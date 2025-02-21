@@ -1,13 +1,5 @@
 ﻿using Application;
-using Application.Interfaces;
-using Application.Repositories;
-using Application.Services;
-using Domain.Models;
-using Infrastructure;
-using Infrastructure.Mappers;
-using Infrastructure.Repositories;
-
-using Microsoft.EntityFrameworkCore;
+using AutoMapper.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -24,10 +16,10 @@ public static class DependencyInjection
 
         #endregion
 
-        services.AddSingleton<ICurrentTime, CurrentTime>();
-        // Use local DB
-        services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(config.GetConnectionString("Default")));
-        services.AddAutoMapper(typeof(MapperConfigs).Assembly);
+        //services.AddSingleton<ICurrentTime, CurrentTime>();
+        //// Use local DB
+        //services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(config.GetConnectionString("Default")));
+        //services.AddAutoMapper(typeof(MapperConfigs).Assembly);
 
         return services;
 
