@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Enitity\IotbaseFarmContext.txt" />
+    <Compile Include="Models\IotbaseFarmContext.txt" />
   </ItemGroup>
 
   <ItemGroup>
