@@ -1,6 +1,4 @@
-﻿using Application.Interfaces;
-using Application.Services;
-using Domain;
+﻿using Domain;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,8 +12,7 @@ namespace Infrastructure.Repositories.Implement
     {
         private readonly AppDbContext _context;
 
-        public ProductRepository(AppDbContext context, ICurrentTime timeService, IClaimsServices claimsService)
-            : base(context, timeService, claimsService) => _context = context;
+        public ProductRepository(AppDbContext context) => _context = context;
 
         public async Task<List<Product?>> getAllProductAsync()
         {

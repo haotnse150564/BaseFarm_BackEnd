@@ -26,7 +26,7 @@ namespace Infrastructure
         {
             get
             {
-                return _productRepository ??= new ProductRepository(_context, _currentTime, _claimsServices);
+                return _productRepository ??= new ProductRepository(_context);
             }
         }
 

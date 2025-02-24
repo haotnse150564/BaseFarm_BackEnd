@@ -1,7 +1,5 @@
 ﻿using Application.Commons;
-using Application.Interfaces;
 using Application.Repositories;
-using Application.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 
@@ -11,14 +9,11 @@ namespace Infrastructure.Repositories.Implement
     public class GenericRepository<TModel> : IGenericRepository<TModel> where TModel : class
     {
         protected DbSet<TModel> _dbSet;
-        private readonly ICurrentTime _timeService;
-        private readonly IClaimsServices _claimsService;
-
-        public GenericRepository(AppDbContext context, ICurrentTime timeService, IClaimsServices claimsService)
+        protected AppDbContext _context;
+        public GenericRepository()
         {
-            _dbSet = context.Set<TModel>();
-            _timeService = timeService;
-            _claimsService = claimsService;
+            _context = new AppDbContext();
+            _dbSet = _context.Set<TModel>();
         }
 
         public virtual async Task AddAsync(TModel model)

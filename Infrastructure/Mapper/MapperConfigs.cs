@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Mapper
 {
-    class MapperConfigs
+    public class MapperConfigs
     {
     }
 }

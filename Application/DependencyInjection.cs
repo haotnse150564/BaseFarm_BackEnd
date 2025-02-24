@@ -19,7 +19,7 @@ public static class DependencyInjection
 
         #endregion
 
-        services.AddSingleton<ICurrentTime, CurrentTime>();
+        //services.AddSingleton<ICurrentTime, CurrentTime>();
         // Use local DB
         services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(config.GetConnectionString("Default")));
         services.AddAutoMapper(typeof(MapperConfigs).Assembly);
