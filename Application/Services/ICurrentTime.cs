@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Services.Implement
+namespace Application.Interfaces
 {
-    public interface IUnitOfWorks
+    public interface ICurrentTime
     {
+        public DateTime GetCurrentTime();
     }
 }
+

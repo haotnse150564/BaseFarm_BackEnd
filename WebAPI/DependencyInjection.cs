@@ -3,7 +3,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using WebAPI.Services;
-using Application.Services.Implement;
+using Application.Services;
 
 namespace WebAPI;
 public static class DependencyInjection
