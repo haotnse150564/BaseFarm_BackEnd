@@ -1,9 +1,9 @@
-﻿using Application;
+﻿
 
 namespace Application
 {
-    public interface IUnitOfWorks
+    public interface IUnitOfWorks : IDisposable
     {
-        public Task<int> SaveChangesAsync();
+        
     }
 }
