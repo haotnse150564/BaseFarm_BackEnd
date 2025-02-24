@@ -19,18 +19,18 @@ namespace Infrastructure
         //{
         //    optionBuilder.UseSqlServer("ConnectionsString");
         //}
-        public DbSet<Account> Users { get; set; }
-        public DbSet<AccountProfile> WorkSheet { get; set; }
-        public DbSet<Category> WorkSheetWork { get; set; }
-        public DbSet<FarmActivity> Request { get; set; }
-        public DbSet<FarmDetail> Punishments { get; set; }
-        public DbSet<Feedback> Invoice { get; set; }
-        public DbSet<IoTdevice> InvoiceDetails { get; set; }
-        public DbSet<Order> Product { get; set; }
-        public DbSet<OrderDetail> Imports { get; set; }
-        public DbSet<Payment> Inventory { get; set; }
-        public DbSet<Product> Voucher { get; set; }
-        public DbSet<Report> ImportDetails { get; set; }
+        public DbSet<Account> Account { get; set; }
+        public DbSet<AccountProfile> AccountProfile { get; set; }
+        public DbSet<Category> Category { get; set; }
+        public DbSet<FarmActivity> FarmActivity { get; set; }
+        public DbSet<FarmDetail> FarmDetail { get; set; }
+        public DbSet<Feedback> Feedback { get; set; }
+        public DbSet<IoTdevice> IoTdevice { get; set; }
+        public DbSet<Order> Order { get; set; }
+        public DbSet<OrderDetail> OrderDetail { get; set; }
+        public DbSet<Payment> Payment { get; set; }
+        public DbSet<Product> Product { get; set; }
+        public DbSet<Report> Report { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

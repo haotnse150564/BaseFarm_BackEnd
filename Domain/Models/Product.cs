@@ -7,7 +7,7 @@ public partial class Product
 {
     public long ProductId { get; set; }
 
-    public int? ProductName { get; set; }
+    public string? ProductName { get; set; }
 
     public decimal? Price { get; set; }
 
