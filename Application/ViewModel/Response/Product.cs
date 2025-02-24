@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Application.ViewModel.Response
 {
-    class Product
+    public class Product
     {
         public class ResponseDTO
         {

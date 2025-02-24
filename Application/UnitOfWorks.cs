@@ -22,14 +22,13 @@ namespace Infrastructure
             _productRepository = productRepository;
         }
 
-        public IProductRepository ProductRepository
+        public IProductRepository productRepository
         {
             get
             {
                 return _productRepository ??= new ProductRepository(_context);
             }
         }
-
 
         public void Dispose()
         {

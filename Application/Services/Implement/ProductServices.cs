@@ -26,25 +26,25 @@ namespace Application.Services.Implement
             _mapper = mapper;
         }
 
-        //public async Task<ResponseDTO> GetAll()
-        //{
-        //    try
-        //    {
-        //        var listUser = await _unitOfWork.Pro.GetAllAsync();
+        public async Task<ResponseDTO> GetAllProductAsync()
+        {
+            try
+            {
+                var listProduct = await _unitOfWork.productRepository.GetAllAsync();
 
-        //        if (listUser == null)
-        //        {
-        //            return new ResponseDTO(Const.FAIL_READ_CODE, "No users found.");
-        //        }
-        //        else
-        //        {
-        //            return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, listUser);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
-        //    }
-        //}
+                if (listProduct == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "No Products found.");
+                }
+                else
+                {
+                    return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, listProduct);
+                }
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+            }
+        }
     }
 }

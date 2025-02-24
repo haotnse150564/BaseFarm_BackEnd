@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Application.ViewModel.Response.Product;
 
 namespace Application.Services
 {
-    interface IProductServices
+    public interface IProductServices
     {
+        Task<ResponseDTO> GetAllProductAsync();
     }
 }
