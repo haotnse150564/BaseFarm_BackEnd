@@ -1,7 +1,4 @@
-﻿using Application.Commons;
-using Domain.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
+﻿using Microsoft.EntityFrameworkCore.Query;
 
 
 namespace Application.Repositories
