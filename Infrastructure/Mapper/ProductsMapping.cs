@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Application.ViewModel.Request.ProductRequest;
 using static Application.ViewModel.Response.ProductResponse;
 
 namespace Infrastructure.Mapper
@@ -18,7 +19,7 @@ namespace Infrastructure.Mapper
             CreateMap<Product, ProductDetailDTO>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName))
                 .ReverseMap();
-
+            CreateMap<Product, CreateProductDTO>().ReverseMap();
         }
     }
 }

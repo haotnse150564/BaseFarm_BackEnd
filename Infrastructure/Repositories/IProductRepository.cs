@@ -9,5 +9,6 @@ namespace Infrastructure.Repositories
         Task<IEnumerable<Product>> GetPagedAsync(int pageIndex, int pageSize);
         Task<Product?> GetProductByCurrentId(int productId);
         Task<List<Product?>> GetProductByNameAsync(string productName);
+        Task<bool> ExistsByNameAsync(string name);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 
 namespace Application.Commons
@@ -38,5 +39,7 @@ namespace Application.Commons
         public bool Previous => PageIndex > 1;
 
         public ICollection<T> Items { get; set; }
+
+        
     }
 }

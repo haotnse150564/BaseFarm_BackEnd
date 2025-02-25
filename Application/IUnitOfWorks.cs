@@ -6,6 +6,7 @@ namespace Application
 {
     public interface IUnitOfWorks : IDisposable
     {
+        Task<int> SaveChangesAsync();
         IProductRepository productRepository { get; }
     }
 }
