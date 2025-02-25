@@ -1,4 +1,5 @@
-﻿using Application.Interfaces;
+﻿using Application.Commons;
+using Application.Interfaces;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Configuration;
@@ -26,29 +27,40 @@ namespace Application.Services.Implement
             _mapper = mapper;
         }
 
-        public async Task<ResponseDTO> GetAllProductAsync()
+        public async Task<ResponseDTO> GetAllProductAsync(int pageIndex, int pageSize)
         {
             try
             {
-                var listProduct = await _unitOfWork.productRepository.GetAllAsync();
+                var totalItemCount = await _unitOfWork.productRepository.CountAsync(); // Đếm tổng số sản phẩm
+                var listProduct = await _unitOfWork.productRepository
+                                    .GetPagedAsync(pageIndex, pageSize); // Lấy danh sách sản phẩm theo trang
 
-                if (listProduct == null)
+                if (listProduct == null || !listProduct.Any())
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, "No Products found.");
                 }
 
-                else
-                {
-                    var result = _mapper.Map<List<ViewProductDTO>>(listProduct);
+                // Map dữ liệu sang DTO
+                var result = _mapper.Map<List<ViewProductDTO>>(listProduct);
 
-                    return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
-                }
+                // Tạo đối tượng phân trang
+                var pagination = new Pagination<ViewProductDTO>
+                {
+                    TotalItemCount = totalItemCount,
+                    PageSize = pageSize,
+                    PageIndex = pageIndex,
+                    Items = result
+                };
+
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, pagination);
             }
             catch (Exception ex)
             {
                 return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
             }
         }
+
+
 
         public async Task<ResponseDTO> GetProductByIdAsync(int productId)
         {

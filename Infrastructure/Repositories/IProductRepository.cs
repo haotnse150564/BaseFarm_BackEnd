@@ -5,7 +5,8 @@ namespace Infrastructure.Repositories
 {
     public interface IProductRepository : IGenericRepository<Product>
     {
-        Task<List<Product?>> getAllProductAsync();
+        Task<int> CountAsync(); // Đếm tổng số sản phẩm
+        Task<IEnumerable<Product>> GetPagedAsync(int pageIndex, int pageSize);
         Task<Product?> GetProductByCurrentId(int productId);
         Task<List<Product?>> GetProductByNameAsync(string productName);
     }

@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Commons
 {
@@ -13,52 +10,33 @@ namespace Application.Commons
         private int _pageSize = 10;
         public int PageSize
         {
-            get
-            {
-                return _pageSize;
-            }
-            set
-            {
-                _pageSize = (value > MaxPageSize) ? MaxPageSize : value;
-            }
+            get => _pageSize;
+            set => _pageSize = (value > MaxPageSize) ? MaxPageSize : value;
         }
 
-        // Set the maximum amount of items in one page
         private const int MaxPageSize = 100;
 
-        public int TotalPagesCount
-        {
-            get
-            {
-                var tmp = TotalItemCount / PageSize;
-                if (TotalItemCount % PageSize == 0)
-                {
-                    return tmp;
-                }
-                return tmp + 1;
-            }
-        }
+        public int TotalPagesCount => (int)Math.Ceiling((double)TotalItemCount / PageSize);
 
-        private int _pageIndex = 0;
+        private int _pageIndex = 1; // Đặt mặc định trang đầu tiên là 1
 
-        // Auto re-assign pageIndex
-        // if pageIndex is greater than or equal to TotalPagesCount
         public int PageIndex
         {
-            get
-            {
-                return _pageIndex;
-            }
+            get => _pageIndex;
             set
             {
-                _pageIndex = (value >= TotalPagesCount) ? TotalPagesCount - 1 : value;
+                if (value < 1)
+                    _pageIndex = 1; // Không cho phép nhỏ hơn 1
+                else if (value > TotalPagesCount)
+                    _pageIndex = TotalPagesCount; // Không cho phép vượt quá số trang
+                else
+                    _pageIndex = value;
             }
         }
 
-        public bool Next => PageIndex + 1 < TotalPagesCount;
-        public bool Previous => PageIndex > 0;
+        public bool Next => PageIndex < TotalPagesCount;
+        public bool Previous => PageIndex > 1;
+
         public ICollection<T> Items { get; set; }
     }
 }
-
-

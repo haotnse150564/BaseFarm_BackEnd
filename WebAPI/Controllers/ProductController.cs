@@ -16,15 +16,16 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("productsList")]
-        public async Task<IActionResult> GetListProducts()
+        public async Task<IActionResult> GetListProducts([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
-            var result = await _productService.GetAllProductAsync();
-            // Kiểm tra kết quả và trả về phản hồi phù hợp
+            var result = await _productService.GetAllProductAsync(pageIndex, pageSize);
+
             if (result.Status != Const.SUCCESS_READ_CODE)
             {
-                return BadRequest(result); // Trả về mã lỗi 400 với thông báo lỗi từ ResponseDTO
+                return BadRequest(result); // Trả về lỗi 400 nếu thất bại
             }
-            return Ok(result);
+
+            return Ok(result); // Trả về danh sách sản phẩm với phân trang
         }
 
         [HttpGet("GetProductById/{productId}")]

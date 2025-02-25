@@ -14,9 +14,19 @@ namespace Infrastructure.Repositories.Implement
 
         public ProductRepository(AppDbContext context) => _context = context;
 
-        public async Task<List<Product?>> getAllProductAsync()
+        // Đếm tổng số sản phẩm
+        public async Task<int> CountAsync()
         {
-            return await _context.Product.ToListAsync();
+            return await _context.Product.CountAsync();
+        }
+
+        public async Task<IEnumerable<Product>> GetPagedAsync(int pageIndex, int pageSize)
+        {
+            return await _context.Product
+                .OrderBy(p => p.ProductId) // Thay đổi sắp xếp theo nhu cầu
+                .Skip((pageIndex - 1) * pageSize) // Điều chỉnh Skip để trang đầu là 1
+                .Take(pageSize)
+                .ToListAsync();
         }
 
         public async Task<Product?> GetProductByCurrentId(int productId)
@@ -32,5 +42,7 @@ namespace Infrastructure.Repositories.Implement
                 .Where(u => u.ProductName.ToLower().StartsWith(productName.ToLower()))
                 .ToListAsync(); // Trả về danh sách
         }
+
+
     }
 }

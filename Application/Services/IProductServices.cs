@@ -9,7 +9,7 @@ namespace Application.Services
 {
     public interface IProductServices
     {
-        Task<ResponseDTO> GetAllProductAsync();
+        Task<ResponseDTO> GetAllProductAsync(int pageIndex, int pageSize);
         Task<ResponseDTO> GetProductByIdAsync(int productId);
         Task<ResponseDTO> GetProductByNameAsync(string productName);
     }
