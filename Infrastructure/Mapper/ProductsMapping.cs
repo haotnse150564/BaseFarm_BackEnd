@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Application.ViewModel.Response.ProductResponse;
 
 namespace Infrastructure.Mapper
 {
@@ -13,7 +14,7 @@ namespace Infrastructure.Mapper
     {
         public ProductsMapping()
         {
-            CreateMap<Product, ProductRepository>().ReverseMap();
+            CreateMap<Product, ViewProductDTO>().ReverseMap();
         }
     }
 }
