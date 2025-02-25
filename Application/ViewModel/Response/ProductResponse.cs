@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Application.ViewModel.Response
 {
-    public class Product
+    public class ProductResponse
     {
         public class ResponseDTO
         {
@@ -19,6 +19,13 @@ namespace Application.ViewModel.Response
                 Message = message;
                 Data = data;
             }
+        }
+
+        public class ViewProductDTO
+        {
+            public string? ProductName { get; set; }
+            public decimal? Price { get; set; }
+            public int? StockQuantity { get; set; }
         }
     }
 }

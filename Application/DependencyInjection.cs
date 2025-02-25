@@ -20,7 +20,7 @@ public static class DependencyInjection
 
         services.AddScoped<IProductServices, ProductServices>();
 
-
+        services.AddAutoMapper(typeof(ProductsMapping));
         #region Config Repository and Service
 
 
