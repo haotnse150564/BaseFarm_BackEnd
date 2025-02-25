@@ -15,6 +15,10 @@ namespace Infrastructure.Mapper
         public ProductsMapping()
         {
             CreateMap<Product, ViewProductDTO>().ReverseMap();
+            CreateMap<Product, ProductDetailDTO>()
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName))
+                .ReverseMap();
+
         }
     }
 }

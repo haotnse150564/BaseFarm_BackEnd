@@ -10,5 +10,6 @@ namespace Application.Services
     public interface IProductServices
     {
         Task<ResponseDTO> GetAllProductAsync();
+        Task<ResponseDTO> GetProductByIdAsync(int productId);
     }
 }

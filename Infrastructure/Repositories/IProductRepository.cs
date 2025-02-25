@@ -6,5 +6,6 @@ namespace Infrastructure.Repositories
     public interface IProductRepository : IGenericRepository<Product>
     {
         Task<List<Product?>> getAllProductAsync();
+        Task<Product?> GetProductByCurrentId(int productId);
     }
 }

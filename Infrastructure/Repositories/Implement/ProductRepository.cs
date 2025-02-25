@@ -18,5 +18,12 @@ namespace Infrastructure.Repositories.Implement
         {
             return await _context.Product.ToListAsync();
         }
+
+        public async Task<Product?> GetProductByCurrentId(int productId)
+        {
+            return await _context.Product
+                .Include(u => u.Category)
+                .FirstOrDefaultAsync(u => u.ProductId == productId);  // Tìm user theo userId
+        }
     }
 }

@@ -49,5 +49,30 @@ namespace Application.Services.Implement
                 return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
             }
         }
+
+        public async Task<ResponseDTO> GetProductByIdAsync(int productId)
+        {
+            try
+            {
+                // Gọi repository để lấy danh sách người dùng theo tên
+                var productDetail = await _unitOfWork.productRepository.GetProductByCurrentId(productId);
+
+                // Kiểm tra nếu danh sách rỗng
+                if (productDetail == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "No Product found with the ID");
+                }
+
+                // Sử dụng AutoMapper để ánh xạ các entity sang DTO
+                var result = _mapper.Map<ProductDetailDTO>(productDetail);
+
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+            }
+            catch (Exception ex)
+            {
+                // Xử lý ngoại lệ nếu xảy ra
+                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+            }
+        }
     }
 }
