@@ -23,7 +23,14 @@ namespace Infrastructure.Repositories.Implement
         {
             return await _context.Product
                 .Include(u => u.Category)
-                .FirstOrDefaultAsync(u => u.ProductId == productId);  // Tìm user theo userId
+                .FirstOrDefaultAsync(u => u.ProductId == productId);
+        }
+
+        public async Task<List<Product?>> GetProductByNameAsync(string productName)
+        {
+            return await _context.Product
+                .Where(u => u.ProductName.ToLower().StartsWith(productName.ToLower()))
+                .ToListAsync(); // Trả về danh sách
         }
     }
 }

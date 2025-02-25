@@ -30,8 +30,23 @@ namespace WebAPI.Controllers
         [HttpGet("GetProductById/{productId}")]
         public async Task<IActionResult> GetProductById([FromRoute] int productId)
         {
-            // Gọi service để lấy danh sách người dùng
+            
             var response = await _productService.GetProductByIdAsync(productId);
+
+            // Trả về phản hồi
+            if (response.Status != Const.SUCCESS_READ_CODE)
+            {
+                return BadRequest(response); // Trả về mã lỗi nếu không thành công
+            }
+
+            return Ok(response); // Trả về mã 200 nếu thành công
+        }
+
+        [HttpGet("searchProductByName/{productName}")]
+        public async Task<IActionResult> GetProductByName([FromRoute] string productName)
+        {
+            
+            var response = await _productService.GetProductByNameAsync(productName);
 
             // Trả về phản hồi
             if (response.Status != Const.SUCCESS_READ_CODE)

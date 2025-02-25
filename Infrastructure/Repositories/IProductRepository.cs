@@ -7,5 +7,6 @@ namespace Infrastructure.Repositories
     {
         Task<List<Product?>> getAllProductAsync();
         Task<Product?> GetProductByCurrentId(int productId);
+        Task<List<Product?>> GetProductByNameAsync(string productName);
     }
 }

@@ -11,5 +11,6 @@ namespace Application.Services
     {
         Task<ResponseDTO> GetAllProductAsync();
         Task<ResponseDTO> GetProductByIdAsync(int productId);
+        Task<ResponseDTO> GetProductByNameAsync(string productName);
     }
 }

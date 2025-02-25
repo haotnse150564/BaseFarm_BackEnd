@@ -39,5 +39,7 @@ namespace Application.ViewModel.Response
             public string? Description { get; set; }
             public string? CategoryName { get; set; }
         }
+
+
     }
 }
