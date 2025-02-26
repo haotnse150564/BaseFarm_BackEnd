@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Query;
+﻿using Application.Commons;
+using Microsoft.EntityFrameworkCore.Query;
 
 
 namespace Application.Repositories
@@ -22,7 +23,7 @@ namespace Application.Repositories
         Task AddRangeAsync(List<TModel> models);
 
         // Add paging method to generic interface 
-        //Task<Pagination<TModel>> ToPaginationAsync(int pageIndex = 0, int pageSize = 10);
+        Task<Pagination<TModel>> ToPaginationAsync(int pageIndex = 0, int pageSize = 10);
         Task<bool> DeleteAsync(TModel model);
     }
 }
