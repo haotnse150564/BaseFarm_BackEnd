@@ -33,11 +33,9 @@ namespace Application.Services.Implement
         {
             try
             {
-                var totalItemCount = await _unitOfWork.productRepository.CountAsync(); // Đếm tổng số sản phẩm
-                var listProduct = await _unitOfWork.productRepository
-                                    .GetPagedAsync(pageIndex, pageSize); // Lấy danh sách sản phẩm theo trang
+                var listProduct = await _unitOfWork.productRepository.ToPaginationAsync(pageIndex, pageSize);
 
-                if (listProduct == null || !listProduct.Any())
+                if (listProduct == null)
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, "No Products found.");
                 }
@@ -48,7 +46,7 @@ namespace Application.Services.Implement
                 // Tạo đối tượng phân trang
                 var pagination = new Pagination<ViewProductDTO>
                 {
-                    TotalItemCount = totalItemCount,
+                    TotalItemCount = listProduct.TotalItemCount,
                     PageSize = pageSize,
                     PageIndex = pageIndex,
                     Items = result
