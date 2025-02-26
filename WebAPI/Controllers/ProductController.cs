@@ -1,6 +1,8 @@
 ﻿using Application;
 using Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static Application.ViewModel.Request.ProductRequest;
 
 namespace WebAPI.Controllers
 {
@@ -56,6 +58,27 @@ namespace WebAPI.Controllers
             }
 
             return Ok(response); // Trả về mã 200 nếu thành công
+        }
+
+        //[Authorize(Roles = "Manager")]
+        [HttpPost("CreateProduct")]
+        public async Task<IActionResult> CreateProduct([FromBody] CreateProductDTO createRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var result = await _productService.CreateProductAsync(createRequest);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
     }
 }

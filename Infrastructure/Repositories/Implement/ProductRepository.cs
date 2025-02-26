@@ -43,6 +43,9 @@ namespace Infrastructure.Repositories.Implement
                 .ToListAsync(); // Trả về danh sách
         }
 
-
+        public async Task<bool> ExistsByNameAsync(string name)
+        {
+            return await _context.Product.AnyAsync(u => u.ProductName.ToLower() == name.ToLower());
+        }
     }
 }

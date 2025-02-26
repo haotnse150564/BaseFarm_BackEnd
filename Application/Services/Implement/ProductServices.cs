@@ -1,6 +1,7 @@
 ﻿using Application.Commons;
 using Application.Interfaces;
 using AutoMapper;
+using Domain;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Application.ViewModel.Request.ProductRequest;
 using static Application.ViewModel.Response.ProductResponse;
 
 namespace Application.Services.Implement
@@ -111,5 +113,39 @@ namespace Application.Services.Implement
                 return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
             }
         }
+
+        public async Task<ResponseDTO> CreateProductAsync(CreateProductDTO request)
+        {
+            try
+            {
+                if (await _unitOfWork.productRepository.ExistsByNameAsync(request.ProductName))
+                {
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "The Product Name already exists. Please choose a different Product Name.");
+                }
+
+                // Ánh xạ từ DTO sang Entity
+                var product = _mapper.Map<Product>(request);
+                product.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
+
+                // Thêm sản phẩm vào DbSet
+                 await _unitOfWork.productRepository.AddAsync(product);
+
+                // Lưu thay đổi vào database
+                var saveResult = await _unitOfWork.SaveChangesAsync();
+
+                // Kiểm tra nếu lưu không thành công
+                if (saveResult <= 0)
+                {
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Failed to register the product.");
+                }
+
+                return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Product registered successfully");
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+            }
+        }
+
     }
 }
