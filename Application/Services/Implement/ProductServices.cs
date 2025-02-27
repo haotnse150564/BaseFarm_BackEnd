@@ -137,16 +137,6 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_CREATE_CODE, "Failed to add product to repository.");
                 }
 
-
-                // Lưu thay đổi vào database
-                var saveResult = await _unitOfWork.SaveChangesAsync();
-
-                // Kiểm tra nếu lưu không thành công
-                if (saveResult <= 0)
-                {
-                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Failed to register the product.");
-                }
-
                 return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Product registered successfully");
             }
             catch (Exception ex)

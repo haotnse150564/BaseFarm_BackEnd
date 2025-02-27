@@ -19,6 +19,7 @@ namespace Infrastructure.Repositories.Implement
         public virtual async Task AddAsync(TModel model)
         {
             await _dbSet.AddAsync(model);
+            _context.SaveChangesAsync();
         }
 
         public virtual void AddAttach(TModel model)
