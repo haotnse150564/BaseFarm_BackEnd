@@ -29,6 +29,25 @@ namespace Infrastructure.Repositories.Implement
                 .ToListAsync();
         }
 
+        // Đếm tổng số sản phẩm theo tên
+        public async Task<int> CountByNameAsync(string productName)
+        {
+            return await _context.Product
+                .Where(p => p.ProductName.Contains(productName))
+                .CountAsync();
+        }
+
+        // Lấy danh sách sản phẩm theo tên có phân trang
+        public async Task<List<Product>> GetPagedByNameAsync(string productName, int pageIndex, int pageSize)
+        {
+            return await _context.Product
+                .Where(p => p.ProductName.Contains(productName))
+                .OrderBy(p => p.ProductName) // Sắp xếp theo tên sản phẩm
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+        }
+
         public async Task<Product?> GetProductById(int productId)
         {
             return await _context.Product

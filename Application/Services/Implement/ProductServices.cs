@@ -90,30 +90,43 @@ namespace Application.Services.Implement
             }
         }
 
-        public async Task<ResponseDTO> GetProductByNameAsync(string productName)
+        public async Task<ResponseDTO> GetProductByNameAsync(string productName, int pageIndex, int pageSize)
         {
             try
             {
-                
-                var product = await _unitOfWork.productRepository.GetProductByNameAsync(productName);
+                // Đếm tổng số sản phẩm khớp với tên tìm kiếm
+                var totalItemCount = await _unitOfWork.productRepository.CountByNameAsync(productName);
+
+                // Lấy danh sách sản phẩm theo trang
+                var listProduct = await _unitOfWork.productRepository
+                                    .GetPagedByNameAsync(productName, pageIndex, pageSize);
 
                 // Kiểm tra nếu danh sách rỗng
-                if (product == null || !product.Any())
+                if (listProduct == null || !listProduct.Any())
                 {
-                    return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "No Product found with the given name.");
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "No Product found with the given name.");
                 }
 
-                // Sử dụng AutoMapper để ánh xạ các entity sang DTO
-                var result = _mapper.Map<List<ViewProductDTO>>(product);
+                // Ánh xạ dữ liệu sang DTO
+                var result = _mapper.Map<List<ViewProductDTO>>(listProduct);
 
-                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+                // Tạo đối tượng phân trang
+                var pagination = new Pagination<ViewProductDTO>
+                {
+                    TotalItemCount = totalItemCount,
+                    PageSize = pageSize,
+                    PageIndex = pageIndex,
+                    Items = result
+                };
+
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, pagination);
             }
             catch (Exception ex)
             {
-                // Xử lý ngoại lệ nếu xảy ra
                 return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
             }
         }
+
 
         public async Task<ResponseDTO> CreateProductAsync(CreateProductDTO request)
         {

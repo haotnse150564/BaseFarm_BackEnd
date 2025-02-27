@@ -47,18 +47,16 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("searchProductByName/{productName}")]
-        public async Task<IActionResult> GetProductByName([FromRoute] string productName)
+        public async Task<IActionResult> GetProductByName([FromRoute] string productName, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
-            
-            var response = await _productService.GetProductByNameAsync(productName);
+            var response = await _productService.GetProductByNameAsync(productName, pageIndex, pageSize);
 
-            // Trả về phản hồi
             if (response.Status != Const.SUCCESS_READ_CODE)
             {
-                return BadRequest(response); // Trả về mã lỗi nếu không thành công
+                return BadRequest(response);
             }
 
-            return Ok(response); // Trả về mã 200 nếu thành công
+            return Ok(response);
         }
 
         //[Authorize(Roles = "Manager")]
