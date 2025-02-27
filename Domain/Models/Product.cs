@@ -20,6 +20,7 @@ public partial class Product
     public DateOnly? UpdatedAt { get; set; }
 
     public long CategoryId { get; set; }
+    public int Status { get; set; }
 
     public virtual Category Category { get; set; } = null!;
 
