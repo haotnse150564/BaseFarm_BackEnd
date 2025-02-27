@@ -13,13 +13,15 @@ namespace Infrastructure
         private ICurrentTime _currentTime;
         private IClaimsServices _claimsServices;
         private IProductRepository _productRepository;
+        private IFeedbackRepository _feedbackRepository;
 
-        public UnitOfWorks(AppDbContext context, ICurrentTime currentTime, IClaimsServices claimsServices, IProductRepository productRepository)
+        public UnitOfWorks(AppDbContext context, ICurrentTime currentTime, IClaimsServices claimsServices, IProductRepository productRepository, IFeedbackRepository feedbackRepository )
         {
             _context = context;
             _currentTime = currentTime;
             _claimsServices = claimsServices;
             _productRepository = productRepository;
+            _feedbackRepository = feedbackRepository;
         }
 
         public IProductRepository productRepository
@@ -27,6 +29,14 @@ namespace Infrastructure
             get
             {
                 return _productRepository ??= new ProductRepository(_context);
+            }
+        }
+
+        public IFeedbackRepository feedbackRepository
+        {
+            get
+            {
+                return _feedbackRepository ??= new FeedbackRepository(_context);
             }
         }
 

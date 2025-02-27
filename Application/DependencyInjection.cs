@@ -19,12 +19,16 @@ public static class DependencyInjection
 
         //repository
         services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 
         //service
         services.AddScoped<IProductServices, ProductServices>();
+        services.AddScoped<IFeedbackSevices, FeedbackServices>();
 
         //mapping
         services.AddAutoMapper(typeof(ProductsMapping));
+        services.AddAutoMapper(typeof(FeedbackMapping));
+
         #region Config Repository and Service
 
 

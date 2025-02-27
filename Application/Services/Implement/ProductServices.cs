@@ -139,7 +139,7 @@ namespace Application.Services.Implement
 
                 // Ánh xạ từ DTO sang Entity
                 var product = _mapper.Map<Product>(request);
-                //product.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
+                product.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
 
                 // Gọi AddAsync nhưng không gán vào biến vì nó không có giá trị trả về
                 var added = _unitOfWork.productRepository.AddAsync(product);
