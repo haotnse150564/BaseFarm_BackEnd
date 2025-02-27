@@ -2,6 +2,7 @@
 using Application.Interfaces;
 using AutoMapper;
 using Domain;
+using Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -125,10 +126,17 @@ namespace Application.Services.Implement
 
                 // Ánh xạ từ DTO sang Entity
                 var product = _mapper.Map<Product>(request);
-                product.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
+                //product.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
 
-                // Thêm sản phẩm vào DbSet
-                 await _unitOfWork.productRepository.AddAsync(product);
+                // Gọi AddAsync nhưng không gán vào biến vì nó không có giá trị trả về
+                var added = _unitOfWork.productRepository.AddAsync(product);
+
+                // Kiểm tra xem sản phẩm có được thêm không bằng cách kiểm tra product.Id (hoặc khóa chính)
+                if (added==null) // Nếu Id chưa được gán, có thể việc thêm đã thất bại
+                {
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Failed to add product to repository.");
+                }
+
 
                 // Lưu thay đổi vào database
                 var saveResult = await _unitOfWork.SaveChangesAsync();
@@ -146,6 +154,7 @@ namespace Application.Services.Implement
                 return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
             }
         }
+
 
     }
 }
