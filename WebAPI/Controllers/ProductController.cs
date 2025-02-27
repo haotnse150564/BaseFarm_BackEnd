@@ -101,5 +101,21 @@ namespace WebAPI.Controllers
 
             return Ok(response); // Trả về mã 200 nếu cập nhật thành công với thông tin trong ResponseDTO
         }
+
+        //[Authorize(Roles = "Admin, Manager")]
+        [HttpPost("changeProductStatus/{id}")]
+        public async Task<IActionResult> ChangeProductStatus([FromRoute] int id)
+        {
+
+            var response = await _productService.ChangeProductStatusById(id);
+
+            // Kiểm tra kết quả và trả về phản hồi phù hợp
+            if (response.Status != Const.SUCCESS_READ_CODE)
+            {
+                return BadRequest(response); // Trả về mã lỗi 400 với thông báo lỗi từ ResponseDTO
+            }
+
+            return Ok(response); // Trả về mã 200 nếu cập nhật thành công với thông tin trong ResponseDTO
+        }
     }
 }

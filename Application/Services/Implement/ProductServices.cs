@@ -183,5 +183,29 @@ namespace Application.Services.Implement
                 return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
             }
         }
+
+        public async Task<ResponseDTO> ChangeProductStatusById(int productId)
+        {
+            try
+            {
+                // Lấy người dùng hiện tại
+                var product = await _unitOfWork.productRepository.GetProductById(productId);
+                if (product == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Product not found !");
+                }
+
+                product.Status = (product.Status == 1) ? 0 : 1;
+
+                // Lưu các thay đổi vào cơ sở dữ liệu
+                await _unitOfWork.productRepository.UpdateAsync(product);
+
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, "Change Status Succeed");
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+            }
+        }
     }
 }
