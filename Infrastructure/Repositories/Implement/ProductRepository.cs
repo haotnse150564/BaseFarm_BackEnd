@@ -29,7 +29,7 @@ namespace Infrastructure.Repositories.Implement
                 .ToListAsync();
         }
 
-        public async Task<Product?> GetProductByCurrentId(int productId)
+        public async Task<Product?> GetProductById(int productId)
         {
             return await _context.Product
                 .Include(u => u.Category)

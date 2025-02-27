@@ -63,6 +63,13 @@ namespace Infrastructure.Repositories.Implement
             _dbSet.Update(model);
         }
 
+        public async Task<int> UpdateAsync(TModel model)
+        {
+            var tracker = _context.Attach(model);
+            tracker.State = EntityState.Modified;
+            return await _context.SaveChangesAsync();
+        }
+
         public void UpdateRange(List<TModel> models)
         {
             _dbSet.UpdateRange(models);

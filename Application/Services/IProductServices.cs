@@ -14,5 +14,6 @@ namespace Application.Services
         Task<ResponseDTO> GetProductByIdAsync(int productId);
         Task<ResponseDTO> GetProductByNameAsync(string productName);
         Task<ResponseDTO> CreateProductAsync(CreateProductDTO request);
+        Task<ResponseDTO> UpdateProductById(int productId, CreateProductDTO request);
     }
 }

@@ -16,7 +16,7 @@ namespace Application.Repositories
         void AddAttach(TModel model);
         void AddEntry(TModel model);
         void Update(TModel model);
-
+        Task<int> UpdateAsync(TModel model);
         void UpdateRange(List<TModel> models);
 
         Task AddRangeAsync(List<TModel> models);

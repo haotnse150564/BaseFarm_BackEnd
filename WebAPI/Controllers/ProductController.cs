@@ -3,6 +3,7 @@ using Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static Application.ViewModel.Request.ProductRequest;
+using static Application.ViewModel.Response.ProductResponse;
 
 namespace WebAPI.Controllers
 {
@@ -79,6 +80,28 @@ namespace WebAPI.Controllers
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
+        }
+
+        //[Authorize(Roles = "Admin")]
+        [HttpPost("updateProduct/{id}")]
+        public async Task<IActionResult> UpdateProductAsync([FromBody] CreateProductDTO request, [FromRoute] int id)
+        {
+
+            // Kiểm tra xem request có hợp lệ không
+            if (request == null)
+            {
+                return BadRequest(new ResponseDTO(Const.FAIL_READ_CODE, "Invalid request."));
+            }
+
+            var response = await _productService.UpdateProductById(id, request);
+
+            // Kiểm tra kết quả và trả về phản hồi phù hợp
+            if (response.Status != Const.SUCCESS_READ_CODE)
+            {
+                return BadRequest(response); // Trả về mã lỗi 400 với thông báo lỗi từ ResponseDTO
+            }
+
+            return Ok(response); // Trả về mã 200 nếu cập nhật thành công với thông tin trong ResponseDTO
         }
     }
 }

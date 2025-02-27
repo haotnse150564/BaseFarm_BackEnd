@@ -70,7 +70,7 @@ namespace Application.Services.Implement
             try
             {
                 // Gọi repository để lấy danh sách người dùng theo tên
-                var productDetail = await _unitOfWork.productRepository.GetProductByCurrentId(productId);
+                var productDetail = await _unitOfWork.productRepository.GetProductById(productId);
 
                 // Kiểm tra nếu danh sách rỗng
                 if (productDetail == null)
@@ -145,6 +145,30 @@ namespace Application.Services.Implement
             }
         }
 
+        public async Task<ResponseDTO> UpdateProductById(int productId, CreateProductDTO request)
+        {
+            try
+            {
+                var product = await _unitOfWork.productRepository.GetProductById(productId);
+                if (product == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Product not found !");
+                }
 
+                // Sử dụng AutoMapper để ánh xạ thông tin từ DTO vào user
+                var updatedProduct = _mapper.Map(request, product);
+
+                var result = _mapper.Map<ProductDetailDTO>(updatedProduct);
+
+                // Lưu các thay đổi vào cơ sở dữ liệu
+                await _unitOfWork.productRepository.UpdateAsync(product);
+
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_UPDATE_MSG, result);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+            }
+        }
     }
 }
