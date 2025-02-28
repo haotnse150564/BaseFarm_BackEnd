@@ -1,7 +1,10 @@
 ﻿using Application.Commons;
 using Application.Interfaces;
 using AutoMapper;
+using Domain;
+using Infrastructure.ViewModel.Request;
 using Microsoft.Extensions.Configuration;
+using static Infrastructure.ViewModel.Request.FeedbackRequest;
 using static Infrastructure.ViewModel.Response.FeedbackResponse;
 
 namespace Application.Services.Implement
@@ -47,6 +50,58 @@ namespace Application.Services.Implement
                 };
 
                 return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, pagination);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+            }
+        }
+
+        public async Task<ResponseDTO> CreateFeedbackAsync(CreateFeedbackDTO request)
+        {
+            try
+            {
+
+                // Ánh xạ từ DTO sang Entity
+                var feedback = _mapper.Map<Feedback>(request);
+                feedback.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
+
+                // Gọi AddAsync nhưng không gán vào biến vì nó không có giá trị trả về
+                var create = _unitOfWork.feedbackRepository.AddAsync(feedback);
+
+                // Kiểm tra xem sản phẩm có được thêm không bằng cách kiểm tra product.Id (hoặc khóa chính)
+                if (create == null) // Nếu Id chưa được gán, có thể việc thêm đã thất bại
+                {
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Failed to Cteate Feedback to repository.");
+                }
+
+                return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Feedback created!");
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+            }
+        }
+
+        public async Task<ResponseDTO> UpdateFeedbackById(int feedbackId, CreateFeedbackDTO request)
+        {
+            try
+            {
+                var feedback = await _unitOfWork.feedbackRepository.GetByIdAsync(feedbackId);
+                if (feedback == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Feedback not found !");
+                }
+
+                // Sử dụng AutoMapper để ánh xạ thông tin từ DTO vào
+                var updatedFeedback = _mapper.Map(request, feedback);
+
+                var result = _mapper.Map<ViewFeedbackDTO>(updatedFeedback);
+
+                // Lưu các thay đổi vào cơ sở dữ liệu
+                await _unitOfWork.feedbackRepository.UpdateAsync(feedback);
+
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_UPDATE_MSG, result);
             }
             catch (Exception ex)
             {

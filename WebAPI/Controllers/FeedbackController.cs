@@ -1,6 +1,8 @@
 ﻿using Application;
 using Application.Services;
 using Microsoft.AspNetCore.Mvc;
+using static Infrastructure.ViewModel.Request.FeedbackRequest;
+using static Infrastructure.ViewModel.Response.FeedbackResponse;
 
 namespace WebAPI.Controllers
 {
@@ -26,6 +28,47 @@ namespace WebAPI.Controllers
             }
 
             return Ok(result); // Trả về danh sách sản phẩm với phân trang
+        }
+
+        [HttpPost("CreateFeedback")]
+        public async Task<IActionResult> CreateFeedback([FromBody] CreateFeedbackDTO createRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var result = await _feedbackService.CreateFeedbackAsync(createRequest);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpPost("updateFeedback/{id}")]
+        public async Task<IActionResult> UpdateFeedbackAsync([FromBody] CreateFeedbackDTO request, [FromRoute] int id)
+        {
+
+            // Kiểm tra xem request có hợp lệ không
+            if (request == null)
+            {
+                return BadRequest(new ResponseDTO(Const.FAIL_READ_CODE, "Invalid request."));
+            }
+
+            var response = await _feedbackService.UpdateFeedbackById(id, request);
+
+            // Kiểm tra kết quả và trả về phản hồi phù hợp
+            if (response.Status != Const.SUCCESS_READ_CODE)
+            {
+                return BadRequest(response); // Trả về mã lỗi 400 với thông báo lỗi từ ResponseDTO
+            }
+
+            return Ok(response); // Trả về mã 200 nếu cập nhật thành công với thông tin trong ResponseDTO
         }
     }
 }
