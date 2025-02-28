@@ -14,14 +14,17 @@ namespace Infrastructure
         private IClaimsServices _claimsServices;
         private IProductRepository _productRepository;
         private IFeedbackRepository _feedbackRepository;
+        private IAccountProfileRepository _accountProfileRepository;
+        private IAccountRepository _accountRepository;
 
-        public UnitOfWorks(AppDbContext context, ICurrentTime currentTime, IClaimsServices claimsServices, IProductRepository productRepository, IFeedbackRepository feedbackRepository )
+        public UnitOfWorks(AppDbContext context, ICurrentTime currentTime, IClaimsServices claimsServices, IProductRepository productRepository, IFeedbackRepository feedbackRepository, IAccountProfileRepository accountProfileRepository)
         {
             _context = context;
             _currentTime = currentTime;
             _claimsServices = claimsServices;
             _productRepository = productRepository;
             _feedbackRepository = feedbackRepository;
+            _accountProfileRepository = accountProfileRepository;
         }
 
         public IProductRepository productRepository
@@ -39,7 +42,21 @@ namespace Infrastructure
                 return _feedbackRepository ??= new FeedbackRepository(_context);
             }
         }
+        public IAccountProfileRepository accountProfileRepository
+        {
+            get
+            {
+                return _accountProfileRepository ??= new AccountProfileRepository(_context);
+            }
+        }
 
+        public IAccountRepository accountRepository
+        {
+            get
+            {
+                return _accountRepository ??= new AccountRepository(_context);
+            }
+        }
         public void Dispose()
         {
             _context.Dispose();

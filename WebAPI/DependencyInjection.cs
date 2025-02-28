@@ -4,6 +4,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using WebAPI.Services;
 using Application.Services;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace WebAPI;
 public static class DependencyInjection
@@ -30,6 +32,22 @@ public static class DependencyInjection
         services.AddDistributedMemoryCache(); //Adding cache in memory for session.
         services.AddSession(); //Adding session.
         //services.AddTransient<ISessionServices, SessionServices>();
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateIssuerSigningKey = true,
+                ValidateLifetime = true,
+                RoleClaimType = ClaimTypes.Role,
+                ValidAudience = builder.Configuration["JWT:Audience"],
+                ValidIssuer = builder.Configuration["JWT:Issuer"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding
+                    .UTF8.GetBytes(builder.Configuration["JWT:Key"]))
+            };
+        });
         services.AddAuthorization();
         //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
         //{

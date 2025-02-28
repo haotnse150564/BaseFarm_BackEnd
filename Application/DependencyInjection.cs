@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Application.Services.Implement;
+using WebAPI.Services;
+using Application.Utils;
 
 namespace Infrastructure;
 
@@ -16,22 +18,23 @@ public static class DependencyInjection
     public static IServiceCollection AddInfractstructure(this IServiceCollection services, IConfiguration config)
     {
         services.AddScoped<IUnitOfWorks, UnitOfWorks>();
-
-        //repository
-        services.AddScoped<IProductRepository, ProductRepository>();
-        services.AddScoped<IFeedbackRepository, FeedbackRepository>();
-
-        //service
-        services.AddScoped<IProductServices, ProductServices>();
-        services.AddScoped<IFeedbackSevices, FeedbackServices>();
+        services.AddScoped<JWTUtils>();
 
         //mapping
         services.AddAutoMapper(typeof(ProductsMapping));
         services.AddAutoMapper(typeof(FeedbackMapping));
 
         #region Config Repository and Service
-
-
+        //repository
+        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IFeedbackRepository, FeedbackRepository>();
+        services.AddScoped<IAccountRepository, AccountRepository>();
+        services.AddScoped<IAccountProfileRepository, AccountProfileRepository>();
+        //service
+        services.AddScoped<IProductServices, ProductServices>();
+        services.AddScoped<IFeedbackSevices, FeedbackServices>();
+        services.AddScoped<IAccountServices, AccountServices>();
+        //services.AddScoped<IAccountProfileServices, AccountProfileServices>();
         #endregion
 
         services.AddSingleton<ICurrentTime, CurrentTime>();

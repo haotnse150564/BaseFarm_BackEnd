@@ -2,6 +2,7 @@
 using Application.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using System.Linq.Expressions;
 
 namespace Infrastructure.Repositories.Implement
 {
@@ -22,6 +23,10 @@ namespace Infrastructure.Repositories.Implement
             _context.SaveChangesAsync();
         }
 
+        public async Task<TModel?> FirstOrDefaultAsync(Expression<Func<TModel, bool>> predicate)
+        {
+            return await _dbSet.FirstOrDefaultAsync(predicate);
+        }
         public virtual void AddAttach(TModel model)
         {
             _dbSet.Attach(model).State = EntityState.Added;

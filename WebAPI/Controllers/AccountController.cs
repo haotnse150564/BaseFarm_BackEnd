@@ -1,12 +1,25 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Application.Services;
+using Microsoft.AspNetCore.Mvc;
+using static Infrastructure.ViewModel.Request.AccountRequest;
 
 namespace WebAPI.Controllers
 {
-    public class AccountController : Controller
+    [Route("api/v1/products")]
+    [ApiController]
+    public class AccountController : ControllerBase
     {
-        public IActionResult Index()
+        private readonly IAccountServices _accountServices;
+
+        public AccountController(IAccountServices accountServices)
         {
-            return View();
+            _accountServices = accountServices;
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequestDTO request)
+        {
+            var result = await _accountServices.LoginAsync(request.Phone, request.Password);
+            return Ok(result);
         }
     }
 }

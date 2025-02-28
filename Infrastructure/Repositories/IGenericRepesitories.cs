@@ -1,5 +1,6 @@
 ﻿using Application.Commons;
 using Microsoft.EntityFrameworkCore.Query;
+using System.Linq.Expressions;
 
 
 namespace Application.Repositories
@@ -25,5 +26,6 @@ namespace Application.Repositories
         // Add paging method to generic interface 
         Task<Pagination<TModel>> ToPaginationAsync(int pageIndex = 0, int pageSize = 10);
         Task<bool> DeleteAsync(TModel model);
+        Task<TModel?> FirstOrDefaultAsync(Expression<Func<TModel, bool>> predicate);
     }
 }
