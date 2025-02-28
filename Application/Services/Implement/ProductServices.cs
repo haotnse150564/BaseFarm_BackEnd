@@ -2,6 +2,7 @@
 using Application.Interfaces;
 using AutoMapper;
 using Domain;
+using Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -67,7 +68,7 @@ namespace Application.Services.Implement
             try
             {
                 // Gọi repository để lấy danh sách người dùng theo tên
-                var productDetail = await _unitOfWork.productRepository.GetProductByCurrentId(productId);
+                var productDetail = await _unitOfWork.productRepository.GetProductById(productId);
 
                 // Kiểm tra nếu danh sách rỗng
                 if (productDetail == null)
@@ -87,30 +88,43 @@ namespace Application.Services.Implement
             }
         }
 
-        public async Task<ResponseDTO> GetProductByNameAsync(string productName)
+        public async Task<ResponseDTO> GetProductByNameAsync(string productName, int pageIndex, int pageSize)
         {
             try
             {
-                
-                var product = await _unitOfWork.productRepository.GetProductByNameAsync(productName);
+                // Đếm tổng số sản phẩm khớp với tên tìm kiếm
+                var totalItemCount = await _unitOfWork.productRepository.CountByNameAsync(productName);
+
+                // Lấy danh sách sản phẩm theo trang
+                var listProduct = await _unitOfWork.productRepository
+                                    .GetPagedByNameAsync(productName, pageIndex, pageSize);
 
                 // Kiểm tra nếu danh sách rỗng
-                if (product == null || !product.Any())
+                if (listProduct == null || !listProduct.Any())
                 {
-                    return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "No Product found with the given name.");
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "No Product found with the given name.");
                 }
 
-                // Sử dụng AutoMapper để ánh xạ các entity sang DTO
-                var result = _mapper.Map<List<ViewProductDTO>>(product);
+                // Ánh xạ dữ liệu sang DTO
+                var result = _mapper.Map<List<ViewProductDTO>>(listProduct);
 
-                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+                // Tạo đối tượng phân trang
+                var pagination = new Pagination<ViewProductDTO>
+                {
+                    TotalItemCount = totalItemCount,
+                    PageSize = pageSize,
+                    PageIndex = pageIndex,
+                    Items = result
+                };
+
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, pagination);
             }
             catch (Exception ex)
             {
-                // Xử lý ngoại lệ nếu xảy ra
                 return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
             }
         }
+
 
         public async Task<ResponseDTO> CreateProductAsync(CreateProductDTO request)
         {
@@ -125,16 +139,13 @@ namespace Application.Services.Implement
                 var product = _mapper.Map<Product>(request);
                 product.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
 
-                // Thêm sản phẩm vào DbSet
-                 await _unitOfWork.productRepository.AddAsync(product);
+                // Gọi AddAsync nhưng không gán vào biến vì nó không có giá trị trả về
+                var added = _unitOfWork.productRepository.AddAsync(product);
 
-                // Lưu thay đổi vào database
-                var saveResult = await _unitOfWork.SaveChangesAsync();
-
-                // Kiểm tra nếu lưu không thành công
-                if (saveResult <= 0)
+                // Kiểm tra xem sản phẩm có được thêm không bằng cách kiểm tra product.Id (hoặc khóa chính)
+                if (added==null) // Nếu Id chưa được gán, có thể việc thêm đã thất bại
                 {
-                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Failed to register the product.");
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Failed to add product to repository.");
                 }
 
                 return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Product registered successfully");
@@ -145,5 +156,54 @@ namespace Application.Services.Implement
             }
         }
 
+        public async Task<ResponseDTO> UpdateProductById(int productId, CreateProductDTO request)
+        {
+            try
+            {
+                var product = await _unitOfWork.productRepository.GetProductById(productId);
+                if (product == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Product not found !");
+                }
+
+                // Sử dụng AutoMapper để ánh xạ thông tin từ DTO vào user
+                var updatedProduct = _mapper.Map(request, product);
+
+                var result = _mapper.Map<ProductDetailDTO>(updatedProduct);
+
+                // Lưu các thay đổi vào cơ sở dữ liệu
+                await _unitOfWork.productRepository.UpdateAsync(product);
+
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_UPDATE_MSG, result);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+            }
+        }
+
+        public async Task<ResponseDTO> ChangeProductStatusById(int productId)
+        {
+            try
+            {
+                // Lấy người dùng hiện tại
+                var product = await _unitOfWork.productRepository.GetProductById(productId);
+                if (product == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Product not found !");
+                }
+
+                product.Status = (product.Status == 1) ? 0 : 1;
+
+                // Lưu các thay đổi vào cơ sở dữ liệu
+                await _unitOfWork.productRepository.UpdateAsync(product);
+
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, "Change Status Succeed");
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+            }
+        }
     }
 }

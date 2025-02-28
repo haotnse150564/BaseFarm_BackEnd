@@ -8,6 +8,6 @@ namespace Application
     {
         Task<int> SaveChangesAsync();
         IProductRepository productRepository { get; }
-        void Dispose();
+        IFeedbackRepository feedbackRepository { get; }
     }
 }

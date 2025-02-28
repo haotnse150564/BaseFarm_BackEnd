@@ -12,7 +12,9 @@ namespace Application.Services
     {
         Task<ResponseDTO> GetAllProductAsync(int pageIndex, int pageSize);
         Task<ResponseDTO> GetProductByIdAsync(int productId);
-        Task<ResponseDTO> GetProductByNameAsync(string productName);
+        Task<ResponseDTO> GetProductByNameAsync(string productName, int pageIndex, int pageSize);
         Task<ResponseDTO> CreateProductAsync(CreateProductDTO request);
+        Task<ResponseDTO> UpdateProductById(int productId, CreateProductDTO request);
+        Task<ResponseDTO> ChangeProductStatusById(int productId);
     }
 }

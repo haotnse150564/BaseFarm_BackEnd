@@ -3,6 +3,7 @@ using Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static Application.ViewModel.Request.ProductRequest;
+using static Application.ViewModel.Response.ProductResponse;
 
 namespace WebAPI.Controllers
 {
@@ -46,18 +47,16 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("searchProductByName/{productName}")]
-        public async Task<IActionResult> GetProductByName([FromRoute] string productName)
+        public async Task<IActionResult> GetProductByName([FromRoute] string productName, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
-            
-            var response = await _productService.GetProductByNameAsync(productName);
+            var response = await _productService.GetProductByNameAsync(productName, pageIndex, pageSize);
 
-            // Trả về phản hồi
             if (response.Status != Const.SUCCESS_READ_CODE)
             {
-                return BadRequest(response); // Trả về mã lỗi nếu không thành công
+                return BadRequest(response);
             }
 
-            return Ok(response); // Trả về mã 200 nếu thành công
+            return Ok(response);
         }
 
         //[Authorize(Roles = "Manager")]
@@ -79,6 +78,44 @@ namespace WebAPI.Controllers
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
+        }
+
+        //[Authorize(Roles = "Admin")]
+        [HttpPost("updateProduct/{id}")]
+        public async Task<IActionResult> UpdateProductAsync([FromBody] CreateProductDTO request, [FromRoute] int id)
+        {
+
+            // Kiểm tra xem request có hợp lệ không
+            if (request == null)
+            {
+                return BadRequest(new ResponseDTO(Const.FAIL_READ_CODE, "Invalid request."));
+            }
+
+            var response = await _productService.UpdateProductById(id, request);
+
+            // Kiểm tra kết quả và trả về phản hồi phù hợp
+            if (response.Status != Const.SUCCESS_READ_CODE)
+            {
+                return BadRequest(response); // Trả về mã lỗi 400 với thông báo lỗi từ ResponseDTO
+            }
+
+            return Ok(response); // Trả về mã 200 nếu cập nhật thành công với thông tin trong ResponseDTO
+        }
+
+        //[Authorize(Roles = "Admin, Manager")]
+        [HttpPost("changeProductStatus/{id}")]
+        public async Task<IActionResult> ChangeProductStatus([FromRoute] int id)
+        {
+
+            var response = await _productService.ChangeProductStatusById(id);
+
+            // Kiểm tra kết quả và trả về phản hồi phù hợp
+            if (response.Status != Const.SUCCESS_READ_CODE)
+            {
+                return BadRequest(response); // Trả về mã lỗi 400 với thông báo lỗi từ ResponseDTO
+            }
+
+            return Ok(response); // Trả về mã 200 nếu cập nhật thành công với thông tin trong ResponseDTO
         }
     }
 }

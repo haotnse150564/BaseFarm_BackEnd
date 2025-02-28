@@ -19,6 +19,7 @@ namespace Infrastructure.Repositories.Implement
         public virtual async Task AddAsync(TModel model)
         {
             await _dbSet.AddAsync(model);
+            _context.SaveChangesAsync();
         }
 
         public virtual void AddAttach(TModel model)
@@ -60,6 +61,13 @@ namespace Infrastructure.Repositories.Implement
         public void Update(TModel? model)
         {
             _dbSet.Update(model);
+        }
+
+        public async Task<int> UpdateAsync(TModel model)
+        {
+            var tracker = _context.Attach(model);
+            tracker.State = EntityState.Modified;
+            return await _context.SaveChangesAsync();
         }
 
         public void UpdateRange(List<TModel> models)
