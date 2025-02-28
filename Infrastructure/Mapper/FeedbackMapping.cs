@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Domain;
+using static Infrastructure.ViewModel.Request.FeedbackRequest;
 using static Infrastructure.ViewModel.Response.FeedbackResponse;
 
 namespace Infrastructure.Mapper
@@ -12,6 +13,7 @@ namespace Infrastructure.Mapper
             CreateMap<Feedback, ViewFeedbackDTO>()
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Customer.AccountProfile.Email))
             .ReverseMap();
+            CreateMap<Feedback, CreateFeedbackDTO>().ReverseMap();
         }
     }
 }

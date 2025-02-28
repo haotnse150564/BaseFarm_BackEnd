@@ -166,7 +166,7 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Product not found !");
                 }
 
-                // Sử dụng AutoMapper để ánh xạ thông tin từ DTO vào user
+                // Sử dụng AutoMapper để ánh xạ thông tin từ DTO
                 var updatedProduct = _mapper.Map(request, product);
 
                 var result = _mapper.Map<ProductDetailDTO>(updatedProduct);
