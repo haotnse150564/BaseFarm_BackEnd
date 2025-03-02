@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using Application.Commons;
+using AutoMapper;
 using Domain;
 using System;
 using System.Collections.Generic;
@@ -35,7 +36,12 @@ namespace Infrastructure.Mapper
 
             CreateMap<Order, OrderResultDTO>()
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Customer.AccountProfile.Email))
-                .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.OrderDetails));
+                .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.OrderDetails))
+                .ReverseMap();
+
+            CreateMap<Pagination<Order>, Pagination<OrderResultDTO>>()
+                .ReverseMap();
+
         }
 
     }

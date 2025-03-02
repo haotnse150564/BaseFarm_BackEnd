@@ -11,5 +11,6 @@ namespace Application.Services
     public interface IOrderServices
     {
         Task<ResponseDTO> CreateOrderAsync(CreateOrderDTO request);
+        Task<ResponseDTO> GetAllOrderAsync(int pageIndex, int pageSize);
     }
 }

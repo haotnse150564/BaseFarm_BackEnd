@@ -1,4 +1,6 @@
-﻿using Domain;
+﻿using Application.Commons;
+using Domain;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +14,29 @@ namespace Infrastructure.Repositories.Implement
         private readonly AppDbContext _context;
 
         public OrderRepository(AppDbContext context) => _context = context;
+
+        public async Task<Pagination<Order>> GetPagedOrdersAsync(int pageIndex, int pageSize)
+        {
+            var query = _context.Order
+                .Include(o => o.Customer).ThenInclude(a => a.AccountProfile)
+                .Include(o => o.OrderDetails).ThenInclude(od => od.Product)
+                .AsQueryable();
+
+            int totalCount = await query.CountAsync();
+
+            var orders = await query
+                .OrderByDescending(o => o.CreatedAt)
+                .Skip(pageIndex * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new Pagination<Order>
+            {
+                TotalItemCount = totalCount,
+                PageIndex = pageIndex,
+                PageSize = pageSize,
+                Items = orders
+            };
+        }
     }
 }

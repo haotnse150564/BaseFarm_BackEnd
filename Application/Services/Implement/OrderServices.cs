@@ -1,4 +1,5 @@
-﻿using Application.Utils;
+﻿using Application.Commons;
+using Application.Utils;
 using AutoMapper;
 using Domain;
 using System;
@@ -130,6 +131,43 @@ namespace Application.Services.Implement
             return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Create Order Success.", orderResult);
         }
 
+        public async Task<ResponseDTO> GetAllOrderAsync(int pageIndex, int pageSize)
+        {
+            try
+            {
+                var listOrder = await _unitOfWork.orderRepository.GetPagedOrdersAsync(pageIndex, pageSize);
+
+                if (listOrder == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "No Order found.");
+                }
+
+                // Chuyển đổi danh sách Order sang OrderResultDTO thủ công
+                var mappedOrders = new Pagination<OrderResultDTO>
+                {
+                    TotalItemCount = listOrder.TotalItemCount,
+                    PageIndex = listOrder.PageIndex,
+                    PageSize = listOrder.PageSize,
+                    Items = listOrder.Items.Select(order => new OrderResultDTO
+                    {
+                        TotalPrice = order.TotalPrice,
+                        Email = order.Customer.AccountProfile.Email,
+                        OrderItems = order.OrderDetails.Select(detail => new ViewProductDTO
+                        {
+                            ProductName = detail.Product.ProductName,
+                            Price = detail.UnitPrice,
+                            StockQuantity = detail.Quantity
+                        }).ToList()
+                    }).ToList()
+                };
+
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, mappedOrders);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+            }
+        }
 
 
 
