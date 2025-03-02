@@ -13,5 +13,6 @@ namespace Infrastructure.Repositories
     public interface IOrderRepository : IGenericRepository<Order>
     {
         Task<Pagination<OrderResultDTO>> GetAllOrdersAsync(int pageIndex, int pageSize);
+        Task<Pagination<OrderResultDTO>> GetOrdersByCustomerIdAsync(long customerId, int pageIndex, int pageSize);
     }
 }

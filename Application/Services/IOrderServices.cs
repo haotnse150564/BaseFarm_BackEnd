@@ -12,5 +12,6 @@ namespace Application.Services
     {
         Task<ResponseDTO> CreateOrderAsync(CreateOrderDTO request);
         Task<ResponseDTO> GetAllOrderAsync(int pageIndex, int pageSize);
+        Task<ResponseDTO> GetAllOrderByCustomerIdAsync(long customerId, int pageIndex, int pageSize);
     }
 }
