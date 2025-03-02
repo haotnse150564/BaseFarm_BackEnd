@@ -11,5 +11,7 @@ namespace Application
         IFeedbackRepository feedbackRepository { get; }
         IAccountProfileRepository accountProfileRepository { get; }
         IAccountRepository accountRepository { get; }
+        IOrderRepository orderRepository { get; }
+        IOrderDetailRepository orderDetailRepository { get; }
     }
 }

@@ -23,6 +23,7 @@ public static class DependencyInjection
         //mapping
         services.AddAutoMapper(typeof(ProductsMapping));
         services.AddAutoMapper(typeof(FeedbackMapping));
+        services.AddAutoMapper(typeof(OrderMapping));
 
         #region Config Repository and Service
         //repository
@@ -30,10 +31,14 @@ public static class DependencyInjection
         services.AddScoped<IFeedbackRepository, FeedbackRepository>();
         services.AddScoped<IAccountRepository, AccountRepository>();
         services.AddScoped<IAccountProfileRepository, AccountProfileRepository>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
         //service
         services.AddScoped<IProductServices, ProductServices>();
         services.AddScoped<IFeedbackSevices, FeedbackServices>();
         services.AddScoped<IAccountServices, AccountServices>();
+        services.AddScoped<IOrderServices, OrderServices>();
+        //services.AddScoped<IOrderDetailServices, OrderDetailServices>();
         //services.AddScoped<IAccountProfileServices, AccountProfileServices>();
         #endregion
 

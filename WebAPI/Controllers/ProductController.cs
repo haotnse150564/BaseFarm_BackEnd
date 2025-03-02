@@ -32,7 +32,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("GetProductById/{productId}")]
-        public async Task<IActionResult> GetProductById([FromRoute] int productId)
+        public async Task<IActionResult> GetProductById([FromRoute] long productId)
         {
             
             var response = await _productService.GetProductByIdAsync(productId);
@@ -82,7 +82,7 @@ namespace WebAPI.Controllers
 
         //[Authorize(Roles = "Admin")]
         [HttpPost("updateProduct/{id}")]
-        public async Task<IActionResult> UpdateProductAsync([FromBody] CreateProductDTO request, [FromRoute] int id)
+        public async Task<IActionResult> UpdateProductAsync([FromBody] CreateProductDTO request, [FromRoute] long id)
         {
 
             // Kiểm tra xem request có hợp lệ không
@@ -104,7 +104,7 @@ namespace WebAPI.Controllers
 
         //[Authorize(Roles = "Admin, Manager")]
         [HttpPost("changeProductStatus/{id}")]
-        public async Task<IActionResult> ChangeProductStatus([FromRoute] int id)
+        public async Task<IActionResult> ChangeProductStatus([FromRoute] long id)
         {
 
             var response = await _productService.ChangeProductStatusById(id);

@@ -63,7 +63,7 @@ namespace Application.Services.Implement
 
 
 
-        public async Task<ResponseDTO> GetProductByIdAsync(int productId)
+        public async Task<ResponseDTO> GetProductByIdAsync(long productId)
         {
             try
             {
@@ -156,7 +156,7 @@ namespace Application.Services.Implement
             }
         }
 
-        public async Task<ResponseDTO> UpdateProductById(int productId, CreateProductDTO request)
+        public async Task<ResponseDTO> UpdateProductById(long productId, CreateProductDTO request)
         {
             try
             {
@@ -182,7 +182,7 @@ namespace Application.Services.Implement
             }
         }
 
-        public async Task<ResponseDTO> ChangeProductStatusById(int productId)
+        public async Task<ResponseDTO> ChangeProductStatusById(long productId)
         {
             try
             {

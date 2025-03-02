@@ -16,8 +16,12 @@ namespace Infrastructure
         private IFeedbackRepository _feedbackRepository;
         private IAccountProfileRepository _accountProfileRepository;
         private IAccountRepository _accountRepository;
+        private IOrderRepository _orderRepository;
+        private IOrderDetailRepository _orderDetailRepository;
 
-        public UnitOfWorks(AppDbContext context, ICurrentTime currentTime, IClaimsServices claimsServices, IProductRepository productRepository, IFeedbackRepository feedbackRepository, IAccountProfileRepository accountProfileRepository)
+        public UnitOfWorks(AppDbContext context, ICurrentTime currentTime, IClaimsServices claimsServices, IProductRepository productRepository
+            , IFeedbackRepository feedbackRepository, IAccountProfileRepository accountProfileRepository, IOrderRepository orderRepository
+            , IOrderDetailRepository orderDetailRepository)
         {
             _context = context;
             _currentTime = currentTime;
@@ -25,6 +29,8 @@ namespace Infrastructure
             _productRepository = productRepository;
             _feedbackRepository = feedbackRepository;
             _accountProfileRepository = accountProfileRepository;
+            _orderRepository = orderRepository;
+            _orderDetailRepository = orderDetailRepository;
         }
 
         public IProductRepository productRepository
@@ -57,6 +63,23 @@ namespace Infrastructure
                 return _accountRepository ??= new AccountRepository(_context);
             }
         }
+
+        public IOrderRepository orderRepository
+        {
+            get
+            {
+                return _orderRepository ??= new OrderRepository(_context);
+            }
+        }
+
+        public IOrderDetailRepository orderDetailRepository
+        {
+            get
+            {
+                return _orderDetailRepository ??= new OrderDetailRepository(_context);
+            }
+        }
+
         public void Dispose()
         {
             _context.Dispose();
