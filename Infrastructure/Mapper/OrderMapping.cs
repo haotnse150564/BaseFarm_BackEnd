@@ -20,8 +20,7 @@ namespace Infrastructure.Mapper
             CreateMap<CreateOrderDTO, Order>()
                 .ForMember(dest => dest.OrderDetails, opt => opt.Ignore()) // Chi tiết đơn hàng sẽ được xử lý riêng
                 .ForMember(dest => dest.TotalPrice, opt => opt.Ignore()) // Tổng tiền sẽ được tính sau
-                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateOnly.FromDateTime(DateTime.UtcNow)))
-                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateOnly.FromDateTime(DateTime.UtcNow)));
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateOnly.FromDateTime(DateTime.UtcNow)));
 
             // Mapping từ SelectProductDTO -> OrderDetail
             CreateMap<SelectProductDTO, OrderDetail>()
@@ -34,13 +33,20 @@ namespace Infrastructure.Mapper
             .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.UnitPrice))
             .ForMember(dest => dest.StockQuantity, opt => opt.MapFrom(src => src.Quantity));
 
+            CreateMap<Pagination<Order>, Pagination<OrderResultDTO>>()
+                .ReverseMap();
+
             CreateMap<Order, OrderResultDTO>()
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Customer.AccountProfile.Email))
                 .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.OrderDetails))
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt.HasValue ? src.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null))
                 .ReverseMap();
 
-            CreateMap<Pagination<Order>, Pagination<OrderResultDTO>>()
-                .ReverseMap();
+
+            CreateMap<OrderDetail, ViewProductDTO>()
+                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.ProductName))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.UnitPrice))
+                .ForMember(dest => dest.StockQuantity, opt => opt.MapFrom(src => src.Quantity));
 
         }
 

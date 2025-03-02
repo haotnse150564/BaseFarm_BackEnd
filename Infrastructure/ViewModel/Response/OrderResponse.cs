@@ -26,6 +26,7 @@ namespace Application.ViewModel.Response
         {
             public decimal? TotalPrice { get; set; }
             public string? Email { get; set; }
+            public DateTime? CreatedAt { get; set; }
             public List<ViewProductDTO> OrderItems { get; set; } = new();
         }
     }

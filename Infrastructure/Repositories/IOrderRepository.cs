@@ -6,11 +6,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Application.ViewModel.Response.OrderResponse;
 
 namespace Infrastructure.Repositories
 {
     public interface IOrderRepository : IGenericRepository<Order>
     {
-        Task<Pagination<Order>> GetPagedOrdersAsync(int pageIndex, int pageSize);
+        Task<Pagination<OrderResultDTO>> GetAllOrdersAsync(int pageIndex, int pageSize);
     }
 }

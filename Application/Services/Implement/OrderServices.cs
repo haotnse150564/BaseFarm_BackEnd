@@ -135,41 +135,19 @@ namespace Application.Services.Implement
         {
             try
             {
-                var listOrder = await _unitOfWork.orderRepository.GetPagedOrdersAsync(pageIndex, pageSize);
+                var listOrder = await _unitOfWork.orderRepository.GetAllOrdersAsync(pageIndex, pageSize);
 
-                if (listOrder == null)
+                if (listOrder == null || !listOrder.Items.Any())
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, "No Order found.");
                 }
 
-                // Chuyển đổi danh sách Order sang OrderResultDTO thủ công
-                var mappedOrders = new Pagination<OrderResultDTO>
-                {
-                    TotalItemCount = listOrder.TotalItemCount,
-                    PageIndex = listOrder.PageIndex,
-                    PageSize = listOrder.PageSize,
-                    Items = listOrder.Items.Select(order => new OrderResultDTO
-                    {
-                        TotalPrice = order.TotalPrice,
-                        Email = order.Customer.AccountProfile.Email,
-                        OrderItems = order.OrderDetails.Select(detail => new ViewProductDTO
-                        {
-                            ProductName = detail.Product.ProductName,
-                            Price = detail.UnitPrice,
-                            StockQuantity = detail.Quantity
-                        }).ToList()
-                    }).ToList()
-                };
-
-                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, mappedOrders);
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, listOrder);
             }
             catch (Exception ex)
             {
                 return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
             }
         }
-
-
-
     }
 }
