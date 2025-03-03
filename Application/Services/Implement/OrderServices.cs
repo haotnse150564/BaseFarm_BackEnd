@@ -34,7 +34,12 @@ namespace Application.Services.Implement
             // {
             //     return new ResponseDTO(Const.FAIL_READ_CODE, "No User found.");
             // }
-
+            // Lấy thông tin người dùng từ JWT
+            var user = await _jwtUtils.GetCurrentUserAsync();
+            if (user == null)
+            {
+                return new ResponseDTO(Const.FAIL_READ_CODE, "No User found.");
+            }
             // Danh sách lỗi
             var errorMessages = new List<string>();
 
@@ -70,7 +75,7 @@ namespace Application.Services.Implement
             // Nếu không có lỗi, tiến hành tạo đơn hàng
             var order = new Order
             {
-                CustomerId = 6,
+                CustomerId = user.AccountId,
                 TotalPrice = 0, // Tính sau
                 Status = 1, // Đang xử lý
                 CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow),

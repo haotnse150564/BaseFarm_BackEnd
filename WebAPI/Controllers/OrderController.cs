@@ -1,5 +1,6 @@
 ﻿using Application;
 using Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static Application.ViewModel.Request.OrderRequest;
 using static Application.ViewModel.Response.OrderResponse;
@@ -17,6 +18,7 @@ namespace WebAPI.Controllers
             _orderService = orderService;
         }
 
+        [Authorize(Roles = "1")]
         [HttpPost("createOrder")]
         public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDTO request)
         {

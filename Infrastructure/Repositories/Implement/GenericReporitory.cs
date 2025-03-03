@@ -61,7 +61,7 @@ namespace Infrastructure.Repositories.Implement
             return await query.ToListAsync();
         }
 
-        public virtual async Task<TModel?> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
+        public virtual async Task<TModel?> GetByIdAsync(long id) => await _dbSet.FindAsync(id);
 
         public void Update(TModel? model)
         {

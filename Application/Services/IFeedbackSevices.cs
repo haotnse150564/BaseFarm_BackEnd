@@ -12,6 +12,6 @@ namespace Application.Services
     {
         Task<ResponseDTO> GetAllFeedbackAsync(int pageIndex, int pageSize);
         Task<ResponseDTO> CreateFeedbackAsync(CreateFeedbackDTO request);
-        Task<ResponseDTO> UpdateFeedbackById(int feedbackId, CreateFeedbackDTO request);
+        Task<ResponseDTO> UpdateFeedbackById(long feedbackId, CreateFeedbackDTO request);
     }
 }

@@ -11,7 +11,7 @@ namespace Application.Repositories
         Task<List<TModel>> GetAllAsync();
         Task<List<TModel>> GetAllAsync(Func<IQueryable<TModel>, IIncludableQueryable<TModel, object>>? include = null);
 
-        Task<TModel?> GetByIdAsync(int id);
+        Task<TModel?> GetByIdAsync(long id);
 
         Task AddAsync(TModel model);
 

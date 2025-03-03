@@ -83,7 +83,7 @@ namespace Application.Services.Implement
             }
         }
 
-        public async Task<ResponseDTO> UpdateFeedbackById(int feedbackId, CreateFeedbackDTO request)
+        public async Task<ResponseDTO> UpdateFeedbackById(long feedbackId, CreateFeedbackDTO request)
         {
             try
             {
