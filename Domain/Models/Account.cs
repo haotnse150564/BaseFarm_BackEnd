@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Enum;
+using System;
 using System.Collections.Generic;
 
 namespace Domain;
@@ -11,7 +12,7 @@ public partial class Account
 
     public string? PasswordHash { get; set; }
 
-    public int? Role { get; set; }
+    public Roles Role { get; set; }
 
     public DateOnly? CreatedAt { get; set; }
 
