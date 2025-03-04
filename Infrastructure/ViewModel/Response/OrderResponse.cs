@@ -29,5 +29,15 @@ namespace Application.ViewModel.Response
             public DateTime? CreatedAt { get; set; }
             public List<ViewProductDTO> OrderItems { get; set; } = new();
         }
+
+        public class CreateOrderResultDTO
+        {
+            public decimal? TotalPrice { get; set; }
+            public string? Email { get; set; }
+            public DateTime? CreatedAt { get; set; }
+            public List<ViewProductDTO> OrderItems { get; set; } = new();
+            public string? PaymentUrl { get; set; } // 🔥 Thêm URL thanh toán vào DTO
+        }
+
     }
 }

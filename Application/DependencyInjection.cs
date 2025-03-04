@@ -38,6 +38,8 @@ public static class DependencyInjection
         services.AddScoped<IFeedbackSevices, FeedbackServices>();
         services.AddScoped<IAccountServices, AccountServices>();
         services.AddScoped<IOrderServices, OrderServices>();
+        services.AddScoped<IVnPayService, VnPayService>();
+
         //services.AddScoped<IOrderDetailServices, OrderDetailServices>();
         //services.AddScoped<IAccountProfileServices, AccountProfileServices>();
         #endregion
