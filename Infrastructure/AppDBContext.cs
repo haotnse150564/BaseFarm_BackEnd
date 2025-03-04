@@ -1,5 +1,5 @@
 ﻿using Azure.Core;
-using Domain;
+using Domain.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -20,17 +20,32 @@ namespace Infrastructure
         //    optionBuilder.UseSqlServer("ConnectionsString");
         //}
         public DbSet<Account> Account { get; set; }
+
         public DbSet<AccountProfile> AccountProfile { get; set; }
-        public DbSet<Category> Category { get; set; }
-        public DbSet<FarmActivity> FarmActivity { get; set; }
+
+        public DbSet<Category> Categorie { get; set; }
+
+        public DbSet<Crop> Crop { get; set; }
+
+        public DbSet<FarmActivity> FarmActivitie { get; set; }
+
         public DbSet<FarmDetail> FarmDetail { get; set; }
+
         public DbSet<Feedback> Feedback { get; set; }
+
         public DbSet<IoTdevice> IoTdevice { get; set; }
+
         public DbSet<Order> Order { get; set; }
+
         public DbSet<OrderDetail> OrderDetail { get; set; }
+
         public DbSet<Payment> Payment { get; set; }
+
         public DbSet<Product> Product { get; set; }
+
         public DbSet<Report> Report { get; set; }
+
+        public DbSet<Schedule> Schedule { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

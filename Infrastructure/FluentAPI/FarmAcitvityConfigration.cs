@@ -15,11 +15,11 @@ namespace Infrastructure.FluentAPI
         {
             builder.ToTable("FarmActivity");
 
-            builder.Property(e => e.FarmActivitiesId).HasColumnName("farmActivitiesID");
-            builder.Property(e => e.ActivityType).HasColumnName("activityType");
-            builder.Property(e => e.EndDate).HasColumnName("endDate");
-            builder.Property(e => e.StartDate).HasColumnName("startDate");
-            builder.Property(e => e.Status).HasColumnName("status");
+            builder.HasKey(e => e.FarmActivitiesId);
+            builder.Property(e => e.ActivityType) ;
+            builder.Property(e => e.EndDate) ;
+            builder.Property(e => e.StartDate);
+            builder.Property(e => e.Status);
         }
     }
 }

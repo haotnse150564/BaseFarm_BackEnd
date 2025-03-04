@@ -16,15 +16,17 @@ namespace Infrastructure.FluentAPI
             builder.Property(e => e.AccountId);
             builder.Property(e => e.CreatedAt);
             builder.Property(e => e.FarmName)
-                 .HasMaxLength(255)
-                 .IsUnicode(false);
+                  .HasMaxLength(255)
+                  .IsUnicode(false);
             builder.Property(e => e.Location)
-                 .HasMaxLength(255)
-                 .IsUnicode(false);
+                  .HasMaxLength(255)
+                  .IsUnicode(false);
             builder.Property(e => e.UpdatedAt);
 
             builder.HasOne(d => d.Account).WithMany(p => p.FarmDetails)
-                 .HasForeignKey(d => d.AccountId);
+                      .HasForeignKey(d => d.AccountId);
+            builder.HasMany(a => a.Schedules).WithOne(p => p.FarmDetails)
+                .HasForeignKey(d => d.FarmDetailsId);
         }
     }
 }

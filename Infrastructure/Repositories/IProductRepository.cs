@@ -1,5 +1,5 @@
 ﻿using Application.Repositories;
-using Domain;
+using Domain.Model;
 
 namespace Infrastructure.Repositories
 {

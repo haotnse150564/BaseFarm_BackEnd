@@ -18,11 +18,11 @@ namespace WebAPI.Services
             _jwtUtils = jwtUtils;
         }
 
-        public async Task<LoginResponseDTO> LoginAsync(int phone, string password)
+        public async Task<LoginResponseDTO> LoginAsync(string email, string password)
         {
             // Kiểm tra tài khoản có tồn tại hay không
             var account = await _unitOfWork.accountRepository
-                .FirstOrDefaultAsync(a => a.Phone == phone && a.PasswordHash == password);
+                .FirstOrDefaultAsync(a => a.Email == email && a.PasswordHash == password);
 
             if (account == null)
             {

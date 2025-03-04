@@ -22,7 +22,7 @@ namespace Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Domain.Account", b =>
+            modelBuilder.Entity("Domain.Model.Account", b =>
                 {
                     b.Property<long>("AccountId")
                         .ValueGeneratedOnAdd()
@@ -33,13 +33,19 @@ namespace Infrastructure.Migrations
                     b.Property<DateOnly?>("CreatedAt")
                         .HasColumnType("date");
 
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ExpireMinutes")
+                        .HasColumnType("int");
+
                     b.Property<string>("PasswordHash")
                         .HasMaxLength(255)
                         .IsUnicode(false)
                         .HasColumnType("varchar(255)");
 
-                    b.Property<int?>("Phone")
-                        .HasColumnType("int");
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("Role")
                         .HasColumnType("int");
@@ -55,23 +61,29 @@ namespace Infrastructure.Migrations
                     b.ToTable("Account", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.AccountProfile", b =>
+            modelBuilder.Entity("Domain.Model.AccountProfile", b =>
                 {
                     b.Property<long>("AccountProfileId")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateOnly?>("CreatedAt")
                         .HasColumnType("date");
 
-                    b.Property<string>("Email")
-                        .HasMaxLength(255)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(255)");
+                    b.Property<string>("Fullname")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("Gender")
                         .HasColumnType("int");
 
                     b.Property<string>("Images")
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Phone")
                         .HasMaxLength(255)
                         .IsUnicode(false)
                         .HasColumnType("varchar(255)");
@@ -84,7 +96,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("AccountProfile", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Category", b =>
+            modelBuilder.Entity("Domain.Model.Category", b =>
                 {
                     b.Property<long>("CategoryId")
                         .ValueGeneratedOnAdd()
@@ -102,25 +114,69 @@ namespace Infrastructure.Migrations
                     b.ToTable("Category", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.FarmActivity", b =>
+            modelBuilder.Entity("Domain.Model.Crop", b =>
                 {
-                    b.Property<long>("FarmActivitiesId")
+                    b.Property<long>("CropId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("FarmActivitiesId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("CropId"));
+
+                    b.Property<string>("CropName")
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<long>("FarmDetailsId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Fertilizer")
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("fertilizer");
+
+                    b.Property<DateOnly?>("HarvestDate")
+                        .HasColumnType("date");
+
+                    b.Property<decimal?>("Moisture")
+                        .HasColumnType("decimal(5, 2)")
+                        .HasColumnName("moisture");
+
+                    b.Property<DateOnly?>("PlantingDate")
+                        .HasColumnType("date");
+
+                    b.Property<int?>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("Temperature")
+                        .HasColumnType("decimal(5, 2)");
+
+                    b.HasKey("CropId");
+
+                    b.HasIndex("FarmDetailsId");
+
+                    b.ToTable("Crop", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Model.FarmActivity", b =>
+                {
+                    b.Property<int>("FarmActivitiesId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FarmActivitiesId"));
 
                     b.Property<int?>("ActivityType")
                         .HasColumnType("int");
 
-                    b.Property<long>("AssignedTo")
-                        .HasColumnType("bigint");
-
                     b.Property<DateOnly?>("EndDate")
                         .HasColumnType("date");
-
-                    b.Property<long>("FarmId")
-                        .HasColumnType("bigint");
 
                     b.Property<DateOnly?>("StartDate")
                         .HasColumnType("date");
@@ -130,20 +186,19 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("FarmActivitiesId");
 
-                    b.HasIndex("AssignedTo");
-
-                    b.HasIndex("FarmId");
-
                     b.ToTable("FarmActivity", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.FarmDetail", b =>
+            modelBuilder.Entity("Domain.Model.FarmDetail", b =>
                 {
                     b.Property<long>("FarmDetailsId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("FarmDetailsId"));
+
+                    b.Property<long>("AccountId")
+                        .HasColumnType("bigint");
 
                     b.Property<DateOnly?>("CreatedAt")
                         .HasColumnType("date");
@@ -158,20 +213,17 @@ namespace Infrastructure.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(255)");
 
-                    b.Property<long>("StaffId")
-                        .HasColumnType("bigint");
-
                     b.Property<DateOnly?>("UpdatedAt")
                         .HasColumnType("date");
 
                     b.HasKey("FarmDetailsId");
 
-                    b.HasIndex("StaffId");
+                    b.HasIndex("AccountId");
 
                     b.ToTable("FarmDetail", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Feedback", b =>
+            modelBuilder.Entity("Domain.Model.Feedback", b =>
                 {
                     b.Property<int>("FeedbackId")
                         .ValueGeneratedOnAdd()
@@ -193,6 +245,9 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("Rating")
                         .HasColumnType("int");
 
+                    b.Property<int?>("Status")
+                        .HasColumnType("int");
+
                     b.HasKey("FeedbackId");
 
                     b.HasIndex("CustomerId");
@@ -200,7 +255,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("Feedback", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.IoTdevice", b =>
+            modelBuilder.Entity("Domain.Model.IoTdevice", b =>
                 {
                     b.Property<long>("IoTdevicesId")
                         .ValueGeneratedOnAdd()
@@ -208,15 +263,20 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("IoTdevicesId"));
 
-                    b.Property<int?>("DeviceName")
-                        .HasColumnType("int");
+                    b.Property<string>("DeviceName")
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("DeviceType")
                         .HasMaxLength(255)
                         .IsUnicode(false)
                         .HasColumnType("varchar(255)");
 
-                    b.Property<long>("FarmId")
+                    b.Property<DateOnly?>("ExpiryDate")
+                        .HasColumnType("date");
+
+                    b.Property<long>("FarmDetailsId")
                         .HasColumnType("bigint");
 
                     b.Property<DateOnly?>("LastUpdate")
@@ -237,12 +297,12 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("IoTdevicesId");
 
-                    b.HasIndex("FarmId");
+                    b.HasIndex("FarmDetailsId");
 
-                    b.ToTable("IoTDevices", (string)null);
+                    b.ToTable("IoTDevice", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Order", b =>
+            modelBuilder.Entity("Domain.Model.Order", b =>
                 {
                     b.Property<long>("OrderId")
                         .ValueGeneratedOnAdd()
@@ -255,6 +315,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<long>("CustomerId")
                         .HasColumnType("bigint");
+
+                    b.Property<string>("ShippingAddress")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("Status")
                         .HasColumnType("int");
@@ -272,7 +335,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("Order", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.OrderDetail", b =>
+            modelBuilder.Entity("Domain.Model.OrderDetail", b =>
                 {
                     b.Property<long>("OrderDetailId")
                         .ValueGeneratedOnAdd()
@@ -301,7 +364,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("OrderDetail", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Payment", b =>
+            modelBuilder.Entity("Domain.Model.Payment", b =>
                 {
                     b.Property<long>("PaymentId")
                         .ValueGeneratedOnAdd()
@@ -328,7 +391,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("Payment", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Product", b =>
+            modelBuilder.Entity("Domain.Model.Product", b =>
                 {
                     b.Property<long>("ProductId")
                         .ValueGeneratedOnAdd()
@@ -342,10 +405,16 @@ namespace Infrastructure.Migrations
                     b.Property<DateOnly?>("CreatedAt")
                         .HasColumnType("date");
 
+                    b.Property<long>("CropId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Description")
                         .HasMaxLength(255)
                         .IsUnicode(false)
                         .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Images")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal?>("Price")
                         .HasColumnType("decimal(10, 2)");
@@ -353,7 +422,7 @@ namespace Infrastructure.Migrations
                     b.Property<string>("ProductName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Status")
+                    b.Property<int?>("Status")
                         .HasColumnType("int");
 
                     b.Property<int?>("StockQuantity")
@@ -366,10 +435,12 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("CropId");
+
                     b.ToTable("Product", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Report", b =>
+            modelBuilder.Entity("Domain.Model.Report", b =>
                 {
                     b.Property<long>("ReportId")
                         .ValueGeneratedOnAdd()
@@ -391,6 +462,9 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("ReportType")
                         .HasColumnType("int");
 
+                    b.Property<int?>("Status")
+                        .HasColumnType("int");
+
                     b.HasKey("ReportId");
 
                     b.HasIndex("GeneratedBy");
@@ -398,48 +472,84 @@ namespace Infrastructure.Migrations
                     b.ToTable("Report", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.AccountProfile", b =>
+            modelBuilder.Entity("Domain.Model.Schedule", b =>
                 {
-                    b.HasOne("Domain.Account", "AccountProfileNavigation")
+                    b.Property<long>("ScheduleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ScheduleId"));
+
+                    b.Property<long>("AssignedTo")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateOnly?>("CreatedAt")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("FarmActivityId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("FarmDetailsId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateOnly?>("StartDate")
+                        .HasColumnType("date");
+
+                    b.Property<int?>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly?>("UpdatedAt")
+                        .HasColumnType("date");
+
+                    b.HasKey("ScheduleId");
+
+                    b.HasIndex("AssignedTo");
+
+                    b.HasIndex("FarmActivityId");
+
+                    b.HasIndex("FarmDetailsId");
+
+                    b.ToTable("Schedule", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Model.AccountProfile", b =>
+                {
+                    b.HasOne("Domain.Model.Account", "AccountProfileNavigation")
                         .WithOne("AccountProfile")
-                        .HasForeignKey("Domain.AccountProfile", "AccountProfileId")
+                        .HasForeignKey("Domain.Model.AccountProfile", "AccountProfileId")
                         .IsRequired();
 
                     b.Navigation("AccountProfileNavigation");
                 });
 
-            modelBuilder.Entity("Domain.FarmActivity", b =>
+            modelBuilder.Entity("Domain.Model.Crop", b =>
                 {
-                    b.HasOne("Domain.Account", "AssignedToNavigation")
-                        .WithMany("FarmActivities")
-                        .HasForeignKey("AssignedTo")
+                    b.HasOne("Domain.Model.FarmDetail", "FarmDetails")
+                        .WithMany("Crops")
+                        .HasForeignKey("FarmDetailsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.FarmDetail", "Farm")
-                        .WithMany("FarmActivities")
-                        .HasForeignKey("FarmId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AssignedToNavigation");
-
-                    b.Navigation("Farm");
+                    b.Navigation("FarmDetails");
                 });
 
-            modelBuilder.Entity("Domain.FarmDetail", b =>
+            modelBuilder.Entity("Domain.Model.FarmDetail", b =>
                 {
-                    b.HasOne("Domain.Account", "Staff")
+                    b.HasOne("Domain.Model.Account", "Account")
                         .WithMany("FarmDetails")
-                        .HasForeignKey("StaffId")
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Staff");
+                    b.Navigation("Account");
                 });
 
-            modelBuilder.Entity("Domain.Feedback", b =>
+            modelBuilder.Entity("Domain.Model.Feedback", b =>
                 {
-                    b.HasOne("Domain.Account", "Customer")
+                    b.HasOne("Domain.Model.Account", "Customer")
                         .WithMany("Feedbacks")
                         .HasForeignKey("CustomerId")
                         .IsRequired();
@@ -447,19 +557,20 @@ namespace Infrastructure.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("Domain.IoTdevice", b =>
+            modelBuilder.Entity("Domain.Model.IoTdevice", b =>
                 {
-                    b.HasOne("Domain.FarmDetail", "Farm")
+                    b.HasOne("Domain.Model.FarmDetail", "FarmDetails")
                         .WithMany("IoTdevices")
-                        .HasForeignKey("FarmId")
+                        .HasForeignKey("FarmDetailsId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Farm");
+                    b.Navigation("FarmDetails");
                 });
 
-            modelBuilder.Entity("Domain.Order", b =>
+            modelBuilder.Entity("Domain.Model.Order", b =>
                 {
-                    b.HasOne("Domain.Account", "Customer")
+                    b.HasOne("Domain.Model.Account", "Customer")
                         .WithMany("Orders")
                         .HasForeignKey("CustomerId")
                         .IsRequired();
@@ -467,14 +578,14 @@ namespace Infrastructure.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("Domain.OrderDetail", b =>
+            modelBuilder.Entity("Domain.Model.OrderDetail", b =>
                 {
-                    b.HasOne("Domain.Order", "Order")
+                    b.HasOne("Domain.Model.Order", "Order")
                         .WithMany("OrderDetails")
                         .HasForeignKey("OrderId")
                         .IsRequired();
 
-                    b.HasOne("Domain.Product", "Product")
+                    b.HasOne("Domain.Model.Product", "Product")
                         .WithMany("OrderDetails")
                         .HasForeignKey("ProductId")
                         .IsRequired();
@@ -484,9 +595,9 @@ namespace Infrastructure.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Domain.Payment", b =>
+            modelBuilder.Entity("Domain.Model.Payment", b =>
                 {
-                    b.HasOne("Domain.Order", "Order")
+                    b.HasOne("Domain.Model.Order", "Order")
                         .WithMany("Payments")
                         .HasForeignKey("OrderId")
                         .IsRequired();
@@ -494,19 +605,27 @@ namespace Infrastructure.Migrations
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("Domain.Product", b =>
+            modelBuilder.Entity("Domain.Model.Product", b =>
                 {
-                    b.HasOne("Domain.Category", "Category")
+                    b.HasOne("Domain.Model.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .IsRequired();
 
+                    b.HasOne("Domain.Model.Crop", "Crop")
+                        .WithMany("Products")
+                        .HasForeignKey("CropId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Category");
+
+                    b.Navigation("Crop");
                 });
 
-            modelBuilder.Entity("Domain.Report", b =>
+            modelBuilder.Entity("Domain.Model.Report", b =>
                 {
-                    b.HasOne("Domain.Account", "GeneratedByNavigation")
+                    b.HasOne("Domain.Model.Account", "GeneratedByNavigation")
                         .WithMany("Reports")
                         .HasForeignKey("GeneratedBy")
                         .IsRequired();
@@ -514,11 +633,35 @@ namespace Infrastructure.Migrations
                     b.Navigation("GeneratedByNavigation");
                 });
 
-            modelBuilder.Entity("Domain.Account", b =>
+            modelBuilder.Entity("Domain.Model.Schedule", b =>
+                {
+                    b.HasOne("Domain.Model.Account", "AssignedToNavigation")
+                        .WithMany("Schedules")
+                        .HasForeignKey("AssignedTo")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Model.FarmActivity", "FarmActivity")
+                        .WithMany("Schedules")
+                        .HasForeignKey("FarmActivityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Model.FarmDetail", "FarmDetails")
+                        .WithMany("Schedules")
+                        .HasForeignKey("FarmDetailsId")
+                        .IsRequired();
+
+                    b.Navigation("AssignedToNavigation");
+
+                    b.Navigation("FarmActivity");
+
+                    b.Navigation("FarmDetails");
+                });
+
+            modelBuilder.Entity("Domain.Model.Account", b =>
                 {
                     b.Navigation("AccountProfile");
-
-                    b.Navigation("FarmActivities");
 
                     b.Navigation("FarmDetails");
 
@@ -527,28 +670,42 @@ namespace Infrastructure.Migrations
                     b.Navigation("Orders");
 
                     b.Navigation("Reports");
+
+                    b.Navigation("Schedules");
                 });
 
-            modelBuilder.Entity("Domain.Category", b =>
+            modelBuilder.Entity("Domain.Model.Category", b =>
                 {
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("Domain.FarmDetail", b =>
+            modelBuilder.Entity("Domain.Model.Crop", b =>
                 {
-                    b.Navigation("FarmActivities");
-
-                    b.Navigation("IoTdevices");
+                    b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("Domain.Order", b =>
+            modelBuilder.Entity("Domain.Model.FarmActivity", b =>
+                {
+                    b.Navigation("Schedules");
+                });
+
+            modelBuilder.Entity("Domain.Model.FarmDetail", b =>
+                {
+                    b.Navigation("Crops");
+
+                    b.Navigation("IoTdevices");
+
+                    b.Navigation("Schedules");
+                });
+
+            modelBuilder.Entity("Domain.Model.Order", b =>
                 {
                     b.Navigation("OrderDetails");
 
                     b.Navigation("Payments");
                 });
 
-            modelBuilder.Entity("Domain.Product", b =>
+            modelBuilder.Entity("Domain.Model.Product", b =>
                 {
                     b.Navigation("OrderDetails");
                 });
