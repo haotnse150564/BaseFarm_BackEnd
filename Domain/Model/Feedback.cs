@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Domain;
+namespace Domain.Model;
 
 public partial class Feedback
 {
@@ -10,6 +10,8 @@ public partial class Feedback
     public string? Comment { get; set; }
 
     public int? Rating { get; set; }
+
+    public int? Status { get; set; }
 
     public DateOnly? CreatedAt { get; set; }
 

@@ -1,4 +1,4 @@
-﻿using Domain;
+﻿using Domain.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -15,19 +15,11 @@ namespace Infrastructure.FluentAPI
         {
             builder.ToTable("FarmActivity");
 
-            builder.HasKey(e => e.FarmActivitiesId);
-            builder.Property(e => e.ActivityType);
-            builder.Property(e => e.AssignedTo);
-            builder.Property(e => e.EndDate);
-            builder.Property(e => e.FarmId);
-            builder.Property(e => e.StartDate);
-            builder.Property(e => e.Status);
-
-            builder.HasOne(d => d.AssignedToNavigation).WithMany(p => p.FarmActivities)
-                .HasForeignKey(d => d.AssignedTo);
-
-            builder.HasOne(d => d.Farm).WithMany(p => p.FarmActivities)
-                .HasForeignKey(d => d.FarmId);
+            builder.Property(e => e.FarmActivitiesId).HasColumnName("farmActivitiesID");
+            builder.Property(e => e.ActivityType).HasColumnName("activityType");
+            builder.Property(e => e.EndDate).HasColumnName("endDate");
+            builder.Property(e => e.StartDate).HasColumnName("startDate");
+            builder.Property(e => e.Status).HasColumnName("status");
         }
     }
 }
