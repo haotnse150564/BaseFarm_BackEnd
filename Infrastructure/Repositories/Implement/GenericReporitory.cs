@@ -81,7 +81,7 @@ namespace Infrastructure.Repositories.Implement
         }
 
         // Implement to pagination method
-        public async Task<Pagination<TModel>> ToPaginationAsync(int pageIndex = 0, int pageSize = 10)
+        public async Task<Pagination<TModel>> ToPaginationAsync(int pageIndex = 0, int pageSize = 3)
         {
             // get total count of items in the db set
             var itemCount = await _dbSet.CountAsync();

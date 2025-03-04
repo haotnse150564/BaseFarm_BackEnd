@@ -33,6 +33,7 @@ app.UseCors("_myAllowSpecificOrigins");
 #endregion
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

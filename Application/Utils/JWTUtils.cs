@@ -30,7 +30,7 @@ namespace Application.Utils
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, account.Email.ToString()), //SỬA CHỖ NÀY LẠI
+                new Claim(ClaimTypes.NameIdentifier, account.AccountId.ToString()), 
                 new Claim(ClaimTypes.Role, account.Role!.ToString()!.Trim())
             };
 

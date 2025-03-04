@@ -35,7 +35,7 @@ namespace Application.Services.Implement
                 }
 
                 // Map dữ liệu sang DTO
-                var result = _mapper.Map<List<ViewProductDTO>>(listProduct);
+                var result = _mapper.Map<List<ViewProductDTO>>(listProduct.Items);
 
                 // Tạo đối tượng phân trang
                 var pagination = new Pagination<ViewProductDTO>

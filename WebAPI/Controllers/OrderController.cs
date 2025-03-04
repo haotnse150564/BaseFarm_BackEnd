@@ -18,7 +18,7 @@ namespace WebAPI.Controllers
             _orderService = orderService;
         }
 
-        [Authorize(Roles = "1")]
+        [Authorize(Roles = "Customer")]
         [HttpPost("createOrder")]
         public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDTO request)
         {
