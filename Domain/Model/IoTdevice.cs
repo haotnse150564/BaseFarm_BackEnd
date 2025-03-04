@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Domain;
+namespace Domain.Model;
 
 public partial class IoTdevice
 {
     public long IoTdevicesId { get; set; }
+
+    public string? DeviceName { get; set; }
 
     public string? DeviceType { get; set; }
 
@@ -15,11 +17,11 @@ public partial class IoTdevice
 
     public string? Unit { get; set; }
 
-    public int? DeviceName { get; set; }
-
     public DateOnly? LastUpdate { get; set; }
 
-    public long FarmId { get; set; }
+    public DateOnly? ExpiryDate { get; set; }
 
-    public virtual FarmDetail Farm { get; set; } = null!;
+    public long FarmDetailsId { get; set; }
+
+    public virtual FarmDetail FarmDetails { get; set; } = null!;
 }

@@ -1,15 +1,8 @@
 ﻿using Application.Commons;
 using Application.Interfaces;
 using AutoMapper;
-using Domain;
-using Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
+using Domain.Model;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Application.ViewModel.Request.ProductRequest;
 using static Application.ViewModel.Response.ProductResponse;
 
@@ -42,7 +35,7 @@ namespace Application.Services.Implement
                 }
 
                 // Map dữ liệu sang DTO
-                var result = _mapper.Map<List<ViewProductDTO>>(listProduct);
+                var result = _mapper.Map<List<ViewProductDTO>>(listProduct.Items);
 
                 // Tạo đối tượng phân trang
                 var pagination = new Pagination<ViewProductDTO>

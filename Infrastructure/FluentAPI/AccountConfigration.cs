@@ -1,11 +1,6 @@
-﻿using Domain;
+﻿using Domain.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.FluentAPI
 {
@@ -21,7 +16,7 @@ namespace Infrastructure.FluentAPI
                 .HasMaxLength(255)
                 .IsUnicode(false)
                 ;                                                       
-            builder.Property(e => e.Phone);
+            builder.Property(e => e.Email);
             builder.Property(e => e.Role);
             builder.Property(e => e.Status);
             builder.Property(e => e.UpdatedAt);

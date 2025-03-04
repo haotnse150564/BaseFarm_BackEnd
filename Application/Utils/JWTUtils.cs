@@ -1,4 +1,5 @@
 ﻿using Domain;
+using Domain.Model;
 using Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -29,7 +30,7 @@ namespace Application.Utils
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, account.Phone.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, account.AccountId.ToString()), 
                 new Claim(ClaimTypes.Role, account.Role!.ToString()!.Trim())
             };
 

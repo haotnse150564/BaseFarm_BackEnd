@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Domain;
+namespace Domain.Model;
 
 public partial class Order
 {
     public long OrderId { get; set; }
 
     public decimal? TotalPrice { get; set; }
+
+    public string? ShippingAddress { get; set; }
 
     public int? Status { get; set; }
 

@@ -51,7 +51,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("updateFeedback/{id}")]
-        public async Task<IActionResult> UpdateFeedbackAsync([FromBody] CreateFeedbackDTO request, [FromRoute] int id)
+        public async Task<IActionResult> UpdateFeedbackAsync([FromBody] CreateFeedbackDTO request, [FromRoute] long id)
         {
 
             // Kiểm tra xem request có hợp lệ không
