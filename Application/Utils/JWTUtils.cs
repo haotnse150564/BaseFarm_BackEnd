@@ -1,4 +1,5 @@
 ﻿using Domain;
+using Domain.Model;
 using Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;

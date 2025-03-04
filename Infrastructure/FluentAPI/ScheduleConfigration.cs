@@ -25,7 +25,7 @@ namespace Infrastructure.FluentAPI
             builder.Property(e => e.FarmDetailsId);
             builder.Property(e => e.StartDate);
             builder.Property(e => e.Status);
-            builder.Property(e => e.UpdatedAt));
+            builder.Property(e => e.UpdatedAt);
 
             builder.HasOne(d => d.AssignedToNavigation).WithMany(p => p.Schedules)
                 .HasForeignKey(d => d.AssignedTo);
