@@ -33,7 +33,8 @@ namespace Application.Services.Implement
 
         public async Task<ResponseDTO> CreateOrderAsync(CreateOrderDTO request, HttpContext context)
         {
-            var user = await _jwtUtils.GetCurrentUserAsync();
+            //var user = await _jwtUtils.GetCurrentUserAsync();
+
             var errorMessages = new List<string>();
 
             foreach (var item in request.OrderItems)
@@ -51,7 +52,7 @@ namespace Application.Services.Implement
 
             var order = new Order
             {
-                CustomerId = user.AccountId,
+                CustomerId = 1,
                 TotalPrice = 0,
                 Status = 1, // Đang xử lý
                 CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow),
@@ -104,118 +105,11 @@ namespace Application.Services.Implement
 
             // 🔥 Ánh xạ sang CreateOrderResultDTO
             var orderResultDTO = _mapper.Map<CreateOrderResultDTO>(order);
-            orderResultDTO.OrderItems = _mapper.Map<List<ViewProductDTO>>(orderedProducts); // 🔥 Mapping từ Product thay vì OrderDetail
+            orderResultDTO.OrderItems = _mapper.Map<List<ViewProductDTO>>(orderItems); // 🔥 Mapping từ Product thay vì OrderDetail
             orderResultDTO.PaymentUrl = paymentUrl;
 
             return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Order created. Redirect to payment.", orderResultDTO);
         }
-
-
-
-        //public async Task<ResponseDTO> CreateOrderAsync(CreateOrderDTO request)
-        //{
-        //    // Lấy người dùng hiện tại (Nếu cần)
-        //    // var user = await _jwtUtils.GetCurrentUserAsync();
-        //    // if (user == null)
-        //    // {
-        //    //     return new ResponseDTO(Const.FAIL_READ_CODE, "No User found.");
-        //    // }
-
-        //    // Danh sách lỗi
-        //    var errorMessages = new List<string>();
-
-        //    // Kiểm tra từng sản phẩm trước khi tạo đơn hàng
-        //    foreach (var item in request.OrderItems)
-        //    {
-        //        var product = await _unitOfWork.productRepository.GetProductById(item.ProductId);
-
-        //        if (product == null)
-        //        {
-        //            errorMessages.Add($"Product ID {item.ProductId} not found.");
-        //            continue;
-        //        }
-
-        //        if (product.Status == 0)
-        //        {
-        //            errorMessages.Add($"Product ID {item.ProductId} is unavailable.");
-        //            continue;
-        //        }
-
-        //        if (product.StockQuantity < item.StockQuantity)
-        //        {
-        //            errorMessages.Add($"Product ID {item.ProductId} not enough stock.");
-        //        }
-        //    }
-
-        //    // Nếu có lỗi, hủy tạo đơn hàng
-        //    if (errorMessages.Any())
-        //    {
-        //        return new ResponseDTO(Const.FAIL_CREATE_CODE, "Order create failed.", errorMessages);
-        //    }
-
-        //    // Nếu không có lỗi, tiến hành tạo đơn hàng
-        //    var order = new Order
-        //    {
-        //        CustomerId = 6,
-        //        TotalPrice = 0, // Tính sau
-        //        Status = 1, // Đang xử lý
-        //        CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow),
-        //    };
-
-        //    await _unitOfWork.orderRepository.AddAsync(order);
-
-        //    decimal? totalPrice = 0;
-        //    var orderItems = new List<ViewProductDTO>();
-
-        //    foreach (var item in request.OrderItems)
-        //    {
-        //        var product = await _unitOfWork.productRepository.GetProductById(item.ProductId);
-
-        //        var orderDetail = new OrderDetail
-        //        {
-        //            OrderId = order.OrderId,
-        //            ProductId = item.ProductId,
-        //            Quantity = item.StockQuantity,
-        //            UnitPrice = product.Price
-        //        };
-
-        //        await _unitOfWork.orderDetailRepository.AddAsync(orderDetail);
-
-        //        // Cập nhật số lượng tồn kho
-        //        product.StockQuantity -= item.StockQuantity;
-
-        //        // Nếu sản phẩm hết hàng, cập nhật trạng thái thành 0 (Unavailable)
-        //        if (product.StockQuantity == 0)
-        //        {
-        //            product.Status = 0;
-        //        }
-
-        //        await _unitOfWork.productRepository.UpdateAsync(product);
-
-        //        totalPrice += (product.Price ?? 0) * item.StockQuantity;
-
-        //        // Thêm sản phẩm vào danh sách kết quả
-        //        orderItems.Add(new ViewProductDTO
-        //        {
-        //            ProductName = product.ProductName ?? "Unknown",
-        //            Price = product.Price,
-        //            StockQuantity = item.StockQuantity
-        //        });
-        //    }
-
-        //    order.TotalPrice = totalPrice;
-
-        //    await _unitOfWork.orderRepository.UpdateAsync(order);
-
-        //    // Tạo DTO kết quả
-        //    var orderResult = new OrderResultDTO
-        //    {
-        //        TotalPrice = order.TotalPrice,
-        //        OrderItems = orderItems
-        //    };
-
-        //    return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Create Order Success.", orderResult);
-        //}
 
         public async Task<ResponseDTO> GetAllOrderAsync(int pageIndex, int pageSize)
         {

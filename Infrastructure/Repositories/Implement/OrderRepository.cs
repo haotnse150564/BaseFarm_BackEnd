@@ -26,7 +26,7 @@ namespace Infrastructure.Repositories.Implement
                 .Select(o => new OrderResultDTO
                 {
                     TotalPrice = o.TotalPrice,
-                    Phone = o.Customer.AccountProfile.Phone,
+                    Email = o.Customer.Email,
                     CreatedAt = o.CreatedAt.HasValue ? o.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null, // Fix lỗi
                     OrderItems = o.OrderDetails.Select(od => new ViewProductDTO
                     {
@@ -63,7 +63,7 @@ namespace Infrastructure.Repositories.Implement
                 .Select(o => new OrderResultDTO
                 {
                     TotalPrice = o.TotalPrice,
-                    Phone = o.Customer.AccountProfile.Phone,
+                    Email = o.Customer.Email,
                     CreatedAt = o.CreatedAt.HasValue ? o.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
                     OrderItems = o.OrderDetails.Select(od => new ViewProductDTO
                     {
@@ -93,7 +93,7 @@ namespace Infrastructure.Repositories.Implement
                 .Select(o => new OrderResultDTO
                 {
                     TotalPrice = o.TotalPrice,
-                    Email = o.Customer.AccountProfile.Email,
+                    Email = o.Customer.Email,
                     CreatedAt = o.CreatedAt.HasValue ? o.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
                     OrderItems = o.OrderDetails.Select(od => new ViewProductDTO
                     {

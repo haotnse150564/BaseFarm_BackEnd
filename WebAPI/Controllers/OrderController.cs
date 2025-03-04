@@ -1,7 +1,6 @@
 ﻿using Application;
 using Application.Services;
 using Application.ViewModel.Request;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static Application.ViewModel.Request.OrderRequest;
 using static Application.ViewModel.Response.OrderResponse;
@@ -22,7 +21,6 @@ namespace WebAPI.Controllers
             _logger = logger;
         }
 
-        [Authorize(Roles = "Customer")]
         [HttpPost("create")]
         public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDTO request)
         {

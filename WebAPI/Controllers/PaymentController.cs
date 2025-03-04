@@ -1,5 +1,4 @@
-﻿using Application;
-using Application.Services;
+﻿using Application.Services;
 using Application.Services.Implement;
 using Application.ViewModel.Request;
 using Microsoft.AspNetCore.Mvc;
@@ -14,14 +13,12 @@ namespace WebAPI.Controllers
         private readonly IVnPayService _vnPayService;
         private readonly ILogger<PaymentController> _logger;
         private readonly IOrderServices _orderServices;
-        private readonly IUnitOfWorks _unitOfWork;
 
-        public PaymentController(IVnPayService vnPayService, ILogger<PaymentController> logger, IOrderServices orderServices, IUnitOfWorks unitOfWork)
+        public PaymentController(IVnPayService vnPayService, ILogger<PaymentController> logger, IOrderServices orderServices)
         {
             _vnPayService = vnPayService;
             _logger = logger;
             _orderServices = orderServices;
-            _unitOfWork = unitOfWork;
         }
 
         /// <summary>
@@ -89,41 +86,14 @@ namespace WebAPI.Controllers
                     return BadRequest(new { message = "Invalid payment response." });
                 }
 
-                // 🔥 Lấy OrderId từ phản hồi VNPay
-                if (!long.TryParse(response.OrderId, out long orderId))
-                {
-                    return BadRequest(new { message = "Invalid OrderId in payment response." });
-                }
-
-                // 🔥 Tìm đơn hàng trong database
-                var order = await _unitOfWork.orderRepository.GetOrderById(orderId);
-                if (order == null)
-                {
-                    return NotFound(new { message = "Order not found." });
-                }
-
-                // 🔥 Cập nhật trạng thái đơn hàng dựa vào phản hồi từ VNPay
-                if (response.VnPayResponseCode == "00") // ✅ 00: Thanh toán thành công
-                {
-                    order.Status = 3; // Đơn hàng đã thanh toán thành công
-                }
-                else // ❌ Các mã khác: Thanh toán thất bại
-                {
-                    order.Status = 4; // Thanh toán thất bại
-                }
-
-                await _unitOfWork.orderRepository.UpdateAsync(order);
-                await _unitOfWork.SaveChangesAsync();
-
-                // 🔥 Trả về thông tin payment sau khi cập nhật đơn hàng
+                // 🔥 Trả về thông tin payment như bình thường
                 return Ok(new
                 {
                     message = "Payment processed successfully.",
-                    orderStatus = order.Status, // ✅ Trạng thái đơn hàng đã được cập nhật
                     payment = new
                     {
                         response.TransactionId,
-                        response.OrderId, // Đây là OrderId của Payment
+                        response.OrderId, // Đây là OrderId của Payment, không phải Order thực tế
                         response.PaymentMethod,
                         response.VnPayResponseCode,
                         response.Success
@@ -136,7 +106,6 @@ namespace WebAPI.Controllers
                 return StatusCode(500, new { message = "An error occurred while processing the payment response." });
             }
         }
-
 
     }
 

@@ -37,7 +37,7 @@ namespace Infrastructure.Mapper
                 .ReverseMap();
 
             CreateMap<Order, OrderResultDTO>()
-                .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Customer.AccountProfile.Phone))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Customer.Email))
                 .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.OrderDetails))
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt.HasValue ? src.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null))
                 .ReverseMap();
