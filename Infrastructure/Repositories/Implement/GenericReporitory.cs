@@ -81,15 +81,33 @@ namespace Infrastructure.Repositories.Implement
         }
 
         // Implement to pagination method
-        public async Task<Pagination<TModel>> ToPaginationAsync(int pageIndex = 0, int pageSize = 3)
+        public async Task<Pagination<TModel>> ToPaginationAsync(int pageIndex = 1, int pageSize = 10)
         {
-            // get total count of items in the db set
+            // Lấy tổng số lượng phần tử trong bảng
             var itemCount = await _dbSet.CountAsync();
 
-            // Create Pagination instance
-            // to set data related to paging
-            // Calculate and replace pageIndex and pageSize
-            // if they are invalid
+            // Nếu không có dữ liệu, trả về danh sách rỗng
+            if (itemCount == 0)
+            {
+                return new Pagination<TModel>()
+                {
+                    PageSize = pageSize,
+                    TotalItemCount = 0,
+                    PageIndex = 1, 
+                    Items = new List<TModel>()
+                };
+            }
+
+            // Đảm bảo pageSize > 0
+            pageSize = Math.Max(1, pageSize);
+
+            // Tính số trang tối đa
+            var totalPagesCount = (int)Math.Ceiling((double)itemCount / pageSize);
+
+            // Đảm bảo pageIndex nằm trong khoảng hợp lệ (tối thiểu 1, tối đa totalPagesCount)
+            pageIndex = Math.Max(1, Math.Min(pageIndex, totalPagesCount));
+
+            // Tạo đối tượng Pagination
             var result = new Pagination<TModel>()
             {
                 PageSize = pageSize,
@@ -97,19 +115,19 @@ namespace Infrastructure.Repositories.Implement
                 PageIndex = pageIndex,
             };
 
-            // Take items according to the page size and page index
-            // skip items in the previous pages
-            // and take next items equal to page size
-            var items = await _dbSet.Skip(result.PageIndex * result.PageSize)
-                .Take(result.PageSize)
+            // Lấy dữ liệu từ database theo trang (chỉnh pageIndex - 1 để bắt đầu từ 1)
+            var items = await _dbSet
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
                 .AsNoTracking()
                 .ToListAsync();
 
-            // Assign items to page
+            // Gán danh sách vào kết quả
             result.Items = items;
 
             return result;
         }
+
 
         public async Task<TModel> CloneAsync(TModel model)
         {
