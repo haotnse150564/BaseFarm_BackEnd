@@ -1,11 +1,6 @@
-﻿using Domain;
+﻿using Domain.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.FluentAPI
 {
@@ -18,7 +13,7 @@ namespace Infrastructure.FluentAPI
             builder.Property(e => e.AccountProfileId)
                 .ValueGeneratedNever();
             builder.Property(e => e.CreatedAt);
-            builder.Property(e => e.Email)
+            builder.Property(e => e.Phone)
                 .HasMaxLength(255)
                 .IsUnicode(false);
             builder.Property(e => e.Gender);

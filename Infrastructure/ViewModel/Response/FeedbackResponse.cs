@@ -28,7 +28,7 @@ namespace Infrastructure.ViewModel.Response
             public int? Rating { get; set; }
 
             public DateOnly? CreatedAt { get; set; }
-            public string? Email { get; set; }
+            public string? Phone { get; set; }
         }
     }
 }

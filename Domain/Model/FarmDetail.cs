@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Domain;
+namespace Domain.Model;
 
 public partial class FarmDetail
 {
@@ -15,11 +15,13 @@ public partial class FarmDetail
 
     public DateOnly? UpdatedAt { get; set; }
 
-    public long StaffId { get; set; }
+    public long AccountId { get; set; }
 
-    public virtual ICollection<FarmActivity> FarmActivities { get; set; } = new List<FarmActivity>();
+    public virtual Account Account { get; set; } = null!;
+
+    public virtual ICollection<Crop> Crops { get; set; } = new List<Crop>();
 
     public virtual ICollection<IoTdevice> IoTdevices { get; set; } = new List<IoTdevice>();
 
-    public virtual Account Staff { get; set; } = null!;
+    public virtual ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
 }

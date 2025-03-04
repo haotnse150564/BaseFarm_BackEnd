@@ -1,4 +1,5 @@
 ﻿using Domain;
+using Domain.Model;
 using Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -29,14 +30,14 @@ namespace Application.Utils
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, account.AccountId.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, account.Email.ToString()), //SỬA CHỖ NÀY LẠI
                 new Claim(ClaimTypes.Role, account.Role!.ToString()!.Trim())
             };
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddMinutes(30),
+                Expires = DateTime.UtcNow.Add(TimeSpan.FromMinutes(30)),
                 Issuer = _config["Jwt:Issuer"],
                 Audience = _config["Jwt:Audience"],
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
@@ -49,39 +50,17 @@ namespace Application.Utils
 
         public ClaimsPrincipal ValidateToken(string token)
         {
-            try
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenValidationParameters = new TokenValidationParameters
             {
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var tokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"])),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero // Không cho phép chênh lệch thời gian
-                };
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"])),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ClockSkew = TimeSpan.Zero // Không cho phép chênh lệch thời gian
+            };
 
-                return tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken validatedToken);
-                
-            }
-            catch (SecurityTokenExpiredException ex)
-            {
-                Console.WriteLine("Token expired: " + ex.Message);
-            }
-            catch (SecurityTokenInvalidSignatureException ex)
-            {
-                Console.WriteLine("Invalid token signature: " + ex.Message);
-            }
-            catch (SecurityTokenException ex)
-            {
-                Console.WriteLine("Invalid token: " + ex.Message);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Unexpected error in ValidateToken: " + ex.Message);
-            }
-            return null;
+            return tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken validatedToken);
         }
 
         public async Task<Account> GetCurrentUserAsync()
@@ -105,7 +84,7 @@ namespace Application.Utils
                 throw new Exception("User not found in token."); // Hoặc trả về một ResponseDTO nếu cần
             }
 
-            long userId = Convert.ToInt64(userIdClaim.Value);
+            int userId = int.Parse(userIdClaim.Value);
 
             // Lấy người dùng hiện tại
             var user = await _unitOfWork.accountRepository.GetByIdAsync(userId);

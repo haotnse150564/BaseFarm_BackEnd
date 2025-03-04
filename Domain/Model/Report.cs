@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Domain;
+namespace Domain.Model;
 
 public partial class Report
 {
@@ -12,6 +12,8 @@ public partial class Report
     public DateOnly? ReportDate { get; set; }
 
     public string? FilePath { get; set; }
+
+    public int? Status { get; set; }
 
     public long GeneratedBy { get; set; }
 

@@ -1,8 +1,7 @@
 ﻿using Application.Commons;
 using Application.Interfaces;
 using AutoMapper;
-using Domain;
-using Infrastructure.ViewModel.Request;
+using Domain.Model;
 using Microsoft.Extensions.Configuration;
 using static Infrastructure.ViewModel.Request.FeedbackRequest;
 using static Infrastructure.ViewModel.Response.FeedbackResponse;

@@ -9,6 +9,6 @@ namespace Application.Services
 {
     public interface IAccountServices
     {
-        Task<LoginResponseDTO> LoginAsync(int phone, string password);
+        Task<LoginResponseDTO> LoginAsync(string email, string password);
     }
 }
