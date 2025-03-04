@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Domain;
+namespace Domain.Model;
 
 public partial class AccountProfile
 {
     public long AccountProfileId { get; set; }
 
-    public string? Email { get; set; }
-
     public int? Gender { get; set; }
+
+    public string? Phone { get; set; }
+
+    public string? Fullname { get; set; }
+
+    public string? Address { get; set; }
 
     public string? Images { get; set; }
 
