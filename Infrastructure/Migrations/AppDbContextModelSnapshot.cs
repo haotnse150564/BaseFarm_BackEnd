@@ -59,6 +59,107 @@ namespace Infrastructure.Migrations
                     b.HasKey("AccountId");
 
                     b.ToTable("Account", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            AccountId = 1L,
+                            CreatedAt = new DateOnly(2025, 3, 1),
+                            Email = "admin@email.com",
+                            ExpireMinutes = 30,
+                            PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+                            Role = 1,
+                            Status = 1,
+                            UpdatedAt = new DateOnly(2025, 3, 1)
+                        },
+                        new
+                        {
+                            AccountId = 2L,
+                            CreatedAt = new DateOnly(2025, 1, 1),
+                            Email = "manager@email.com",
+                            ExpireMinutes = 30,
+                            PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+                            Role = 2,
+                            Status = 1,
+                            UpdatedAt = new DateOnly(2025, 5, 1)
+                        },
+                        new
+                        {
+                            AccountId = 3L,
+                            CreatedAt = new DateOnly(2025, 5, 1),
+                            Email = "staff01@email.com",
+                            ExpireMinutes = 30,
+                            PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+                            Role = 3,
+                            Status = 1,
+                            UpdatedAt = new DateOnly(2025, 5, 1)
+                        },
+                        new
+                        {
+                            AccountId = 6L,
+                            CreatedAt = new DateOnly(2025, 5, 1),
+                            Email = "staff02@email.com",
+                            ExpireMinutes = 30,
+                            PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+                            Role = 3,
+                            Status = 1,
+                            UpdatedAt = new DateOnly(2025, 5, 1)
+                        },
+                        new
+                        {
+                            AccountId = 9L,
+                            CreatedAt = new DateOnly(2025, 5, 1),
+                            Email = "staff03@email.com",
+                            ExpireMinutes = 30,
+                            PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+                            Role = 3,
+                            Status = 1,
+                            UpdatedAt = new DateOnly(2025, 5, 1)
+                        },
+                        new
+                        {
+                            AccountId = 4L,
+                            CreatedAt = new DateOnly(2025, 4, 1),
+                            Email = "cus01@email.com",
+                            ExpireMinutes = 30,
+                            PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+                            Role = 0,
+                            Status = 1,
+                            UpdatedAt = new DateOnly(2025, 5, 1)
+                        },
+                        new
+                        {
+                            AccountId = 8L,
+                            CreatedAt = new DateOnly(2025, 4, 1),
+                            Email = "cus03@email.com",
+                            ExpireMinutes = 30,
+                            PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+                            Role = 0,
+                            Status = 1,
+                            UpdatedAt = new DateOnly(2025, 5, 1)
+                        },
+                        new
+                        {
+                            AccountId = 7L,
+                            CreatedAt = new DateOnly(2025, 4, 1),
+                            Email = "cus04@email.com",
+                            ExpireMinutes = 30,
+                            PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+                            Role = 0,
+                            Status = 1,
+                            UpdatedAt = new DateOnly(2025, 5, 1)
+                        },
+                        new
+                        {
+                            AccountId = 5L,
+                            CreatedAt = new DateOnly(2025, 2, 1),
+                            Email = "cus02@email.com",
+                            ExpireMinutes = 30,
+                            PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+                            Role = 0,
+                            Status = 1,
+                            UpdatedAt = new DateOnly(2025, 5, 1)
+                        });
                 });
 
             modelBuilder.Entity("Domain.Model.AccountProfile", b =>
@@ -94,6 +195,98 @@ namespace Infrastructure.Migrations
                     b.HasKey("AccountProfileId");
 
                     b.ToTable("AccountProfile", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            AccountProfileId = 1L,
+                            Address = "HCM",
+                            CreatedAt = new DateOnly(2025, 3, 1),
+                            Fullname = "Admin",
+                            Gender = 1,
+                            Phone = "0123456789",
+                            UpdatedAt = new DateOnly(2025, 3, 1)
+                        },
+                        new
+                        {
+                            AccountProfileId = 2L,
+                            Address = "HCM",
+                            CreatedAt = new DateOnly(2025, 1, 1),
+                            Fullname = "Manager",
+                            Gender = 1,
+                            Phone = "0123456789",
+                            UpdatedAt = new DateOnly(2025, 5, 1)
+                        },
+                        new
+                        {
+                            AccountProfileId = 3L,
+                            Address = "HCM",
+                            CreatedAt = new DateOnly(2025, 5, 1),
+                            Fullname = "Staff 1",
+                            Gender = 2,
+                            Phone = "0123456789",
+                            UpdatedAt = new DateOnly(2025, 5, 1)
+                        },
+                        new
+                        {
+                            AccountProfileId = 6L,
+                            Address = "HCM",
+                            CreatedAt = new DateOnly(2025, 5, 1),
+                            Fullname = "Staff 2",
+                            Gender = 1,
+                            Phone = "0123456789",
+                            UpdatedAt = new DateOnly(2025, 5, 1)
+                        },
+                        new
+                        {
+                            AccountProfileId = 4L,
+                            Address = "HCM",
+                            CreatedAt = new DateOnly(2025, 4, 1),
+                            Fullname = "Customer 1",
+                            Gender = 2,
+                            Phone = "0123456789",
+                            UpdatedAt = new DateOnly(2025, 5, 1)
+                        },
+                        new
+                        {
+                            AccountProfileId = 8L,
+                            Address = "HCM",
+                            CreatedAt = new DateOnly(2025, 4, 1),
+                            Fullname = "Customer 3",
+                            Gender = 1,
+                            Phone = "0123456789",
+                            UpdatedAt = new DateOnly(2025, 5, 1)
+                        },
+                        new
+                        {
+                            AccountProfileId = 7L,
+                            Address = "HCM",
+                            CreatedAt = new DateOnly(2025, 4, 1),
+                            Fullname = "Customer 4",
+                            Gender = 1,
+                            Phone = "0123456789",
+                            UpdatedAt = new DateOnly(2025, 5, 1)
+                        },
+                        new
+                        {
+                            AccountProfileId = 5L,
+                            Address = "HCM",
+                            CreatedAt = new DateOnly(2025, 2, 1),
+                            Fullname = "Customer 2",
+                            Gender = 2,
+                            Phone = "0123456789",
+                            UpdatedAt = new DateOnly(2025, 5, 1)
+                        },
+                        new
+                        {
+                            AccountProfileId = 9L,
+                            Address = "HCM",
+                            CreatedAt = new DateOnly(2025, 2, 1),
+                            Fullname = "Staff 3",
+                            Gender = 1,
+                            Phone = "0123456789",
+                            UpdatedAt = new DateOnly(2025, 5, 1)
+                        });
                 });
 
             modelBuilder.Entity("Domain.Model.Category", b =>
@@ -112,6 +305,28 @@ namespace Infrastructure.Migrations
                     b.HasKey("CategoryId");
 
                     b.ToTable("Category", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            CategoryId = 1L,
+                            CategoryName = "Vegetable"
+                        },
+                        new
+                        {
+                            CategoryId = 3L,
+                            CategoryName = "IOT 1"
+                        },
+                        new
+                        {
+                            CategoryId = 4L,
+                            CategoryName = "Divice 1"
+                        },
+                        new
+                        {
+                            CategoryId = 2L,
+                            CategoryName = "Fruit"
+                        });
                 });
 
             modelBuilder.Entity("Domain.Model.Crop", b =>
@@ -162,6 +377,73 @@ namespace Infrastructure.Migrations
                     b.HasIndex("FarmDetailsId");
 
                     b.ToTable("Crop", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            CropId = 1L,
+                            CropName = "Cop 01",
+                            Description = "3x3 m2",
+                            FarmDetailsId = 1L,
+                            Fertilizer = "NPK",
+                            HarvestDate = new DateOnly(2025, 4, 21),
+                            Moisture = 1m,
+                            PlantingDate = new DateOnly(2025, 3, 1),
+                            Status = 1,
+                            Temperature = 30m
+                        },
+                        new
+                        {
+                            CropId = 2L,
+                            CropName = "Cop 02",
+                            Description = "2x3 m2",
+                            FarmDetailsId = 1L,
+                            Fertilizer = "Cali",
+                            HarvestDate = new DateOnly(2025, 4, 21),
+                            Moisture = 1m,
+                            PlantingDate = new DateOnly(2025, 3, 14),
+                            Status = 1,
+                            Temperature = 30m
+                        },
+                        new
+                        {
+                            CropId = 3L,
+                            CropName = "Cop 03",
+                            Description = "3x2 m2",
+                            FarmDetailsId = 1L,
+                            Fertilizer = "Photpho",
+                            HarvestDate = new DateOnly(2025, 4, 11),
+                            Moisture = 1m,
+                            PlantingDate = new DateOnly(2025, 3, 21),
+                            Status = 1,
+                            Temperature = 30m
+                        },
+                        new
+                        {
+                            CropId = 4L,
+                            CropName = "Cop 04",
+                            Description = "3x5 m2",
+                            FarmDetailsId = 2L,
+                            Fertilizer = "Nito",
+                            HarvestDate = new DateOnly(2025, 4, 30),
+                            Moisture = 1m,
+                            PlantingDate = new DateOnly(2025, 3, 12),
+                            Status = 1,
+                            Temperature = 30m
+                        },
+                        new
+                        {
+                            CropId = 5L,
+                            CropName = "Cop 05",
+                            Description = "4x3 m2",
+                            FarmDetailsId = 3L,
+                            Fertilizer = "NPK",
+                            HarvestDate = new DateOnly(2025, 4, 30),
+                            Moisture = 1m,
+                            PlantingDate = new DateOnly(2025, 3, 12),
+                            Status = 1,
+                            Temperature = 30m
+                        });
                 });
 
             modelBuilder.Entity("Domain.Model.FarmActivity", b =>
@@ -187,6 +469,32 @@ namespace Infrastructure.Migrations
                     b.HasKey("FarmActivitiesId");
 
                     b.ToTable("FarmActivity", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            FarmActivitiesId = 1,
+                            ActivityType = 1,
+                            EndDate = new DateOnly(2025, 4, 1),
+                            StartDate = new DateOnly(2025, 3, 1),
+                            Status = 1
+                        },
+                        new
+                        {
+                            FarmActivitiesId = 2,
+                            ActivityType = 1,
+                            EndDate = new DateOnly(2025, 4, 11),
+                            StartDate = new DateOnly(2025, 3, 12),
+                            Status = 1
+                        },
+                        new
+                        {
+                            FarmActivitiesId = 3,
+                            ActivityType = 1,
+                            EndDate = new DateOnly(2025, 4, 30),
+                            StartDate = new DateOnly(2025, 3, 12),
+                            Status = 1
+                        });
                 });
 
             modelBuilder.Entity("Domain.Model.FarmDetail", b =>
@@ -221,6 +529,35 @@ namespace Infrastructure.Migrations
                     b.HasIndex("AccountId");
 
                     b.ToTable("FarmDetail", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            FarmDetailsId = 1L,
+                            AccountId = 4L,
+                            CreatedAt = new DateOnly(2025, 2, 1),
+                            FarmName = "Happy Farm",
+                            Location = "Q1, HCM",
+                            UpdatedAt = new DateOnly(2025, 3, 1)
+                        },
+                        new
+                        {
+                            FarmDetailsId = 2L,
+                            AccountId = 5L,
+                            CreatedAt = new DateOnly(2025, 2, 1),
+                            FarmName = "Sky Garden",
+                            Location = "Thu Duc, HCM",
+                            UpdatedAt = new DateOnly(2025, 3, 2)
+                        },
+                        new
+                        {
+                            FarmDetailsId = 3L,
+                            AccountId = 7L,
+                            CreatedAt = new DateOnly(2025, 2, 1),
+                            FarmName = "Hidden Planting",
+                            Location = "Binh Tan, HCM",
+                            UpdatedAt = new DateOnly(2025, 3, 5)
+                        });
                 });
 
             modelBuilder.Entity("Domain.Model.Feedback", b =>
@@ -253,6 +590,32 @@ namespace Infrastructure.Migrations
                     b.HasIndex("CustomerId");
 
                     b.ToTable("Feedback", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            FeedbackId = 1,
+                            Comment = "App very good, but load data slow",
+                            CreatedAt = new DateOnly(2025, 4, 3),
+                            CustomerId = 4L,
+                            Rating = 4
+                        },
+                        new
+                        {
+                            FeedbackId = 2,
+                            Comment = "My avt so cute <3",
+                            CreatedAt = new DateOnly(2025, 4, 10),
+                            CustomerId = 7L,
+                            Rating = 5
+                        },
+                        new
+                        {
+                            FeedbackId = 3,
+                            Comment = "Test FeedBack <3",
+                            CreatedAt = new DateOnly(2025, 3, 3),
+                            CustomerId = 8L,
+                            Rating = 5
+                        });
                 });
 
             modelBuilder.Entity("Domain.Model.IoTdevice", b =>
@@ -300,6 +663,98 @@ namespace Infrastructure.Migrations
                     b.HasIndex("FarmDetailsId");
 
                     b.ToTable("IoTDevice", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            IoTdevicesId = 1L,
+                            DeviceName = "Thermocouple - 1",
+                            DeviceType = "Temperature IC",
+                            ExpiryDate = new DateOnly(2025, 4, 30),
+                            FarmDetailsId = 2L,
+                            LastUpdate = new DateOnly(2025, 3, 12),
+                            Status = 1
+                        },
+                        new
+                        {
+                            IoTdevicesId = 2L,
+                            DeviceName = "LM393 - 1",
+                            DeviceType = "Humidity measurement IC",
+                            ExpiryDate = new DateOnly(2025, 4, 30),
+                            FarmDetailsId = 1L,
+                            LastUpdate = new DateOnly(2025, 3, 12),
+                            Status = 1
+                        },
+                        new
+                        {
+                            IoTdevicesId = 3L,
+                            DeviceName = "LM393 - 2",
+                            DeviceType = "Humidity measurement IC",
+                            ExpiryDate = new DateOnly(2025, 4, 30),
+                            FarmDetailsId = 2L,
+                            LastUpdate = new DateOnly(2025, 3, 12),
+                            Status = 1
+                        },
+                        new
+                        {
+                            IoTdevicesId = 4L,
+                            DeviceName = "Thermocouple  - 2",
+                            DeviceType = "Temperature IC",
+                            ExpiryDate = new DateOnly(2025, 4, 30),
+                            FarmDetailsId = 3L,
+                            LastUpdate = new DateOnly(2025, 3, 12),
+                            Status = 1
+                        },
+                        new
+                        {
+                            IoTdevicesId = 5L,
+                            DeviceName = "Thermocouple  - 3",
+                            DeviceType = "Temperature IC",
+                            ExpiryDate = new DateOnly(2025, 4, 30),
+                            FarmDetailsId = 1L,
+                            LastUpdate = new DateOnly(2025, 3, 12),
+                            Status = 1
+                        },
+                        new
+                        {
+                            IoTdevicesId = 6L,
+                            DeviceName = "LM393 - 3",
+                            DeviceType = "Humidity measurement IC",
+                            ExpiryDate = new DateOnly(2025, 4, 30),
+                            FarmDetailsId = 3L,
+                            LastUpdate = new DateOnly(2025, 3, 12),
+                            Status = 1
+                        },
+                        new
+                        {
+                            IoTdevicesId = 7L,
+                            DeviceName = "Soil Moisture Sensor 1",
+                            DeviceType = "Soil Moisture Sensor IC",
+                            ExpiryDate = new DateOnly(2025, 4, 30),
+                            FarmDetailsId = 1L,
+                            LastUpdate = new DateOnly(2025, 3, 12),
+                            Status = 1
+                        },
+                        new
+                        {
+                            IoTdevicesId = 8L,
+                            DeviceName = "Soil Moisture Sensor 2",
+                            DeviceType = "Soil Moisture Sensor IC",
+                            ExpiryDate = new DateOnly(2025, 4, 30),
+                            FarmDetailsId = 2L,
+                            LastUpdate = new DateOnly(2025, 3, 12),
+                            Status = 1
+                        },
+                        new
+                        {
+                            IoTdevicesId = 9L,
+                            DeviceName = "Soil Moisture Sensor 3",
+                            DeviceType = "Soil Moisture Sensor IC",
+                            ExpiryDate = new DateOnly(2025, 4, 30),
+                            FarmDetailsId = 3L,
+                            LastUpdate = new DateOnly(2025, 3, 12),
+                            Status = 1
+                        });
                 });
 
             modelBuilder.Entity("Domain.Model.Order", b =>
@@ -333,6 +788,38 @@ namespace Infrastructure.Migrations
                     b.HasIndex("CustomerId");
 
                     b.ToTable("Order", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            OrderId = 1L,
+                            CreatedAt = new DateOnly(2025, 3, 1),
+                            CustomerId = 8L,
+                            ShippingAddress = "HCM",
+                            Status = 1,
+                            TotalPrice = 200m,
+                            UpdatedAt = new DateOnly(2025, 3, 1)
+                        },
+                        new
+                        {
+                            OrderId = 2L,
+                            CreatedAt = new DateOnly(2025, 3, 1),
+                            CustomerId = 8L,
+                            ShippingAddress = "HCM",
+                            Status = 0,
+                            TotalPrice = 105m,
+                            UpdatedAt = new DateOnly(2025, 3, 1)
+                        },
+                        new
+                        {
+                            OrderId = 3L,
+                            CreatedAt = new DateOnly(2025, 3, 1),
+                            CustomerId = 8L,
+                            ShippingAddress = "HCM",
+                            Status = 1,
+                            TotalPrice = 315m,
+                            UpdatedAt = new DateOnly(2025, 3, 1)
+                        });
                 });
 
             modelBuilder.Entity("Domain.Model.OrderDetail", b =>
@@ -362,6 +849,32 @@ namespace Infrastructure.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("OrderDetail", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            OrderDetailId = 1L,
+                            OrderId = 1L,
+                            ProductId = 1L,
+                            Quantity = 20,
+                            UnitPrice = 10m
+                        },
+                        new
+                        {
+                            OrderDetailId = 2L,
+                            OrderId = 1L,
+                            ProductId = 2L,
+                            Quantity = 10,
+                            UnitPrice = 15m
+                        },
+                        new
+                        {
+                            OrderDetailId = 3L,
+                            OrderId = 1L,
+                            ProductId = 2L,
+                            Quantity = 21,
+                            UnitPrice = 10m
+                        });
                 });
 
             modelBuilder.Entity("Domain.Model.Payment", b =>
@@ -389,6 +902,29 @@ namespace Infrastructure.Migrations
                     b.HasIndex("OrderId");
 
                     b.ToTable("Payment", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            PaymentId = 1L,
+                            OrderId = 1L,
+                            PaymentStatus = 1,
+                            TransactionDate = new DateOnly(2025, 3, 1)
+                        },
+                        new
+                        {
+                            PaymentId = 2L,
+                            OrderId = 2L,
+                            PaymentStatus = 0,
+                            TransactionDate = new DateOnly(2025, 3, 1)
+                        },
+                        new
+                        {
+                            PaymentId = 3L,
+                            OrderId = 3L,
+                            PaymentStatus = 1,
+                            TransactionDate = new DateOnly(2025, 3, 1)
+                        });
                 });
 
             modelBuilder.Entity("Domain.Model.Product", b =>
@@ -438,6 +974,73 @@ namespace Infrastructure.Migrations
                     b.HasIndex("CropId");
 
                     b.ToTable("Product", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            ProductId = 1L,
+                            CategoryId = 1L,
+                            CreatedAt = new DateOnly(2025, 2, 1),
+                            CropId = 1L,
+                            Description = "Rau Den",
+                            Price = 10m,
+                            ProductName = "Vegetable 1",
+                            Status = 1,
+                            StockQuantity = 10000,
+                            UpdatedAt = new DateOnly(2025, 2, 1)
+                        },
+                        new
+                        {
+                            ProductId = 2L,
+                            CategoryId = 1L,
+                            CreatedAt = new DateOnly(2025, 2, 1),
+                            CropId = 1L,
+                            Description = "Salad",
+                            Price = 15m,
+                            ProductName = "Vegetable 2",
+                            Status = 1,
+                            StockQuantity = 10000,
+                            UpdatedAt = new DateOnly(2025, 2, 1)
+                        },
+                        new
+                        {
+                            ProductId = 3L,
+                            CategoryId = 1L,
+                            CreatedAt = new DateOnly(2025, 2, 1),
+                            CropId = 1L,
+                            Description = "Dau Ha Lan",
+                            Price = 20m,
+                            ProductName = "Vegetable 3",
+                            Status = 1,
+                            StockQuantity = 10000,
+                            UpdatedAt = new DateOnly(2025, 2, 1)
+                        },
+                        new
+                        {
+                            ProductId = 4L,
+                            CategoryId = 1L,
+                            CreatedAt = new DateOnly(2025, 2, 1),
+                            CropId = 2L,
+                            Description = "Ca chua",
+                            Price = 35m,
+                            ProductName = "Fruit 1",
+                            Status = 1,
+                            StockQuantity = 10000,
+                            UpdatedAt = new DateOnly(2025, 2, 1)
+                        },
+                        new
+                        {
+                            ProductId = 5L,
+                            CategoryId = 1L,
+                            CreatedAt = new DateOnly(2025, 2, 1),
+                            CropId = 3L,
+                            Description = "Dua Hau",
+                            Price = 55m,
+                            ProductName = "Fruit 2",
+                            Status = 1,
+                            StockQuantity = 10000,
+                            UpdatedAt = new DateOnly(2025, 2, 1)
+                        });
                 });
 
             modelBuilder.Entity("Domain.Model.Report", b =>
@@ -470,6 +1073,48 @@ namespace Infrastructure.Migrations
                     b.HasIndex("GeneratedBy");
 
                     b.ToTable("Report", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            ReportId = 1L,
+                            GeneratedBy = 2L,
+                            ReportDate = new DateOnly(2025, 3, 1),
+                            ReportType = 1,
+                            Status = 1
+                        },
+                        new
+                        {
+                            ReportId = 2L,
+                            GeneratedBy = 2L,
+                            ReportDate = new DateOnly(2025, 3, 3),
+                            ReportType = 3,
+                            Status = 1
+                        },
+                        new
+                        {
+                            ReportId = 3L,
+                            GeneratedBy = 2L,
+                            ReportDate = new DateOnly(2025, 3, 5),
+                            ReportType = 2,
+                            Status = 0
+                        },
+                        new
+                        {
+                            ReportId = 4L,
+                            GeneratedBy = 2L,
+                            ReportDate = new DateOnly(2025, 3, 10),
+                            ReportType = 1,
+                            Status = 0
+                        },
+                        new
+                        {
+                            ReportId = 5L,
+                            GeneratedBy = 2L,
+                            ReportDate = new DateOnly(2025, 3, 11),
+                            ReportType = 3,
+                            Status = 1
+                        });
                 });
 
             modelBuilder.Entity("Domain.Model.Schedule", b =>
@@ -513,6 +1158,44 @@ namespace Infrastructure.Migrations
                     b.HasIndex("FarmDetailsId");
 
                     b.ToTable("Schedule", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            ScheduleId = 1L,
+                            AssignedTo = 3L,
+                            CreatedAt = new DateOnly(2025, 3, 1),
+                            EndDate = new DateOnly(2025, 4, 30),
+                            FarmActivityId = 1,
+                            FarmDetailsId = 1L,
+                            StartDate = new DateOnly(2025, 3, 1),
+                            Status = 1,
+                            UpdatedAt = new DateOnly(2025, 3, 1)
+                        },
+                        new
+                        {
+                            ScheduleId = 2L,
+                            AssignedTo = 9L,
+                            CreatedAt = new DateOnly(2025, 3, 1),
+                            EndDate = new DateOnly(2025, 4, 11),
+                            FarmActivityId = 2,
+                            FarmDetailsId = 2L,
+                            StartDate = new DateOnly(2025, 3, 12),
+                            Status = 1,
+                            UpdatedAt = new DateOnly(2025, 3, 1)
+                        },
+                        new
+                        {
+                            ScheduleId = 3L,
+                            AssignedTo = 6L,
+                            CreatedAt = new DateOnly(2025, 3, 1),
+                            EndDate = new DateOnly(2025, 4, 30),
+                            FarmActivityId = 3,
+                            FarmDetailsId = 3L,
+                            StartDate = new DateOnly(2025, 3, 12),
+                            Status = 1,
+                            UpdatedAt = new DateOnly(2025, 3, 1)
+                        });
                 });
 
             modelBuilder.Entity("Domain.Model.AccountProfile", b =>
