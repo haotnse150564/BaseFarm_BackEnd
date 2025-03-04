@@ -33,8 +33,6 @@ namespace Application.Services.Implement
 
         public async Task<ResponseDTO> CreateOrderAsync(CreateOrderDTO request, HttpContext context)
         {
-            //var user = await _jwtUtils.GetCurrentUserAsync();
-
             var errorMessages = new List<string>();
 
             foreach (var item in request.OrderItems)
@@ -59,40 +57,47 @@ namespace Application.Services.Implement
             };
 
             await _unitOfWork.orderRepository.AddAsync(order);
-            await _unitOfWork.SaveChangesAsync(); // 🔥 Save để cập nhật OrderId
+            await _unitOfWork.SaveChangesAsync(); // 🔥 Đảm bảo OrderId đã cập nhật
 
             decimal totalPrice = 0;
             var orderItems = new List<OrderDetail>();
-            var orderedProducts = new List<Product>(); // 🔥 Lưu danh sách sản phẩm đã đặt
 
             foreach (var item in request.OrderItems)
             {
                 var product = await _unitOfWork.productRepository.GetProductById(item.ProductId);
                 if (product == null) continue;
 
-                var orderDetail = new OrderDetail
+                if (product.StockQuantity >= item.StockQuantity)
                 {
-                    OrderId = order.OrderId,
-                    ProductId = item.ProductId,
-                    Quantity = item.StockQuantity,
-                    UnitPrice = product.Price
-                };
+                    var orderDetail = new OrderDetail
+                    {
+                        OrderId = order.OrderId,
+                        ProductId = item.ProductId,
+                        Quantity = item.StockQuantity,
+                        UnitPrice = product.Price
+                    };
 
-                await _unitOfWork.orderDetailRepository.AddAsync(orderDetail);
-                product.StockQuantity -= item.StockQuantity;
-                if (product.StockQuantity == 0) product.Status = 0;
-                await _unitOfWork.productRepository.UpdateAsync(product);
-                totalPrice += (decimal)((product.Price ?? 0) * item.StockQuantity);
+                    await _unitOfWork.orderDetailRepository.AddAsync(orderDetail);
+                    await _unitOfWork.SaveChangesAsync(); // 🔥 Lưu ngay OrderDetail
 
-                orderItems.Add(orderDetail);
-                orderedProducts.Add(product); // 🔥 Thêm sản phẩm vào danh sách
+                    product.StockQuantity -= item.StockQuantity;
+                    if (product.StockQuantity == 0) product.Status = 0;
+                    await _unitOfWork.productRepository.UpdateAsync(product);
+                    await _unitOfWork.SaveChangesAsync(); // 🔥 Lưu ngay sản phẩm cập nhật
+
+                    totalPrice += (decimal)((product.Price ?? 0) * item.StockQuantity);
+                    orderItems.Add(orderDetail);
+                }
+                else
+                {
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, $"Not enough stock for product {item.ProductId}.", null);
+                }
             }
 
             order.TotalPrice = totalPrice;
             await _unitOfWork.orderRepository.UpdateAsync(order);
-            await _unitOfWork.SaveChangesAsync(); // 🔥 Lưu thay đổi sau khi cập nhật OrderDetail & Product
+            await _unitOfWork.SaveChangesAsync(); // 🔥 Lưu thay đổi Order
 
-            // 🔥 Tạo URL thanh toán VnPay
             var paymentModel = new PaymentInformationModel
             {
                 Amount = (double)totalPrice,
@@ -103,13 +108,13 @@ namespace Application.Services.Implement
 
             var paymentUrl = _vnPayService.CreatePaymentUrl(paymentModel, context);
 
-            // 🔥 Ánh xạ sang CreateOrderResultDTO
             var orderResultDTO = _mapper.Map<CreateOrderResultDTO>(order);
-            orderResultDTO.OrderItems = _mapper.Map<List<ViewProductDTO>>(orderItems); // 🔥 Mapping từ Product thay vì OrderDetail
+            orderResultDTO.OrderItems = _mapper.Map<List<ViewProductDTO>>(orderItems);
             orderResultDTO.PaymentUrl = paymentUrl;
 
             return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Order created. Redirect to payment.", orderResultDTO);
         }
+
 
         public async Task<ResponseDTO> GetAllOrderAsync(int pageIndex, int pageSize)
         {
