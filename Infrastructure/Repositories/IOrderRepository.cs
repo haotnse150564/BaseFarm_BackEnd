@@ -9,5 +9,7 @@ namespace Infrastructure.Repositories
     {
         Task<Pagination<OrderResultDTO>> GetAllOrdersAsync(int pageIndex, int pageSize);
         Task<Pagination<OrderResultDTO>> GetOrdersByCustomerIdAsync(long customerId, int pageIndex, int pageSize);
+        Task<OrderResultDTO> GetOrderByIdAsync(long orderId);
+        Task<Order?> GetOrderById(long orderId);
     }
 }

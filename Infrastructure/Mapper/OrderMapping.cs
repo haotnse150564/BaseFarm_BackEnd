@@ -43,11 +43,13 @@ namespace Infrastructure.Mapper
                 .ReverseMap();
 
 
-            CreateMap<OrderDetail, ViewProductDTO>()
-                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.ProductName))
-                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.UnitPrice))
-                .ForMember(dest => dest.StockQuantity, opt => opt.MapFrom(src => src.Quantity));
+            CreateMap<Product, ViewProductDTO>(); // 🔥 Mapping trực tiếp từ Product sang ViewProductDTO
 
+            CreateMap<UpdateOrderStatusDTO, Order>()
+                .ReverseMap();
+
+            CreateMap<Order, CreateOrderResultDTO>()
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt.HasValue ? src.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null));
         }
 
     }

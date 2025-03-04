@@ -19,5 +19,10 @@ namespace Application.ViewModel.Request
         {
             public List<SelectProductDTO> OrderItems { get; set; } = new();
         }
+
+        public class UpdateOrderStatusDTO
+        {
+            public int? Status { get; set; }
+        }
     }
 }

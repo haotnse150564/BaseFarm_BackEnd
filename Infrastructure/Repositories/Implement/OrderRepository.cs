@@ -82,5 +82,41 @@ namespace Infrastructure.Repositories.Implement
                 Items = orders
             };
         }
+
+        public async Task<OrderResultDTO> GetOrderByIdAsync(long orderId)
+        {
+            var order = await _context.Order
+                .Where(o => o.OrderId == orderId)
+                .Include(o => o.Customer)
+                .Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.Product)
+                .Select(o => new OrderResultDTO
+                {
+                    TotalPrice = o.TotalPrice,
+                    Email = o.Customer.AccountProfile.Email,
+                    CreatedAt = o.CreatedAt.HasValue ? o.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
+                    OrderItems = o.OrderDetails.Select(od => new ViewProductDTO
+                    {
+                        ProductName = od.Product.ProductName,
+                        Price = od.UnitPrice,
+                        StockQuantity = od.Quantity
+                    }).ToList()
+                })
+                .FirstOrDefaultAsync();
+
+            return order;
+        }
+
+        public async Task<Order?> GetOrderById(long orderId)
+        {
+            return await _context.Order
+                .Where(o => o.OrderId == orderId)
+                .OrderByDescending(o => o.CreatedAt) // Sắp xếp theo ngày mới nhất
+                .Include(o => o.Customer)
+                .Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.Product)
+                .FirstOrDefaultAsync();
+        }
+
     }
 }
