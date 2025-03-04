@@ -18,7 +18,7 @@ namespace WebAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO request)
         {
-            var result = await _accountServices.LoginAsync(request.Phone, request.Password);
+            var result = await _accountServices.LoginAsync(request.Email, request.Password);
             return Ok(result);
         }
     }

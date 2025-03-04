@@ -1,11 +1,6 @@
 ﻿using Application.Commons;
-using Domain;
+using Domain.Model;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Application.ViewModel.Response.OrderResponse;
 using static Application.ViewModel.Response.ProductResponse;
 
@@ -31,7 +26,7 @@ namespace Infrastructure.Repositories.Implement
                 .Select(o => new OrderResultDTO
                 {
                     TotalPrice = o.TotalPrice,
-                    Email = o.Customer.AccountProfile.Email,
+                    Phone = o.Customer.AccountProfile.Phone,
                     CreatedAt = o.CreatedAt.HasValue ? o.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null, // Fix lỗi
                     OrderItems = o.OrderDetails.Select(od => new ViewProductDTO
                     {
@@ -68,7 +63,7 @@ namespace Infrastructure.Repositories.Implement
                 .Select(o => new OrderResultDTO
                 {
                     TotalPrice = o.TotalPrice,
-                    Email = o.Customer.AccountProfile.Email,
+                    Phone = o.Customer.AccountProfile.Phone,
                     CreatedAt = o.CreatedAt.HasValue ? o.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
                     OrderItems = o.OrderDetails.Select(od => new ViewProductDTO
                     {

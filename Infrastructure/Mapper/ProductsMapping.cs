@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Domain;
+using Domain.Model;
 using Infrastructure.Repositories.Implement;
 using System;
 using System.Collections.Generic;
