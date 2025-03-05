@@ -80,11 +80,11 @@ namespace Infrastructure
                 new Category { CategoryId = 2, CategoryName = "Fruit" }
                 );
             builder.Entity<Product>().HasData(
-                new Product { ProductId = 1, ProductName = "Vegetable 1", Images = null, Price = 10, StockQuantity = 10000, Description = "Rau Den", Status = 1, CreatedAt = DateOnly.Parse("2/1/25"), UpdatedAt = DateOnly.Parse("2/1/25"), CategoryId = 1, CropId = 1 },
-                new Product { ProductId = 2, ProductName = "Vegetable 2", Images = null, Price = 15, StockQuantity = 10000, Description = "Salad", Status = 1, CreatedAt = DateOnly.Parse("2/1/25"), UpdatedAt = DateOnly.Parse("2/1/25"), CategoryId = 1, CropId = 1 },
-                new Product { ProductId = 3, ProductName = "Vegetable 3", Images = null, Price = 20, StockQuantity = 10000, Description = "Dau Ha Lan", Status = 1, CreatedAt = DateOnly.Parse("2/1/25"), UpdatedAt = DateOnly.Parse("2/1/25"), CategoryId = 1, CropId = 1 },
-                new Product { ProductId = 4, ProductName = "Fruit 1", Images = null, Price = 35, StockQuantity = 10000, Description = "Ca chua", Status = 1, CreatedAt = DateOnly.Parse("2/1/25"), UpdatedAt = DateOnly.Parse("2/1/25"), CategoryId = 1, CropId = 2 },
-                new Product { ProductId = 5, ProductName = "Fruit 2", Images = null, Price = 55, StockQuantity = 10000, Description = "Dua Hau", Status = 1, CreatedAt = DateOnly.Parse("2/1/25"), UpdatedAt = DateOnly.Parse("2/1/25"), CategoryId = 1, CropId = 3 }
+                new Product { ProductId = 1, ProductName = "Vegetable 1", Images = null, Price = 10000, StockQuantity = 10000, Description = "Rau Den", Status = 1, CreatedAt = DateOnly.Parse("2/1/25"), UpdatedAt = DateOnly.Parse("2/1/25"), CategoryId = 1, CropId = 1 },
+                new Product { ProductId = 2, ProductName = "Vegetable 2", Images = null, Price = 15000, StockQuantity = 10000, Description = "Salad", Status = 1, CreatedAt = DateOnly.Parse("2/1/25"), UpdatedAt = DateOnly.Parse("2/1/25"), CategoryId = 1, CropId = 1 },
+                new Product { ProductId = 3, ProductName = "Vegetable 3", Images = null, Price = 20000, StockQuantity = 10000, Description = "Dau Ha Lan", Status = 1, CreatedAt = DateOnly.Parse("2/1/25"), UpdatedAt = DateOnly.Parse("2/1/25"), CategoryId = 1, CropId = 1 },
+                new Product { ProductId = 4, ProductName = "Fruit 1", Images = null, Price = 35000, StockQuantity = 10000, Description = "Ca chua", Status = 1, CreatedAt = DateOnly.Parse("2/1/25"), UpdatedAt = DateOnly.Parse("2/1/25"), CategoryId = 1, CropId = 2 },
+                new Product { ProductId = 5, ProductName = "Fruit 2", Images = null, Price = 55000, StockQuantity = 10000, Description = "Dua Hau", Status = 1, CreatedAt = DateOnly.Parse("2/1/25"), UpdatedAt = DateOnly.Parse("2/1/25"), CategoryId = 1, CropId = 3 }
                 );
             builder.Entity<Schedule>().HasData(
                 new Schedule { ScheduleId = 1, StartDate = DateOnly.Parse("3/1/25"), EndDate = DateOnly.Parse("4/30/25"), Status = 1, CreatedAt = DateOnly.Parse("3/1/25"), UpdatedAt = DateOnly.Parse("3/1/25"), AssignedTo = 3, FarmActivityId = 1, FarmDetailsId = 1 },
