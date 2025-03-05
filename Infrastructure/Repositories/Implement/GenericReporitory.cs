@@ -20,7 +20,7 @@ namespace Infrastructure.Repositories.Implement
         public virtual async Task AddAsync(TModel model)
         {
             await _dbSet.AddAsync(model);
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
         public async Task<TModel?> FirstOrDefaultAsync(Expression<Func<TModel, bool>> predicate)

@@ -12,12 +12,13 @@ namespace Application.ViewModel.Request
         public class SelectProductDTO
         {
             public long ProductId { get; set; }
-            public int? StockQuantity { get; set; }
+            public int? StockQuantity { get; set; }          
         }
 
         public class CreateOrderDTO
         {
             public List<SelectProductDTO> OrderItems { get; set; } = new();
+            public string? ShippingAddress { get; set; }
         }
 
         public class UpdateOrderStatusDTO

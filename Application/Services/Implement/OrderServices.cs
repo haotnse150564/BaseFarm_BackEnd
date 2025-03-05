@@ -33,87 +33,99 @@ namespace Application.Services.Implement
 
         public async Task<ResponseDTO> CreateOrderAsync(CreateOrderDTO request, HttpContext context)
         {
-            var user = await _jwtUtils.GetCurrentUserAsync();
-            var errorMessages = new List<string>();
-
-            foreach (var item in request.OrderItems)
+            try
             {
-                var product = await _unitOfWork.productRepository.GetProductById(item.ProductId);
-                if (product == null) errorMessages.Add($"Product ID {item.ProductId} not found.");
-                else if (product.Status == 0) errorMessages.Add($"Product ID {item.ProductId} is unavailable.");
-                else if (product.StockQuantity < item.StockQuantity) errorMessages.Add($"Product ID {item.ProductId} not enough stock.");
-            }
+                var user = await _jwtUtils.GetCurrentUserAsync();
+                using var transaction = await _unitOfWork.BeginTransactionAsync();
+                var errorMessages = new List<string>();
 
-            if (errorMessages.Any())
-            {
-                return new ResponseDTO(Const.FAIL_CREATE_CODE, "Order creation failed.", errorMessages);
-            }
-
-            var order = new Order
-            {
-                CustomerId = user.AccountId,
-                TotalPrice = 0,
-                Status = 1, // Đang xử lý
-                CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow),
-            };
-
-            await _unitOfWork.orderRepository.AddAsync(order);
-            await _unitOfWork.SaveChangesAsync(); // 🔥 Đảm bảo OrderId đã cập nhật
-
-            decimal totalPrice = 0;
-            var orderItems = new List<OrderDetail>();
-
-            foreach (var item in request.OrderItems)
-            {
-                var product = await _unitOfWork.productRepository.GetProductById(item.ProductId);
-                if (product == null) continue;
-
-                if (product.StockQuantity >= item.StockQuantity)
+                foreach (var item in request.OrderItems)
                 {
-                    var orderDetail = new OrderDetail
+                    var product = await _unitOfWork.productRepository.GetProductById(item.ProductId);
+                    if (product == null) errorMessages.Add($"Product ID {item.ProductId} not found.");
+                    else if (product.Status == 0) errorMessages.Add($"Product ID {item.ProductId} is unavailable.");
+                    else if (product.StockQuantity < item.StockQuantity) errorMessages.Add($"Product ID {item.ProductId} not enough stock.");
+                }
+
+                if (errorMessages.Any())
+                {
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Order creation failed.", errorMessages);
+                }
+
+                var order = new Order
+                {
+                    CustomerId = user.AccountId,
+                    //CustomerId = 3,
+                    TotalPrice = 0,
+                    Status = 1, // Đang xử lý
+                    CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow),
+                    ShippingAddress = request.ShippingAddress,
+                };
+
+                await _unitOfWork.orderRepository.AddAsync(order);
+                await _unitOfWork.SaveChangesAsync(); // 🔥 Đảm bảo OrderId đã cập nhật
+
+                decimal totalPrice = 0;
+                var orderItems = new List<OrderDetail>();
+
+                foreach (var item in request.OrderItems)
+                {
+                    var product = await _unitOfWork.productRepository.GetProductById(item.ProductId);
+                    if (product == null) continue;
+
+                    if (product.StockQuantity >= item.StockQuantity)
                     {
-                        OrderId = order.OrderId,
-                        ProductId = item.ProductId,
-                        Quantity = item.StockQuantity,
-                        UnitPrice = product.Price
-                    };
+                        var orderDetail = new OrderDetail
+                        {
+                            OrderId = order.OrderId,
+                            ProductId = item.ProductId,
+                            Quantity = item.StockQuantity,
+                            UnitPrice = product.Price
+                        };
 
-                    await _unitOfWork.orderDetailRepository.AddAsync(orderDetail);
-                    await _unitOfWork.SaveChangesAsync(); // 🔥 Lưu ngay OrderDetail
+                        await _unitOfWork.orderDetailRepository.AddAsync(orderDetail);
+                        orderItems.Add(orderDetail); // 🔥 Lưu ngay OrderDetail
 
-                    product.StockQuantity -= item.StockQuantity;
-                    if (product.StockQuantity == 0) product.Status = 0;
-                    await _unitOfWork.productRepository.UpdateAsync(product);
-                    await _unitOfWork.SaveChangesAsync(); // 🔥 Lưu ngay sản phẩm cập nhật
+                        
 
-                    totalPrice += (decimal)((product.Price ?? 0) * item.StockQuantity);
-                    orderItems.Add(orderDetail);
+                        product.StockQuantity -= item.StockQuantity;
+                        if (product.StockQuantity == 0) product.Status = 0;
+                        await _unitOfWork.productRepository.UpdateAsync(product);
+                        await _unitOfWork.SaveChangesAsync(); // 🔥 Lưu ngay sản phẩm cập nhật
+
+                        totalPrice += (decimal)((product.Price ?? 0) * item.StockQuantity);
+                    }
+                    else
+                    {
+                        return new ResponseDTO(Const.FAIL_CREATE_CODE, $"Not enough stock for product {item.ProductId}.", null);
+                    }
                 }
-                else
+
+                order.TotalPrice = totalPrice;
+                await _unitOfWork.orderRepository.UpdateAsync(order);
+                await _unitOfWork.SaveChangesAsync(); // 🔥 Lưu thay đổi Order
+                
+                // Commit transaction sau khi tất cả dữ liệu được thêm thành công
+                await transaction.CommitAsync();
+                var paymentModel = new PaymentInformationModel
                 {
-                    return new ResponseDTO(Const.FAIL_CREATE_CODE, $"Not enough stock for product {item.ProductId}.", null);
-                }
-            }
+                    Amount = (double)totalPrice,
+                    OrderDescription = $"Thanh toán đơn hàng #{order.OrderId}",
+                    OrderType = "billpayment",
+                    Name = "IOT Base Farm"
+                };
 
-            order.TotalPrice = totalPrice;
-            await _unitOfWork.orderRepository.UpdateAsync(order);
-            await _unitOfWork.SaveChangesAsync(); // 🔥 Lưu thay đổi Order
+                var paymentUrl = _vnPayService.CreatePaymentUrl(paymentModel, context);
 
-            var paymentModel = new PaymentInformationModel
+                var orderResultDTO = _mapper.Map<CreateOrderResultDTO>(order);
+                orderResultDTO.OrderItems = _mapper.Map<List<ViewProductDTO>>(orderItems);
+                orderResultDTO.PaymentUrl = paymentUrl;
+
+                return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Order created. Redirect to payment.", orderResultDTO);
+            }catch (Exception ex)
             {
-                Amount = (double)totalPrice,
-                OrderDescription = $"Thanh toán đơn hàng #{order.OrderId}",
-                OrderType = "billpayment",
-                Name = "IOT Base Farm"
-            };
-
-            var paymentUrl = _vnPayService.CreatePaymentUrl(paymentModel, context);
-
-            var orderResultDTO = _mapper.Map<CreateOrderResultDTO>(order);
-            orderResultDTO.OrderItems = _mapper.Map<List<ViewProductDTO>>(orderItems);
-            orderResultDTO.PaymentUrl = paymentUrl;
-
-            return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Order created. Redirect to payment.", orderResultDTO);
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "An error occurred while creating the order.", ex.Message);
+            }
         }
 
 

@@ -4,6 +4,7 @@ using Application.Services;
 using Infrastructure.Repositories;
 using Infrastructure.Repositories.Implement;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Infrastructure
 {
@@ -85,6 +86,10 @@ namespace Infrastructure
             _context.Dispose();
         }
 
+        public async Task<IDbContextTransaction> BeginTransactionAsync()
+        {
+            return await _context.Database.BeginTransactionAsync();
+        }
         public async Task<int> SaveChangesAsync()
         {
             return await _context.SaveChangesAsync();
