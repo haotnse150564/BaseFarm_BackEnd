@@ -33,6 +33,7 @@ namespace Application.Services.Implement
 
         public async Task<ResponseDTO> CreateOrderAsync(CreateOrderDTO request, HttpContext context)
         {
+            var user = await _jwtUtils.GetCurrentUserAsync();
             var errorMessages = new List<string>();
 
             foreach (var item in request.OrderItems)
@@ -50,7 +51,7 @@ namespace Application.Services.Implement
 
             var order = new Order
             {
-                CustomerId = 1,
+                CustomerId = user.AccountId,
                 TotalPrice = 0,
                 Status = 1, // Đang xử lý
                 CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow),
