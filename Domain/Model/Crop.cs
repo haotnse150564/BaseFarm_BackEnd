@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Enum;
+using System;
 using System.Collections.Generic;
 
 namespace Domain.Model;
@@ -11,7 +12,7 @@ public partial class Crop
 
     public string? Description { get; set; }
 
-    public int? Status { get; set; }
+    public Status? Status { get; set; }
 
     public DateOnly? PlantingDate { get; set; }
 

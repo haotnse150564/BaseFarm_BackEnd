@@ -14,7 +14,7 @@ public partial class Account
 
     public Roles? Role { get; set; }
 
-    public int? Status { get; set; }
+    public Status? Status { get; set; }
 
     public string? RefreshToken { get; set; }
 

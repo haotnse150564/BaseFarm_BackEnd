@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Domain.Enum;
+using System;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 
 namespace Domain.Model;
 
@@ -8,10 +10,9 @@ public partial class Feedback
     public int FeedbackId { get; set; }
 
     public string? Comment { get; set; }
-
     public int? Rating { get; set; }
 
-    public int? Status { get; set; }
+    public Status? Status { get; set; }
 
     public DateOnly? CreatedAt { get; set; }
 
