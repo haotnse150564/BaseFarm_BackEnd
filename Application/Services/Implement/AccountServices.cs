@@ -71,6 +71,15 @@ namespace WebAPI.Services
             
             await _unitOfWork.accountRepository.AddAsync(newAccount);
 
+            // Tạo profile rỗng với CreatedAt
+            var newProfile = new AccountProfile
+            {
+                AccountProfileId = newAccount.AccountId,
+                CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow)
+            };
+
+            await _unitOfWork.accountProfileRepository.AddAsync(newProfile);
+
             return new ResponseDTO(201, "Registration successful.");
         }
     }

@@ -24,6 +24,7 @@ public static class DependencyInjection
         services.AddAutoMapper(typeof(ProductsMapping));
         services.AddAutoMapper(typeof(FeedbackMapping));
         services.AddAutoMapper(typeof(OrderMapping));
+        services.AddAutoMapper(typeof(AccountProfileMapping));
 
         #region Config Repository and Service
         //repository
@@ -37,6 +38,7 @@ public static class DependencyInjection
         services.AddScoped<IProductServices, ProductServices>();
         services.AddScoped<IFeedbackSevices, FeedbackServices>();
         services.AddScoped<IAccountServices, AccountServices>();
+        services.AddScoped<IAccountProfileServices, AccountProfileServices>();
         services.AddScoped<IOrderServices, OrderServices>();
         services.AddScoped<IVnPayService, VnPayService>();
 

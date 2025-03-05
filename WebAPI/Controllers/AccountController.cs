@@ -5,7 +5,7 @@ using static Infrastructure.ViewModel.Request.AccountRequest;
 
 namespace WebAPI.Controllers
 {
-    [Route("api/v1/products")]
+    [Route("api/v1/account")]
     [ApiController]
     public class AccountController : ControllerBase
     {
