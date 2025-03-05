@@ -1,5 +1,6 @@
 ﻿using Application.Services;
 using Microsoft.AspNetCore.Mvc;
+using WebAPI.Services;
 using static Infrastructure.ViewModel.Request.AccountRequest;
 
 namespace WebAPI.Controllers
@@ -20,6 +21,17 @@ namespace WebAPI.Controllers
         {
             var result = await _accountServices.LoginAsync(request.Email, request.Password);
             return Ok(result);
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterRequestDTO request)
+        {
+            var response = await _accountServices.RegisterAsync(request);
+
+            if (response.Status == 201)
+                return Ok(response);
+
+            return BadRequest(response);
         }
     }
 }

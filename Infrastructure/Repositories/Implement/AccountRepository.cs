@@ -1,4 +1,5 @@
 ﻿using Domain.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories.Implement
 {
@@ -7,5 +8,10 @@ namespace Infrastructure.Repositories.Implement
         private readonly AppDbContext _context;
 
         public AccountRepository(AppDbContext context) => _context = context;
+
+        public async Task<Account?> GetByEmailAsync(string email)
+        {
+            return await _dbSet.FirstOrDefaultAsync(a => a.Email == email);
+        }
     }
 }
