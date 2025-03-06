@@ -1,6 +1,7 @@
 ﻿using Application.Commons;
 using Application.Interfaces;
 using AutoMapper;
+using Domain.Enum;
 using Domain.Model;
 using Microsoft.Extensions.Configuration;
 using static Application.ViewModel.Request.ProductRequest;
@@ -186,7 +187,7 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Product not found !");
                 }
 
-                product.Status = (product.Status == 1) ? 0 : 1;
+                product.Status = (product.Status == Status.ACTIVE) ? Status.ACTIVE : Status.SUSPENDED;
 
                 // Lưu các thay đổi vào cơ sở dữ liệu
                 await _unitOfWork.productRepository.UpdateAsync(product);

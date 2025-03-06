@@ -64,7 +64,7 @@ namespace WebAPI.Services
                 Email = request.Email,
                 PasswordHash = hashedPassword,
                 Role = Roles.Customer,
-                Status = 1, // Active
+                Status = Status.ACTIVE, // Active
                 CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow)
             };
 

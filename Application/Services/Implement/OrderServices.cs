@@ -3,6 +3,7 @@ using Application.Utils;
 using Application.ViewModel.Request;
 using AutoMapper;
 using Domain;
+using Domain.Enum;
 using Domain.Model;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -57,7 +58,7 @@ namespace Application.Services.Implement
                     CustomerId = user.AccountId,
                     //CustomerId = 3,
                     TotalPrice = 0,
-                    Status = 1, // Đang xử lý
+                    Status = Status.ACTIVE, // Đang xử lý
                     CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow),
                     ShippingAddress = request.ShippingAddress,
                 };
