@@ -806,7 +806,7 @@ namespace Infrastructure.Migrations
                             CreatedAt = new DateOnly(2025, 3, 1),
                             CustomerId = 8L,
                             ShippingAddress = "HCM",
-                            Status = 0,
+                            Status = 1,
                             TotalPrice = 105m,
                             UpdatedAt = new DateOnly(2025, 3, 1)
                         },
@@ -915,7 +915,7 @@ namespace Infrastructure.Migrations
                         {
                             PaymentId = 2L,
                             OrderId = 2L,
-                            PaymentStatus = 0,
+                            PaymentStatus = 1,
                             TransactionDate = new DateOnly(2025, 3, 1)
                         },
                         new
@@ -1097,7 +1097,7 @@ namespace Infrastructure.Migrations
                             GeneratedBy = 2L,
                             ReportDate = new DateOnly(2025, 3, 5),
                             ReportType = 2,
-                            Status = 0
+                            Status = 1
                         },
                         new
                         {
@@ -1105,7 +1105,7 @@ namespace Infrastructure.Migrations
                             GeneratedBy = 2L,
                             ReportDate = new DateOnly(2025, 3, 10),
                             ReportType = 1,
-                            Status = 0
+                            Status = 1
                         },
                         new
                         {

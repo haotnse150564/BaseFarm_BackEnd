@@ -39,5 +39,13 @@ namespace Application.ViewModel.Response
             public string? PaymentUrl { get; set; } // 🔥 Thêm URL thanh toán vào DTO
         }
 
+        public class OrderDetailDTO
+        {
+            public long ProductId { get; set; } // ID của Product
+            public string ProductName { get; set; } = string.Empty; // 🔥 Thêm ProductName
+            public decimal? UnitPrice { get; set; }
+            public int? Quantity { get; set; }
+        }
+
     }
 }

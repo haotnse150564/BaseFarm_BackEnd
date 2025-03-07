@@ -20,7 +20,8 @@ namespace Infrastructure.Mapper
             CreateMap<CreateOrderDTO, Order>()
                 .ForMember(dest => dest.OrderDetails, opt => opt.Ignore()) // Chi tiết đơn hàng sẽ được xử lý riêng
                 .ForMember(dest => dest.TotalPrice, opt => opt.Ignore()) // Tổng tiền sẽ được tính sau
-                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateOnly.FromDateTime(DateTime.UtcNow)));
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateOnly.FromDateTime(DateTime.UtcNow)))
+                .ReverseMap();
 
             // Mapping từ SelectProductDTO -> OrderDetail
             CreateMap<SelectProductDTO, OrderDetail>()
@@ -43,13 +44,24 @@ namespace Infrastructure.Mapper
                 .ReverseMap();
 
 
-            CreateMap<Product, ViewProductDTO>(); // 🔥 Mapping trực tiếp từ Product sang ViewProductDTO
+            CreateMap<Product, ViewProductDTO>()
+                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.ProductName))
+                .ReverseMap(); // 🔥 Mapping trực tiếp từ Product sang ViewProductDTO
 
             CreateMap<UpdateOrderStatusDTO, Order>()
                 .ReverseMap();
 
             CreateMap<Order, CreateOrderResultDTO>()
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt.HasValue ? src.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null));
+
+            CreateMap<OrderDetail, OrderDetailDTO>()
+                .ForMember(dest => dest.ProductName, opt => opt.Ignore()); // 🔥 Tránh lỗi nếu ProductName chưa có
+
+            // 🔥 Mapping từ OrderDetailDTO sang ViewProductDTO
+            CreateMap<OrderDetailDTO, ViewProductDTO>()
+                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.ProductName))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.UnitPrice))
+                .ForMember(dest => dest.StockQuantity, opt => opt.MapFrom(src => src.Quantity));
         }
 
     }
