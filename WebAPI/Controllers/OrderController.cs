@@ -69,7 +69,7 @@ namespace WebAPI.Controllers
         //    return Ok(result);
         //}
 
-        [HttpGet("orderList")]
+        [HttpGet("order-list")]
         public async Task<IActionResult> GetListOrders([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
             var result = await _orderService.GetAllOrderAsync(pageIndex, pageSize);
@@ -82,7 +82,7 @@ namespace WebAPI.Controllers
             return Ok(result); // Trả về danh sách sản phẩm với phân trang
         }
 
-        [HttpGet("orderListByCustomerId/{id}")]
+        [HttpGet("order-list-by-customer/{id}")]
         public async Task<IActionResult> GetListOrdersByCustomerId([FromRoute] long id, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
             var result = await _orderService.GetAllOrderByCustomerIdAsync(id, pageIndex, pageSize);
@@ -95,7 +95,7 @@ namespace WebAPI.Controllers
             return Ok(result); // Trả về danh sách sản phẩm với phân trang
         }
 
-        [HttpGet("orderById/{orderId}")]
+        [HttpGet("order/{orderId}")]
         public async Task<IActionResult> GetOrderById(long orderId)
         {
             var result = await _orderService.GetOrderByIdAsync(orderId);
