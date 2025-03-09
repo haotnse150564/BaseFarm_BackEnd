@@ -2,6 +2,7 @@
 using Application.Services.Implement;
 using Application.ViewModel.Request;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using static Application.ViewModel.Request.OrderRequest;
 
 namespace WebAPI.Controllers
@@ -49,30 +50,6 @@ namespace WebAPI.Controllers
                 return StatusCode(500, new { message = "An error occurred while processing payment." });
             }
         }
-
-        /// <summary>
-        /// Xử lý callback từ VNPay sau khi thanh toán
-        /// </summary>
-        //[HttpGet("callback")]
-        //public async Task<IActionResult> PaymentCallback()
-        //{
-        //    try
-        //    {
-        //        var response = await Task.Run(() => _vnPayService.PaymentExecute(Request.Query));
-
-        //        if (response == null)
-        //        {
-        //            return BadRequest(new { message = "Invalid payment response." });
-        //        }
-
-        //        return Ok(response);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "Error while processing payment callback.");
-        //        return StatusCode(500, new { message = "An error occurred while processing the payment response." });
-        //    }
-        //}
 
         [HttpGet("callback")]
         public async Task<IActionResult> PaymentCallback()
