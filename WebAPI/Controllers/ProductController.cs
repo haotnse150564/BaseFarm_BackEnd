@@ -18,7 +18,7 @@ namespace WebAPI.Controllers
             _productService = productService;
         }
 
-        [HttpGet("productsList")]
+        [HttpGet("products-list")]
         public async Task<IActionResult> GetListProducts([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
             var result = await _productService.GetAllProductAsync(pageIndex, pageSize);
@@ -31,7 +31,7 @@ namespace WebAPI.Controllers
             return Ok(result); // Trả về danh sách sản phẩm với phân trang
         }
 
-        [HttpGet("GetProductById/{productId}")]
+        [HttpGet("get-product/{productId}")]
         public async Task<IActionResult> GetProductById([FromRoute] long productId)
         {
             
@@ -46,7 +46,7 @@ namespace WebAPI.Controllers
             return Ok(response); // Trả về mã 200 nếu thành công
         }
 
-        [HttpGet("searchProductByName/{productName}")]
+        [HttpGet("search-product/{productName}")]
         public async Task<IActionResult> GetProductByName([FromRoute] string productName, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
             var response = await _productService.GetProductByNameAsync(productName, pageIndex, pageSize);
@@ -60,7 +60,7 @@ namespace WebAPI.Controllers
         }
 
         //[Authorize(Roles = "Manager")]
-        [HttpPost("CreateProduct")]
+        [HttpPost("create")]
         public async Task<IActionResult> CreateProduct([FromBody] CreateProductDTO createRequest)
         {
             if (!ModelState.IsValid)
@@ -81,7 +81,7 @@ namespace WebAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin")]
-        [HttpPost("updateProduct/{id}")]
+        [HttpPost("update/{id}")]
         public async Task<IActionResult> UpdateProductAsync([FromBody] CreateProductDTO request, [FromRoute] long id)
         {
 
@@ -103,7 +103,7 @@ namespace WebAPI.Controllers
         }
 
         //[Authorize(Roles = "Admin, Manager")]
-        [HttpPost("changeProductStatus/{id}")]
+        [HttpPost("change-product-status/{id}")]
         public async Task<IActionResult> ChangeProductStatus([FromRoute] long id)
         {
 

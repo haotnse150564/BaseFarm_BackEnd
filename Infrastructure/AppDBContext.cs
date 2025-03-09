@@ -63,15 +63,15 @@ namespace Infrastructure
                 new Account { AccountId = 5, Email = "cus02@email.com", PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", Status = Domain.Enum.Status.ACTIVE, Role = Domain.Enum.Roles.Customer, RefreshToken = null, ExpireMinutes = 30, CreatedAt = DateOnly.Parse("2/1/25"), UpdatedAt = DateOnly.Parse("5/1/25") }
             );
             builder.Entity<AccountProfile>().HasData(
-                new AccountProfile { AccountProfileId = 1, Gender = 1, Phone = "0123456789", Fullname = "Admin", Address = "HCM", Images = null, CreatedAt = DateOnly.Parse("3/1/25"), UpdatedAt = DateOnly.Parse("3/1/25") },
-                new AccountProfile { AccountProfileId = 2, Gender = 1, Phone = "0123456789", Fullname = "Manager", Address = "HCM", Images = null, CreatedAt = DateOnly.Parse("1/1/25"), UpdatedAt = DateOnly.Parse("5/1/25") },
-                new AccountProfile { AccountProfileId = 3, Gender = 2, Phone = "0123456789", Fullname = "Staff 1", Address = "HCM", Images = null, CreatedAt = DateOnly.Parse("5/1/25"), UpdatedAt = DateOnly.Parse("5/1/25") },
-                new AccountProfile { AccountProfileId = 6, Gender = 1, Phone = "0123456789", Fullname = "Staff 2", Address = "HCM", Images = null, CreatedAt = DateOnly.Parse("5/1/25"), UpdatedAt = DateOnly.Parse("5/1/25") },
-                new AccountProfile { AccountProfileId = 4, Gender = 2, Phone = "0123456789", Fullname = "Customer 1", Address = "HCM", Images = null, CreatedAt = DateOnly.Parse("4/1/25"), UpdatedAt = DateOnly.Parse("5/1/25") },
-                new AccountProfile { AccountProfileId = 8, Gender = 1, Phone = "0123456789", Fullname = "Customer 3", Address = "HCM", Images = null, CreatedAt = DateOnly.Parse("4/1/25"), UpdatedAt = DateOnly.Parse("5/1/25") },
-                new AccountProfile { AccountProfileId = 7, Gender = 1, Phone = "0123456789", Fullname = "Customer 4", Address = "HCM", Images = null, CreatedAt = DateOnly.Parse("4/1/25"), UpdatedAt = DateOnly.Parse("5/1/25") },
-                new AccountProfile { AccountProfileId = 5, Gender = 2, Phone = "0123456789", Fullname = "Customer 2", Address = "HCM", Images = null, CreatedAt = DateOnly.Parse("2/1/25"), UpdatedAt = DateOnly.Parse("5/1/25") },
-                new AccountProfile { AccountProfileId = 9, Gender = 1, Phone = "0123456789", Fullname = "Staff 3", Address = "HCM", Images = null, CreatedAt = DateOnly.Parse("2/1/25"), UpdatedAt = DateOnly.Parse("5/1/25") }
+                new AccountProfile { AccountProfileId = 1, Gender = Domain.Enum.Gender.Male, Phone = "0123456789", Fullname = "Admin", Address = "HCM", Images = null, CreatedAt = DateOnly.Parse("3/1/25"), UpdatedAt = DateOnly.Parse("3/1/25") },
+                new AccountProfile { AccountProfileId = 2, Gender = Domain.Enum.Gender.Male, Phone = "0123456789", Fullname = "Manager", Address = "HCM", Images = null, CreatedAt = DateOnly.Parse("1/1/25"), UpdatedAt = DateOnly.Parse("5/1/25") },
+                new AccountProfile { AccountProfileId = 3, Gender = Domain.Enum.Gender.Female, Phone = "0123456789", Fullname = "Staff 1", Address = "HCM", Images = null, CreatedAt = DateOnly.Parse("5/1/25"), UpdatedAt = DateOnly.Parse("5/1/25") },
+                new AccountProfile { AccountProfileId = 6, Gender = Domain.Enum.Gender.Male, Phone = "0123456789", Fullname = "Staff 2", Address = "HCM", Images = null, CreatedAt = DateOnly.Parse("5/1/25"), UpdatedAt = DateOnly.Parse("5/1/25") },
+                new AccountProfile { AccountProfileId = 4, Gender = Domain.Enum.Gender.Female, Phone = "0123456789", Fullname = "Customer 1", Address = "HCM", Images = null, CreatedAt = DateOnly.Parse("4/1/25"), UpdatedAt = DateOnly.Parse("5/1/25") },
+                new AccountProfile { AccountProfileId = 8, Gender = Domain.Enum.Gender.Male, Phone = "0123456789", Fullname = "Customer 3", Address = "HCM", Images = null, CreatedAt = DateOnly.Parse("4/1/25"), UpdatedAt = DateOnly.Parse("5/1/25") },
+                new AccountProfile { AccountProfileId = 7, Gender = Domain.Enum.Gender.Male, Phone = "0123456789", Fullname = "Customer 4", Address = "HCM", Images = null, CreatedAt = DateOnly.Parse("4/1/25"), UpdatedAt = DateOnly.Parse("5/1/25") },
+                new AccountProfile { AccountProfileId = 5, Gender = Domain.Enum.Gender.Female, Phone = "0123456789", Fullname = "Customer 2", Address = "HCM", Images = null, CreatedAt = DateOnly.Parse("2/1/25"), UpdatedAt = DateOnly.Parse("5/1/25") },
+                new AccountProfile { AccountProfileId = 9, Gender = Domain.Enum.Gender.Male, Phone = "0123456789", Fullname = "Staff 3", Address = "HCM", Images = null, CreatedAt = DateOnly.Parse("2/1/25"), UpdatedAt = DateOnly.Parse("5/1/25") }
             );
             builder.Entity<Category>().HasData(
                 new Category { CategoryId = 1, CategoryName = "Vegetable" },
@@ -135,9 +135,9 @@ namespace Infrastructure
                 new OrderDetail { OrderDetailId = 3, OrderId = 1, Quantity = 21, UnitPrice = 10, ProductId = 2 }
                 );
             builder.Entity<Payment>().HasData(
-                new Payment { PaymentId = 1, OrderId = 1, PaymentStatus = 1, TransactionDate = DateOnly.Parse("3/1/25") },
-                new Payment { PaymentId = 2, OrderId = 2, PaymentStatus = 1, TransactionDate = DateOnly.Parse("3/1/25") },
-                new Payment { PaymentId = 3, OrderId = 3, PaymentStatus = 1, TransactionDate = DateOnly.Parse("3/1/25") }
+                new Payment { PaymentId = 1, OrderId = 1, TransactionId = "VNPay01", Amount = 100000, PaymentMethod = "VNPay", VnPayResponseCode = "VNPayPayment01", Success = true, PaymentTime = DateTime.Parse("3/1/25"), CreateDate = DateTime.Parse("3/1/25"), UpdateDate = null },
+                new Payment { PaymentId = 2, OrderId = 2, TransactionId = "VNPay02", Amount = 150000, PaymentMethod = "VNPay", VnPayResponseCode = "VNPayPayment02", Success = false, PaymentTime = DateTime.Parse("3/1/25"), CreateDate = DateTime.Parse("3/1/25"), UpdateDate = null },
+                new Payment { PaymentId = 3, OrderId = 3, TransactionId = "VNPay03", Amount = 315000, PaymentMethod = "VNPay", VnPayResponseCode = "VNPayPayment03", Success = false, PaymentTime = DateTime.Parse("3/1/25"), CreateDate = DateTime.Parse("3/1/25"), UpdateDate = null }
                 );
             builder.Entity<Report>().HasData(
                 new Report { ReportId = 1, ReportDate = DateOnly.Parse("3/1/25"), ReportType = 1, FilePath = null, Status = Domain.Enum.Status.ACTIVE, GeneratedBy = 2 },
