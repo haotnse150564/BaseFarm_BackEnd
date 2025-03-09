@@ -47,7 +47,7 @@ public class VnPayLibrary
             Success = vnpResponseCode.Equals("00"),
             PaymentMethod = "VnPay",
             OrderDescription = orderInfo,
-            OrderId = orderId.ToString(),
+            OrderId = orderId,
             PaymentId = vnPayTranId.ToString(),
             TransactionId = vnPayTranId.ToString(),
             Token = vnpSecureHash,

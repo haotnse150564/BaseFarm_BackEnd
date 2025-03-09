@@ -203,7 +203,7 @@ namespace Infrastructure.Migrations
                             Address = "HCM",
                             CreatedAt = new DateOnly(2025, 3, 1),
                             Fullname = "Admin",
-                            Gender = 1,
+                            Gender = 0,
                             Phone = "0123456789",
                             UpdatedAt = new DateOnly(2025, 3, 1)
                         },
@@ -213,7 +213,7 @@ namespace Infrastructure.Migrations
                             Address = "HCM",
                             CreatedAt = new DateOnly(2025, 1, 1),
                             Fullname = "Manager",
-                            Gender = 1,
+                            Gender = 0,
                             Phone = "0123456789",
                             UpdatedAt = new DateOnly(2025, 5, 1)
                         },
@@ -223,7 +223,7 @@ namespace Infrastructure.Migrations
                             Address = "HCM",
                             CreatedAt = new DateOnly(2025, 5, 1),
                             Fullname = "Staff 1",
-                            Gender = 2,
+                            Gender = 1,
                             Phone = "0123456789",
                             UpdatedAt = new DateOnly(2025, 5, 1)
                         },
@@ -233,7 +233,7 @@ namespace Infrastructure.Migrations
                             Address = "HCM",
                             CreatedAt = new DateOnly(2025, 5, 1),
                             Fullname = "Staff 2",
-                            Gender = 1,
+                            Gender = 0,
                             Phone = "0123456789",
                             UpdatedAt = new DateOnly(2025, 5, 1)
                         },
@@ -243,7 +243,7 @@ namespace Infrastructure.Migrations
                             Address = "HCM",
                             CreatedAt = new DateOnly(2025, 4, 1),
                             Fullname = "Customer 1",
-                            Gender = 2,
+                            Gender = 1,
                             Phone = "0123456789",
                             UpdatedAt = new DateOnly(2025, 5, 1)
                         },
@@ -253,7 +253,7 @@ namespace Infrastructure.Migrations
                             Address = "HCM",
                             CreatedAt = new DateOnly(2025, 4, 1),
                             Fullname = "Customer 3",
-                            Gender = 1,
+                            Gender = 0,
                             Phone = "0123456789",
                             UpdatedAt = new DateOnly(2025, 5, 1)
                         },
@@ -263,7 +263,7 @@ namespace Infrastructure.Migrations
                             Address = "HCM",
                             CreatedAt = new DateOnly(2025, 4, 1),
                             Fullname = "Customer 4",
-                            Gender = 1,
+                            Gender = 0,
                             Phone = "0123456789",
                             UpdatedAt = new DateOnly(2025, 5, 1)
                         },
@@ -273,7 +273,7 @@ namespace Infrastructure.Migrations
                             Address = "HCM",
                             CreatedAt = new DateOnly(2025, 2, 1),
                             Fullname = "Customer 2",
-                            Gender = 2,
+                            Gender = 1,
                             Phone = "0123456789",
                             UpdatedAt = new DateOnly(2025, 5, 1)
                         },
@@ -283,7 +283,7 @@ namespace Infrastructure.Migrations
                             Address = "HCM",
                             CreatedAt = new DateOnly(2025, 2, 1),
                             Fullname = "Staff 3",
-                            Gender = 1,
+                            Gender = 0,
                             Phone = "0123456789",
                             UpdatedAt = new DateOnly(2025, 5, 1)
                         });
@@ -885,17 +885,35 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("PaymentId"));
 
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<long>("OrderId")
                         .HasColumnType("bigint");
 
-                    b.Property<int?>("PaymentMethod")
-                        .HasColumnType("int");
+                    b.Property<string>("PaymentMethod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PaymentStatus")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("PaymentTime")
+                        .HasColumnType("datetime2");
 
-                    b.Property<DateOnly?>("TransactionDate")
-                        .HasColumnType("date");
+                    b.Property<bool>("Success")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("TransactionId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("VnPayResponseCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("PaymentId");
 
@@ -907,23 +925,38 @@ namespace Infrastructure.Migrations
                         new
                         {
                             PaymentId = 1L,
+                            Amount = 100000m,
+                            CreateDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OrderId = 1L,
-                            PaymentStatus = 1,
-                            TransactionDate = new DateOnly(2025, 3, 1)
+                            PaymentMethod = "VNPay",
+                            PaymentTime = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Success = true,
+                            TransactionId = "VNPay01",
+                            VnPayResponseCode = "VNPayPayment01"
                         },
                         new
                         {
                             PaymentId = 2L,
+                            Amount = 150000m,
+                            CreateDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OrderId = 2L,
-                            PaymentStatus = 1,
-                            TransactionDate = new DateOnly(2025, 3, 1)
+                            PaymentMethod = "VNPay",
+                            PaymentTime = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Success = false,
+                            TransactionId = "VNPay02",
+                            VnPayResponseCode = "VNPayPayment02"
                         },
                         new
                         {
                             PaymentId = 3L,
+                            Amount = 315000m,
+                            CreateDate = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             OrderId = 3L,
-                            PaymentStatus = 1,
-                            TransactionDate = new DateOnly(2025, 3, 1)
+                            PaymentMethod = "VNPay",
+                            PaymentTime = new DateTime(2025, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Success = false,
+                            TransactionId = "VNPay03",
+                            VnPayResponseCode = "VNPayPayment03"
                         });
                 });
 

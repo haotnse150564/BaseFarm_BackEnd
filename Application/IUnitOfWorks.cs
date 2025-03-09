@@ -15,5 +15,6 @@ namespace Application
         IAccountRepository accountRepository { get; }
         IOrderRepository orderRepository { get; }
         IOrderDetailRepository orderDetailRepository { get; }
+        IPaymentRepository paymentRepository { get; }
     }
 }

@@ -19,10 +19,11 @@ namespace Infrastructure
         private IAccountRepository _accountRepository;
         private IOrderRepository _orderRepository;
         private IOrderDetailRepository _orderDetailRepository;
+        private IPaymentRepository _paymentRepository;
 
         public UnitOfWorks(AppDbContext context, ICurrentTime currentTime, IClaimsServices claimsServices, IProductRepository productRepository
             , IFeedbackRepository feedbackRepository, IAccountProfileRepository accountProfileRepository, IOrderRepository orderRepository
-            , IOrderDetailRepository orderDetailRepository)
+            , IOrderDetailRepository orderDetailRepository, IPaymentRepository paymentRepository)
         {
             _context = context;
             _currentTime = currentTime;
@@ -32,6 +33,7 @@ namespace Infrastructure
             _accountProfileRepository = accountProfileRepository;
             _orderRepository = orderRepository;
             _orderDetailRepository = orderDetailRepository;
+            _paymentRepository = paymentRepository;
         }
 
         public IProductRepository productRepository
@@ -78,6 +80,14 @@ namespace Infrastructure
             get
             {
                 return _orderDetailRepository ??= new OrderDetailRepository(_context);
+            }
+        }
+
+        public IPaymentRepository paymentRepository
+        {
+            get
+            {
+                return _paymentRepository ??= new PaymentRepository(_context);
             }
         }
 

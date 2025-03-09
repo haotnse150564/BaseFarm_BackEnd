@@ -103,6 +103,7 @@ namespace Application.Services.Implement
 
                 var paymentModel = new PaymentInformationModel
                 {
+                    OrderId = order.OrderId, // Sử dụng OrderId của hệ thống bạn
                     Amount = (double)totalPrice,
                     OrderDescription = $"Thanh toán đơn hàng #{order.OrderId}",
                     OrderType = "billpayment",
@@ -110,6 +111,7 @@ namespace Application.Services.Implement
                 };
 
                 var paymentUrl = _vnPayService.CreatePaymentUrl(paymentModel, context);
+
 
                 // 🔥 Mapping lại OrderDetail sang OrderDetailDTO có ProductName
                 var orderDetailDTOs = orderItems.Select(od => new OrderDetailDTO

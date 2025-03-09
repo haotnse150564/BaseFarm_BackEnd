@@ -61,6 +61,9 @@ namespace WebAPI.Controllers
                     return BadRequest(new { message = "Invalid payment response." });
                 }
 
+                // ✅ Lưu thông tin thanh toán vào database
+                await _vnPayService.SavePaymentAsync(response);
+
                 // 🔥 Trả về thông tin payment như bình thường
                 return Ok(new
                 {
