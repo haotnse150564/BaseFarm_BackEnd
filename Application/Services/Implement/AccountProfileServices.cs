@@ -3,6 +3,7 @@ using Application;
 using AutoMapper;
 using Application.Services;
 using static Infrastructure.ViewModel.Response.AccountProfileResponse;
+using Infrastructure.ViewModel.Request;
 
 namespace WebAPI.Services
 {
@@ -29,8 +30,24 @@ namespace WebAPI.Services
                 throw new Exception("Profile not found");
 
             var profileResponse = _mapper.Map<ProfileResponseDTO>(profile);
-            profileResponse.Email = user.Email; // Thêm email từ bảng Account
+            profileResponse.Email = user.Email;
             return profileResponse;
+        }
+
+        public async Task<bool> UpdateProfileAsync(AccountProfileRequest.ProfileRequestDTO request)
+        {
+            var profile = await _unitOfWork.accountProfileRepository.GetByIdAsync(request.AccountId);
+
+            // Không tìm thấy profile
+            if (profile == null)
+                return false; 
+
+            _mapper.Map(request, profile);
+
+            profile.UpdatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
+
+            await _unitOfWork.accountProfileRepository.UpdateAsync(profile);
+            return true;
         }
     }
 }

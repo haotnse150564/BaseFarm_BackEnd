@@ -20,5 +20,7 @@ namespace Infrastructure.ViewModel.Response
             public DateTime? CreatedAt { get; set; }
         }
 
+        
+
     }
 }
