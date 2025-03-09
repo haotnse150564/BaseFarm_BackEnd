@@ -1,17 +1,9 @@
-﻿using Application.Commons;
-using Application.Utils;
+﻿using Application.Utils;
 using Application.ViewModel.Request;
 using AutoMapper;
-using Domain;
 using Domain.Enum;
 using Domain.Model;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Application.ViewModel.Request.OrderRequest;
 using static Application.ViewModel.Response.OrderResponse;
 using static Application.ViewModel.Response.ProductResponse;
