@@ -1,10 +1,6 @@
 ﻿using AutoMapper;
 using Domain.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static Infrastructure.ViewModel.Request.AccountProfileRequest;
 using static Infrastructure.ViewModel.Response.AccountProfileResponse;
 
 namespace Infrastructure.Mapper
@@ -22,6 +18,9 @@ namespace Infrastructure.Mapper
                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src =>
                     src.CreatedAt.HasValue ? src.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null))
+                .ReverseMap();
+            CreateMap<ProfileRequestDTO, AccountProfile>()
+                .ForMember(dest => dest.AccountProfileId, opt => opt.MapFrom(src => src.AccountId))
                 .ReverseMap();
         }
     }

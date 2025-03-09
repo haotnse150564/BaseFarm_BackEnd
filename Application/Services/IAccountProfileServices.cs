@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Infrastructure.ViewModel.Request;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,5 +11,6 @@ namespace Application.Services
     public interface IAccountProfileServices
     {
         Task<ProfileResponseDTO> ViewProfileAsync();
+        Task<bool> UpdateProfileAsync(AccountProfileRequest.ProfileRequestDTO request);
     }
 }

@@ -1,11 +1,12 @@
 ﻿using Application.Services;
+using Infrastructure.ViewModel.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Services;
 
 namespace WebAPI.Controllers
 {
-    [Route("api/v1/account")]
+    [Route("api/v1/account-profile")]
     [ApiController]
     public class AccountProfileController : ControllerBase
     {
@@ -23,5 +24,16 @@ namespace WebAPI.Controllers
             var profile = await _accountProfileServices.ViewProfileAsync();
             return Ok(profile);
         }
+
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateProfile([FromBody] AccountProfileRequest.ProfileRequestDTO request)
+        {
+            var result = await _accountProfileServices.UpdateProfileAsync(request);
+            if (!result)
+                return NotFound("Profile not found");
+
+            return Ok("Profile updated successfully");
+        }
     }
 }
+
