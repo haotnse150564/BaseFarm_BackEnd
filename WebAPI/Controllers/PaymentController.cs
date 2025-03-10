@@ -72,6 +72,7 @@ namespace WebAPI.Controllers
                     {
                         response.TransactionId,
                         response.OrderId, // Đây là OrderId của Payment, không phải Order thực tế
+                        response.Amount,
                         response.PaymentMethod,
                         response.VnPayResponseCode,
                         response.Success

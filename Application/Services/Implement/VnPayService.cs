@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using WebAPI.Services;
+using static Application.ViewModel.Response.OrderResponse;
 
 namespace Application.Services.Implement;
 
@@ -96,9 +97,9 @@ public class VnPayService : IVnPayService
         return response;
     }
 
-    public async Task SavePaymentAsync(PaymentResponseModel response)
+    public async Task<ResponseDTO> SavePaymentAsync(PaymentResponseModel response)
     {
-        using var transaction = await _unitOfWork.BeginTransactionAsync();
+        //using var transaction = await _unitOfWork.BeginTransactionAsync();
         try
         {
             var order = await _orderRepository.GetByIdAsync(response.OrderId);
@@ -111,10 +112,12 @@ public class VnPayService : IVnPayService
                 TransactionId = response.TransactionId,
                 PaymentMethod = response.PaymentMethod,
                 Success = response.Success ? true : false,
+                Amount = response.Amount,
+                PaymentTime = DateTime.UtcNow,
                 VnPayResponseCode = response.VnPayResponseCode,
                 CreateDate = DateTime.UtcNow
             };
-            _logger.LogInformation("dm payment"+payment);
+            _logger.LogInformation("payment"+payment);
 
             await _unitOfWork.paymentRepository.AddAsync(payment);
 
@@ -124,13 +127,14 @@ public class VnPayService : IVnPayService
                 await _orderRepository.UpdateAsync(order);
             }
 
-            //await _unitOfWork.SaveChangesAsync();
-            await transaction.CommitAsync();
+            await _unitOfWork.SaveChangesAsync();
+            //await transaction.CommitAsync();
+            return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Payment Created.");
         }
-        catch
+        catch(Exception ex)
         {
-            await transaction.RollbackAsync();
-            throw;
+            //await transaction.RollbackAsync();
+            return new ResponseDTO(Const.ERROR_EXCEPTION, "An error occurred while creating the payment.", ex.Message);
         }
     }
     }
