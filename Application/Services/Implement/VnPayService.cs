@@ -126,6 +126,11 @@ public class VnPayService : IVnPayService
                 order.Status = Status.PAID;
                 await _orderRepository.UpdateAsync(order);
             }
+            else
+            {
+                order.Status = Status.UNDISCHARGED; // Đặt trạng thái khác khi response không thành công
+                await _orderRepository.UpdateAsync(order);
+            }
 
             await _unitOfWork.SaveChangesAsync();
             //await transaction.CommitAsync();
