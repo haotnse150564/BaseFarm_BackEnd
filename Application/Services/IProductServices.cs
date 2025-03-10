@@ -16,5 +16,6 @@ namespace Application.Services
         Task<ResponseDTO> CreateProductAsync(CreateProductDTO request);
         Task<ResponseDTO> UpdateProductById(long productId, CreateProductDTO request);
         Task<ResponseDTO> ChangeProductStatusById(long productId);
+        Task<ResponseDTO> ChangeProductQuantityById(long productId, UpdateQuantityDTO request);
     }
 }

@@ -36,5 +36,12 @@ namespace Application.ViewModel.Request
             public long CropId { get; set; }
 
         }
+
+        public class UpdateQuantityDTO
+        {
+            [Required(ErrorMessage = "Stock Quantity is required.")]
+            [Range(0, int.MaxValue, ErrorMessage = "Stock Quantity cannot be negative.")]
+            public int? StockQuantity { get; set; }
+        }
     }
 }
