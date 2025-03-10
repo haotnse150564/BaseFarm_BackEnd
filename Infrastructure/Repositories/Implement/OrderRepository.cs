@@ -118,5 +118,43 @@ namespace Infrastructure.Repositories.Implement
                 .FirstOrDefaultAsync();
         }
 
+        public async Task<Pagination<OrderResultDTO>> GetOrdersByCustomerNameAsync(string customerName, int pageIndex, int pageSize)
+        {
+            var query = _context.Order
+                .Where(o => o.Customer.AccountProfile.Fullname.Contains(customerName)) // Lọc theo tên khách hàng
+                .Include(o => o.Customer)
+                .Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.Product)
+                .OrderByDescending(o => o.CreatedAt);
+
+            var totalItemCount = await query.CountAsync();
+
+            var orders = await query
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .Select(o => new OrderResultDTO
+                {
+                    TotalPrice = o.TotalPrice,
+                    Email = o.Customer.Email,
+                    CreatedAt = o.CreatedAt.HasValue ? o.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
+                    OrderItems = o.OrderDetails.Select(od => new ViewProductDTO
+                    {
+                        ProductName = od.Product.ProductName,
+                        Price = od.UnitPrice,
+                        StockQuantity = od.Quantity
+                    }).ToList()
+                })
+                .ToListAsync();
+
+            return new Pagination<OrderResultDTO>
+            {
+                TotalItemCount = totalItemCount,
+                PageIndex = pageIndex,
+                PageSize = pageSize,
+                Items = orders
+            };
+        }
+
+
     }
 }

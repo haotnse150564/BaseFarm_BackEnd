@@ -108,5 +108,18 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
 
+        [HttpGet("order-list-by-customer-name/{name}")]
+        public async Task<IActionResult> GetListOrdersByCustomerName([FromRoute] string name, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
+        {
+            var result = await _orderService.GetAllOrderByCustomerNameAsync(name, pageIndex, pageSize);
+
+            if (result.Status != Const.SUCCESS_READ_CODE)
+            {
+                return BadRequest(result); // Trả về lỗi 400 nếu thất bại
+            }
+
+            return Ok(result); // Trả về danh sách đơn hàng với phân trang
+        }
+
     }
 }

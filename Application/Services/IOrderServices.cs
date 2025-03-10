@@ -18,5 +18,6 @@ namespace Application.Services
         Task<ResponseDTO> GetOrderByIdAsync(long orderId);
         Task<ResponseDTO> UpdateOrderStatusAsync(long orderId, UpdateOrderStatusDTO request);
         Task<long> GetOrderIdByOrderIdAsync(long orderId);
+        Task<ResponseDTO> GetAllOrderByCustomerNameAsync(string customerName, int pageIndex, int pageSize);
     }
 }
