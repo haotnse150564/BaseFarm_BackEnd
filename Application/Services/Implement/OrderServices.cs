@@ -172,6 +172,31 @@ namespace Application.Services.Implement
             }
         }
 
+        public async Task<ResponseDTO> GetAllOrderByCurrentCustomerAsync(int pageIndex, int pageSize)
+        {
+            try
+            {
+                var user = await _jwtUtils.GetCurrentUserAsync();
+                if (user == null)
+                {
+                    return new ResponseDTO(Const.ERROR_EXCEPTION, "No Login Session Found!");
+                }
+
+                var listOrder = await _unitOfWork.orderRepository.GetOrdersByCustomerIdAsync(user.AccountId, pageIndex, pageSize);
+
+                if (listOrder == null || !listOrder.Items.Any())
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "No Order found.");
+                }
+
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, listOrder);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+            }
+        }
+
         public async Task<ResponseDTO> GetOrderByIdAsync(long orderId)
         {
             try

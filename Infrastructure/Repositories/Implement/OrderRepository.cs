@@ -64,6 +64,7 @@ namespace Infrastructure.Repositories.Implement
                 {
                     TotalPrice = o.TotalPrice,
                     Email = o.Customer.Email,
+                    Status = o.Status,
                     CreatedAt = o.CreatedAt.HasValue ? o.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
                     OrderItems = o.OrderDetails.Select(od => new ViewProductDTO
                     {
@@ -136,6 +137,7 @@ namespace Infrastructure.Repositories.Implement
                 {
                     TotalPrice = o.TotalPrice,
                     Email = o.Customer.Email,
+                    Status = o.Status,
                     CreatedAt = o.CreatedAt.HasValue ? o.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
                     OrderItems = o.OrderDetails.Select(od => new ViewProductDTO
                     {

@@ -95,6 +95,19 @@ namespace WebAPI.Controllers
             return Ok(result); // Trả về danh sách sản phẩm với phân trang
         }
 
+        [HttpGet("order-list-by-current-account")]
+        public async Task<IActionResult> GetListOrdersByCurrentCustomer([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
+        {
+            var result = await _orderService.GetAllOrderByCurrentCustomerAsync(pageIndex, pageSize);
+
+            if (result.Status != Const.SUCCESS_READ_CODE)
+            {
+                return BadRequest(result); // Trả về lỗi 400 nếu thất bại
+            }
+
+            return Ok(result); // Trả về danh sách sản phẩm với phân trang
+        }
+
         [HttpGet("order/{orderId}")]
         public async Task<IActionResult> GetOrderById(long orderId)
         {

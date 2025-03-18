@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Enum;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,6 +28,7 @@ namespace Application.ViewModel.Response
             public decimal? TotalPrice { get; set; }
             public string? Email { get; set; }
             public DateTime? CreatedAt { get; set; }
+            public Status? Status { get; set; }
             public List<ViewProductDTO> OrderItems { get; set; } = new();
         }
 
