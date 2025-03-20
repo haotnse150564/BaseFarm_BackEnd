@@ -23,6 +23,7 @@ namespace Application.ViewModel.Response
 
         public class ViewProductDTO
         {
+            public long ProductId { get; set; }
             public string? ProductName { get; set; }
             public decimal? Price { get; set; }
             public int? StockQuantity { get; set; }
