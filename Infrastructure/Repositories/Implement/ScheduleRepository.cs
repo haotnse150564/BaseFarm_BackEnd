@@ -9,5 +9,7 @@ namespace Infrastructure.Repositories.Implement
 {
     public class ScheduleRepository : GenericRepository<Schedule>, IScheduleRepository
     {
+        public ScheduleRepository(AppDbContext context) => _context = context;
+
     }
 }
