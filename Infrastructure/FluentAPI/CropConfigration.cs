@@ -23,16 +23,13 @@ namespace Infrastructure.FluentAPI
             builder.Property(e => e.FarmDetailsId);
             builder.Property(e => e.Fertilizer)
                  .HasMaxLength(255)
-                 .IsUnicode(false)
-                 .HasColumnName("fertilizer");
+                 .IsUnicode(false);
             builder.Property(e => e.HarvestDate);
             builder.Property(e => e.Moisture)
-                 .HasColumnType("decimal(5, 2)")
-                 .HasColumnName("moisture");
-            builder.Property(e => e.PlantingDate);
-            builder.Property(e => e.Status);
-            builder.Property(e => e.Temperature)
                  .HasColumnType("decimal(5, 2)");
+            builder.Property(e => e.PlantingDate);
+            builder.Property(e => e.Status).HasConversion<int>();
+            builder.Property(e => e.Temperature);
 
             builder.HasOne(d => d.FarmDetails).WithMany(p => p.Crops)
                  .HasForeignKey(d => d.FarmDetailsId);

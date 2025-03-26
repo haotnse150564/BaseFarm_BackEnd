@@ -18,7 +18,7 @@ namespace Infrastructure.FluentAPI
                 ;                                                       
             builder.Property(e => e.Email);
             builder.Property(e => e.Role);
-            builder.Property(e => e.Status);
+            builder.Property(e => e.Status).HasConversion<int>();
             builder.Property(e => e.UpdatedAt);
         }
     }
