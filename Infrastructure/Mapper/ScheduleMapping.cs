@@ -9,7 +9,7 @@ using static Infrastructure.ViewModel.Response.ScheduleResponse;
 
 namespace Infrastructure.Mapper
 {
-    public class ScheduleMapping :Profile
+    public class ScheduleMapping : Profile
     {
         public ScheduleMapping()
         {
