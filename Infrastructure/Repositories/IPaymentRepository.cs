@@ -11,5 +11,6 @@ namespace Infrastructure.Repositories
     public interface IPaymentRepository : IGenericRepository<Payment>
     {
         Task<Payment> GetByTransactionIdAsync(string transactionId);
+        Task<Payment> GetByOrderIdAsync(long orderId);
     }
 }

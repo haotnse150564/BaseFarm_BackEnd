@@ -19,5 +19,20 @@ namespace Infrastructure.Repositories.Implement
                 .Include(u => u.Order)
                 .FirstOrDefaultAsync(p => p.TransactionId == transactionId);
         }
+
+        public async Task<Payment> GetByOrderIdAsync(long orderId)
+        {
+            var payment = await _context.Payment
+                .Include(u => u.Order)
+                .FirstOrDefaultAsync(p => p.OrderId == orderId);
+
+            if (payment == null)
+            {
+                throw new KeyNotFoundException($"Không tìm thấy Payment với OrderId = {orderId}");
+            }
+
+            return payment;
+
+        }
     }
 }

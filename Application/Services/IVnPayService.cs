@@ -10,4 +10,5 @@ public interface IVnPayService
     string CreatePaymentUrl(PaymentInformationModel model, HttpContext context);
     PaymentResponseModel PaymentExecute(IQueryCollection collections);
     Task<ResponseDTO> SavePaymentAsync(PaymentResponseModel response);
+    Task<ResponseDTO> GetPaymentByOrderIdAsync(long orderId);
 }

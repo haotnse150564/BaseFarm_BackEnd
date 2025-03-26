@@ -142,4 +142,23 @@ public class VnPayService : IVnPayService
             return new ResponseDTO(Const.ERROR_EXCEPTION, "An error occurred while creating the payment.", ex.Message);
         }
     }
+
+    public async Task<ResponseDTO> GetPaymentByOrderIdAsync(long orderId)
+    {
+        try
+        {
+            var getPayment = await _unitOfWork.paymentRepository.GetByOrderIdAsync(orderId);
+
+            if (getPayment == null)
+            {
+                return new ResponseDTO(Const.FAIL_READ_CODE, "No Payment found.");
+            }
+
+            return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, getPayment);
+        }
+        catch (Exception ex)
+        {
+            return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+        }
     }
+}

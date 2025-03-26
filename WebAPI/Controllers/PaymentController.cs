@@ -1,4 +1,6 @@
-﻿using Application.Services;
+﻿using Application;
+using Application.Services;
+using Application.Services.Implement;
 using Application.ViewModel.Request;
 using Microsoft.AspNetCore.Mvc;
 using static Application.ViewModel.Request.OrderRequest;
@@ -86,6 +88,18 @@ namespace WebAPI.Controllers
             }
         }
 
+        [HttpGet("PaymentByOrderId/{orderId}")]
+        public async Task<IActionResult> GetPaymentByOrderId(long orderId)
+        {
+            var result = await _vnPayService.GetPaymentByOrderIdAsync(orderId);
+
+            if (result.Status == Const.FAIL_READ_CODE)
+            {
+                return NotFound(result);
+            }
+
+            return Ok(result);
+        }
     }
 
 }
