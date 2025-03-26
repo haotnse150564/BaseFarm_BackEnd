@@ -19,7 +19,7 @@ namespace Infrastructure.FluentAPI
             builder.Property(e => e.ActivityType) ;
             builder.Property(e => e.EndDate) ;
             builder.Property(e => e.StartDate);
-            builder.Property(e => e.Status);
+            builder.Property(e => e.Status).HasConversion<int>();
         }
     }
 }

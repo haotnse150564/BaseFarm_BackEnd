@@ -13,7 +13,7 @@ namespace Infrastructure.FluentAPI
             builder.HasKey(e => e.OrderId);
             builder.Property(e => e.CreatedAt);
             builder.Property(e => e.CustomerId);
-            builder.Property(e => e.Status);
+            builder.Property(e => e.Status).HasConversion<int>();
             builder.Property(e => e.TotalPrice)
                 .HasColumnType("decimal(10, 2)");
             builder.Property(e => e.UpdatedAt);

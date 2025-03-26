@@ -25,7 +25,7 @@ namespace Infrastructure.FluentAPI
             builder.Property(e => e.SensorValue)
                 .HasMaxLength(255)
                 .IsUnicode(false) ;
-            builder.Property(e => e.Status) ;
+            builder.Property(e => e.Status).HasConversion<int>() ;
             builder.Property(e => e.Unit)
                 .HasMaxLength(255)
                 .IsUnicode(false) ;
