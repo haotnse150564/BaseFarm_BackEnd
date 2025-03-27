@@ -9,9 +9,10 @@ namespace Application.Services
 {
     public class CurrentTime : ICurrentTime
     {
-        public DateTime GetCurrentTime()
+        public DateOnly GetCurrentTime()
         {
-            return DateTime.Now;
+            DateOnly DateNow = DateOnly.FromDateTime(DateTime.Now);
+            return DateNow;
         }
     }
 }
