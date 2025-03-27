@@ -25,6 +25,7 @@ public static class DependencyInjection
         services.AddAutoMapper(typeof(FeedbackMapping));
         services.AddAutoMapper(typeof(OrderMapping));
         services.AddAutoMapper(typeof(AccountProfileMapping));
+        services.AddAutoMapper(typeof(ScheduleMapping));
 
         #region Config Repository and Service
         //repository

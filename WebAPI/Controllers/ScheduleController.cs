@@ -19,6 +19,30 @@ namespace WebAPI.Controllers
 
             _logger = logger;
         }
+        [HttpPost("schedule-create")]
+        public async Task<IActionResult> CreateSchedule([FromBody] ScheduleRequest request)
+        {
+            var result = await _schedule.CreateScheduleAsync(request);
+
+            if (result.Status != Const.SUCCESS_READ_CODE)
+            {
+                return BadRequest(result); // Trả về lỗi 400 nếu thất bại
+            }
+
+            return Ok(result); // Trả về danh sách sản phẩm với phân trang
+        }
+        [HttpPut("schedule-assign-staff")]
+        public async Task<IActionResult> AssidnStaff(long scheduleId, [FromBody] long staffId)
+        {
+            var result = await _schedule.AssignStaff(scheduleId, staffId);
+
+            if (result.Status != Const.SUCCESS_READ_CODE)
+            {
+                return BadRequest(result); // Trả về lỗi 400 nếu thất bại
+            }
+
+            return Ok(result); // Trả về danh sách sản phẩm với phân trang
+        }
         [HttpGet("schedule-list")]
         public async Task<IActionResult> GetListSchedule([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
@@ -31,8 +55,20 @@ namespace WebAPI.Controllers
 
             return Ok(result); // Trả về danh sách sản phẩm với phân trang
         }
-        [HttpGet("schedule-update-status")]
-        public async Task<IActionResult> UpdateScheduleStatus(long scheduleId, string status)
+        [HttpGet("schedule-byId")]
+        public async Task<IActionResult> GetScheduleByID(long id)
+        {
+            var result = await _schedule.GetScheduleByIdAsync(id);
+
+            if (result.Status != Const.SUCCESS_READ_CODE)
+            {
+                return BadRequest(result); // Trả về lỗi 400 nếu thất bại
+            }
+
+            return Ok(result); // Trả về danh sách sản phẩm với phân trang
+        }
+        [HttpPut("schedule-update-status")]
+        public async Task<IActionResult> UpdateScheduleStatus(long scheduleId,[FromBody] string status)
         {
             var result = await _schedule.ChangeScheduleStatusById(scheduleId, status.ToUpper());
 
@@ -43,8 +79,8 @@ namespace WebAPI.Controllers
 
             return Ok(result); // Trả về danh sách sản phẩm với phân trang
         }
-        [HttpPut("schedule-update")]
-        public async Task<IActionResult> UpdateSchedule(long scheduleId, ScheduleRequest request)
+        [HttpPatch("schedule-update")]
+        public async Task<IActionResult> UpdateSchedule(long scheduleId, [FromBody] ScheduleRequest request)
         {
             var result = await _schedule.UpdateScheduleById(scheduleId, request);
 

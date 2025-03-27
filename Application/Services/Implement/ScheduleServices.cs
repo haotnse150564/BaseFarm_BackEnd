@@ -28,9 +28,32 @@ namespace Application.Services.Implement
         }
 
 
-        public Task<ResponseDTO> CreateScheduleAsync(ScheduleRequest request)
+        public async Task<ResponseDTO> CreateScheduleAsync(ScheduleRequest request)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var result = new Schedule{
+                    StartDate = request.StartDate,
+                    EndDate = request.EndDate,
+                    AssignedTo = request.AssignedTo,
+                    FarmActivityId = request.FarmActivityId,
+                    FarmDetailsId = request.FarmDetailsId,
+                    UpdatedAt = _currentTime.GetCurrentTime(),
+                    CreatedAt = _currentTime.GetCurrentTime(),
+                    Status = Status.ACTIVE,
+                };
+
+                // Map dữ liệu sang DTO
+                await _unitOfWork.scheduleRepository.AddAsync(result);
+                await _unitOfWork.SaveChangesAsync();
+
+                var resultView = _mapper.Map<ViewSchedule>(result);
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, resultView);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+            }
         }
         public async Task<ResponseDTO> ChangeScheduleStatusById(long ScheduleId, string status)
         {
@@ -122,14 +145,52 @@ namespace Application.Services.Implement
                 return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
             }
         }
-        public Task<ResponseDTO> GetScheduleByIdAsync(long ScheduleId)
+        public async Task<ResponseDTO> GetScheduleByIdAsync(long ScheduleId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var schedule = await _unitOfWork.scheduleRepository.GetByIdAsync(ScheduleId);
+
+                if (schedule == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "No Schedule found.");
+                }
+
+                // Map dữ liệu sang DTO
+                var result = _mapper.Map<ViewSchedule>(schedule);
+                result.FullNameStaff = (await _account.GetAccountProfileByAccountIdAsync(schedule.AssignedTo)).AccountProfile?.Fullname;
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+            }
         }
 
-        public Task<ResponseDTO> AsignStaff(long scheduleID)
+        public async Task<ResponseDTO> AssignStaff(long scheduleID, long staffId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var schedule = await _unitOfWork.scheduleRepository.GetByIdAsync(scheduleID);
+
+                if (schedule == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "No Schedule found.");
+                }
+
+                // Map dữ liệu sang DTO
+                schedule.AssignedTo = staffId; 
+                await _unitOfWork.scheduleRepository.UpdateAsync(schedule);
+                await _unitOfWork.SaveChangesAsync();
+
+                var result = _mapper.Map<ViewSchedule>(schedule);
+                result.FullNameStaff = (await _account.GetAccountProfileByAccountIdAsync(schedule.AssignedTo)).AccountProfile?.Fullname;
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+            }
         }
 
 
