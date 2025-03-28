@@ -97,9 +97,54 @@ public class VnPayService : IVnPayService
         return response;
     }
 
+    //public async Task<ResponseDTO> SavePaymentAsync(PaymentResponseModel response)
+    //{
+    //    //using var transaction = await _unitOfWork.BeginTransactionAsync();
+    //    try
+    //    {
+    //        var order = await _orderRepository.GetByIdAsync(response.OrderId);
+    //        if (order == null)
+    //            throw new Exception($"Order ID {response.OrderId} not found.");
+
+    //        var payment = new Payment
+    //        {
+    //            OrderId = response.OrderId,
+    //            TransactionId = response.TransactionId,
+    //            PaymentMethod = response.PaymentMethod,
+    //            Success = response.Success ? true : false,
+    //            Amount = response.Amount,
+    //            PaymentTime = DateTime.UtcNow,
+    //            VnPayResponseCode = response.VnPayResponseCode,
+    //            CreateDate = DateTime.UtcNow
+    //        };
+    //        _logger.LogInformation("payment"+payment);
+
+    //        await _unitOfWork.paymentRepository.AddAsync(payment);
+
+    //        if (response.Success)
+    //        {
+    //            order.Status = Status.PAID;
+    //            await _orderRepository.UpdateAsync(order);
+    //        }
+    //        else
+    //        {
+    //            order.Status = Status.UNDISCHARGED; // Đặt trạng thái khác khi response không thành công
+    //            await _orderRepository.UpdateAsync(order);
+    //        }
+
+    //        await _unitOfWork.SaveChangesAsync();
+    //        //await transaction.CommitAsync();
+    //        return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Payment Created.");
+    //    }
+    //    catch(Exception ex)
+    //    {
+    //        //await transaction.RollbackAsync();
+    //        return new ResponseDTO(Const.ERROR_EXCEPTION, "An error occurred while creating the payment.", ex.Message);
+    //    }
+    //}
+
     public async Task<ResponseDTO> SavePaymentAsync(PaymentResponseModel response)
     {
-        //using var transaction = await _unitOfWork.BeginTransactionAsync();
         try
         {
             var order = await _orderRepository.GetByIdAsync(response.OrderId);
@@ -111,13 +156,12 @@ public class VnPayService : IVnPayService
                 OrderId = response.OrderId,
                 TransactionId = response.TransactionId,
                 PaymentMethod = response.PaymentMethod,
-                Success = response.Success ? true : false,
+                Success = response.Success,
                 Amount = response.Amount,
                 PaymentTime = DateTime.UtcNow,
                 VnPayResponseCode = response.VnPayResponseCode,
                 CreateDate = DateTime.UtcNow
             };
-            _logger.LogInformation("payment"+payment);
 
             await _unitOfWork.paymentRepository.AddAsync(payment);
 
@@ -128,20 +172,40 @@ public class VnPayService : IVnPayService
             }
             else
             {
-                order.Status = Status.UNDISCHARGED; // Đặt trạng thái khác khi response không thành công
+                order.Status = Status.UNDISCHARGED;
                 await _orderRepository.UpdateAsync(order);
+
+                // 🔥 Hoàn lại số lượng sản phẩm nếu thanh toán thất bại
+                var orderDetails = await _unitOfWork.orderDetailRepository.GetOrderDetailsByOrderId(order.OrderId);
+                foreach (var item in orderDetails)
+                {
+                    var product = await _unitOfWork.productRepository.GetByIdAsync(item.ProductId);
+                    if (product != null)
+                    {
+                        product.StockQuantity += item.Quantity ?? 0; // Đảm bảo không bị null
+
+                        // Nếu trước đó sản phẩm hết hàng thì cập nhật lại trạng thái
+                        if (product.StockQuantity > 0)
+                            product.Status = Status.ACTIVE; // Đổi sang trạng thái phù hợp
+
+                        await _unitOfWork.productRepository.UpdateAsync(product);
+                    }
+                }
+
+                // 🔥 Gọi `SaveChangesAsync()` để lưu thay đổi trong `Product`
+                //await _unitOfWork.SaveChangesAsync();
             }
 
-            await _unitOfWork.SaveChangesAsync();
-            //await transaction.CommitAsync();
-            return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Payment Created.");
+            //await _unitOfWork.SaveChangesAsync();
+            return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Payment processed successfully.");
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
-            //await transaction.RollbackAsync();
-            return new ResponseDTO(Const.ERROR_EXCEPTION, "An error occurred while creating the payment.", ex.Message);
+            return new ResponseDTO(Const.ERROR_EXCEPTION, "An error occurred while processing the payment.", ex.Message);
         }
     }
+
+
 
     public async Task<ResponseDTO> GetPaymentByOrderIdAsync(long orderId)
     {
