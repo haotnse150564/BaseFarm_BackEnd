@@ -34,8 +34,7 @@ namespace Infrastructure.FluentAPI
                 .HasForeignKey(d => d.FarmActivityId);
 
             builder.HasOne(d => d.FarmDetails).WithMany(p => p.Schedules)
-                .HasForeignKey(d => d.FarmDetailsId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+                .HasForeignKey(d => d.FarmDetailsId);
 
         }
     }

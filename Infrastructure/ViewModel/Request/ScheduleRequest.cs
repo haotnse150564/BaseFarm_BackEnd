@@ -13,12 +13,6 @@ namespace Infrastructure.ViewModel.Request
 
         public DateOnly? EndDate { get; set; }
 
-        public Status? Status { get; set; }
-
-        public DateOnly? CreatedAt { get; set; }
-
-        public DateOnly? UpdatedAt { get; set; }
-
         public long AssignedTo { get; set; }
 
         public int FarmActivityId { get; set; }
