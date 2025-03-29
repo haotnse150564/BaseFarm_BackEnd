@@ -1,6 +1,6 @@
 ﻿using Infrastructure.ViewModel.Request;
 using Infrastructure.ViewModel.Response;
-using static Infrastructure.ViewModel.Response.ScheduleResponse;
+using ResponseDTO = Infrastructure.ViewModel.Response.ScheduleResponse.ResponseDTO;
 
 namespace Application.Services
 {

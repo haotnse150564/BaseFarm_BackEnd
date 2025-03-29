@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.ViewModel.Response
 {
-    public interface IOTResponse
+    public class IOTResponse
     {
         public class IOTView
         {
@@ -25,19 +25,19 @@ namespace Infrastructure.ViewModel.Response
 
             public DateOnly? ExpiryDate { get; set; }
 
-            public string FarmDetails { get; set; }
+            public long FarmDetailsId { get; set; }
         }
-    }
-    public class ResponseDTO
-    {
-        public int Status { get; set; }
-        public string? Message { get; set; }
-        public object? Data { get; set; }
-        public ResponseDTO(int status, string? message, object? data = null)
+        public class ResponseDTO
         {
-            Status = status;
-            Message = message;
-            Data = data;
+            public int Status { get; set; }
+            public string? Message { get; set; }
+            public object? Data { get; set; }
+            public ResponseDTO(int status, string? message, object? data = null)
+            {
+                Status = status;
+                Message = message;
+                Data = data;
+            }
         }
     }
 }

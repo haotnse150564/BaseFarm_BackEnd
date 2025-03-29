@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.ViewModel.Request
 {
-    public interface IOTRequest
+    public class IOTRequest
     {
-
         public string? DeviceName { get; set; }
 
         public string? DeviceType { get; set; }
