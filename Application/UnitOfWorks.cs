@@ -21,10 +21,12 @@ namespace Infrastructure
         private IOrderDetailRepository _orderDetailRepository;
         private IPaymentRepository _paymentRepository;
         private IScheduleRepository _scheduleRepository;
+        private IIoTdeviceRepository _ioTdeviceRepository;
 
         public UnitOfWorks(AppDbContext context, ICurrentTime currentTime, IClaimsServices claimsServices, IProductRepository productRepository
             , IFeedbackRepository feedbackRepository, IAccountProfileRepository accountProfileRepository, IOrderRepository orderRepository
-            , IOrderDetailRepository orderDetailRepository, IPaymentRepository paymentRepository, IScheduleRepository scheduleRepository)
+            , IOrderDetailRepository orderDetailRepository, IPaymentRepository paymentRepository, IScheduleRepository scheduleRepository
+            , IIoTdeviceRepository ioTdeviceRepository)
         {
             _context = context;
             _currentTime = currentTime;
@@ -36,6 +38,14 @@ namespace Infrastructure
             _orderDetailRepository = orderDetailRepository;
             _paymentRepository = paymentRepository;
             _scheduleRepository = scheduleRepository;
+            _ioTdeviceRepository = ioTdeviceRepository;
+        }
+        public IIoTdeviceRepository ioTdeviceRepository
+        {
+            get
+            {
+                return _ioTdeviceRepository ??= new IoTdeviceRepository(_context);
+            }
         }
         public IScheduleRepository scheduleRepository
         {

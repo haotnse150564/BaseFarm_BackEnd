@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Application.Services
 {
-    interface IFarmActivityServices
+    public interface IFarmActivityServices
     {
     }
 }

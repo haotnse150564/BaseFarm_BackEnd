@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Infrastructure.ViewModel.Request;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,12 +10,12 @@ namespace Application.Services
 {
     public interface IIoTdeviceServices
     {
-        Task<IEnumerable<IOTView>> GetAllDevices();
-        Task<IOTView> GetDeviceById(long deviceId);
-        Task<IOTView> CreateDeviceAsync(IOTView device);
-        Task<IOTView> UpdateDeviceAsync(long deviceId, IOTView device);
-        Task<IOTView> UPdateStatusDeviceAsync(long deviceId);
-        Task<IOTView> GetInforInvironment(long deviceId);
+        Task<ResponseDTO> GetAllDevices(int pageIndex, int pageSize);
+        Task<ResponseDTO> GetDeviceById(long deviceId);
+        Task<ResponseDTO> CreateDeviceAsync(IOTRequest device);
+        Task<ResponseDTO> UpdateDeviceAsync(long deviceId, IOTRequest device);
+        Task<ResponseDTO> UpdateStatusDeviceAsync(long deviceId, string status);
+        Task<ResponseDTO> GetInforInvironment(long deviceId);
 
     }
 }

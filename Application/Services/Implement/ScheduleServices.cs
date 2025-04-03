@@ -32,7 +32,8 @@ namespace Application.Services.Implement
         {
             try
             {
-                var result = new Schedule{
+                var result = new Schedule
+                {
                     StartDate = request.StartDate,
                     EndDate = request.EndDate,
                     AssignedTo = request.AssignedTo,
@@ -110,7 +111,7 @@ namespace Application.Services.Implement
                     TotalItemCount = totalItem,
                     PageSize = pageSize,
                     PageIndex = pageIndex,
-                    Items = result
+                    Items = result.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList()
                 };
 
                 return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, pagination);
@@ -179,7 +180,7 @@ namespace Application.Services.Implement
                 }
 
                 // Map dữ liệu sang DTO
-                schedule.AssignedTo = staffId; 
+                schedule.AssignedTo = staffId;
                 await _unitOfWork.scheduleRepository.UpdateAsync(schedule);
                 await _unitOfWork.SaveChangesAsync();
 
