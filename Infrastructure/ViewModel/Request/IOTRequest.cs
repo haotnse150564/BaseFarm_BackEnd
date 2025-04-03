@@ -13,13 +13,9 @@ namespace Infrastructure.ViewModel.Request
 
         public string? DeviceType { get; set; }
 
-        public Status? Status { get; set; }
-
         public string? SensorValue { get; set; }
 
         public string? Unit { get; set; }
-
-        public DateOnly? LastUpdate { get; set; }
 
         public DateOnly? ExpiryDate { get; set; }
 
