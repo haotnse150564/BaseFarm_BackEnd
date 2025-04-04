@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Application.Commons;
+using Infrastructure.ViewModel.Request;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,5 +15,10 @@ namespace Application.Services
     {
         Task<LoginResponseDTO> LoginAsync(string email, string password);
         Task<ResponseDTO> RegisterAsync(RegisterRequestDTO request);
+        Task<ViewAccount> UpdateAccountStatusAsync(long id);
+        Task<ViewAccount> CreateAccountAsync(AccountForm request);
+        Task<ViewAccount> UpdateAccountAsync(long id, AccountForm request);
+        Task<Pagination<ViewAccount>> GetAllAccountAsync(int pageSize, int pageIndex );
+
     }
 }

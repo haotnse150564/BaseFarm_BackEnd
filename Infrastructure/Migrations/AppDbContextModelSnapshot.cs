@@ -31,30 +31,42 @@ namespace Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("AccountId"));
 
                     b.Property<DateOnly?>("CreatedAt")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("createdAt");
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("email");
 
-                    b.Property<int?>("ExpireMinutes")
-                        .HasColumnType("int");
+                    b.Property<int?>("ExpireMinute")
+                        .HasColumnType("int")
+                        .HasColumnName("expireMinute");
 
                     b.Property<string>("PasswordHash")
                         .HasMaxLength(255)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("passwordHash");
 
                     b.Property<string>("RefreshToken")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("refreshToken");
 
                     b.Property<int?>("Role")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("role");
 
                     b.Property<int?>("Status")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("status");
 
                     b.Property<DateOnly?>("UpdatedAt")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("updatedAt");
 
                     b.HasKey("AccountId");
 
@@ -66,7 +78,7 @@ namespace Infrastructure.Migrations
                             AccountId = 1L,
                             CreatedAt = new DateOnly(2025, 3, 1),
                             Email = "admin@email.com",
-                            ExpireMinutes = 30,
+                            ExpireMinute = 30,
                             PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
                             Role = 1,
                             Status = 1,
@@ -77,7 +89,7 @@ namespace Infrastructure.Migrations
                             AccountId = 2L,
                             CreatedAt = new DateOnly(2025, 1, 1),
                             Email = "manager@email.com",
-                            ExpireMinutes = 30,
+                            ExpireMinute = 30,
                             PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
                             Role = 2,
                             Status = 1,
@@ -88,7 +100,7 @@ namespace Infrastructure.Migrations
                             AccountId = 3L,
                             CreatedAt = new DateOnly(2025, 5, 1),
                             Email = "staff01@email.com",
-                            ExpireMinutes = 30,
+                            ExpireMinute = 30,
                             PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
                             Role = 3,
                             Status = 1,
@@ -99,7 +111,7 @@ namespace Infrastructure.Migrations
                             AccountId = 6L,
                             CreatedAt = new DateOnly(2025, 5, 1),
                             Email = "staff02@email.com",
-                            ExpireMinutes = 30,
+                            ExpireMinute = 30,
                             PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
                             Role = 3,
                             Status = 1,
@@ -110,7 +122,7 @@ namespace Infrastructure.Migrations
                             AccountId = 9L,
                             CreatedAt = new DateOnly(2025, 5, 1),
                             Email = "staff03@email.com",
-                            ExpireMinutes = 30,
+                            ExpireMinute = 30,
                             PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
                             Role = 3,
                             Status = 1,
@@ -121,7 +133,7 @@ namespace Infrastructure.Migrations
                             AccountId = 4L,
                             CreatedAt = new DateOnly(2025, 4, 1),
                             Email = "cus01@email.com",
-                            ExpireMinutes = 30,
+                            ExpireMinute = 30,
                             PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
                             Role = 0,
                             Status = 1,
@@ -132,7 +144,7 @@ namespace Infrastructure.Migrations
                             AccountId = 8L,
                             CreatedAt = new DateOnly(2025, 4, 1),
                             Email = "cus03@email.com",
-                            ExpireMinutes = 30,
+                            ExpireMinute = 30,
                             PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
                             Role = 0,
                             Status = 1,
@@ -143,7 +155,7 @@ namespace Infrastructure.Migrations
                             AccountId = 7L,
                             CreatedAt = new DateOnly(2025, 4, 1),
                             Email = "cus04@email.com",
-                            ExpireMinutes = 30,
+                            ExpireMinute = 30,
                             PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
                             Role = 0,
                             Status = 1,
@@ -154,7 +166,7 @@ namespace Infrastructure.Migrations
                             AccountId = 5L,
                             CreatedAt = new DateOnly(2025, 2, 1),
                             Email = "cus02@email.com",
-                            ExpireMinutes = 30,
+                            ExpireMinute = 30,
                             PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
                             Role = 0,
                             Status = 1,
@@ -168,29 +180,40 @@ namespace Infrastructure.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("address");
 
                     b.Property<DateOnly?>("CreatedAt")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("createdAt");
 
                     b.Property<string>("Fullname")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(75)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(75)")
+                        .HasColumnName("fullname");
 
                     b.Property<int?>("Gender")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("gender");
 
                     b.Property<string>("Images")
                         .HasMaxLength(255)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("images");
 
                     b.Property<string>("Phone")
                         .HasMaxLength(255)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("phone");
 
                     b.Property<DateOnly?>("UpdatedAt")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("updatedAt");
 
                     b.HasKey("AccountProfileId");
 
@@ -300,7 +323,8 @@ namespace Infrastructure.Migrations
                     b.Property<string>("CategoryName")
                         .HasMaxLength(255)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("categoryName");
 
                     b.HasKey("CategoryId");
 
@@ -340,41 +364,32 @@ namespace Infrastructure.Migrations
                     b.Property<string>("CropName")
                         .HasMaxLength(255)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("cropName");
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<long>("FarmDetailsId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Fertilizer")
-                        .HasMaxLength(255)
-                        .IsUnicode(false)
                         .HasColumnType("varchar(255)")
-                        .HasColumnName("fertilizer");
+                        .HasColumnName("description");
 
                     b.Property<DateOnly?>("HarvestDate")
-                        .HasColumnType("date");
-
-                    b.Property<decimal?>("Moisture")
-                        .HasColumnType("decimal(5, 2)")
-                        .HasColumnName("moisture");
+                        .HasColumnType("date")
+                        .HasColumnName("harvestDate");
 
                     b.Property<DateOnly?>("PlantingDate")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("plantingDate");
+
+                    b.Property<int?>("Quantity")
+                        .HasColumnType("int")
+                        .HasColumnName("quantity");
 
                     b.Property<int?>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("Temperature")
-                        .HasColumnType("decimal(5, 2)");
+                        .HasColumnType("int")
+                        .HasColumnName("status");
 
                     b.HasKey("CropId");
-
-                    b.HasIndex("FarmDetailsId");
 
                     b.ToTable("Crop", (string)null);
 
@@ -384,120 +399,189 @@ namespace Infrastructure.Migrations
                             CropId = 1L,
                             CropName = "Cop 01",
                             Description = "3x3 m2",
-                            FarmDetailsId = 1L,
-                            Fertilizer = "NPK",
-                            HarvestDate = new DateOnly(2025, 4, 21),
-                            Moisture = 1m,
+                            HarvestDate = new DateOnly(2025, 4, 5),
                             PlantingDate = new DateOnly(2025, 3, 1),
-                            Status = 1,
-                            Temperature = 30m
+                            Quantity = 100,
+                            Status = 1
                         },
                         new
                         {
                             CropId = 2L,
                             CropName = "Cop 02",
                             Description = "2x3 m2",
-                            FarmDetailsId = 1L,
-                            Fertilizer = "Cali",
-                            HarvestDate = new DateOnly(2025, 4, 21),
-                            Moisture = 1m,
-                            PlantingDate = new DateOnly(2025, 3, 14),
-                            Status = 1,
-                            Temperature = 30m
+                            HarvestDate = new DateOnly(2025, 4, 5),
+                            PlantingDate = new DateOnly(2025, 3, 4),
+                            Quantity = 100,
+                            Status = 1
                         },
                         new
                         {
                             CropId = 3L,
                             CropName = "Cop 03",
                             Description = "3x2 m2",
-                            FarmDetailsId = 1L,
-                            Fertilizer = "Photpho",
-                            HarvestDate = new DateOnly(2025, 4, 11),
-                            Moisture = 1m,
-                            PlantingDate = new DateOnly(2025, 3, 21),
-                            Status = 1,
-                            Temperature = 30m
+                            HarvestDate = new DateOnly(2025, 4, 6),
+                            PlantingDate = new DateOnly(2025, 4, 4),
+                            Quantity = 100,
+                            Status = 1
                         },
                         new
                         {
                             CropId = 4L,
                             CropName = "Cop 04",
                             Description = "3x5 m2",
-                            FarmDetailsId = 2L,
-                            Fertilizer = "Nito",
-                            HarvestDate = new DateOnly(2025, 4, 30),
-                            Moisture = 1m,
-                            PlantingDate = new DateOnly(2025, 3, 12),
-                            Status = 1,
-                            Temperature = 30m
+                            HarvestDate = new DateOnly(2025, 4, 3),
+                            PlantingDate = new DateOnly(2025, 3, 5),
+                            Quantity = 100,
+                            Status = 1
                         },
                         new
                         {
                             CropId = 5L,
                             CropName = "Cop 05",
                             Description = "4x3 m2",
-                            FarmDetailsId = 3L,
-                            Fertilizer = "NPK",
-                            HarvestDate = new DateOnly(2025, 4, 30),
-                            Moisture = 1m,
-                            PlantingDate = new DateOnly(2025, 3, 12),
-                            Status = 1,
-                            Temperature = 30m
+                            HarvestDate = new DateOnly(2025, 4, 3),
+                            PlantingDate = new DateOnly(2025, 3, 5),
+                            Quantity = 100,
+                            Status = 1
                         });
                 });
 
-            modelBuilder.Entity("Domain.Model.FarmActivity", b =>
+            modelBuilder.Entity("Domain.Model.CropRequirement", b =>
                 {
-                    b.Property<int>("FarmActivitiesId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<long>("RequirementId")
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FarmActivitiesId"));
+                    b.Property<long>("DeviceId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("deviceID");
 
-                    b.Property<int?>("ActivityType")
-                        .HasColumnType("int");
+                    b.Property<string>("EstimatedDate")
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("estimatedDate");
 
-                    b.Property<DateOnly?>("EndDate")
-                        .HasColumnType("date");
+                    b.Property<string>("Fertilizer")
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("fertilizer");
 
-                    b.Property<DateOnly?>("StartDate")
-                        .HasColumnType("date");
+                    b.Property<decimal?>("Moisture")
+                        .HasColumnType("decimal(5, 2)")
+                        .HasColumnName("moisture");
 
-                    b.Property<int?>("Status")
-                        .HasColumnType("int");
+                    b.Property<decimal?>("Temperature")
+                        .HasColumnType("decimal(5, 2)")
+                        .HasColumnName("temperature");
 
-                    b.HasKey("FarmActivitiesId");
+                    b.HasKey("RequirementId");
 
-                    b.ToTable("FarmActivity", (string)null);
+                    b.HasIndex("DeviceId");
+
+                    b.ToTable("CropRequirement");
 
                     b.HasData(
                         new
                         {
-                            FarmActivitiesId = 1,
-                            ActivityType = 1,
-                            EndDate = new DateOnly(2025, 4, 1),
-                            StartDate = new DateOnly(2025, 3, 1),
-                            Status = 1
+                            RequirementId = 1L,
+                            DeviceId = 1L,
+                            EstimatedDate = "60",
+                            Fertilizer = "NPK",
+                            Moisture = 1m,
+                            Temperature = 29m
                         },
                         new
                         {
-                            FarmActivitiesId = 2,
-                            ActivityType = 1,
-                            EndDate = new DateOnly(2025, 4, 11),
-                            StartDate = new DateOnly(2025, 3, 12),
-                            Status = 1
+                            RequirementId = 2L,
+                            DeviceId = 3L,
+                            EstimatedDate = "45",
+                            Fertilizer = "NPK",
+                            Moisture = 1m,
+                            Temperature = 22m
                         },
                         new
                         {
-                            FarmActivitiesId = 3,
-                            ActivityType = 1,
-                            EndDate = new DateOnly(2025, 4, 30),
-                            StartDate = new DateOnly(2025, 3, 12),
-                            Status = 1
+                            RequirementId = 3L,
+                            DeviceId = 2L,
+                            EstimatedDate = "30",
+                            Fertilizer = "NPK",
+                            Moisture = 1m,
+                            Temperature = 26m
                         });
                 });
 
-            modelBuilder.Entity("Domain.Model.FarmDetail", b =>
+            modelBuilder.Entity("Domain.Model.DailyLog", b =>
+                {
+                    b.Property<long>("TrackingId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("AssignedTo")
+                        .HasColumnType("bigint")
+                        .HasColumnName("assignedTo");
+
+                    b.Property<DateOnly?>("CreatedAt")
+                        .HasColumnType("date")
+                        .HasColumnName("createdAt");
+
+                    b.Property<DateOnly?>("Date")
+                        .HasColumnType("date")
+                        .HasColumnName("date");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("notes");
+
+                    b.Property<int?>("Status")
+                        .HasColumnType("int")
+                        .HasColumnName("status");
+
+                    b.Property<DateOnly?>("UpdatedAt")
+                        .HasColumnType("date")
+                        .HasColumnName("updatedAt");
+
+                    b.HasKey("TrackingId");
+
+                    b.HasIndex("AssignedTo");
+
+                    b.ToTable("DailyLog", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            TrackingId = 1L,
+                            AssignedTo = 3L,
+                            CreatedAt = new DateOnly(2025, 4, 5),
+                            Date = new DateOnly(2025, 4, 5),
+                            Notes = "Hoat dong binh thuong",
+                            Status = 1,
+                            UpdatedAt = new DateOnly(2025, 4, 5)
+                        },
+                        new
+                        {
+                            TrackingId = 2L,
+                            AssignedTo = 6L,
+                            CreatedAt = new DateOnly(2025, 4, 6),
+                            Date = new DateOnly(2025, 4, 6),
+                            Notes = "Hoat dong binh thuong",
+                            Status = 1,
+                            UpdatedAt = new DateOnly(2025, 4, 6)
+                        },
+                        new
+                        {
+                            TrackingId = 3L,
+                            AssignedTo = 9L,
+                            CreatedAt = new DateOnly(2025, 4, 7),
+                            Date = new DateOnly(2025, 4, 7),
+                            Notes = "Hoat dong binh thuong",
+                            Status = 1,
+                            UpdatedAt = new DateOnly(2025, 4, 7)
+                        });
+                });
+
+            modelBuilder.Entity("Domain.Model.Farm", b =>
                 {
                     b.Property<long>("FarmDetailsId")
                         .ValueGeneratedOnAdd()
@@ -506,29 +590,34 @@ namespace Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("FarmDetailsId"));
 
                     b.Property<long>("AccountId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("accountID");
 
                     b.Property<DateOnly?>("CreatedAt")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("createdAt");
 
                     b.Property<string>("FarmName")
                         .HasMaxLength(255)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("farmName");
 
                     b.Property<string>("Location")
                         .HasMaxLength(255)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("location");
 
                     b.Property<DateOnly?>("UpdatedAt")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("updatedAt");
 
                     b.HasKey("FarmDetailsId");
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("FarmDetail", (string)null);
+                    b.ToTable("Farm", (string)null);
 
                     b.HasData(
                         new
@@ -560,30 +649,90 @@ namespace Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.Model.Feedback", b =>
+            modelBuilder.Entity("Domain.Model.FarmActivity", b =>
                 {
-                    b.Property<int>("FeedbackId")
+                    b.Property<int>("FarmActivitiesId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FeedbackId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FarmActivitiesId"));
+
+                    b.Property<int?>("ActivityType")
+                        .HasColumnType("int")
+                        .HasColumnName("activityType");
+
+                    b.Property<DateOnly?>("EndDate")
+                        .HasColumnType("date")
+                        .HasColumnName("endDate");
+
+                    b.Property<DateOnly?>("StartDate")
+                        .HasColumnType("date")
+                        .HasColumnName("startDate");
+
+                    b.Property<int?>("Status")
+                        .HasColumnType("int")
+                        .HasColumnName("status");
+
+                    b.HasKey("FarmActivitiesId");
+
+                    b.ToTable("FarmActivitie");
+
+                    b.HasData(
+                        new
+                        {
+                            FarmActivitiesId = 1,
+                            ActivityType = 1,
+                            EndDate = new DateOnly(2025, 4, 1),
+                            StartDate = new DateOnly(2025, 3, 1),
+                            Status = 1
+                        },
+                        new
+                        {
+                            FarmActivitiesId = 2,
+                            ActivityType = 1,
+                            EndDate = new DateOnly(2025, 4, 11),
+                            StartDate = new DateOnly(2025, 5, 4),
+                            Status = 1
+                        },
+                        new
+                        {
+                            FarmActivitiesId = 3,
+                            ActivityType = 1,
+                            EndDate = new DateOnly(2025, 4, 3),
+                            StartDate = new DateOnly(2025, 5, 4),
+                            Status = 1
+                        });
+                });
+
+            modelBuilder.Entity("Domain.Model.Feedback", b =>
+                {
+                    b.Property<long>("FeedbackId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("FeedbackId"));
 
                     b.Property<string>("Comment")
                         .HasMaxLength(255)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("comment");
 
                     b.Property<DateOnly?>("CreatedAt")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("createdAt");
 
                     b.Property<long>("CustomerId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("customerID");
 
                     b.Property<int?>("Rating")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("rating");
 
                     b.Property<int?>("Status")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("status");
 
                     b.HasKey("FeedbackId");
 
@@ -594,7 +743,7 @@ namespace Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            FeedbackId = 1,
+                            FeedbackId = 1L,
                             Comment = "App very good, but load data slow",
                             CreatedAt = new DateOnly(2025, 4, 3),
                             CustomerId = 4L,
@@ -602,7 +751,7 @@ namespace Infrastructure.Migrations
                         },
                         new
                         {
-                            FeedbackId = 2,
+                            FeedbackId = 2L,
                             Comment = "My avt so cute <3",
                             CreatedAt = new DateOnly(2025, 4, 10),
                             CustomerId = 7L,
@@ -610,11 +759,84 @@ namespace Infrastructure.Migrations
                         },
                         new
                         {
-                            FeedbackId = 3,
+                            FeedbackId = 3L,
                             Comment = "Test FeedBack <3",
                             CreatedAt = new DateOnly(2025, 3, 3),
                             CustomerId = 8L,
                             Rating = 5
+                        });
+                });
+
+            modelBuilder.Entity("Domain.Model.Inventory", b =>
+                {
+                    b.Property<long>("InventoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("InventoryId"));
+
+                    b.Property<DateOnly?>("CreatedAt")
+                        .HasColumnType("date")
+                        .HasColumnName("createdAt");
+
+                    b.Property<DateOnly?>("ExpiryDate")
+                        .HasColumnType("date")
+                        .HasColumnName("expiryDate");
+
+                    b.Property<string>("Location")
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("location");
+
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("productId");
+
+                    b.Property<int?>("Status")
+                        .HasColumnType("int")
+                        .HasColumnName("status");
+
+                    b.Property<int?>("StockQuantity")
+                        .HasColumnType("int")
+                        .HasColumnName("stockQuantity");
+
+                    b.HasKey("InventoryId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Inventory", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            InventoryId = 1L,
+                            CreatedAt = new DateOnly(2025, 3, 1),
+                            ExpiryDate = new DateOnly(2025, 6, 1),
+                            Location = "HCM",
+                            ProductId = 1L,
+                            Status = 1,
+                            StockQuantity = 1000
+                        },
+                        new
+                        {
+                            InventoryId = 2L,
+                            CreatedAt = new DateOnly(2025, 3, 11),
+                            ExpiryDate = new DateOnly(2025, 6, 1),
+                            Location = "HCM",
+                            ProductId = 2L,
+                            Status = 1,
+                            StockQuantity = 500
+                        },
+                        new
+                        {
+                            InventoryId = 3L,
+                            CreatedAt = new DateOnly(2025, 3, 8),
+                            ExpiryDate = new DateOnly(2025, 6, 1),
+                            Location = "HCM",
+                            ProductId = 3L,
+                            Status = 1,
+                            StockQuantity = 666
                         });
                 });
 
@@ -629,34 +851,42 @@ namespace Infrastructure.Migrations
                     b.Property<string>("DeviceName")
                         .HasMaxLength(255)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("deviceName");
 
                     b.Property<string>("DeviceType")
                         .HasMaxLength(255)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("deviceType");
 
                     b.Property<DateOnly?>("ExpiryDate")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("expiryDate");
 
                     b.Property<long>("FarmDetailsId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("farmDetailsID");
 
                     b.Property<DateOnly?>("LastUpdate")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("lastUpdate");
 
                     b.Property<string>("SensorValue")
                         .HasMaxLength(255)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("sensorValue");
 
                     b.Property<int?>("Status")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("status");
 
                     b.Property<string>("Unit")
                         .HasMaxLength(255)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("unit");
 
                     b.HasKey("IoTdevicesId");
 
@@ -670,9 +900,9 @@ namespace Infrastructure.Migrations
                             IoTdevicesId = 1L,
                             DeviceName = "Thermocouple - 1",
                             DeviceType = "Temperature IC",
-                            ExpiryDate = new DateOnly(2025, 4, 30),
+                            ExpiryDate = new DateOnly(2025, 4, 3),
                             FarmDetailsId = 2L,
-                            LastUpdate = new DateOnly(2025, 3, 12),
+                            LastUpdate = new DateOnly(2025, 5, 4),
                             Status = 1
                         },
                         new
@@ -680,9 +910,9 @@ namespace Infrastructure.Migrations
                             IoTdevicesId = 2L,
                             DeviceName = "LM393 - 1",
                             DeviceType = "Humidity measurement IC",
-                            ExpiryDate = new DateOnly(2025, 4, 30),
+                            ExpiryDate = new DateOnly(2025, 4, 3),
                             FarmDetailsId = 1L,
-                            LastUpdate = new DateOnly(2025, 3, 12),
+                            LastUpdate = new DateOnly(2025, 5, 4),
                             Status = 1
                         },
                         new
@@ -690,9 +920,9 @@ namespace Infrastructure.Migrations
                             IoTdevicesId = 3L,
                             DeviceName = "LM393 - 2",
                             DeviceType = "Humidity measurement IC",
-                            ExpiryDate = new DateOnly(2025, 4, 30),
+                            ExpiryDate = new DateOnly(2025, 4, 3),
                             FarmDetailsId = 2L,
-                            LastUpdate = new DateOnly(2025, 3, 12),
+                            LastUpdate = new DateOnly(2025, 5, 4),
                             Status = 1
                         },
                         new
@@ -700,9 +930,9 @@ namespace Infrastructure.Migrations
                             IoTdevicesId = 4L,
                             DeviceName = "Thermocouple  - 2",
                             DeviceType = "Temperature IC",
-                            ExpiryDate = new DateOnly(2025, 4, 30),
+                            ExpiryDate = new DateOnly(2025, 4, 3),
                             FarmDetailsId = 3L,
-                            LastUpdate = new DateOnly(2025, 3, 12),
+                            LastUpdate = new DateOnly(2025, 5, 4),
                             Status = 1
                         },
                         new
@@ -710,9 +940,9 @@ namespace Infrastructure.Migrations
                             IoTdevicesId = 5L,
                             DeviceName = "Thermocouple  - 3",
                             DeviceType = "Temperature IC",
-                            ExpiryDate = new DateOnly(2025, 4, 30),
+                            ExpiryDate = new DateOnly(2025, 4, 3),
                             FarmDetailsId = 1L,
-                            LastUpdate = new DateOnly(2025, 3, 12),
+                            LastUpdate = new DateOnly(2025, 5, 4),
                             Status = 1
                         },
                         new
@@ -720,9 +950,9 @@ namespace Infrastructure.Migrations
                             IoTdevicesId = 6L,
                             DeviceName = "LM393 - 3",
                             DeviceType = "Humidity measurement IC",
-                            ExpiryDate = new DateOnly(2025, 4, 30),
+                            ExpiryDate = new DateOnly(2025, 4, 3),
                             FarmDetailsId = 3L,
-                            LastUpdate = new DateOnly(2025, 3, 12),
+                            LastUpdate = new DateOnly(2025, 5, 4),
                             Status = 1
                         },
                         new
@@ -730,9 +960,9 @@ namespace Infrastructure.Migrations
                             IoTdevicesId = 7L,
                             DeviceName = "Soil Moisture Sensor 1",
                             DeviceType = "Soil Moisture Sensor IC",
-                            ExpiryDate = new DateOnly(2025, 4, 30),
+                            ExpiryDate = new DateOnly(2025, 4, 3),
                             FarmDetailsId = 1L,
-                            LastUpdate = new DateOnly(2025, 3, 12),
+                            LastUpdate = new DateOnly(2025, 5, 4),
                             Status = 1
                         },
                         new
@@ -740,9 +970,9 @@ namespace Infrastructure.Migrations
                             IoTdevicesId = 8L,
                             DeviceName = "Soil Moisture Sensor 2",
                             DeviceType = "Soil Moisture Sensor IC",
-                            ExpiryDate = new DateOnly(2025, 4, 30),
+                            ExpiryDate = new DateOnly(2025, 4, 3),
                             FarmDetailsId = 2L,
-                            LastUpdate = new DateOnly(2025, 3, 12),
+                            LastUpdate = new DateOnly(2025, 5, 4),
                             Status = 1
                         },
                         new
@@ -750,38 +980,95 @@ namespace Infrastructure.Migrations
                             IoTdevicesId = 9L,
                             DeviceName = "Soil Moisture Sensor 3",
                             DeviceType = "Soil Moisture Sensor IC",
-                            ExpiryDate = new DateOnly(2025, 4, 30),
+                            ExpiryDate = new DateOnly(2025, 4, 3),
                             FarmDetailsId = 3L,
-                            LastUpdate = new DateOnly(2025, 3, 12),
+                            LastUpdate = new DateOnly(2025, 5, 4),
                             Status = 1
+                        });
+                });
+
+            modelBuilder.Entity("Domain.Model.IoTdeviceLog", b =>
+                {
+                    b.Property<long>("LogId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("LogId"));
+
+                    b.Property<DateOnly?>("CreatedAt")
+                        .HasColumnType("date")
+                        .HasColumnName("createdAt");
+
+                    b.Property<long>("IoTdevice")
+                        .HasColumnType("bigint")
+                        .HasColumnName("ioTDevice");
+
+                    b.Property<long>("TrackingId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("trackingID");
+
+                    b.HasKey("LogId");
+
+                    b.HasIndex("IoTdevice");
+
+                    b.HasIndex("TrackingId");
+
+                    b.ToTable("IoTDeviceLog", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            LogId = 1L,
+                            CreatedAt = new DateOnly(2025, 4, 5),
+                            IoTdevice = 1L,
+                            TrackingId = 1L
+                        },
+                        new
+                        {
+                            LogId = 2L,
+                            CreatedAt = new DateOnly(2025, 4, 6),
+                            IoTdevice = 2L,
+                            TrackingId = 2L
+                        },
+                        new
+                        {
+                            LogId = 3L,
+                            CreatedAt = new DateOnly(2025, 4, 7),
+                            IoTdevice = 3L,
+                            TrackingId = 3L
                         });
                 });
 
             modelBuilder.Entity("Domain.Model.Order", b =>
                 {
                     b.Property<long>("OrderId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("OrderId"));
 
                     b.Property<DateOnly?>("CreatedAt")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("createdAt");
 
                     b.Property<long>("CustomerId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("customerID");
 
                     b.Property<string>("ShippingAddress")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("shippingAddress");
 
                     b.Property<int?>("Status")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("status");
 
                     b.Property<decimal?>("TotalPrice")
-                        .HasColumnType("decimal(10, 2)");
+                        .HasColumnType("decimal(10, 2)")
+                        .HasColumnName("totalPrice");
 
                     b.Property<DateOnly?>("UpdatedAt")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("updatedAt");
 
                     b.HasKey("OrderId");
 
@@ -831,16 +1118,20 @@ namespace Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("OrderDetailId"));
 
                     b.Property<long>("OrderId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("orderID");
 
                     b.Property<long>("ProductId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("productID");
 
                     b.Property<int?>("Quantity")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("quantity");
 
                     b.Property<decimal?>("UnitPrice")
-                        .HasColumnType("decimal(10, 2)");
+                        .HasColumnType("decimal(10, 2)")
+                        .HasColumnName("unitPrice");
 
                     b.HasKey("OrderDetailId");
 
@@ -963,39 +1254,44 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Model.Product", b =>
                 {
                     b.Property<long>("ProductId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ProductId"));
 
                     b.Property<long>("CategoryId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("categoryID");
 
                     b.Property<DateOnly?>("CreatedAt")
                         .HasColumnType("date");
 
-                    b.Property<long>("CropId")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("Description")
                         .HasMaxLength(255)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("description");
 
                     b.Property<string>("Images")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("images");
 
                     b.Property<decimal?>("Price")
-                        .HasColumnType("decimal(10, 2)");
+                        .HasColumnType("decimal(10, 2)")
+                        .HasColumnName("price");
 
                     b.Property<string>("ProductName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("productName");
 
                     b.Property<int?>("Status")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("status");
 
                     b.Property<int?>("StockQuantity")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("stockQuantity");
 
                     b.Property<DateOnly?>("UpdatedAt")
                         .HasColumnType("date");
@@ -1003,8 +1299,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("ProductId");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("CropId");
 
                     b.ToTable("Product", (string)null);
 
@@ -1014,7 +1308,6 @@ namespace Infrastructure.Migrations
                             ProductId = 1L,
                             CategoryId = 1L,
                             CreatedAt = new DateOnly(2025, 2, 1),
-                            CropId = 1L,
                             Description = "Rau Den",
                             Price = 10000m,
                             ProductName = "Vegetable 1",
@@ -1027,7 +1320,6 @@ namespace Infrastructure.Migrations
                             ProductId = 2L,
                             CategoryId = 1L,
                             CreatedAt = new DateOnly(2025, 2, 1),
-                            CropId = 1L,
                             Description = "Salad",
                             Price = 15000m,
                             ProductName = "Vegetable 2",
@@ -1040,7 +1332,6 @@ namespace Infrastructure.Migrations
                             ProductId = 3L,
                             CategoryId = 1L,
                             CreatedAt = new DateOnly(2025, 2, 1),
-                            CropId = 1L,
                             Description = "Dau Ha Lan",
                             Price = 20000m,
                             ProductName = "Vegetable 3",
@@ -1053,7 +1344,6 @@ namespace Infrastructure.Migrations
                             ProductId = 4L,
                             CategoryId = 1L,
                             CreatedAt = new DateOnly(2025, 2, 1),
-                            CropId = 2L,
                             Description = "Ca chua",
                             Price = 35000m,
                             ProductName = "Fruit 1",
@@ -1066,87 +1356,12 @@ namespace Infrastructure.Migrations
                             ProductId = 5L,
                             CategoryId = 1L,
                             CreatedAt = new DateOnly(2025, 2, 1),
-                            CropId = 3L,
                             Description = "Dua Hau",
                             Price = 55000m,
                             ProductName = "Fruit 2",
                             Status = 1,
                             StockQuantity = 10000,
                             UpdatedAt = new DateOnly(2025, 2, 1)
-                        });
-                });
-
-            modelBuilder.Entity("Domain.Model.Report", b =>
-                {
-                    b.Property<long>("ReportId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ReportId"));
-
-                    b.Property<string>("FilePath")
-                        .HasMaxLength(255)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<long>("GeneratedBy")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateOnly?>("ReportDate")
-                        .HasColumnType("date");
-
-                    b.Property<int?>("ReportType")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("ReportId");
-
-                    b.HasIndex("GeneratedBy");
-
-                    b.ToTable("Report", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            ReportId = 1L,
-                            GeneratedBy = 2L,
-                            ReportDate = new DateOnly(2025, 3, 1),
-                            ReportType = 1,
-                            Status = 1
-                        },
-                        new
-                        {
-                            ReportId = 2L,
-                            GeneratedBy = 2L,
-                            ReportDate = new DateOnly(2025, 3, 3),
-                            ReportType = 3,
-                            Status = 1
-                        },
-                        new
-                        {
-                            ReportId = 3L,
-                            GeneratedBy = 2L,
-                            ReportDate = new DateOnly(2025, 3, 5),
-                            ReportType = 2,
-                            Status = 1
-                        },
-                        new
-                        {
-                            ReportId = 4L,
-                            GeneratedBy = 2L,
-                            ReportDate = new DateOnly(2025, 3, 10),
-                            ReportType = 1,
-                            Status = 1
-                        },
-                        new
-                        {
-                            ReportId = 5L,
-                            GeneratedBy = 2L,
-                            ReportDate = new DateOnly(2025, 3, 11),
-                            ReportType = 3,
-                            Status = 1
                         });
                 });
 
@@ -1159,32 +1374,46 @@ namespace Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ScheduleId"));
 
                     b.Property<long>("AssignedTo")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("assignedTo");
 
                     b.Property<DateOnly?>("CreatedAt")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("createdAt");
+
+                    b.Property<long>("CropId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("cropID");
 
                     b.Property<DateOnly?>("EndDate")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("endDate");
 
                     b.Property<int>("FarmActivityId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("farmActivityID");
 
                     b.Property<long>("FarmDetailsId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("farmDetailsID");
 
                     b.Property<DateOnly?>("StartDate")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("startDate");
 
                     b.Property<int?>("Status")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("status");
 
                     b.Property<DateOnly?>("UpdatedAt")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("updatedAt");
 
                     b.HasKey("ScheduleId");
 
                     b.HasIndex("AssignedTo");
+
+                    b.HasIndex("CropId");
 
                     b.HasIndex("FarmActivityId");
 
@@ -1198,7 +1427,8 @@ namespace Infrastructure.Migrations
                             ScheduleId = 1L,
                             AssignedTo = 3L,
                             CreatedAt = new DateOnly(2025, 3, 1),
-                            EndDate = new DateOnly(2025, 4, 30),
+                            CropId = 1L,
+                            EndDate = new DateOnly(2025, 4, 3),
                             FarmActivityId = 1,
                             FarmDetailsId = 1L,
                             StartDate = new DateOnly(2025, 3, 1),
@@ -1210,10 +1440,11 @@ namespace Infrastructure.Migrations
                             ScheduleId = 2L,
                             AssignedTo = 9L,
                             CreatedAt = new DateOnly(2025, 3, 1),
+                            CropId = 2L,
                             EndDate = new DateOnly(2025, 4, 11),
                             FarmActivityId = 2,
                             FarmDetailsId = 2L,
-                            StartDate = new DateOnly(2025, 3, 12),
+                            StartDate = new DateOnly(2025, 5, 4),
                             Status = 1,
                             UpdatedAt = new DateOnly(2025, 3, 1)
                         },
@@ -1222,10 +1453,11 @@ namespace Infrastructure.Migrations
                             ScheduleId = 3L,
                             AssignedTo = 6L,
                             CreatedAt = new DateOnly(2025, 3, 1),
-                            EndDate = new DateOnly(2025, 4, 30),
+                            CropId = 3L,
+                            EndDate = new DateOnly(2025, 4, 3),
                             FarmActivityId = 3,
                             FarmDetailsId = 3L,
-                            StartDate = new DateOnly(2025, 3, 12),
+                            StartDate = new DateOnly(2025, 5, 4),
                             Status = 1,
                             UpdatedAt = new DateOnly(2025, 3, 1)
                         });
@@ -1241,23 +1473,45 @@ namespace Infrastructure.Migrations
                     b.Navigation("AccountProfileNavigation");
                 });
 
-            modelBuilder.Entity("Domain.Model.Crop", b =>
+            modelBuilder.Entity("Domain.Model.CropRequirement", b =>
                 {
-                    b.HasOne("Domain.Model.FarmDetail", "FarmDetails")
-                        .WithMany("Crops")
-                        .HasForeignKey("FarmDetailsId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("Domain.Model.IoTdevice", "Device")
+                        .WithMany("CropRequirements")
+                        .HasForeignKey("DeviceId")
                         .IsRequired();
 
-                    b.Navigation("FarmDetails");
+                    b.HasOne("Domain.Model.Crop", "Requirement")
+                        .WithOne("CropRequirement")
+                        .HasForeignKey("Domain.Model.CropRequirement", "RequirementId")
+                        .IsRequired();
+
+                    b.Navigation("Device");
+
+                    b.Navigation("Requirement");
                 });
 
-            modelBuilder.Entity("Domain.Model.FarmDetail", b =>
+            modelBuilder.Entity("Domain.Model.DailyLog", b =>
+                {
+                    b.HasOne("Domain.Model.Account", "AssignedToNavigation")
+                        .WithMany("DailyLogs")
+                        .HasForeignKey("AssignedTo")
+                        .IsRequired();
+
+                    b.HasOne("Domain.Model.Schedule", "Tracking")
+                        .WithOne("DailyLog")
+                        .HasForeignKey("Domain.Model.DailyLog", "TrackingId")
+                        .IsRequired();
+
+                    b.Navigation("AssignedToNavigation");
+
+                    b.Navigation("Tracking");
+                });
+
+            modelBuilder.Entity("Domain.Model.Farm", b =>
                 {
                     b.HasOne("Domain.Model.Account", "Account")
-                        .WithMany("FarmDetails")
+                        .WithMany("Farms")
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Account");
@@ -1273,15 +1527,43 @@ namespace Infrastructure.Migrations
                     b.Navigation("Customer");
                 });
 
+            modelBuilder.Entity("Domain.Model.Inventory", b =>
+                {
+                    b.HasOne("Domain.Model.Product", "Product")
+                        .WithMany("Inventories")
+                        .HasForeignKey("ProductId")
+                        .IsRequired()
+                        .HasConstraintName("FK_Inventory_Product_productID");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("Domain.Model.IoTdevice", b =>
                 {
-                    b.HasOne("Domain.Model.FarmDetail", "FarmDetails")
+                    b.HasOne("Domain.Model.Farm", "FarmDetails")
                         .WithMany("IoTdevices")
                         .HasForeignKey("FarmDetailsId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("FarmDetails");
+                });
+
+            modelBuilder.Entity("Domain.Model.IoTdeviceLog", b =>
+                {
+                    b.HasOne("Domain.Model.IoTdevice", "IoTdeviceNavigation")
+                        .WithMany("IoTdeviceLogs")
+                        .HasForeignKey("IoTdevice")
+                        .IsRequired()
+                        .HasConstraintName("FKIoTDeviceL440028");
+
+                    b.HasOne("Domain.Model.DailyLog", "Tracking")
+                        .WithMany("IoTdeviceLogs")
+                        .HasForeignKey("TrackingId")
+                        .IsRequired();
+
+                    b.Navigation("IoTdeviceNavigation");
+
+                    b.Navigation("Tracking");
                 });
 
             modelBuilder.Entity("Domain.Model.Order", b =>
@@ -1291,7 +1573,14 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("CustomerId")
                         .IsRequired();
 
+                    b.HasOne("Domain.Model.Feedback", "OrderNavigation")
+                        .WithOne("Order")
+                        .HasForeignKey("Domain.Model.Order", "OrderId")
+                        .IsRequired();
+
                     b.Navigation("Customer");
+
+                    b.Navigation("OrderNavigation");
                 });
 
             modelBuilder.Entity("Domain.Model.OrderDetail", b =>
@@ -1328,25 +1617,14 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("CategoryId")
                         .IsRequired();
 
-                    b.HasOne("Domain.Model.Crop", "Crop")
-                        .WithMany("Products")
-                        .HasForeignKey("CropId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("Domain.Model.Crop", "ProductNavigation")
+                        .WithOne("Product")
+                        .HasForeignKey("Domain.Model.Product", "ProductId")
                         .IsRequired();
 
                     b.Navigation("Category");
 
-                    b.Navigation("Crop");
-                });
-
-            modelBuilder.Entity("Domain.Model.Report", b =>
-                {
-                    b.HasOne("Domain.Model.Account", "GeneratedByNavigation")
-                        .WithMany("Reports")
-                        .HasForeignKey("GeneratedBy")
-                        .IsRequired();
-
-                    b.Navigation("GeneratedByNavigation");
+                    b.Navigation("ProductNavigation");
                 });
 
             modelBuilder.Entity("Domain.Model.Schedule", b =>
@@ -1354,21 +1632,26 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Model.Account", "AssignedToNavigation")
                         .WithMany("Schedules")
                         .HasForeignKey("AssignedTo")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Model.Crop", "Crop")
+                        .WithMany("Schedules")
+                        .HasForeignKey("CropId")
                         .IsRequired();
 
                     b.HasOne("Domain.Model.FarmActivity", "FarmActivity")
                         .WithMany("Schedules")
                         .HasForeignKey("FarmActivityId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Model.FarmDetail", "FarmDetails")
+                    b.HasOne("Domain.Model.Farm", "FarmDetails")
                         .WithMany("Schedules")
                         .HasForeignKey("FarmDetailsId")
                         .IsRequired();
 
                     b.Navigation("AssignedToNavigation");
+
+                    b.Navigation("Crop");
 
                     b.Navigation("FarmActivity");
 
@@ -1379,13 +1662,13 @@ namespace Infrastructure.Migrations
                 {
                     b.Navigation("AccountProfile");
 
-                    b.Navigation("FarmDetails");
+                    b.Navigation("DailyLogs");
+
+                    b.Navigation("Farms");
 
                     b.Navigation("Feedbacks");
 
                     b.Navigation("Orders");
-
-                    b.Navigation("Reports");
 
                     b.Navigation("Schedules");
                 });
@@ -1397,7 +1680,23 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Model.Crop", b =>
                 {
-                    b.Navigation("Products");
+                    b.Navigation("CropRequirement");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Schedules");
+                });
+
+            modelBuilder.Entity("Domain.Model.DailyLog", b =>
+                {
+                    b.Navigation("IoTdeviceLogs");
+                });
+
+            modelBuilder.Entity("Domain.Model.Farm", b =>
+                {
+                    b.Navigation("IoTdevices");
+
+                    b.Navigation("Schedules");
                 });
 
             modelBuilder.Entity("Domain.Model.FarmActivity", b =>
@@ -1405,13 +1704,16 @@ namespace Infrastructure.Migrations
                     b.Navigation("Schedules");
                 });
 
-            modelBuilder.Entity("Domain.Model.FarmDetail", b =>
+            modelBuilder.Entity("Domain.Model.Feedback", b =>
                 {
-                    b.Navigation("Crops");
+                    b.Navigation("Order");
+                });
 
-                    b.Navigation("IoTdevices");
+            modelBuilder.Entity("Domain.Model.IoTdevice", b =>
+                {
+                    b.Navigation("CropRequirements");
 
-                    b.Navigation("Schedules");
+                    b.Navigation("IoTdeviceLogs");
                 });
 
             modelBuilder.Entity("Domain.Model.Order", b =>
@@ -1423,7 +1725,14 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Model.Product", b =>
                 {
+                    b.Navigation("Inventories");
+
                     b.Navigation("OrderDetails");
+                });
+
+            modelBuilder.Entity("Domain.Model.Schedule", b =>
+                {
+                    b.Navigation("DailyLog");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,4 +1,5 @@
 ﻿using Application.Services;
+using Infrastructure.ViewModel.Request;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Services;
 using static Infrastructure.ViewModel.Request.AccountRequest;
@@ -32,6 +33,38 @@ namespace WebAPI.Controllers
                 return Ok(response);
 
             return BadRequest(response);
+        }
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateAccount([FromBody] AccountForm request)
+        {
+            var result = await _accountServices.CreateAccountAsync(request);
+            if (result != null)
+                return Ok(result);
+            return BadRequest("Failed to create account.");
+        }
+        [HttpPut("update-status/{id}")]
+        public async Task<IActionResult> UpdateAccount(long id)
+        {
+            var result = await _accountServices.UpdateAccountStatusAsync(id);
+            if (result != null)
+                return Ok(result);
+            return BadRequest("Failed to update account.");
+        }
+        [HttpPut("update/{id}")]
+        public async Task<IActionResult> UpdateAccount(long id, [FromBody] AccountForm request)
+        {
+            var result = await _accountServices.UpdateAccountAsync(id, request);
+            if (result != null)
+                return Ok(result);
+            return BadRequest("Failed to update account.");
+        }
+        [HttpGet("get-all")]
+        public async Task<IActionResult> GetAllAccount(int pageSize = 10, int pageIndex = 1)
+        {
+            var result = await _accountServices.GetAllAccountAsync(pageSize, pageIndex);
+            if (result != null)
+                return Ok(result);
+            return BadRequest("Failed to get accounts.");
         }
     }
 }
