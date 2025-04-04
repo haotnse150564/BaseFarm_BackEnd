@@ -68,7 +68,6 @@ namespace WebAPI.Controllers
 
         //    return Ok(result);
         //}
-
         [HttpGet("order-list")]
         public async Task<IActionResult> GetListOrders([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
