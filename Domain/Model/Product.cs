@@ -26,11 +26,11 @@ public partial class Product
 
     public long CategoryId { get; set; }
 
-    public long CropId { get; set; }
-
     public virtual Category Category { get; set; } = null!;
 
-    public virtual Crop Crop { get; set; } = null!;
+    public virtual ICollection<Inventory> Inventories { get; set; } = new List<Inventory>();
 
     public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+
+    public virtual Crop ProductNavigation { get; set; } = null!;
 }

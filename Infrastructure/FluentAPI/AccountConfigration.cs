@@ -8,18 +8,27 @@ namespace Infrastructure.FluentAPI
     {
         public void Configure(EntityTypeBuilder<Account> builder)
         {
+
             builder.ToTable("Account");
 
             builder.HasKey(e => e.AccountId);
-            builder.Property(e => e.CreatedAt);
+            builder.Property(e => e.CreatedAt).HasColumnName("createdAt");
+            builder.Property(e => e.Email)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("email");
+            builder.Property(e => e.ExpireMinute).HasColumnName("expireMinute");
             builder.Property(e => e.PasswordHash)
                 .HasMaxLength(255)
                 .IsUnicode(false)
-                ;                                                       
-            builder.Property(e => e.Email);
-            builder.Property(e => e.Role);
-            builder.Property(e => e.Status).HasConversion<int>();
-            builder.Property(e => e.UpdatedAt);
+                .HasColumnName("passwordHash");
+            builder.Property(e => e.RefreshToken)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("refreshToken");
+            builder.Property(e => e.Role).HasColumnName("role");
+            builder.Property(e => e.Status).HasColumnName("status");
+            builder.Property(e => e.UpdatedAt).HasColumnName("updatedAt");
         }
     }
 }

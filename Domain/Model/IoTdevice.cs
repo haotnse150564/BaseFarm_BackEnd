@@ -24,5 +24,9 @@ public partial class IoTdevice
 
     public long FarmDetailsId { get; set; }
 
-    public virtual FarmDetail FarmDetails { get; set; } = null!;
+    public virtual ICollection<CropRequirement> CropRequirements { get; set; } = new List<CropRequirement>();
+
+    public virtual Farm FarmDetails { get; set; } = null!;
+
+    public virtual ICollection<IoTdeviceLog> IoTdeviceLogs { get; set; } = new List<IoTdeviceLog>();
 }

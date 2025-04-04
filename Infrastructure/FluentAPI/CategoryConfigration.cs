@@ -9,11 +9,11 @@ namespace Infrastructure.FluentAPI
         public void Configure(EntityTypeBuilder<Category> builder)
         {
             builder.ToTable("Category");
-
             builder.HasKey(e => e.CategoryId);
             builder.Property(e => e.CategoryName)
                 .HasMaxLength(255)
-                .IsUnicode(false);
+                .IsUnicode(false)
+                .HasColumnName("categoryName");
         }
     }
 }

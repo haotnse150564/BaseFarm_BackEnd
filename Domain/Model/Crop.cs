@@ -12,21 +12,17 @@ public partial class Crop
 
     public string? Description { get; set; }
 
-    public  Status? Status { get; set; }
+    public int? Quantity { get; set; }
+
+    public Status? Status { get; set; }
 
     public DateOnly? PlantingDate { get; set; }
 
     public DateOnly? HarvestDate { get; set; }
 
-    public decimal? Moisture { get; set; }
+    public virtual CropRequirement? CropRequirement { get; set; }
 
-    public decimal? Temperature { get; set; }
+    public virtual Product? Product { get; set; }
 
-    public string? Fertilizer { get; set; }
-
-    public long FarmDetailsId { get; set; }
-
-    public virtual FarmDetail FarmDetails { get; set; } = null!;
-
-    public virtual ICollection<Product> Products { get; set; } = new List<Product>();
+    public virtual ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
 }

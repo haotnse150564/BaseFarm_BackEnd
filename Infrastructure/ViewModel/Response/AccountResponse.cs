@@ -13,7 +13,12 @@ namespace Infrastructure.ViewModel.Response
             public string Token { get; set; }
             public string RefreshToken { get; set; }
         }
-
+        public class ViewAccount
+        {
+            public string Email { get; set; }
+            public string Role { get; set; }
+            public string Password { get; set; }
+        }
         public class ResponseDTO
         {
             public int Status { get; set; }

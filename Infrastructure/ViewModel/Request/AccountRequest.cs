@@ -16,7 +16,14 @@ namespace Infrastructure.ViewModel.Request
             public string Email { get; set; }
             public string Password { get; set; }
         }
-
+        public class AccountForm
+        {
+            [Required]
+            [EmailAddress]
+            public string Email { get; set; }
+            public string Password { get; set; }
+            public int Role { get; set; }
+        }
         public class RegisterRequestDTO
         {
             [Required]

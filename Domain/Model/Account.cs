@@ -18,7 +18,7 @@ public partial class Account
 
     public string? RefreshToken { get; set; }
 
-    public int? ExpireMinutes { get; set; }
+    public int? ExpireMinute { get; set; }
 
     public DateOnly? CreatedAt { get; set; }
 
@@ -26,13 +26,13 @@ public partial class Account
 
     public virtual AccountProfile? AccountProfile { get; set; }
 
-    public virtual ICollection<FarmDetail> FarmDetails { get; set; } = new List<FarmDetail>();
+    public virtual ICollection<DailyLog> DailyLogs { get; set; } = new List<DailyLog>();
+
+    public virtual ICollection<Farm> Farms { get; set; } = new List<Farm>();
 
     public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
-
-    public virtual ICollection<Report> Reports { get; set; } = new List<Report>();
 
     public virtual ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
 }

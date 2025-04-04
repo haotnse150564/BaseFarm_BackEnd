@@ -9,30 +9,21 @@ namespace Infrastructure.FluentAPI
     {
         public void Configure(EntityTypeBuilder<Crop> builder)
         {
-            builder.HasKey(e => e.CropId);
-
             builder.ToTable("Crop");
 
-            builder.Property(e => e.CropId);
+            builder.HasKey(e => e.CropId);
             builder.Property(e => e.CropName)
-                 .HasMaxLength(255)
-                 .IsUnicode(false);
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("cropName");
             builder.Property(e => e.Description)
-                 .HasMaxLength(255)
-                 .IsUnicode(false);
-            builder.Property(e => e.FarmDetailsId);
-            builder.Property(e => e.Fertilizer)
-                 .HasMaxLength(255)
-                 .IsUnicode(false);
-            builder.Property(e => e.HarvestDate);
-            builder.Property(e => e.Moisture)
-                 .HasColumnType("decimal(5, 2)");
-            builder.Property(e => e.PlantingDate);
-            builder.Property(e => e.Status).HasConversion<int>();
-            builder.Property(e => e.Temperature);
-
-            builder.HasOne(d => d.FarmDetails).WithMany(p => p.Crops)
-                 .HasForeignKey(d => d.FarmDetailsId);
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("description");
+            builder.Property(e => e.HarvestDate).HasColumnName("harvestDate");
+            builder.Property(e => e.PlantingDate).HasColumnName("plantingDate");
+            builder.Property(e => e.Quantity).HasColumnName("quantity");
+            builder.Property(e => e.Status).HasColumnName("status");
 
         }
     }
