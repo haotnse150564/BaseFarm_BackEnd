@@ -11,6 +11,8 @@ namespace Infrastructure.FluentAPI
             builder.ToTable("Order");
 
             builder.HasKey(e => e.OrderId);
+
+            builder.Property(e => e.OrderId).HasColumnName("orderId");
             builder.Property(e => e.CreatedAt).HasColumnName("createdAt");
             builder.Property(e => e.CustomerId).HasColumnName("customerID");
             builder.Property(e => e.ShippingAddress)
@@ -23,15 +25,16 @@ namespace Infrastructure.FluentAPI
                 .HasColumnName("totalPrice");
             builder.Property(e => e.UpdatedAt).HasColumnName("updatedAt");
 
-            builder.HasOne(d => d.Customer).WithMany(p => p.Orders)
+            builder.HasOne(d => d.Customer)
+                .WithMany(p => p.Orders)
                 .HasForeignKey(d => d.CustomerId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                ;
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
-            builder.HasOne(d => d.OrderNavigation).WithOne(p => p.Order)
-                .HasForeignKey<Order>(d => d.OrderId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                ;
+            builder.HasOne(d => d.OrderNavigation)
+                .WithOne(p => p.Order)
+                .HasForeignKey<Feedback>(d => d.FeedbackId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+            ;
         }
     }
 }
