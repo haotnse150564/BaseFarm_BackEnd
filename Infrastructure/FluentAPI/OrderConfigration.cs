@@ -10,9 +10,7 @@ namespace Infrastructure.FluentAPI
         {
             builder.ToTable("Order");
 
-            builder.Property(e => e.OrderId)
-                .ValueGeneratedNever()
-                .HasColumnName("orderID");
+            builder.HasKey(e => e.OrderId);
             builder.Property(e => e.CreatedAt).HasColumnName("createdAt");
             builder.Property(e => e.CustomerId).HasColumnName("customerID");
             builder.Property(e => e.ShippingAddress)
@@ -28,12 +26,12 @@ namespace Infrastructure.FluentAPI
             builder.HasOne(d => d.Customer).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.CustomerId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKOrder542182");
+                ;
 
             builder.HasOne(d => d.OrderNavigation).WithOne(p => p.Order)
                 .HasForeignKey<Order>(d => d.OrderId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKOrder797634");
+                ;
         }
     }
 }

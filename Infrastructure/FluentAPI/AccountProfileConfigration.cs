@@ -10,9 +10,7 @@ namespace Infrastructure.FluentAPI
         {
             builder.ToTable("AccountProfile");
 
-            builder.Property(e => e.AccountProfileId)
-                .ValueGeneratedNever()
-                .HasColumnName("accountProfileID");
+            builder.HasKey(e => e.AccountProfileId);
             builder.Property(e => e.Address)
                 .HasMaxLength(255)
                 .IsUnicode(false)
@@ -36,7 +34,7 @@ namespace Infrastructure.FluentAPI
             builder.HasOne(d => d.AccountProfileNavigation).WithOne(p => p.AccountProfile)
                 .HasForeignKey<AccountProfile>(d => d.AccountProfileId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKAccountPro821701");
+                ;
         }
     }
 }

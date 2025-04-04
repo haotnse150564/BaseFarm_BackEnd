@@ -15,7 +15,7 @@ namespace Infrastructure.FluentAPI
         {
             builder.ToTable("IoTDeviceLog");
 
-            builder.Property(e => e.LogId).HasColumnName("logID");
+            builder.HasKey(e => e.LogId);
             builder.Property(e => e.CreatedAt).HasColumnName("createdAt");
             builder.Property(e => e.IoTdevice).HasColumnName("ioTDevice");
             builder.Property(e => e.TrackingId).HasColumnName("trackingID");
@@ -28,7 +28,7 @@ namespace Infrastructure.FluentAPI
             builder.HasOne(d => d.Tracking).WithMany(p => p.IoTdeviceLogs)
                 .HasForeignKey(d => d.TrackingId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKIoTDeviceL634723");
+                ;
         }
     }
 }

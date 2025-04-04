@@ -13,9 +13,7 @@ namespace Infrastructure.FluentAPI
     {
         public void Configure(EntityTypeBuilder<CropRequirement> builder)
         {
-            builder.Property(e => e.RequirementId)
-                .ValueGeneratedNever()
-                .HasColumnName("requirementID");
+            builder.HasKey(e => e.RequirementId);
             builder.Property(e => e.DeviceId).HasColumnName("deviceID");
             builder.Property(e => e.EstimatedDate)
                 .HasMaxLength(50)
@@ -35,12 +33,12 @@ namespace Infrastructure.FluentAPI
             builder.HasOne(d => d.Device).WithMany(p => p.CropRequirements)
                 .HasForeignKey(d => d.DeviceId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKCropRequir679994");
+                ;
 
             builder.HasOne(d => d.Requirement).WithOne(p => p.CropRequirement)
                 .HasForeignKey<CropRequirement>(d => d.RequirementId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKCropRequir605080");
+                ;
         }
     }
 }

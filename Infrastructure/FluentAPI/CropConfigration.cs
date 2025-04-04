@@ -11,7 +11,7 @@ namespace Infrastructure.FluentAPI
         {
             builder.ToTable("Crop");
 
-            builder.Property(e => e.CropId).HasColumnName("cropID");
+            builder.HasKey(e => e.CropId);
             builder.Property(e => e.CropName)
                 .HasMaxLength(255)
                 .IsUnicode(false)

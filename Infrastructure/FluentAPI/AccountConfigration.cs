@@ -11,7 +11,7 @@ namespace Infrastructure.FluentAPI
 
             builder.ToTable("Account");
 
-            builder.Property(e => e.AccountId).HasColumnName("accountID");
+            builder.HasKey(e => e.AccountId);
             builder.Property(e => e.CreatedAt).HasColumnName("createdAt");
             builder.Property(e => e.Email)
                 .HasMaxLength(255)

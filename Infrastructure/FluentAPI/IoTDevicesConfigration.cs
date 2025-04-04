@@ -10,7 +10,7 @@ namespace Infrastructure.FluentAPI
         {
             builder.ToTable("IoTDevice");
 
-            builder.Property(e => e.IoTdevicesId).HasColumnName("ioTDevicesID");
+            builder.HasKey(e => e.IoTdevicesId);
             builder.Property(e => e.DeviceName)
                 .HasMaxLength(255)
                 .IsUnicode(false)
@@ -35,7 +35,7 @@ namespace Infrastructure.FluentAPI
             builder.HasOne(d => d.FarmDetails).WithMany(p => p.IoTdevices)
                 .HasForeignKey(d => d.FarmDetailsId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKIoTDevice 346109");
+                ;
 
         }
     }

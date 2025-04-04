@@ -10,7 +10,7 @@ namespace Infrastructure.FluentAPI
         {
             builder.ToTable("Feedback");
 
-            builder.Property(e => e.FeedbackId).HasColumnName("feedbackID");
+            builder.HasKey(e => e.FeedbackId);
             builder.Property(e => e.Comment)
                 .HasMaxLength(255)
                 .IsUnicode(false)
@@ -23,7 +23,7 @@ namespace Infrastructure.FluentAPI
             builder.HasOne(d => d.Customer).WithMany(p => p.Feedbacks)
                 .HasForeignKey(d => d.CustomerId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKFeedback230994");
+                ;
         }
     }
 }

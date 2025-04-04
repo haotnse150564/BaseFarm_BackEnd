@@ -14,7 +14,7 @@ namespace Infrastructure.FluentAPI
         public void Configure(EntityTypeBuilder<FarmActivity> builder)
         {
 
-            builder.Property(e => e.FarmActivitiesId).HasColumnName("farmActivitiesID");
+            builder.HasKey(e => e.FarmActivitiesId);
             builder.Property(e => e.ActivityType).HasColumnName("activityType");
             builder.Property(e => e.EndDate).HasColumnName("endDate");
             builder.Property(e => e.StartDate).HasColumnName("startDate");

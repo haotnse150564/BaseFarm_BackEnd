@@ -15,9 +15,7 @@ namespace Infrastructure.FluentAPI
         {
             builder.ToTable("DailyLog");
 
-            builder.Property(e => e.TrackingId)
-                .ValueGeneratedNever()
-                .HasColumnName("trackingID");
+            builder.HasKey(e => e.TrackingId);
             builder.Property(e => e.AssignedTo).HasColumnName("assignedTo");
             builder.Property(e => e.CreatedAt).HasColumnName("createdAt");
             builder.Property(e => e.Date).HasColumnName("date");
@@ -31,12 +29,12 @@ namespace Infrastructure.FluentAPI
             builder.HasOne(d => d.AssignedToNavigation).WithMany(p => p.DailyLogs)
                 .HasForeignKey(d => d.AssignedTo)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKDailyLog 60639");
+                ;
 
             builder.HasOne(d => d.Tracking).WithOne(p => p.DailyLog)
                 .HasForeignKey<DailyLog>(d => d.TrackingId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKDailyLog 386238");
+                ;
         }
     }
 }
