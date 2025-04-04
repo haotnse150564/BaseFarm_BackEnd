@@ -13,7 +13,7 @@ namespace Infrastructure.FluentAPI
             builder.HasKey(e => e.PaymentId);
             builder.Property(e => e.OrderId);
             builder.Property(e => e.TransactionId);
-            builder.Property(e => e.Amount);
+            builder.Property(e => e.Amount).HasColumnType("decimal(5, 10)");
             builder.Property(e => e.PaymentMethod);
             builder.Property(e => e.VnPayResponseCode);
             builder.Property(e => e.Success);
