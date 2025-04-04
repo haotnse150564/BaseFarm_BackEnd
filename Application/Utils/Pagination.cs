@@ -10,7 +10,7 @@ namespace Application.Commons
     {
         public int TotalItemCount { get; set; }
 
-        private int _pageSize;
+        private int _pageSize = 10;
         public int PageSize
         {
             get

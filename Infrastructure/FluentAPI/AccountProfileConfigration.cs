@@ -11,21 +11,32 @@ namespace Infrastructure.FluentAPI
             builder.ToTable("AccountProfile");
 
             builder.Property(e => e.AccountProfileId)
-                .ValueGeneratedNever();
-            builder.Property(e => e.CreatedAt);
-            builder.Property(e => e.Phone)
+                .ValueGeneratedNever()
+                .HasColumnName("accountProfileID");
+            builder.Property(e => e.Address)
                 .HasMaxLength(255)
-                .IsUnicode(false);
-            builder.Property(e => e.Gender);
+                .IsUnicode(false)
+                .HasColumnName("address");
+            builder.Property(e => e.CreatedAt).HasColumnName("createdAt");
+            builder.Property(e => e.Fullname)
+                .HasMaxLength(75)
+                .IsUnicode(false)
+                .HasColumnName("fullname");
+            builder.Property(e => e.Gender).HasColumnName("gender");
             builder.Property(e => e.Images)
                 .HasMaxLength(255)
-                .IsUnicode(false);
-            builder.Property(e => e.UpdatedAt);
+                .IsUnicode(false)
+                .HasColumnName("images");
+            builder.Property(e => e.Phone)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("phone");
+            builder.Property(e => e.UpdatedAt).HasColumnName("updatedAt");
 
             builder.HasOne(d => d.AccountProfileNavigation).WithOne(p => p.AccountProfile)
                 .HasForeignKey<AccountProfile>(d => d.AccountProfileId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKAccountPro821701");
         }
     }
 }

@@ -6,7 +6,7 @@ namespace Domain.Model;
 
 public partial class Feedback
 {
-    public int FeedbackId { get; set; }
+    public long FeedbackId { get; set; }
 
     public string? Comment { get; set; }
 
@@ -19,4 +19,6 @@ public partial class Feedback
     public long CustomerId { get; set; }
 
     public virtual Account Customer { get; set; } = null!;
+
+    public virtual Order? Order { get; set; }
 }

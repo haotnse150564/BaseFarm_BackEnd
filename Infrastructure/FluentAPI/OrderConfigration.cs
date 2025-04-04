@@ -10,17 +10,30 @@ namespace Infrastructure.FluentAPI
         {
             builder.ToTable("Order");
 
-            builder.HasKey(e => e.OrderId);
-            builder.Property(e => e.CreatedAt);
-            builder.Property(e => e.CustomerId);
-            builder.Property(e => e.Status).HasConversion<int>();
+            builder.Property(e => e.OrderId)
+                .ValueGeneratedNever()
+                .HasColumnName("orderID");
+            builder.Property(e => e.CreatedAt).HasColumnName("createdAt");
+            builder.Property(e => e.CustomerId).HasColumnName("customerID");
+            builder.Property(e => e.ShippingAddress)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("shippingAddress");
+            builder.Property(e => e.Status).HasColumnName("status");
             builder.Property(e => e.TotalPrice)
-                .HasColumnType("decimal(10, 2)");
-            builder.Property(e => e.UpdatedAt);
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("totalPrice");
+            builder.Property(e => e.UpdatedAt).HasColumnName("updatedAt");
 
             builder.HasOne(d => d.Customer).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.CustomerId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKOrder542182");
+
+            builder.HasOne(d => d.OrderNavigation).WithOne(p => p.Order)
+                .HasForeignKey<Order>(d => d.OrderId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKOrder797634");
         }
     }
 }

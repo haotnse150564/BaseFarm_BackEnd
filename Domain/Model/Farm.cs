@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Domain.Model;
 
-public partial class FarmDetail
+public partial class Farm
 {
     public long FarmDetailsId { get; set; }
 
@@ -18,8 +18,6 @@ public partial class FarmDetail
     public long AccountId { get; set; }
 
     public virtual Account Account { get; set; } = null!;
-
-    public virtual ICollection<Crop> Crops { get; set; } = new List<Crop>();
 
     public virtual ICollection<IoTdevice> IoTdevices { get; set; } = new List<IoTdevice>();
 

@@ -24,5 +24,7 @@ public partial class Order
 
     public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 
+    public virtual Feedback OrderNavigation { get; set; } = null!;
+
     public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
 }

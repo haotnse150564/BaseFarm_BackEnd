@@ -24,9 +24,15 @@ public partial class Schedule
 
     public long FarmDetailsId { get; set; }
 
+    public long CropId { get; set; }
+
     public virtual Account AssignedToNavigation { get; set; } = null!;
+
+    public virtual Crop Crop { get; set; } = null!;
+
+    public virtual DailyLog? DailyLog { get; set; }
 
     public virtual FarmActivity FarmActivity { get; set; } = null!;
 
-    public virtual FarmDetail FarmDetails { get; set; } = null!;
+    public virtual Farm FarmDetails { get; set; } = null!;
 }

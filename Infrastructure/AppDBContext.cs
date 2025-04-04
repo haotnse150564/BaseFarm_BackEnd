@@ -13,48 +13,55 @@ namespace Infrastructure
         //{
         //    optionBuilder.UseSqlServer("ConnectionsString");
         //}
-        public DbSet<Account> Account { get; set; }
 
-        public DbSet<AccountProfile> AccountProfile { get; set; }
+        public virtual DbSet<Account> Account { get; set; }
 
-        public DbSet<Category> Categorie { get; set; }
+        public virtual DbSet<AccountProfile> AccountProfile { get; set; }
 
-        public DbSet<Crop> Crop { get; set; }
+        public virtual DbSet<Category> Categorie { get; set; }
 
-        public DbSet<FarmActivity> FarmActivitie { get; set; }
+        public virtual DbSet<Crop> Crops { get; set; }
 
-        public DbSet<FarmDetail> FarmDetail { get; set; }
+        public virtual DbSet<CropRequirement> CropRequirement { get; set; }
 
-        public DbSet<Feedback> Feedback { get; set; }
+        public virtual DbSet<DailyLog> DailyLog { get; set; }
 
-        public DbSet<IoTdevice> IoTdevice { get; set; }
+        public virtual DbSet<Farm> Farm { get; set; }
 
-        public DbSet<Order> Order { get; set; }
+        public virtual DbSet<FarmActivity> FarmActivitie { get; set; }
 
-        public DbSet<OrderDetail> OrderDetail { get; set; }
+        public virtual DbSet<Feedback> Feedback { get; set; }
 
-        public DbSet<Payment> Payment { get; set; }
+        public virtual DbSet<Inventory> Inventorie { get; set; }
 
-        public DbSet<Product> Product { get; set; }
+        public virtual DbSet<IoTdevice> IoTdevice { get; set; }
 
-        public DbSet<Report> Report { get; set; }
+        public virtual DbSet<IoTdeviceLog> IoTdeviceLog { get; set; }
 
-        public DbSet<Schedule> Schedule { get; set; }
+        public virtual DbSet<Order> Order { get; set; }
+
+        public virtual DbSet<OrderDetail> OrderDetail { get; set; }
+
+        public virtual DbSet<Payment> Payment { get; set; }
+
+        public virtual DbSet<Product> Product { get; set; }
+
+        public virtual DbSet<Schedule> Schedule { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             #region seedingdata
             builder.Entity<Account>().HasData(
-                new Account { AccountId = 1, Email = "admin@email.com", PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", Status = Domain.Enum.Status.ACTIVE, Role = Domain.Enum.Roles.Admin, RefreshToken = null, ExpireMinutes = 30, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") },
-                new Account { AccountId = 2, Email = "manager@email.com", PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", Status = Domain.Enum.Status.ACTIVE, Role = Domain.Enum.Roles.Manager, RefreshToken = null, ExpireMinutes = 30, CreatedAt = DateOnly.Parse("1/1/2025"), UpdatedAt = DateOnly.Parse("5/1/2025") },
-                new Account { AccountId = 3, Email = "staff01@email.com", PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", Status = Domain.Enum.Status.ACTIVE, Role = Domain.Enum.Roles.Staff, RefreshToken = null, ExpireMinutes = 30, CreatedAt = DateOnly.Parse("5/1/2025"), UpdatedAt = DateOnly.Parse("5/1/2025") },
-                new Account { AccountId = 6, Email = "staff02@email.com", PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", Status = Domain.Enum.Status.ACTIVE, Role = Domain.Enum.Roles.Staff, RefreshToken = null, ExpireMinutes = 30, CreatedAt = DateOnly.Parse("5/1/2025"), UpdatedAt = DateOnly.Parse("5/1/2025") },
-                new Account { AccountId = 9, Email = "staff03@email.com", PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", Status = Domain.Enum.Status.ACTIVE, Role = Domain.Enum.Roles.Staff, RefreshToken = null, ExpireMinutes = 30, CreatedAt = DateOnly.Parse("5/1/2025"), UpdatedAt = DateOnly.Parse("5/1/2025") },
-                new Account { AccountId = 4, Email = "cus01@email.com", PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", Status = Domain.Enum.Status.ACTIVE, Role = Domain.Enum.Roles.Customer, RefreshToken = null, ExpireMinutes = 30, CreatedAt = DateOnly.Parse("4/1/2025"), UpdatedAt = DateOnly.Parse("5/1/2025") },
-                new Account { AccountId = 8, Email = "cus03@email.com", PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", Status = Domain.Enum.Status.ACTIVE, Role = Domain.Enum.Roles.Customer, RefreshToken = null, ExpireMinutes = 30, CreatedAt = DateOnly.Parse("4/1/2025"), UpdatedAt = DateOnly.Parse("5/1/2025") },
-                new Account { AccountId = 7, Email = "cus04@email.com", PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", Status = Domain.Enum.Status.ACTIVE, Role = Domain.Enum.Roles.Customer, RefreshToken = null, ExpireMinutes = 30, CreatedAt = DateOnly.Parse("4/1/2025"), UpdatedAt = DateOnly.Parse("5/1/2025") },
-                new Account { AccountId = 5, Email = "cus02@email.com", PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", Status = Domain.Enum.Status.ACTIVE, Role = Domain.Enum.Roles.Customer, RefreshToken = null, ExpireMinutes = 30, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("5/1/2025") }
+                new Account { AccountId = 1, Email = "admin@email.com", PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", Status = Domain.Enum.Status.ACTIVE, Role = Domain.Enum.Roles.Admin, RefreshToken = null, ExpireMinute = 30, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") },
+                new Account { AccountId = 2, Email = "manager@email.com", PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", Status = Domain.Enum.Status.ACTIVE, Role = Domain.Enum.Roles.Manager, RefreshToken = null, ExpireMinute = 30, CreatedAt = DateOnly.Parse("1/1/2025"), UpdatedAt = DateOnly.Parse("5/1/2025") },
+                new Account { AccountId = 3, Email = "staff01@email.com", PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", Status = Domain.Enum.Status.ACTIVE, Role = Domain.Enum.Roles.Staff, RefreshToken = null, ExpireMinute = 30, CreatedAt = DateOnly.Parse("5/1/2025"), UpdatedAt = DateOnly.Parse("5/1/2025") },
+                new Account { AccountId = 6, Email = "staff02@email.com", PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", Status = Domain.Enum.Status.ACTIVE, Role = Domain.Enum.Roles.Staff, RefreshToken = null, ExpireMinute = 30, CreatedAt = DateOnly.Parse("5/1/2025"), UpdatedAt = DateOnly.Parse("5/1/2025") },
+                new Account { AccountId = 9, Email = "staff03@email.com", PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", Status = Domain.Enum.Status.ACTIVE, Role = Domain.Enum.Roles.Staff, RefreshToken = null, ExpireMinute = 30, CreatedAt = DateOnly.Parse("5/1/2025"), UpdatedAt = DateOnly.Parse("5/1/2025") },
+                new Account { AccountId = 4, Email = "cus01@email.com", PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", Status = Domain.Enum.Status.ACTIVE, Role = Domain.Enum.Roles.Customer, RefreshToken = null, ExpireMinute = 30, CreatedAt = DateOnly.Parse("4/1/2025"), UpdatedAt = DateOnly.Parse("5/1/2025") },
+                new Account { AccountId = 8, Email = "cus03@email.com", PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", Status = Domain.Enum.Status.ACTIVE, Role = Domain.Enum.Roles.Customer, RefreshToken = null, ExpireMinute = 30, CreatedAt = DateOnly.Parse("4/1/2025"), UpdatedAt = DateOnly.Parse("5/1/2025") },
+                new Account { AccountId = 7, Email = "cus04@email.com", PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", Status = Domain.Enum.Status.ACTIVE, Role = Domain.Enum.Roles.Customer, RefreshToken = null, ExpireMinute = 30, CreatedAt = DateOnly.Parse("4/1/2025"), UpdatedAt = DateOnly.Parse("5/1/2025") },
+                new Account { AccountId = 5, Email = "cus02@email.com", PasswordHash = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", Status = Domain.Enum.Status.ACTIVE, Role = Domain.Enum.Roles.Customer, RefreshToken = null, ExpireMinute = 30, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("5/1/2025") }
             );
             builder.Entity<AccountProfile>().HasData(
                 new AccountProfile { AccountProfileId = 1, Gender = Domain.Enum.Gender.Male, Phone = "0123456789", Fullname = "Admin", Address = "HCM", Images = null, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") },
@@ -74,11 +81,11 @@ namespace Infrastructure
                 new Category { CategoryId = 2, CategoryName = "Fruit" }
                 );
             builder.Entity<Product>().HasData(
-                new Product { ProductId = 1, ProductName = "Vegetable 1", Images = null, Price = 10000, StockQuantity = 10000, Description = "Rau Den", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, CropId = 1 },
-                new Product { ProductId = 2, ProductName = "Vegetable 2", Images = null, Price = 15000, StockQuantity = 10000, Description = "Salad", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, CropId = 1 },
-                new Product { ProductId = 3, ProductName = "Vegetable 3", Images = null, Price = 20000, StockQuantity = 10000, Description = "Dau Ha Lan", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, CropId = 1 },
-                new Product { ProductId = 4, ProductName = "Fruit 1", Images = null, Price = 35000, StockQuantity = 10000, Description = "Ca chua", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, CropId = 2 },
-                new Product { ProductId = 5, ProductName = "Fruit 2", Images = null, Price = 55000, StockQuantity = 10000, Description = "Dua Hau", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, CropId = 3 }
+                new Product { ProductId = 1, ProductName = "Vegetable 1", Images = null, Price = 10000, StockQuantity = 10000, Description = "Rau Den", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, },
+                new Product { ProductId = 2, ProductName = "Vegetable 2", Images = null, Price = 15000, StockQuantity = 10000, Description = "Salad", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1,  },
+                new Product { ProductId = 3, ProductName = "Vegetable 3", Images = null, Price = 20000, StockQuantity = 10000, Description = "Dau Ha Lan", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1,  },
+                new Product { ProductId = 4, ProductName = "Fruit 1", Images = null, Price = 35000, StockQuantity = 10000, Description = "Ca chua", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1,  },
+                new Product { ProductId = 5, ProductName = "Fruit 2", Images = null, Price = 55000, StockQuantity = 10000, Description = "Dua Hau", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1,  }
                 );
             builder.Entity<Schedule>().HasData(
                 new Schedule { ScheduleId = 1, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("4/3/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 3, FarmActivityId = 1, FarmDetailsId = 1 },
@@ -90,17 +97,17 @@ namespace Infrastructure
                 new FarmActivity { FarmActivitiesId = 2, ActivityType = 1, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/11/2025"), Status = Domain.Enum.Status.ACTIVE },
                 new FarmActivity { FarmActivitiesId = 3, ActivityType = 1, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/3/2025"), Status = Domain.Enum.Status.ACTIVE }
                 );
-            builder.Entity<FarmDetail>().HasData(
-                new FarmDetail { FarmDetailsId = 1, FarmName = "Happy Farm", Location = "Q1, HCM", CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AccountId = 4 },
-                new FarmDetail { FarmDetailsId = 2, FarmName = "Sky Garden", Location = "Thu Duc, HCM", CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("3/2/2025"), AccountId = 5 },
-                new FarmDetail { FarmDetailsId = 3, FarmName = "Hidden Planting", Location = "Binh Tan, HCM", CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("3/5/2025"), AccountId = 7 }
+            builder.Entity<Farm>().HasData(
+                new Farm { FarmDetailsId = 1, FarmName = "Happy Farm", Location = "Q1, HCM", CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AccountId = 4 },
+                new Farm { FarmDetailsId = 2, FarmName = "Sky Garden", Location = "Thu Duc, HCM", CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("3/2/2025"), AccountId = 5 },
+                new Farm { FarmDetailsId = 3, FarmName = "Hidden Planting", Location = "Binh Tan, HCM", CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("3/5/2025"), AccountId = 7 }
         );
             builder.Entity<Crop>().HasData(
-                new Crop { CropId = 1, CropName = "Cop 01", Description = "3x3 m2", Status = Domain.Enum.Status.ACTIVE, PlantingDate = DateOnly.Parse("3/1/2025"), HarvestDate = DateOnly.Parse("4/5/2025"), Moisture = 1, Temperature = 30, Fertilizer = "NPK", FarmDetailsId = 1, },
-                new Crop { CropId = 2, CropName = "Cop 02", Description = "2x3 m2", Status = Domain.Enum.Status.ACTIVE, PlantingDate = DateOnly.Parse("3/4/2025"), HarvestDate = DateOnly.Parse("4/5/2025"), Moisture = 1, Temperature = 30, Fertilizer = "Cali", FarmDetailsId = 1, },
-                new Crop { CropId = 3, CropName = "Cop 03", Description = "3x2 m2", Status = Domain.Enum.Status.ACTIVE, PlantingDate = DateOnly.Parse("4/4/2025"), HarvestDate = DateOnly.Parse("4/6/2025"), Moisture = 1, Temperature = 30, Fertilizer = "Photpho", FarmDetailsId = 1, },
-                new Crop { CropId = 4, CropName = "Cop 04", Description = "3x5 m2", Status = Domain.Enum.Status.ACTIVE, PlantingDate = DateOnly.Parse("3/5/2025"), HarvestDate = DateOnly.Parse("4/3/2025"), Moisture = 1, Temperature = 30, Fertilizer = "Nito", FarmDetailsId = 2, },
-                new Crop { CropId = 5, CropName = "Cop 05", Description = "4x3 m2", Status = Domain.Enum.Status.ACTIVE, PlantingDate = DateOnly.Parse("3/5/2025"), HarvestDate = DateOnly.Parse("4/3/2025"), Moisture = 1, Temperature = 30, Fertilizer = "NPK", FarmDetailsId = 3, }
+                new Crop { CropId = 1, CropName = "Cop 01", Description = "3x3 m2", Status = Domain.Enum.Status.ACTIVE, PlantingDate = DateOnly.Parse("3/1/2025"), HarvestDate = DateOnly.Parse("4/5/2025"), Quantity = 100  },
+                new Crop { CropId = 2, CropName = "Cop 02", Description = "2x3 m2", Status = Domain.Enum.Status.ACTIVE, PlantingDate = DateOnly.Parse("3/4/2025"), HarvestDate = DateOnly.Parse("4/5/2025"), Quantity = 100 },
+                new Crop { CropId = 3, CropName = "Cop 03", Description = "3x2 m2", Status = Domain.Enum.Status.ACTIVE, PlantingDate = DateOnly.Parse("4/4/2025"), HarvestDate = DateOnly.Parse("4/6/2025"), Quantity = 100 },
+                new Crop {CropId = 4, CropName = "Cop 04", Description = "3x5 m2", Status = Domain.Enum.Status.ACTIVE, PlantingDate = DateOnly.Parse("3/5/2025"), HarvestDate = DateOnly.Parse("4/3/2025"), Quantity = 100 },
+                new Crop {CropId = 5, CropName = "Cop 05", Description = "4x3 m2", Status = Domain.Enum.Status.ACTIVE, PlantingDate = DateOnly.Parse("3/5/2025"), HarvestDate = DateOnly.Parse("4/3/2025"), Quantity = 100 }
                 );
             builder.Entity<Feedback>().HasData(
                 new Feedback { FeedbackId = 1, CustomerId = 4, CreatedAt = DateOnly.Parse("4/3/2025"), Rating = 4, Comment = "App very good, but load data slow" },
@@ -133,13 +140,8 @@ namespace Infrastructure
                 new Payment { PaymentId = 2, OrderId = 2, TransactionId = "VNPay02", Amount = 150000, PaymentMethod = "VNPay", VnPayResponseCode = "VNPayPayment02", Success = false, PaymentTime = DateTime.Parse("3/1/2025"), CreateDate = DateTime.Parse("3/1/2025"), UpdateDate = null },
                 new Payment { PaymentId = 3, OrderId = 3, TransactionId = "VNPay03", Amount = 315000, PaymentMethod = "VNPay", VnPayResponseCode = "VNPayPayment03", Success = false, PaymentTime = DateTime.Parse("3/1/2025"), CreateDate = DateTime.Parse("3/1/2025"), UpdateDate = null }
                 );
-            builder.Entity<Report>().HasData(
-                new Report { ReportId = 1, ReportDate = DateOnly.Parse("3/1/2025"), ReportType = 1, FilePath = null, Status = Domain.Enum.Status.ACTIVE, GeneratedBy = 2 },
-                new Report { ReportId = 2, ReportDate = DateOnly.Parse("3/3/2025"), ReportType = 3, FilePath = null, Status = Domain.Enum.Status.ACTIVE, GeneratedBy = 2 },
-                new Report { ReportId = 3, ReportDate = DateOnly.Parse("3/5/2025"), ReportType = 2, FilePath = null, Status = Domain.Enum.Status.ACTIVE, GeneratedBy = 2 },
-                new Report { ReportId = 4, ReportDate = DateOnly.Parse("3/10/2025"), ReportType = 1, FilePath = null, Status = Domain.Enum.Status.ACTIVE, GeneratedBy = 2 },
-                new Report { ReportId = 5, ReportDate = DateOnly.Parse("3/11/2025"), ReportType = 3, FilePath = null, Status = Domain.Enum.Status.ACTIVE, GeneratedBy = 2 }
-                );
+            
+            
 
 
             #endregion

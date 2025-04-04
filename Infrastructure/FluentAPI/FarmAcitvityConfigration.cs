@@ -13,13 +13,12 @@ namespace Infrastructure.FluentAPI
     {
         public void Configure(EntityTypeBuilder<FarmActivity> builder)
         {
-            builder.ToTable("FarmActivity");
 
-            builder.HasKey(e => e.FarmActivitiesId);
-            builder.Property(e => e.ActivityType) ;
-            builder.Property(e => e.EndDate) ;
-            builder.Property(e => e.StartDate);
-            builder.Property(e => e.Status).HasConversion<int>();
+            builder.Property(e => e.FarmActivitiesId).HasColumnName("farmActivitiesID");
+            builder.Property(e => e.ActivityType).HasColumnName("activityType");
+            builder.Property(e => e.EndDate).HasColumnName("endDate");
+            builder.Property(e => e.StartDate).HasColumnName("startDate");
+            builder.Property(e => e.Status).HasColumnName("status");
         }
     }
 }
