@@ -12,7 +12,6 @@ namespace Infrastructure.FluentAPI
 
             builder.HasKey(e => e.OrderId);
 
-            builder.Property(e => e.OrderId).HasColumnName("orderId");
             builder.Property(e => e.CreatedAt).HasColumnName("createdAt");
             builder.Property(e => e.CustomerId).HasColumnName("customerID");
             builder.Property(e => e.ShippingAddress)

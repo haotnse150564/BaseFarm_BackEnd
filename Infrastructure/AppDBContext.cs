@@ -14,39 +14,39 @@ namespace Infrastructure
         //    optionBuilder.UseSqlServer("ConnectionsString");
         //}
 
-        public virtual DbSet<Account> Account { get; set; }
+        public DbSet<Account> Account { get; set; }
 
-        public virtual DbSet<AccountProfile> AccountProfile { get; set; }
+        public DbSet<AccountProfile> AccountProfile { get; set; }
 
-        public virtual DbSet<Category> Categorie { get; set; }
+        public DbSet<Category> Categorie { get; set; }
 
-        public virtual DbSet<Crop> Crops { get; set; }
+        public DbSet<Crop> Crops { get; set; }
 
-        public virtual DbSet<CropRequirement> CropRequirement { get; set; }
+        public DbSet<CropRequirement> CropRequirement { get; set; }
 
-        public virtual DbSet<DailyLog> DailyLog { get; set; }
+        public DbSet<DailyLog> DailyLog { get; set; }
 
-        public virtual DbSet<Farm> Farm { get; set; }
+        public DbSet<Farm> Farm { get; set; }
 
-        public virtual DbSet<FarmActivity> FarmActivitie { get; set; }
+        public DbSet<FarmActivity> FarmActivitie { get; set; }
 
-        public virtual DbSet<Feedback> Feedback { get; set; }
+        public DbSet<Feedback> Feedback { get; set; }
 
-        public virtual DbSet<Inventory> Inventorie { get; set; }
+        public DbSet<Inventory> Inventorie { get; set; }
 
-        public virtual DbSet<IoTdevice> IoTdevice { get; set; }
+        public DbSet<IoTdevice> IoTdevice { get; set; }
 
-        public virtual DbSet<IoTdeviceLog> IoTdeviceLog { get; set; }
+        public DbSet<IoTdeviceLog> IoTdeviceLog { get; set; }
 
-        public virtual DbSet<Order> Order { get; set; }
+        public DbSet<Order> Order { get; set; }
 
-        public virtual DbSet<OrderDetail> OrderDetail { get; set; }
+        public DbSet<OrderDetail> OrderDetail { get; set; }
 
-        public virtual DbSet<Payment> Payment { get; set; }
+        public DbSet<Payment> Payment { get; set; }
 
-        public virtual DbSet<Product> Product { get; set; }
+        public DbSet<Product> Product { get; set; }
 
-        public virtual DbSet<Schedule> Schedule { get; set; }
+        public DbSet<Schedule> Schedule { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -141,9 +141,9 @@ namespace Infrastructure
                 new OrderDetail { OrderDetailId = 3, OrderId = 1, Quantity = 21, UnitPrice = 10, ProductId = 2 }
                 );
             builder.Entity<Payment>().HasData(
-                new Payment { PaymentId = 1, OrderId = 1, TransactionId = "VNPay01", Amount = 100000, PaymentMethod = "VNPay", VnPayResponseCode = "VNPayPayment01", Success = true, PaymentTime = DateTime.Parse("3/1/2025"), CreateDate = DateTime.Parse("3/1/2025"), UpdateDate = null },
-                new Payment { PaymentId = 2, OrderId = 2, TransactionId = "VNPay02", Amount = 150000, PaymentMethod = "VNPay", VnPayResponseCode = "VNPayPayment02", Success = false, PaymentTime = DateTime.Parse("3/1/2025"), CreateDate = DateTime.Parse("3/1/2025"), UpdateDate = null },
-                new Payment { PaymentId = 3, OrderId = 3, TransactionId = "VNPay03", Amount = 315000, PaymentMethod = "VNPay", VnPayResponseCode = "VNPayPayment03", Success = false, PaymentTime = DateTime.Parse("3/1/2025"), CreateDate = DateTime.Parse("3/1/2025"), UpdateDate = null }
+                new Payment { PaymentId = 1, OrderId = 1, TransactionId = "VNPay01", Amount = 10, PaymentMethod = "VNPay", VnPayResponseCode = "VNPayPayment01", Success = true, PaymentTime = DateTime.Parse("3/1/2025"), CreateDate = DateTime.Parse("3/1/2025"), UpdateDate = null },
+                new Payment { PaymentId = 2, OrderId = 2, TransactionId = "VNPay02", Amount = 15, PaymentMethod = "VNPay", VnPayResponseCode = "VNPayPayment02", Success = false, PaymentTime = DateTime.Parse("3/1/2025"), CreateDate = DateTime.Parse("3/1/2025"), UpdateDate = null },
+                new Payment { PaymentId = 3, OrderId = 3, TransactionId = "VNPay03", Amount = 21, PaymentMethod = "VNPay", VnPayResponseCode = "VNPayPayment03", Success = false, PaymentTime = DateTime.Parse("3/1/2025"), CreateDate = DateTime.Parse("3/1/2025"), UpdateDate = null }
                 );
 
             builder.Entity<CropRequirement>().HasData(
