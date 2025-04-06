@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Enum;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,14 +11,20 @@ namespace Infrastructure.ViewModel.Response
     {
         public class ProfileResponseDTO
         {
-            public long AccountId { get; set; }
-            public string? Email { get; set; }
-            public int? Gender { get; set; }
+            public long AccountProfileId { get; set; }
+
+            public string Gender { get; set; }
+
             public string? Phone { get; set; }
+
             public string? Fullname { get; set; }
+
             public string? Address { get; set; }
+
             public string? Images { get; set; }
-            public DateTime? CreatedAt { get; set; }
+
+            public string CreatedAt { get; set; }
+
         }
 
         

@@ -7,6 +7,8 @@ namespace Infrastructure.Repositories
     {
         Task<Account?> GetByEmailAsync(string email);
         Task<Account> GetAccountProfileByAccountIdAsync(long accountID);
+        Task<List<Account>> GetAllAccountWithProfiles();
+        Task<Account> GetByEmail(string email);
 
     }
 }

@@ -10,7 +10,6 @@ namespace Infrastructure.Mapper
         public AccountProfileMapping()
         {
             CreateMap<AccountProfile, ProfileResponseDTO>()
-                .ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.AccountProfileId))
                 .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Gender))
                 .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Phone))
                 .ForMember(dest => dest.Fullname, opt => opt.MapFrom(src => src.Fullname))
@@ -19,6 +18,7 @@ namespace Infrastructure.Mapper
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src =>
                     src.CreatedAt.HasValue ? src.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null))
                 .ReverseMap();
+
             CreateMap<ProfileRequestDTO, AccountProfile>()
                 .ForMember(dest => dest.AccountProfileId, opt => opt.MapFrom(src => src.AccountId))
                 .ReverseMap();

@@ -18,7 +18,8 @@ namespace Application.Services
         Task<ViewAccount> UpdateAccountStatusAsync(long id);
         Task<ViewAccount> CreateAccountAsync(AccountForm request);
         Task<ViewAccount> UpdateAccountAsync(long id, AccountForm request);
-        Task<Pagination<ViewAccount>> GetAllAccountAsync(int pageSize, int pageIndex );
+        Task<Pagination<ViewAccount>> GetAllAccountAsync(int pageSize, int pageIndex);
+        Task<ViewAccount> GetAccountByEmail(string email);
 
     }
 }

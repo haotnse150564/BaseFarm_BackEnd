@@ -6,6 +6,7 @@ using Application.Utils;
 using AutoMapper;
 using Domain.Enum;
 using Domain.Model;
+using Infrastructure.Repositories;
 using Infrastructure.ViewModel.Request;
 using System.Drawing.Printing;
 using static Infrastructure.ViewModel.Request.AccountRequest;
@@ -20,12 +21,14 @@ namespace WebAPI.Services
         private readonly IUnitOfWorks _unitOfWork;
         private readonly IMapper _mapper;
         private readonly JWTUtils _jwtUtils;
+        private readonly IAccountProfileRepository _accountProfileRepository;
 
-        public AccountServices(IUnitOfWorks unitOfWork, IMapper mapper, JWTUtils jwtUtils)
+        public AccountServices(IUnitOfWorks unitOfWork, IMapper mapper, JWTUtils jwtUtils, IAccountProfileRepository accountProfileRepository)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _jwtUtils = jwtUtils;
+            _accountProfileRepository = accountProfileRepository;
         }
 
         public async Task<ViewAccount> CreateAccountAsync(AccountForm request)
@@ -57,14 +60,15 @@ namespace WebAPI.Services
         {
             try
             {
-                var account = await _unitOfWork.accountRepository.GetAllAsync();
+                var account = await _unitOfWork.accountRepository.GetAllAccountWithProfiles();
+                await _unitOfWork.accountProfileRepository.GetAllAsync();
 
                 if (account == null)
                 {
                     return null;
                 }
+                // Lọc tài khoản không phải Admin
                 var userAccount = account.Where(x => x.Role != Roles.Admin).ToList();
-                ;
                 var result = _mapper.Map<List<ViewAccount>>(userAccount.OrderBy(x => x.Role));
                 var tolalItem = result.Count;
                 // Map dữ liệu sang DTO
@@ -83,7 +87,24 @@ namespace WebAPI.Services
                 return null;
             }
         }
-
+        public async Task<ViewAccount> GetAccountByEmail(string email)
+        {
+            try
+            {
+                var account = await _unitOfWork.accountRepository.GetByEmail(email);
+                //await _unitOfWork.accountProfileRepository.GetAllAsync();
+                if (account == null)
+                {
+                    return null;
+                }
+                var result = _mapper.Map<ViewAccount>(account);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
         public async Task<LoginResponseDTO> LoginAsync(string email, string password)
         {
             // Kiểm tra tài khoản có tồn tại hay không
