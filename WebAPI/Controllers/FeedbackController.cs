@@ -1,5 +1,6 @@
 ﻿using Application;
 using Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static Infrastructure.ViewModel.Request.FeedbackRequest;
 using static Infrastructure.ViewModel.Response.FeedbackResponse;
@@ -31,6 +32,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("CreateFeedback")]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> CreateFeedback([FromBody] CreateFeedbackDTO createRequest)
         {
             if (!ModelState.IsValid)
@@ -51,6 +53,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("updateFeedback/{id}")]
+        [Authorize(Roles = "Customer")]
         public async Task<IActionResult> UpdateFeedbackAsync([FromBody] CreateFeedbackDTO request, [FromRoute] long id)
         {
 
