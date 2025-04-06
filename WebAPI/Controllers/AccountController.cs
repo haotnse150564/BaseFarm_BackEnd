@@ -36,7 +36,7 @@ namespace WebAPI.Controllers
             return BadRequest(response);
         }
         [HttpPost("create")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateAccount([FromBody] AccountForm request)
         {
             var result = await _accountServices.CreateAccountAsync(request);
@@ -45,7 +45,7 @@ namespace WebAPI.Controllers
             return BadRequest("Failed to create account.");
         }
         [HttpPut("update-status/{id}")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateAccount(long id)
         {
             var result = await _accountServices.UpdateAccountStatusAsync(id);
@@ -54,7 +54,7 @@ namespace WebAPI.Controllers
             return BadRequest("Failed to update account.");
         }
         [HttpPut("update/{id}")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateAccount(long id, [FromBody] AccountForm request)
         {
             var result = await _accountServices.UpdateAccountAsync(id, request);
@@ -63,10 +63,19 @@ namespace WebAPI.Controllers
             return BadRequest("Failed to update account.");
         }
         [HttpGet("get-all")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllAccount(int pageSize = 10, int pageIndex = 1)
         {
             var result = await _accountServices.GetAllAccountAsync(pageSize, pageIndex);
+            if (result != null)
+                return Ok(result);
+            return BadRequest("Failed to get accounts.");
+        }
+        [HttpGet("get-by-email")]
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAllEmailAccount(string email)
+        {
+            var result = await _accountServices.GetAccountByEmail(email);
             if (result != null)
                 return Ok(result);
             return BadRequest("Failed to get accounts.");

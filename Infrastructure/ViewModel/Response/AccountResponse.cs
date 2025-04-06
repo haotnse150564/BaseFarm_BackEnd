@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,7 +18,10 @@ namespace Infrastructure.ViewModel.Response
         {
             public string Email { get; set; }
             public string Role { get; set; }
-            public string Password { get; set; }
+            public string Fullname { get; set; }
+            public string Phone { get; set; }
+            public string Status { get; set; }
+            public AccountProfileResponse.ProfileResponseDTO? AccountProfile { get; set; }
         }
         public class ResponseDTO
         {

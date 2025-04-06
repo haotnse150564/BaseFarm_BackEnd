@@ -30,7 +30,7 @@ namespace WebAPI.Services
                 throw new Exception("Profile not found");
 
             var profileResponse = _mapper.Map<ProfileResponseDTO>(profile);
-            profileResponse.Email = user.Email;
+            ///profileResponse.Email = user.Email;
             return profileResponse;
         }
 
