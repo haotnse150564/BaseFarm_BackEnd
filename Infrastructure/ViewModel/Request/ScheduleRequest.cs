@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Infrastructure.ViewModel.Response.AccountResponse;
 
 namespace Infrastructure.ViewModel.Request
 {
@@ -18,5 +19,8 @@ namespace Infrastructure.ViewModel.Request
         public int FarmActivityId { get; set; }
 
         public long FarmDetailsId { get; set; }
+        public long CropId { get; set; }
+        public ViewAccount account { get; set; }
+
     }
 }
