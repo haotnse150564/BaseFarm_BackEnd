@@ -93,9 +93,9 @@ namespace Infrastructure
                 new Product { ProductId = 5, ProductName = "Fruit 2", Images = null, Price = 55000, StockQuantity = 10000, Description = "Dua Hau", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, }
                 );
             builder.Entity<Schedule>().HasData(
-                new Schedule { ScheduleId = 1, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("4/3/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 3, FarmActivityId = 1, FarmDetailsId = 1, CropId = 1 },
+               new Schedule { ScheduleId = 1, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("4/3/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 3, FarmActivityId = 1, FarmDetailsId = 1, CropId = 1 },
                 new Schedule { ScheduleId = 2, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/11/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 9, FarmActivityId = 2, FarmDetailsId = 2, CropId = 2 },
-                new Schedule { ScheduleId = 3, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/3/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 6, FarmActivityId = 3, FarmDetailsId = 3, CropId = 3 }
+                new Schedule { ScheduleId = 3, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/3/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 6, FarmActivityId = 3, FarmDetailsId = 3, CropId = 3}
            );
             builder.Entity<FarmActivity>().HasData(
                 new FarmActivity { FarmActivitiesId = 1, ActivityType = 1, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("4/1/2025"), Status = Domain.Enum.Status.ACTIVE },
@@ -151,17 +151,24 @@ namespace Infrastructure
                 new CropRequirement { RequirementId = 2, EstimatedDate = "45", Moisture = 1, Temperature = 22, Fertilizer = "NPK", DeviceId = 3 },
                 new CropRequirement { RequirementId = 3, EstimatedDate = "30", Moisture = 1, Temperature = 26, Fertilizer = "NPK", DeviceId = 2 }
                 );
-            builder.Entity<DailyLog>().HasData(
-                new DailyLog { TrackingId = 1, Date = DateOnly.Parse("4/5/2025"), Notes = "Hoat dong binh thuong", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("4/5/2025"), UpdatedAt = DateOnly.Parse("4/5/2025"), AssignedTo = 3 },
-                new DailyLog { TrackingId = 2, Date = DateOnly.Parse("4/6/2025"), Notes = "Hoat dong binh thuong", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("4/6/2025"), UpdatedAt = DateOnly.Parse("4/6/2025"), AssignedTo = 6 },
-                new DailyLog { TrackingId = 3, Date = DateOnly.Parse("4/7/2025"), Notes = "Hoat dong binh thuong", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("4/7/2025"), UpdatedAt = DateOnly.Parse("4/7/2025"), AssignedTo = 9 }
 
-                );
             builder.Entity<IoTdeviceLog>().HasData(
                 new IoTdeviceLog { LogId = 1, CreatedAt = DateOnly.Parse("4/5/2025"), IoTdevice = 1, TrackingId = 1 },
                 new IoTdeviceLog { LogId = 2, CreatedAt = DateOnly.Parse("4/6/2025"), IoTdevice = 2, TrackingId = 2 },
+                new IoTdeviceLog { LogId = 4, CreatedAt = DateOnly.Parse("4/6/2025"), IoTdevice = 2, TrackingId = 4 },
+                new IoTdeviceLog { LogId = 5, CreatedAt = DateOnly.Parse("4/6/2025"), IoTdevice = 2, TrackingId = 5 },
+                new IoTdeviceLog { LogId = 6, CreatedAt = DateOnly.Parse("4/6/2025"), IoTdevice = 2, TrackingId = 6 },
                 new IoTdeviceLog { LogId = 3, CreatedAt = DateOnly.Parse("4/7/2025"), IoTdevice = 3, TrackingId = 3 }
                 );
+            builder.Entity<DailyLog>().HasData(
+                 new DailyLog { TrackingId = 1, Date = DateOnly.Parse("4/5/2025"), Notes = "Hoat dong binh thuong", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("4/5/2025"), UpdatedAt = DateOnly.Parse("4/5/2025"), AssignedTo = 3, ScheduleId = 1 },
+                 new DailyLog { TrackingId = 2, Date = DateOnly.Parse("4/6/2025"), Notes = "Hoat dong binh thuong", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("4/6/2025"), UpdatedAt = DateOnly.Parse("4/6/2025"), AssignedTo = 6, ScheduleId = 2 },
+                 new DailyLog { TrackingId = 4, Date = DateOnly.Parse("4/7/2025"), Notes = "Hoat dong binh thuong", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("4/7/2025"), UpdatedAt = DateOnly.Parse("4/7/2025"), AssignedTo = 6, ScheduleId = 2 },
+                 new DailyLog { TrackingId = 5, Date = DateOnly.Parse("4/8/2025"), Notes = "Hoat dong binh thuong", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("4/8/2025"), UpdatedAt = DateOnly.Parse("4/8/2025"), AssignedTo = 6, ScheduleId = 2 },
+                 new DailyLog { TrackingId = 6, Date = DateOnly.Parse("4/9/2025"), Notes = "Hoat dong binh thuong", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("4/9/2025"), UpdatedAt = DateOnly.Parse("4/9/2025"), AssignedTo = 6, ScheduleId = 2 },
+                 new DailyLog { TrackingId = 3, Date = DateOnly.Parse("4/7/2025"), Notes = "Hoat dong binh thuong", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("4/7/2025"), UpdatedAt = DateOnly.Parse("4/7/2025"), AssignedTo = 9, ScheduleId = 3 }
+
+    );
             #endregion
         }
 

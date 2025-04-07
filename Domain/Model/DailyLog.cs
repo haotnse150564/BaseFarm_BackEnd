@@ -1,4 +1,5 @@
 ﻿using Domain.Enum;
+using Domain.Model;
 using System;
 using System.Collections.Generic;
 
@@ -20,9 +21,11 @@ public partial class DailyLog
 
     public long AssignedTo { get; set; }
 
+    public long ScheduleId { get; set; }
+
     public virtual Account AssignedToNavigation { get; set; } = null!;
 
     public virtual ICollection<IoTdeviceLog> IoTdeviceLogs { get; set; } = new List<IoTdeviceLog>();
 
-    public virtual Schedule Tracking { get; set; } = null!;
+    public virtual Schedule Schedule { get; set; } = null!;
 }
