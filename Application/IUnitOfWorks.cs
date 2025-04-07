@@ -18,5 +18,9 @@ namespace Application
         IPaymentRepository paymentRepository { get; }
         IScheduleRepository scheduleRepository { get; }
         IIoTdeviceRepository ioTdeviceRepository { get; }
+        ICropRepository cropRepository { get; }
+        IFarmActivityRepository farmActivityRepository { get; }
+        IFarmRepository farmRepository { get; }
+
     }
 }

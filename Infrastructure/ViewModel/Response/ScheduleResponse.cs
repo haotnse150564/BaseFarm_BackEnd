@@ -1,7 +1,9 @@
-﻿using Domain.Enum;
+﻿using Domain.Model;
 using System.Text.Json.Serialization;
-using static Infrastructure.ViewModel.Response.AccountProfileResponse;
 using static Infrastructure.ViewModel.Response.AccountResponse;
+using static Infrastructure.ViewModel.Response.CropResponse;
+using static Infrastructure.ViewModel.Response.FarmActivityResponse;
+using static Infrastructure.ViewModel.Response.FarmDetailResponse;
 
 namespace Infrastructure.ViewModel.Response
 {
@@ -9,26 +11,27 @@ namespace Infrastructure.ViewModel.Response
     {
         public class ViewSchedule
         {
-            [JsonIgnore]
             public long ScheduleId { get; set; }
-            public string FullNameStaff { get; set; } = string.Empty;
+            public string? FullNameStaff { get; set; }
 
-            public DateOnly? StartDate { get; set; }
+            public string? StartDate { get; set; }
 
-            public DateOnly? EndDate { get; set; }
+            public string? EndDate { get; set; }
 
-            public Status? Status { get; set; }
+            public string? Status { get; set; }
 
-            public DateOnly? CreatedAt { get; set; }
+            public string? CreatedAt { get; set; }
 
-            public DateOnly? UpdatedAt { get; set; }
+            public string? UpdatedAt { get; set; }
+            public ViewAccount? accountView { get; set; }
+            public FarmActivityView? farmActivityView { get; set; }
+            public FarmDetailView? farmDetailView { get; set; } 
+            public CropView? cropView { get; set; }
+            public DailyLog? DailyLog { get; set; }
 
             public long AssignedTo { get; set; }
-            [JsonIgnore]
             public int FarmActivityId { get; set; }
-            [JsonIgnore]
-            public long FarmDetailsId { get; set; }
-            [JsonIgnore]
+            public long FarmId { get; set; }
             public long CropId { get; set; }
         }
         public class ResponseDTO
