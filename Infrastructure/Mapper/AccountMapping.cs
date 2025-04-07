@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Domain.Model;
 using Infrastructure.ViewModel.Response;
+using static Infrastructure.ViewModel.Request.AccountRequest;
 using static Infrastructure.ViewModel.Response.AccountResponse;
 
 namespace Infrastructure.Mapper
