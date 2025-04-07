@@ -15,7 +15,20 @@ namespace Infrastructure.Repositories.Implement
         {
             var result = await _dbSet.Where(x => x.ScheduleId == id)
                                      .Include(a => a.AssignedToNavigation)
+                                     .Include(a => a.FarmActivity)
+                                     .Include(a => a.Crop)
+                                     .Include(a => a.FarmDetails)
                                      .FirstOrDefaultAsync();
+            return result;
+        }
+        public override async Task<List<Schedule>> GetAllAsync()
+        {
+            var result = await _context.Schedule // Thêm _context.Schedules vào đây
+            .Include(a => a.AssignedToNavigation)
+            .Include(a => a.FarmActivity)
+            .Include(a => a.Crop)
+            .Include(a => a.FarmDetails)
+            .ToListAsync();
             return result;
         }
     }

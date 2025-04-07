@@ -22,11 +22,16 @@ namespace Infrastructure
         private IPaymentRepository _paymentRepository;
         private IScheduleRepository _scheduleRepository;
         private IIoTdeviceRepository _ioTdeviceRepository;
+        private ICropRepository _cropRepository;
+        private IFarmActivityRepository _farmActivityRepository;
+        private IFarmRepository _farmRepository;
 
         public UnitOfWorks(AppDbContext context, ICurrentTime currentTime, IClaimsServices claimsServices, IProductRepository productRepository
             , IFeedbackRepository feedbackRepository, IAccountProfileRepository accountProfileRepository, IOrderRepository orderRepository
             , IOrderDetailRepository orderDetailRepository, IPaymentRepository paymentRepository, IScheduleRepository scheduleRepository
-            , IIoTdeviceRepository ioTdeviceRepository)
+            , IIoTdeviceRepository ioTdeviceRepository, ICropRepository cropRepository, IFarmActivityRepository farmActivityRepository, IFarmRepository farmRepository
+            
+            )
         {
             _context = context;
             _currentTime = currentTime;
@@ -39,6 +44,33 @@ namespace Infrastructure
             _paymentRepository = paymentRepository;
             _scheduleRepository = scheduleRepository;
             _ioTdeviceRepository = ioTdeviceRepository;
+            _cropRepository = cropRepository;
+            _farmActivityRepository = farmActivityRepository;
+            _farmRepository = farmRepository;
+            _cropRepository = cropRepository;
+            _farmActivityRepository = farmActivityRepository;
+            _farmRepository = farmRepository;
+        }
+        public ICropRepository cropRepository
+        {
+            get
+            {
+                return _cropRepository ??= new CropRepository(_context);
+            }
+        }
+        public IFarmActivityRepository farmActivityRepository
+        {
+            get
+            {
+                return _farmActivityRepository ??= new FarmActivityRepository(_context);
+            }
+        }
+        public IFarmRepository farmRepository
+        {
+            get
+            {
+                return _farmRepository ??= new FarmRepository(_context);
+            }
         }
         public IIoTdeviceRepository ioTdeviceRepository
         {

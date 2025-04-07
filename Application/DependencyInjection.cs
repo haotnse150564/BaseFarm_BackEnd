@@ -21,12 +21,17 @@ public static class DependencyInjection
         services.AddScoped<JWTUtils>();
 
         //mapping
+        
         services.AddAutoMapper(typeof(ProductsMapping));
         services.AddAutoMapper(typeof(FeedbackMapping));
         services.AddAutoMapper(typeof(OrderMapping));
         services.AddAutoMapper(typeof(AccountProfileMapping));
         services.AddAutoMapper(typeof(ScheduleMapping));
         services.AddAutoMapper(typeof(IOTMapping));
+        services.AddAutoMapper(typeof(AccountMapping));
+        services.AddAutoMapper(typeof(CropMapping));
+        services.AddAutoMapper(typeof(FarmActitvityMapping));
+        services.AddAutoMapper(typeof(FarmMapping));
 
         #region Config Repository and Service
         //repository
@@ -39,6 +44,9 @@ public static class DependencyInjection
         services.AddScoped<IPaymentRepository, PaymentRepository>();
         services.AddScoped<IScheduleRepository, ScheduleRepository>();
         services.AddScoped<IIoTdeviceRepository, IoTdeviceRepository>();
+        services.AddScoped<ICropRepository, CropRepository>();
+        services.AddScoped<IFarmActivityRepository, FarmActivityRepository>();
+        services.AddScoped<IFarmRepository, FarmRepository>();
         //service
         services.AddScoped<IProductServices, ProductServices>();
         services.AddScoped<IFeedbackSevices, FeedbackServices>();
@@ -48,6 +56,9 @@ public static class DependencyInjection
         services.AddScoped<IVnPayService, VnPayService>();
         services.AddScoped<IScheduleServices, ScheduleServices>();
         services.AddScoped<IIoTdeviceServices, IoTdeviceServices>();
+        services.AddScoped<ICropServices, CropServices>();
+        services.AddScoped<IFarmActivityServices, FarmActivityServices>();
+        services.AddScoped<IFarmDetailServices, FarmDetailServices>();
 
         //services.AddScoped<IOrderDetailServices, OrderDetailServices>();
         //services.AddScoped<IAccountProfileServices, AccountProfileServices>();

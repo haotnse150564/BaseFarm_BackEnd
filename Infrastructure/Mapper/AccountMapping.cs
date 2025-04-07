@@ -16,6 +16,7 @@ namespace Infrastructure.Mapper
                 .ReverseMap();
             CreateMap<Account, ViewAccount>().ReverseMap()
                 .ForMember(dest => dest.AccountProfile, opt => opt.Condition(src => src.AccountProfile != null))
+                .ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.AccountId))
                 .ForPath(dest => dest.AccountProfile.Fullname, opt => opt.MapFrom(src => src.Fullname))
                 .ForPath(dest => dest.AccountProfile.Phone, opt => opt.MapFrom(src => src.Phone));
         }
