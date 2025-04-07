@@ -32,24 +32,36 @@ namespace Application.Services.Implement
         {
             try
             {
-                var result = new Schedule
+                if (request.StartDate < DateOnly.FromDateTime(DateTime.Today) || request.EndDate < DateOnly.FromDateTime(DateTime.Today))
                 {
-                    StartDate = request.StartDate,
-                    EndDate = request.EndDate,
-                    AssignedTo = request.AssignedTo,
-                    FarmActivityId = request.FarmActivityId,
-                    FarmDetailsId = request.FarmDetailsId,
-                    UpdatedAt = _currentTime.GetCurrentTime(),
-                    CreatedAt = _currentTime.GetCurrentTime(),
-                    Status = Status.ACTIVE,
-                };
+                    return new ResponseDTO(Const.ERROR_EXCEPTION, "Start Date and End Date at least is today");
+                }
+                else if (request.StartDate >= request.EndDate)
+                {
+                    return new ResponseDTO(Const.ERROR_EXCEPTION, "The start date cannot be set after the end date.");
+                }
+                else
+                {
+                    var result = new Schedule
+                    {
+                        StartDate = request.StartDate,
+                        EndDate = request.EndDate,
+                        AssignedTo = request.AssignedTo,
+                        FarmActivityId = request.FarmActivityId,
+                        FarmDetailsId = request.FarmDetailsId,
+                        CropId = request.CropId,
+                        UpdatedAt = _currentTime.GetCurrentTime(),
+                        CreatedAt = _currentTime.GetCurrentTime(),
+                        Status = Status.ACTIVE,
+                    };
 
-                // Map dữ liệu sang DTO
-                await _unitOfWork.scheduleRepository.AddAsync(result);
-                await _unitOfWork.SaveChangesAsync();
+                    // Map dữ liệu sang DTO
+                    await _unitOfWork.scheduleRepository.AddAsync(result);
+                    await _unitOfWork.SaveChangesAsync();
 
-                var resultView = _mapper.Map<ViewSchedule>(result);
-                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, resultView);
+                    var resultView = _mapper.Map<ViewSchedule>(result);
+                    return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, resultView);
+                }
             }
             catch (Exception ex)
             {

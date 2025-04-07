@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using Domain.Enum;
+using System.Text.Json.Serialization;
 using static Infrastructure.ViewModel.Response.AccountProfileResponse;
 using static Infrastructure.ViewModel.Response.AccountResponse;
 
@@ -10,19 +11,25 @@ namespace Infrastructure.ViewModel.Response
         {
             [JsonIgnore]
             public long ScheduleId { get; set; }
-            [JsonIgnore]
-            public long AssignedTo { get; set; }
-            public string? FullNameStaff { get; set; }
+            public string FullNameStaff { get; set; } = string.Empty;
 
             public DateOnly? StartDate { get; set; }
 
             public DateOnly? EndDate { get; set; }
 
-            public string? Status { get; set; }
+            public Status? Status { get; set; }
 
             public DateOnly? CreatedAt { get; set; }
 
             public DateOnly? UpdatedAt { get; set; }
+
+            public long AssignedTo { get; set; }
+            [JsonIgnore]
+            public int FarmActivityId { get; set; }
+            [JsonIgnore]
+            public long FarmDetailsId { get; set; }
+            [JsonIgnore]
+            public long CropId { get; set; }
         }
         public class ResponseDTO
         {
