@@ -26,13 +26,13 @@ public partial class Schedule
 
     public long CropId { get; set; }
 
-    public virtual Account AssignedToNavigation { get; set; } = null!;
+    public virtual Account AssignedToNavigation { get; set; }
 
-    public virtual Crop Crop { get; set; } = null!;
+    public virtual Crop Crop { get; set; }
 
     public virtual DailyLog? DailyLog { get; set; }
 
-    public virtual FarmActivity FarmActivity { get; set; } = null!;
+    public virtual FarmActivity FarmActivity { get; set; } 
 
-    public virtual Farm FarmDetails { get; set; } = null!;
+    public virtual Farm FarmDetails { get; set; }
 }

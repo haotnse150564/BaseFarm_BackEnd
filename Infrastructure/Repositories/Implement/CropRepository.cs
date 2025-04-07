@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories.Implement
 {
-    public class FarmRepository : GenericRepository<Farm>, IFarmRepository
+    public class CropRepository : GenericRepository<Crop>, ICropRepository
     {
-        public FarmRepository(AppDbContext context)
+        public CropRepository(AppDbContext context)
         {
             _context = context;
-            _dbSet = _context.Set<Farm>();
+            _dbSet = _context.Set<Crop>();
         }
     }
 }

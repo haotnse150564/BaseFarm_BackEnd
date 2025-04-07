@@ -1,6 +1,8 @@
-﻿namespace WebAPI.Services
+﻿using Application.Services;
+
+namespace WebAPI.Services
 {
-    public class FarmActivityServices
+    public class FarmActivityServices : IFarmActivityServices
     {
     }
 }

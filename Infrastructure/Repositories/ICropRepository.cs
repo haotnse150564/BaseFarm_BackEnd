@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public interface IFarmActivityRepository : IGenericRepository<FarmActivity>
+    public interface ICropRepository : IGenericRepository<Crop>
     {
     }
 }

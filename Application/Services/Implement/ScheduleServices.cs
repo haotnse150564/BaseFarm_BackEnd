@@ -18,13 +18,21 @@ namespace Application.Services.Implement
         private readonly IConfiguration configuration;
         private readonly IMapper _mapper;
         private readonly IAccountRepository _account;
-        public ScheduleServices(IUnitOfWorks unitOfWork, ICurrentTime currentTime, IConfiguration configuration, IMapper mapper, IAccountRepository account)
+        private readonly ICropRepository _cropRepository;
+        private readonly IFarmActivityRepository _farmActivityRepository;
+        private readonly IFarmRepository _farmRepository;
+        public ScheduleServices(IUnitOfWorks unitOfWork, ICurrentTime currentTime, IConfiguration configuration, IMapper mapper
+                , IAccountRepository account, ICropRepository cropRepositorym, IFarmActivityRepository farmActivityRepository
+                , IFarmRepository farmRepository)
         {
             _unitOfWork = unitOfWork;
             _currentTime = currentTime;
             this.configuration = configuration;
             _mapper = mapper;
             _account = account;
+            _cropRepository = cropRepositorym;
+            _farmActivityRepository = farmActivityRepository;
+            _farmRepository = farmRepository;
         }
 
 
@@ -94,9 +102,6 @@ namespace Application.Services.Implement
             }
         }
 
-
-
-
         public async Task<ResponseDTO> GetAllScheduleAsync(int pageIndex, int pageSize)
         {
             try
@@ -117,6 +122,10 @@ namespace Application.Services.Implement
                     item.FullNameStaff = (await _account.GetAccountProfileByAccountIdAsync(item.AssignedTo)).AccountProfile?.Fullname;
 
                 }
+                await _unitOfWork.cropRepository.GetAllAsync();
+                await _unitOfWork.farmActivityRepository.GetAllAsync();
+                await _unitOfWork.farmRepository.GetAllAsync();
+                await _unitOfWork.accountRepository.GetAllAsync();
                 // Tạo đối tượng phân trang
                 var pagination = new Pagination<ViewSchedule>
                 {

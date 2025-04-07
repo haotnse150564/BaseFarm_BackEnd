@@ -20,7 +20,6 @@ namespace Infrastructure.ViewModel.Request
 
         public long FarmDetailsId { get; set; }
         public long CropId { get; set; }
-        public ViewAccount account { get; set; }
 
     }
 }
