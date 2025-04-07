@@ -1,4 +1,5 @@
 ﻿using Domain.Enum;
+using Domain.Model;
 using System;
 using System.Collections.Generic;
 
@@ -26,13 +27,13 @@ public partial class Schedule
 
     public long CropId { get; set; }
 
-    public virtual Account AssignedToNavigation { get; set; }
+    public virtual Account AssignedToNavigation { get; set; } = null!;
 
-    public virtual Crop Crop { get; set; }
+    public virtual Crop Crop { get; set; } = null!;
 
-    public virtual DailyLog? DailyLog { get; set; }
+    public virtual ICollection<DailyLog> DailyLogs { get; set; } = new List<DailyLog>();
 
-    public virtual FarmActivity FarmActivity { get; set; } 
+    public virtual FarmActivity FarmActivity { get; set; } = null!;
 
-    public virtual Farm FarmDetails { get; set; }
+    public virtual Farm FarmDetails { get; set; } = null!;
 }

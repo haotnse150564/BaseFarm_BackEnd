@@ -1,11 +1,6 @@
 ﻿using Domain.Model;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.FluentAPI
 {
@@ -16,6 +11,7 @@ namespace Infrastructure.FluentAPI
             builder.ToTable("DailyLog");
 
             builder.HasKey(e => e.TrackingId);
+            builder.Property(e => e.ScheduleId).HasColumnName("scheduleID");
             builder.Property(e => e.AssignedTo).HasColumnName("assignedTo");
             builder.Property(e => e.CreatedAt).HasColumnName("createdAt");
             builder.Property(e => e.Date).HasColumnName("date");
@@ -28,13 +24,12 @@ namespace Infrastructure.FluentAPI
 
             builder.HasOne(d => d.AssignedToNavigation).WithMany(p => p.DailyLogs)
                 .HasForeignKey(d => d.AssignedTo)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                ;
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
-            builder.HasOne(d => d.Tracking).WithOne(p => p.DailyLog)
-                .HasForeignKey<DailyLog>(d => d.TrackingId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                ;
+            builder.HasOne(d => d.Schedule).WithMany(p => p.DailyLogs)
+                .HasForeignKey(d => d.ScheduleId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
         }
     }
 }

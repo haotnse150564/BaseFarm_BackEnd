@@ -30,8 +30,8 @@ namespace Infrastructure.Mapper
                    .ForMember(dest => dest.accountView, opt => opt.MapFrom(src => src.AssignedToNavigation))
                    .ForMember(dest => dest.farmActivityView, opt => opt.MapFrom(src => src.FarmActivity))
                    .ForMember(dest => dest.cropView, opt => opt.MapFrom(src => src.Crop))
-                   .ForMember(dest => dest.farmDetailView, opt => opt.MapFrom(src => src.FarmDetails))
-                   .ForMember(dest => dest.dailyLog, opt => opt.MapFrom(src => src.DailyLog));
+                   .ForMember(dest => dest.dailyLog, opt => opt.MapFrom(src => src.DailyLogs));
+            ;
 
             CreateMap<FarmActivity, FarmActivityView>().ReverseMap();
             CreateMap<Crop, CropView>().ReverseMap();
