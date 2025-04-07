@@ -20,6 +20,8 @@ namespace Application.Services
         Task<ViewAccount> UpdateAccountAsync(long id, AccountForm request);
         Task<Pagination<ViewAccount>> GetAllAccountAsync(int pageSize, int pageIndex);
         Task<ViewAccount> GetAccountByEmail(string email);
+        Task<ViewAccount> UpdateRoleForUser(long id, int roleId);
+        Task<ResponseDTO> ChangePassword(long id, ChangePasswordDTO request);
 
     }
 }
