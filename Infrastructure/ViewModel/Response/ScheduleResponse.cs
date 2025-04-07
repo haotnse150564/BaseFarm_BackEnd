@@ -2,6 +2,7 @@
 using System.Text.Json.Serialization;
 using static Infrastructure.ViewModel.Response.AccountResponse;
 using static Infrastructure.ViewModel.Response.CropResponse;
+using static Infrastructure.ViewModel.Response.DailyLogResponse;
 using static Infrastructure.ViewModel.Response.FarmActivityResponse;
 using static Infrastructure.ViewModel.Response.FarmDetailResponse;
 
@@ -27,7 +28,7 @@ namespace Infrastructure.ViewModel.Response
             public FarmActivityView? farmActivityView { get; set; }
             public FarmDetailView? farmDetailView { get; set; } 
             public CropView? cropView { get; set; }
-            public DailyLog? DailyLog { get; set; }
+            public DailyLogView? dailyLog { get; set; }
 
             public long AssignedTo { get; set; }
             public int FarmActivityId { get; set; }

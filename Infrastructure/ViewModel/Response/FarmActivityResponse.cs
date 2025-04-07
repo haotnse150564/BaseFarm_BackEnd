@@ -12,15 +12,14 @@ namespace Infrastructure.ViewModel.Response
     {
         public class FarmActivityView
         {
-            public string? FarmName { get; set; }
 
-            public string? Location { get; set; }
+            public int? ActivityType { get; set; }
 
-            public DateOnly? CreatedAt { get; set; }
+            public DateOnly? StartDate { get; set; }
 
-            public DateOnly? UpdatedAt { get; set; }
+            public DateOnly? EndDate { get; set; }
 
-            public ViewAccount Account { get; set; }
+            public Status? Status { get; set; }
         }
         public class ResponseDTO
         {
