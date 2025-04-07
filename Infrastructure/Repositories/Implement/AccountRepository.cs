@@ -33,5 +33,9 @@ namespace Infrastructure.Repositories.Implement
                            .FirstOrDefaultAsync();
             return result;
         }
+        public override async Task<Account?> GetByIdAsync(long id)
+        {
+            return await _dbSet.Include(x => x.AccountProfile).FirstOrDefaultAsync(x => x.AccountId == id);
+        }
     }
 }

@@ -80,5 +80,23 @@ namespace WebAPI.Controllers
                 return Ok(result);
             return BadRequest("Failed to get accounts.");
         }
+        [HttpPut("update-role")]
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateAccountRole(long accountId, int roleId)
+        {
+            var result = await _accountServices.UpdateRoleForUser(accountId, roleId);
+            if (result != null)
+                return Ok(result);
+            return BadRequest("Failed to update roles.");
+        }
+        [HttpPut("update-password")]
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ChangPassword(long id, [FromBody] ChangePasswordDTO request)
+        {
+            var result = await _accountServices.ChangePassword(id, request);
+            if (result != null)
+                return Ok(result);
+            return BadRequest("Failed to update roles.");
+        }
     }
 }
