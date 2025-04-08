@@ -11,9 +11,7 @@ namespace Infrastructure.ViewModel.Request
     {
         public class ProfileRequestDTO
         {
-            [Required]
-            public long AccountId { get; set; }
-
+           
             [Range(0, 1, ErrorMessage = "Gender must be 0 or 1")]
             public int? Gender { get; set; }
 

@@ -25,10 +25,9 @@ namespace Infrastructure.ViewModel.Response
 
             public string CreatedAt { get; set; }
             public string UpdatedAt { get; set; }
+            public string Role { get; set; }   
+            public string Email { get; set; }
 
         }
-
-        
-
     }
 }

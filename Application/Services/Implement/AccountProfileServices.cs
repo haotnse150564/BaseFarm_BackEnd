@@ -26,17 +26,21 @@ namespace WebAPI.Services
                 throw new Exception("User not found");
 
             var profile = await _unitOfWork.accountProfileRepository.GetByIdAsync(user.AccountId);
+            var getCurrentUser = await _unitOfWork.accountRepository.GetByIdAsync(user.AccountId);
             if (profile == null)
                 throw new Exception("Profile not found");
 
             var profileResponse = _mapper.Map<ProfileResponseDTO>(profile);
+            profileResponse.Role = getCurrentUser.Role.Value.ToString();
+            profileResponse.Email = getCurrentUser.Email;
             ///profileResponse.Email = user.Email;
             return profileResponse;
         }
 
         public async Task<bool> UpdateProfileAsync(AccountProfileRequest.ProfileRequestDTO request)
         {
-            var profile = await _unitOfWork.accountProfileRepository.GetByIdAsync(request.AccountId);
+            var user = await _jwtUtils.GetCurrentUserAsync();
+           var profile = await _unitOfWork.accountProfileRepository.GetByIdAsync(user.AccountId);
 
             // Không tìm thấy profile
             if (profile == null)
