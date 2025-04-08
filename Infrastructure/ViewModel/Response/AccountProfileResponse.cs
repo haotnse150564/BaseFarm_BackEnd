@@ -27,8 +27,5 @@ namespace Infrastructure.ViewModel.Response
             public string UpdatedAt { get; set; }
 
         }
-
-        
-
     }
 }

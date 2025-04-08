@@ -20,7 +20,6 @@ namespace Infrastructure.Mapper
                 .ReverseMap();
 
             CreateMap<ProfileRequestDTO, AccountProfile>()
-                .ForMember(dest => dest.AccountProfileId, opt => opt.MapFrom(src => src.AccountId))
                 .ReverseMap();
         }
     }
