@@ -37,21 +37,22 @@ namespace WebAPI.Services
             return profileResponse;
         }
 
-        public async Task<bool> UpdateProfileAsync(AccountProfileRequest.ProfileRequestDTO request)
+        public async Task<ProfileResponseDTO> UpdateProfileAsync(AccountProfileRequest.ProfileRequestDTO request)
         {
             var user = await _jwtUtils.GetCurrentUserAsync();
            var profile = await _unitOfWork.accountProfileRepository.GetByIdAsync(user.AccountId);
 
             // Không tìm thấy profile
             if (profile == null)
-                return false; 
+                throw new Exception(); 
 
             _mapper.Map(request, profile);
 
             profile.UpdatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
 
             await _unitOfWork.accountProfileRepository.UpdateAsync(profile);
-            return true;
+            var result = _mapper.Map<ProfileResponseDTO>(profile);
+            return result;
         }
     }
 }

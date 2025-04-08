@@ -29,10 +29,10 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> UpdateProfile([FromBody] AccountProfileRequest.ProfileRequestDTO request)
         {
             var result = await _accountProfileServices.UpdateProfileAsync(request);
-            if (!result)
+            if (result == null)
                 return NotFound("Profile not found");
 
-            return Ok("Profile updated successfully");
+            return Ok(result);
         }
     }
 }
