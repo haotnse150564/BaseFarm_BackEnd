@@ -11,6 +11,6 @@ namespace Application.Services
     public interface IAccountProfileServices
     {
         Task<ProfileResponseDTO> ViewProfileAsync();
-        Task<bool> UpdateProfileAsync(AccountProfileRequest.ProfileRequestDTO request);
+        Task<ProfileResponseDTO> UpdateProfileAsync(AccountProfileRequest.ProfileRequestDTO request);
     }
 }
