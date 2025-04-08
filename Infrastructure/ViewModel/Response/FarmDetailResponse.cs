@@ -10,10 +10,14 @@ namespace Infrastructure.ViewModel.Response
     {
         public class FarmDetailView
         {
-            public string Name { get; set; }
-            public string Description { get; set; }
-            public DateTime CreatedAt { get; set; }
-            public DateTime UpdatedAt { get; set; }
+
+            public string? FarmName { get; set; }
+
+            public string? Location { get; set; }
+
+            public DateOnly? CreatedAt { get; set; }
+
+            public DateOnly? UpdatedAt { get; set; }
         }
     }
 }

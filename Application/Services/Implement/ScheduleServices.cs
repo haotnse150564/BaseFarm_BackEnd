@@ -50,6 +50,7 @@ namespace Application.Services.Implement
                 }
                 else
                 {
+
                     var result = new Schedule
                     {
                         StartDate = request.StartDate,
@@ -58,6 +59,7 @@ namespace Application.Services.Implement
                         FarmActivityId = request.FarmActivityId,
                         FarmDetailsId = request.FarmDetailsId,
                         CropId = request.CropId,
+                        //DailyLog = ,
                         UpdatedAt = _currentTime.GetCurrentTime(),
                         CreatedAt = _currentTime.GetCurrentTime(),
                         Status = Status.ACTIVE,
@@ -122,10 +124,11 @@ namespace Application.Services.Implement
                     item.FullNameStaff = (await _account.GetAccountProfileByAccountIdAsync(item.AssignedTo)).AccountProfile?.Fullname;
 
                 }
-                await _unitOfWork.cropRepository.GetAllAsync();
-                await _unitOfWork.farmActivityRepository.GetAllAsync();
-                await _unitOfWork.farmRepository.GetAllAsync();
-                await _unitOfWork.accountRepository.GetAllAsync();
+                //await _unitOfWork.cropRepository.GetAllAsync();
+                //await _unitOfWork.farmActivityRepository.GetAllAsync();
+                //await _unitOfWork.farmRepository.GetAllAsync();
+                //await _unitOfWork.accountRepository.GetAllAsync();
+                
                 // Tạo đối tượng phân trang
                 var pagination = new Pagination<ViewSchedule>
                 {
