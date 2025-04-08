@@ -26,10 +26,13 @@ namespace WebAPI.Services
                 throw new Exception("User not found");
 
             var profile = await _unitOfWork.accountProfileRepository.GetByIdAsync(user.AccountId);
+            var getCurrentUser = await _unitOfWork.accountRepository.GetByIdAsync(user.AccountId);
             if (profile == null)
                 throw new Exception("Profile not found");
 
             var profileResponse = _mapper.Map<ProfileResponseDTO>(profile);
+            profileResponse.Role = getCurrentUser.Role.Value.ToString();
+            profileResponse.Email = getCurrentUser.Email;
             ///profileResponse.Email = user.Email;
             return profileResponse;
         }
