@@ -45,7 +45,7 @@ namespace WebAPI.Services
             {
                 Email = request.Email,
                 PasswordHash = hashedPassword,
-                Role = Roles.Customer, // Explicit cast to Roles enum
+                Role = (Roles)request.Role, // Explicit cast to Roles enum
                 Status = Status.ACTIVE, // Active
                 CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow)
             };
@@ -286,7 +286,6 @@ namespace WebAPI.Services
             {
                 throw new Exception("Acoount not found");
             }
-
         }
 
         public async Task<ResponseDTO> ChangePassword(long id, ChangePasswordDTO request)
