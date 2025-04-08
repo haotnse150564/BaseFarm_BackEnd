@@ -36,7 +36,8 @@ namespace WebAPI.Services
 
         public async Task<bool> UpdateProfileAsync(AccountProfileRequest.ProfileRequestDTO request)
         {
-            var profile = await _unitOfWork.accountProfileRepository.GetByIdAsync(request.AccountId);
+            var user = await _jwtUtils.GetCurrentUserAsync();
+           var profile = await _unitOfWork.accountProfileRepository.GetByIdAsync(user.AccountId);
 
             // Không tìm thấy profile
             if (profile == null)
