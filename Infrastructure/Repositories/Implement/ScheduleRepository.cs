@@ -18,7 +18,7 @@ namespace Infrastructure.Repositories.Implement
                                      .Include(a => a.FarmActivity)
                                      .Include(a => a.Crop)
                                      .Include(a => a.FarmDetails)
-                                     .Include(a => a.DailyLog)
+                                     .Include(a => a.DailyLogs)
                                      .FirstOrDefaultAsync();
             return result;
         }
@@ -29,7 +29,7 @@ namespace Infrastructure.Repositories.Implement
             .Include(a => a.FarmActivity)
             .Include(a => a.Crop)
             .Include(a => a.FarmDetails)
-            .Include(a => a.DailyLog)
+            .Include(a => a.DailyLogs)
             .ToListAsync();
             return result;
         }

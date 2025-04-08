@@ -28,7 +28,7 @@ namespace Infrastructure.ViewModel.Response
             public FarmActivityView? farmActivityView { get; set; }
             public FarmDetailView? farmDetailView { get; set; } 
             public CropView? cropView { get; set; }
-            public DailyLogView? dailyLog { get; set; }
+            public List<DailyLogView>? dailyLog { get; set; }
 
             public long AssignedTo { get; set; }
             public int FarmActivityId { get; set; }

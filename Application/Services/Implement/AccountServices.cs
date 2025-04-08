@@ -1,15 +1,12 @@
 ﻿using Application;
 using Application.Commons;
-using Application.Interfaces;
 using Application.Services;
 using Application.Utils;
 using AutoMapper;
 using Domain.Enum;
 using Domain.Model;
 using Infrastructure.Repositories;
-using Infrastructure.ViewModel.Request;
 using Microsoft.IdentityModel.Tokens;
-using System.Drawing.Printing;
 using static Infrastructure.ViewModel.Request.AccountRequest;
 using static Infrastructure.ViewModel.Response.AccountResponse;
 using ResponseDTO = Infrastructure.ViewModel.Response.AccountResponse.ResponseDTO;
@@ -113,6 +110,7 @@ namespace WebAPI.Services
                 {
                     return null;
                 }
+                //var oriPass = BCrypt.Net.BCrypt.HashPassword.(account.PasswordHash);
                 var result = _mapper.Map<ViewAccount>(account);
                 return result;
             }
