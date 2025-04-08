@@ -22,6 +22,8 @@ namespace Infrastructure.ViewModel.Response
             public string Fullname { get; set; }
             public string Phone { get; set; }
             public string Status { get; set; }
+            public string CreatedAt { get; set; }
+            public string UpdatedAt { get; set; }
             public AccountProfileResponse.ProfileResponseDTO? AccountProfile { get; set; }
         }
         public class ResponseDTO
