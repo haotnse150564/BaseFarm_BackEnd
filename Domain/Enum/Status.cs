@@ -13,6 +13,7 @@ namespace Domain.Enum
         SUSPENDED,
         BANNED,
         PAID,
-        UNDISCHARGED
+        UNDISCHARGED,
+        PENDING
     }
 }

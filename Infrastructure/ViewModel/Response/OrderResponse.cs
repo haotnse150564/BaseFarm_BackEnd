@@ -29,6 +29,7 @@ namespace Application.ViewModel.Response
             public string? Email { get; set; }
             public DateTime? CreatedAt { get; set; }
             public Status? Status { get; set; }
+            public string? ShippingAddress { get; set; }
             public List<ViewProductDTO> OrderItems { get; set; } = new();
         }
 

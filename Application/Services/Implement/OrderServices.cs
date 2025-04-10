@@ -62,7 +62,7 @@ namespace Application.Services.Implement
                 {
                     CustomerId = user.AccountId,
                     TotalPrice = 0,
-                    Status = Status.ACTIVE, // Đang xử lý
+                    Status = Status.PENDING, // Đang xử lý
                     CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow),
                     ShippingAddress = request.ShippingAddress,
                 };
