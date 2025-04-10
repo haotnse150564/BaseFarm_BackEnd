@@ -6,6 +6,7 @@ using Domain.Model;
 using Infrastructure.Repositories;
 using Infrastructure.ViewModel.Request;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using static Infrastructure.ViewModel.Response.ScheduleResponse;
 using ResponseDTO = Infrastructure.ViewModel.Response.ScheduleResponse.ResponseDTO;
 
@@ -40,6 +41,8 @@ namespace Application.Services.Implement
         {
             try
             {
+                var listSchedule = await _unitOfWork.scheduleRepository.GetAllAsync();
+                var getduplicateCrop = listSchedule.Where(x => x.CropId == request.CropId && x.Status == Status.ACTIVE).ToList();
                 if (request.StartDate < DateOnly.FromDateTime(DateTime.Today) || request.EndDate < DateOnly.FromDateTime(DateTime.Today))
                 {
                     return new ResponseDTO(Const.ERROR_EXCEPTION, "Start Date and End Date at least is today");
@@ -48,13 +51,27 @@ namespace Application.Services.Implement
                 {
                     return new ResponseDTO(Const.ERROR_EXCEPTION, "The start date cannot be set after the end date.");
                 }
+                else if (!getduplicateCrop.IsNullOrEmpty())
+                {
+                    foreach (var item in getduplicateCrop)
+                    {
+                        if (item.EndDate <= request.StartDate)
+                        {
+                            return new ResponseDTO(Const.ERROR_EXCEPTION, "Crop is in the process of cultivation");
+                        }
+                    }
+                }
+                else if (request.StartDate > request.EndDate)
+                {
+                    return new ResponseDTO(Const.ERROR_EXCEPTION, "The start date cannot be set before the end date.");
+                }
                 else
                 {
-
+                    var crop = await _unitOfWork.cropRepository.GetByIdAsync(request.CropId);
                     var result = new Schedule
                     {
                         StartDate = request.StartDate,
-                        EndDate = request.EndDate,
+                        EndDate = crop.HarvestDate,
                         AssignedTo = request.AssignedTo,
                         FarmActivityId = request.FarmActivityId,
                         FarmDetailsId = request.FarmDetailsId,
@@ -128,7 +145,7 @@ namespace Application.Services.Implement
                 //await _unitOfWork.farmActivityRepository.GetAllAsync();
                 //await _unitOfWork.farmRepository.GetAllAsync();
                 //await _unitOfWork.accountRepository.GetAllAsync();
-                
+
                 // Tạo đối tượng phân trang
                 var pagination = new Pagination<ViewSchedule>
                 {
@@ -204,7 +221,7 @@ namespace Application.Services.Implement
                 }
 
                 // Map dữ liệu sang DTO
-                schedule.AssignedTo = staffId ;
+                schedule.AssignedTo = staffId;
                 await _unitOfWork.scheduleRepository.UpdateAsync(schedule);
                 await _unitOfWork.SaveChangesAsync();
 
