@@ -4,31 +4,31 @@ using Application.Services;
 using AutoMapper;
 using Infrastructure.ViewModel.Response;
 using Microsoft.Extensions.Configuration;
-using Infrastructure.Repositories;
-using static Infrastructure.ViewModel.Response.FarmActivityResponse;
+using static Infrastructure.ViewModel.Response.FarmDetailResponse;
 using Microsoft.IdentityModel.Tokens;
+using Infrastructure.Repositories;
 
 namespace WebAPI.Services
 {
-    public class FarmActivityServices : IFarmActivityServices
-
+    public class FarmServices : IFarmServices
     {
         private readonly IUnitOfWorks _unitOfWork;
         private readonly ICurrentTime _currentTime;
         private readonly IConfiguration configuration;
         private readonly IMapper _mapper;
-        private readonly IFarmActivityRepository _farmActivityRepository;
-        public FarmActivityServices(IUnitOfWorks unitOfWork, ICurrentTime currentTime, IConfiguration configuration, IMapper mapper, IFarmActivityRepository farmActivityRepository)
+        private readonly IFarmRepository _farmRepository;
+        public FarmServices(IUnitOfWorks unitOfWork, ICurrentTime currentTime, IConfiguration configuration, IMapper mapper, IFarmRepository farmRepository)
         {
             _unitOfWork = unitOfWork;
             _currentTime = currentTime;
             this.configuration = configuration;
             _mapper = mapper;
-            _farmActivityRepository = farmActivityRepository;
+            _farmRepository = farmRepository;
         }
-        public async Task<List<FarmActivityView>> GetFarmActivitiesAsync()
+        public async Task<List<FarmDetailView>> GetAll()
         {
-            var result = await _unitOfWork.farmActivityRepository.GetAllAsync();
+            var result = await _unitOfWork.farmRepository.GetAllAsync();
+
             if (result.IsNullOrEmpty())
             {
                 throw new Exception();
@@ -36,7 +36,7 @@ namespace WebAPI.Services
             else
             {
                 // Map dữ liệu sang DTO
-                var resultView = _mapper.Map<List<FarmActivityView>>(result);
+                var resultView = _mapper.Map<List<FarmDetailResponse.FarmDetailView>>(result);
                 return resultView;
             }
         }
