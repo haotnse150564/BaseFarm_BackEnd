@@ -12,7 +12,7 @@ namespace Infrastructure.ViewModel.Response
     {
         public class FarmActivityView
         {
-
+            public int FarmActivitiesId { get; set; }
             public int? ActivityType { get; set; }
 
             public string? StartDate { get; set; }

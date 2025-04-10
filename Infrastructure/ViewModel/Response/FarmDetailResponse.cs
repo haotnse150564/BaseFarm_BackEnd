@@ -11,6 +11,8 @@ namespace Infrastructure.ViewModel.Response
         public class FarmDetailView
         {
 
+            public long FarmDetailsId { get; set; }
+
             public string? FarmName { get; set; }
 
             public string? Location { get; set; }

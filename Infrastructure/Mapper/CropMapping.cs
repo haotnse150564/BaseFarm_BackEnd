@@ -12,7 +12,9 @@ namespace Infrastructure.Mapper
     public class CropMapping : Profile
     {
         public CropMapping() {
-            CreateMap<Crop, CropView>().ReverseMap();
+            CreateMap<Crop, CropView>()
+                .ForMember(dest => dest.CropId, opt => opt.MapFrom(src => src.CropId))  
+                .ReverseMap();
         }
     }
 }
