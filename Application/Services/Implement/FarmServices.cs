@@ -25,7 +25,7 @@ namespace WebAPI.Services
             _mapper = mapper;
             _farmRepository = farmRepository;
         }
-        public async Task<List<FarmDetailView>> GetAll()
+        public async Task<List<FarmView>> GetAll()
         {
             var result = await _unitOfWork.farmRepository.GetAllAsync();
 
@@ -36,7 +36,7 @@ namespace WebAPI.Services
             else
             {
                 // Map dữ liệu sang DTO
-                var resultView = _mapper.Map<List<FarmDetailResponse.FarmDetailView>>(result);
+                var resultView = _mapper.Map<List<FarmDetailResponse.FarmView>>(result);
                 return resultView;
             }
         }

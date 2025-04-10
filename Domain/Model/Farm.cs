@@ -5,7 +5,7 @@ namespace Domain.Model;
 
 public partial class Farm
 {
-    public long FarmDetailsId { get; set; }
+    public long FarmId { get; set; }
 
     public string? FarmName { get; set; }
 

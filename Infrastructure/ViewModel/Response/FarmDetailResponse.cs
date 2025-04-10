@@ -8,9 +8,9 @@ namespace Infrastructure.ViewModel.Response
 {
     public class FarmDetailResponse
     {
-        public class FarmDetailView
+        public class FarmView
         {
-
+            public long? FarmId { get; set; }
             public string? FarmName { get; set; }
 
             public string? Location { get; set; }

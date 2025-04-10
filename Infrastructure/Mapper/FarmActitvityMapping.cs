@@ -12,7 +12,9 @@ namespace Infrastructure.Mapper
     public class FarmActitvityMapping : Profile
     {
         public FarmActitvityMapping() {
-            CreateMap<FarmActivity, FarmActivityView>().ReverseMap();
+            CreateMap<FarmActivity, FarmActivityView>()
+                .ForMember(dest => dest.FarmActivitiesId, opt => opt.MapFrom(src => src.FarmActivitiesId))
+                .ReverseMap();
 
         }
     }

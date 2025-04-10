@@ -9,6 +9,6 @@ namespace Application.Services
 {
     public interface IFarmServices
     {
-        Task<List<FarmDetailView>> GetAll();
+        Task<List<FarmView>> GetAll();
     }
 }

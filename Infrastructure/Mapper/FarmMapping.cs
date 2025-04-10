@@ -13,7 +13,9 @@ namespace Infrastructure.Mapper
     {
         public FarmMapping()
         {
-            CreateMap<Farm, FarmDetailView>().ReverseMap();
+            CreateMap<Farm, FarmView>()
+                .ForMember(dest => dest.FarmId, opt => opt.MapFrom(src => src.FarmId))
+                .ReverseMap();
         }
     }
   
