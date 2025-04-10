@@ -204,7 +204,7 @@ namespace Application.Services.Implement
                 }
 
                 // Map dữ liệu sang DTO
-                schedule.AssignedTo = staffId;
+                schedule.AssignedTo = staffId ;
                 await _unitOfWork.scheduleRepository.UpdateAsync(schedule);
                 await _unitOfWork.SaveChangesAsync();
 
