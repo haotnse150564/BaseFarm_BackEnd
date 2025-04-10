@@ -21,7 +21,7 @@ public partial class Schedule
 
     public long AssignedTo { get; set; }
 
-    public int FarmActivityId { get; set; }
+    public long FarmActivityId { get; set; }
 
     public long FarmDetailsId { get; set; }
 

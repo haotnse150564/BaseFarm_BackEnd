@@ -15,7 +15,7 @@ namespace Infrastructure.FluentAPI
         {
             builder.ToTable("Farm");
 
-            builder.HasKey(e => e.FarmDetailsId);
+            builder.HasKey(e => e.FarmId);
             builder.Property(e => e.AccountId).HasColumnName("accountID");
             builder.Property(e => e.CreatedAt).HasColumnName("createdAt");
             builder.Property(e => e.FarmName)

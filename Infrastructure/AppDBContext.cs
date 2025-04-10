@@ -103,9 +103,9 @@ namespace Infrastructure
                 new FarmActivity { FarmActivitiesId = 3, ActivityType = 1, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/3/2025"), Status = Domain.Enum.Status.ACTIVE }
                 );
             builder.Entity<Farm>().HasData(
-                new Farm { FarmDetailsId = 1, FarmName = "Happy Farm", Location = "Q1, HCM", CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AccountId = 4 },
-                new Farm { FarmDetailsId = 2, FarmName = "Sky Garden", Location = "Thu Duc, HCM", CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("3/2/2025"), AccountId = 5 },
-                new Farm { FarmDetailsId = 3, FarmName = "Hidden Planting", Location = "Binh Tan, HCM", CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("3/5/2025"), AccountId = 7 }
+                new Farm { FarmId = 1, FarmName = "Happy Farm", Location = "Q1, HCM", CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AccountId = 4 },
+                new Farm { FarmId = 2, FarmName = "Sky Garden", Location = "Thu Duc, HCM", CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("3/2/2025"), AccountId = 5 },
+                new Farm { FarmId = 3, FarmName = "Hidden Planting", Location = "Binh Tan, HCM", CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("3/5/2025"), AccountId = 7 }
         );
             builder.Entity<Crop>().HasData(
                 new Crop { CropId = 1, CropName = "Cop 01", Description = "3x3 m2", Status = Domain.Enum.Status.ACTIVE, PlantingDate = DateOnly.Parse("3/1/2025"), HarvestDate = DateOnly.Parse("4/5/2025"), Quantity = 100 },

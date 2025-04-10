@@ -11,6 +11,7 @@ namespace Infrastructure.ViewModel.Response
     {
         public class CropView
         {
+            public long CropId { get; set; }
             public string? CropName { get; set; }
 
             public string? Description { get; set; }

@@ -41,46 +41,40 @@ namespace Application.Services.Implement
         {
             try
             {
+                var crop = await _unitOfWork.cropRepository.GetByIdAsync(request.CropId);
+                var result = new Schedule
+                {
+                    StartDate = request.StartDate,
+                    EndDate = crop.HarvestDate,
+                    AssignedTo = request.AssignedTo,
+                    FarmActivityId = request.FarmActivityId,
+                    FarmDetailsId = request.FarmDetailsId,
+                    CropId = request.CropId,
+                    UpdatedAt = _currentTime.GetCurrentTime(),
+                    CreatedAt = _currentTime.GetCurrentTime(),
+                    Status = Status.ACTIVE,
+                };
                 var listSchedule = await _unitOfWork.scheduleRepository.GetAllAsync();
-                var getduplicateCrop = listSchedule.Where(x => x.CropId == request.CropId && x.Status == Status.ACTIVE).ToList();
-                if (request.StartDate < DateOnly.FromDateTime(DateTime.Today) || request.EndDate < DateOnly.FromDateTime(DateTime.Today))
+                var getduplicateCrop = listSchedule.FirstOrDefault(x => x.CropId == result.CropId && x.Status == Status.ACTIVE);
+                if (result.StartDate < DateOnly.FromDateTime(DateTime.Today) || result.EndDate < DateOnly.FromDateTime(DateTime.Today))
                 {
                     return new ResponseDTO(Const.ERROR_EXCEPTION, "Start Date and End Date at least is today");
                 }
-                else if (request.StartDate >= request.EndDate)
+                else if (result.StartDate >= result.EndDate)
                 {
                     return new ResponseDTO(Const.ERROR_EXCEPTION, "The start date cannot be set after the end date.");
                 }
-                else if (!getduplicateCrop.IsNullOrEmpty())
+                else if (getduplicateCrop.EndDate >= result.StartDate)
                 {
-                    foreach (var item in getduplicateCrop)
-                    {
-                        if (item.EndDate <= request.StartDate)
-                        {
-                            return new ResponseDTO(Const.ERROR_EXCEPTION, "Crop is in the process of cultivation");
-                        }
-                    }
+                    return new ResponseDTO(Const.ERROR_EXCEPTION, "Crop is in the process of cultivation");
                 }
-                else if (request.StartDate > request.EndDate)
+                else if (result.StartDate > result.EndDate)
                 {
                     return new ResponseDTO(Const.ERROR_EXCEPTION, "The start date cannot be set before the end date.");
                 }
                 else
                 {
-                    var crop = await _unitOfWork.cropRepository.GetByIdAsync(request.CropId);
-                    var result = new Schedule
-                    {
-                        StartDate = request.StartDate,
-                        EndDate = crop.HarvestDate,
-                        AssignedTo = request.AssignedTo,
-                        FarmActivityId = request.FarmActivityId,
-                        FarmDetailsId = request.FarmDetailsId,
-                        CropId = request.CropId,
-                        //DailyLog = ,
-                        UpdatedAt = _currentTime.GetCurrentTime(),
-                        CreatedAt = _currentTime.GetCurrentTime(),
-                        Status = Status.ACTIVE,
-                    };
+
 
                     // Map dữ liệu sang DTO
                     await _unitOfWork.scheduleRepository.AddAsync(result);

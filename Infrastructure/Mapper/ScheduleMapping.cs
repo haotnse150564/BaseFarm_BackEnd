@@ -35,7 +35,7 @@ namespace Infrastructure.Mapper
 
             CreateMap<FarmActivity, FarmActivityView>().ReverseMap();
             CreateMap<Crop, CropView>().ReverseMap();
-            CreateMap<Farm, FarmDetailView>().ReverseMap();
+            CreateMap<Farm, FarmView>().ReverseMap();
             CreateMap<DailyLog, DailyLogView>().ReverseMap();
 
             CreateMap<Account, ViewAccount>().ReverseMap()
