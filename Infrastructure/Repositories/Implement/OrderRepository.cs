@@ -27,6 +27,8 @@ namespace Infrastructure.Repositories.Implement
                 {
                     TotalPrice = o.TotalPrice,
                     Email = o.Customer.Email,
+                    ShippingAddress = o.ShippingAddress,
+                    Status = o.Status,
                     CreatedAt = o.CreatedAt.HasValue ? o.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null, // Fix lỗi
                     OrderItems = o.OrderDetails.Select(od => new ViewProductDTO
                     {
