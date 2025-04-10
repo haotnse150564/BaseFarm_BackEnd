@@ -157,6 +157,26 @@ namespace Infrastructure.Repositories.Implement
             };
         }
 
+        public Task<List<Order>> SearchOrdersByEmailAsync(string email)
+        {
+            var result = _context.Order
+                .Where(o => o.Customer.Email.Contains(email))
+                .Include(o => o.Customer)
+                .Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.Product)
+                .ToListAsync();
+            return result;
+        }
 
+        public Task<List<Order>> SearchOrdersByDateAsync(DateOnly date)
+        {
+            var result = _context.Order
+                .Where(o => o.CreatedAt == date)
+                .Include(o => o.Customer)
+                .Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.Product)
+                .ToListAsync();
+            return result;
+        }
     }
 }

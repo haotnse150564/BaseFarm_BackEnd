@@ -22,12 +22,14 @@ namespace Application.Services.Implement
         private readonly IMapper _mapper;
         private readonly JWTUtils _jwtUtils;
         private readonly IVnPayService _vnPayService;
-        public OrderServices(IUnitOfWorks unitOfWork, IMapper mapper, JWTUtils jwtUtils, IVnPayService vnPayService)
+        private readonly CheckDate _checkDate;
+        public OrderServices(IUnitOfWorks unitOfWork, IMapper mapper, JWTUtils jwtUtils, IVnPayService vnPayService, CheckDate checkDate)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _jwtUtils = jwtUtils;
             _vnPayService = vnPayService;
+            _checkDate = checkDate;
         }
 
         public async Task<ResponseDTO> CreateOrderAsync(CreateOrderDTO request, HttpContext context)
@@ -281,5 +283,46 @@ namespace Application.Services.Implement
             }
         }
 
+        public async Task<ResponseDTO> SearchOrderbyEmail(string email, int pageIndex, int pageSize)
+        {
+            try
+            {
+                var listOrder = await _unitOfWork.orderRepository.SearchOrdersByEmailAsync(email);
+
+                if (listOrder == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "No Order found.");
+                }
+                var result = _mapper.Map<List<OrderResultDTO>>(listOrder);
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+            }
+        }
+
+        public async Task<ResponseDTO> SearchOrderbyCreateDate(DateOnly date, int pageIndex, int pageSize)
+        {
+            try
+            {
+                if(!_checkDate.IsValidDate(date))
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Date is not valid.");
+                }
+                var listOrder = await _unitOfWork.orderRepository.SearchOrdersByDateAsync(date);
+
+                if (listOrder == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "No Order found.");
+                }
+                var result = _mapper.Map<List<OrderResultDTO>>(listOrder);
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+            }
+        }
     }
 }

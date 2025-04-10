@@ -19,9 +19,10 @@ public static class DependencyInjection
     {
         services.AddScoped<IUnitOfWorks, UnitOfWorks>();
         services.AddScoped<JWTUtils>();
+        services.AddScoped<CheckDate>();
 
         //mapping
-        
+
         services.AddAutoMapper(typeof(ProductsMapping));
         services.AddAutoMapper(typeof(FeedbackMapping));
         services.AddAutoMapper(typeof(OrderMapping));

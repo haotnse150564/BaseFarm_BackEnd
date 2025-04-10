@@ -12,5 +12,7 @@ namespace Infrastructure.Repositories
         Task<OrderResultDTO> GetOrderByIdAsync(long orderId);
         Task<Order?> GetOrderById(long orderId);
         Task<Pagination<OrderResultDTO>> GetOrdersByCustomerNameAsync(string customerName, int pageIndex, int pageSize);
+        Task<List<Order>> SearchOrdersByEmailAsync(string email);
+        Task<List<Order>> SearchOrdersByDateAsync(DateOnly date);
     }
 }

@@ -132,6 +132,29 @@ namespace WebAPI.Controllers
 
             return Ok(result); // Trả về danh sách đơn hàng với phân trang
         }
+        [HttpGet("order-list-by-emal/{email}")]
+        public async Task<IActionResult> GetListOrderbyEmail([FromRoute] string email, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
+        {
+            var result = await _orderService.SearchOrderbyEmail(email, pageIndex, pageSize);
 
+            if (result.Status != Const.SUCCESS_READ_CODE)
+            {
+                return BadRequest(result); // Trả về lỗi 400 nếu thất bại
+            }
+
+            return Ok(result); // Trả về danh sách đơn hàng với phân trang
+        }
+        [HttpPost("order-list-by-date")]
+        public async Task<IActionResult> GetListOrdersByCustomerName([FromBody] DateOnly date, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
+        {
+            var result = await _orderService.SearchOrderbyCreateDate(date, pageIndex, pageSize);
+
+            if (result.Status != Const.SUCCESS_READ_CODE)
+            {
+                return BadRequest(result); // Trả về lỗi 400 nếu thất bại
+            }
+
+            return Ok(result); // Trả về danh sách đơn hàng với phân trang
+        }
     }
 }
