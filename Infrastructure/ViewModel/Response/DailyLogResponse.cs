@@ -17,7 +17,7 @@ namespace Infrastructure.ViewModel.Response
 
             public string? Notes { get; set; }
 
-            public Status? Status { get; set; }
+            public string? Status { get; set; }
 
             public DateOnly? CreatedAt { get; set; }
 

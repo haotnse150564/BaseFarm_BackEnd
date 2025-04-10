@@ -17,7 +17,7 @@ namespace Infrastructure.ViewModel.Response
 
             public int? Quantity { get; set; }
 
-            public Status? Status { get; set; }
+            public string Status { get; set; }
 
             public DateOnly? PlantingDate { get; set; }
 

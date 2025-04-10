@@ -15,11 +15,11 @@ namespace Infrastructure.ViewModel.Response
 
             public int? ActivityType { get; set; }
 
-            public DateOnly? StartDate { get; set; }
+            public string? StartDate { get; set; }
 
-            public DateOnly? EndDate { get; set; }
+            public string? EndDate { get; set; }
 
-            public Status? Status { get; set; }
+            public string? Status { get; set; }
         }
         public class ResponseDTO
         {

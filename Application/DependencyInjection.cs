@@ -59,7 +59,7 @@ public static class DependencyInjection
         services.AddScoped<IIoTdeviceServices, IoTdeviceServices>();
         services.AddScoped<ICropServices, CropServices>();
         services.AddScoped<IFarmActivityServices, FarmActivityServices>();
-        services.AddScoped<IFarmDetailServices, FarmDetailServices>();
+        services.AddScoped<IFarmServices, FarmServices>();
 
         //services.AddScoped<IOrderDetailServices, OrderDetailServices>();
         //services.AddScoped<IAccountProfileServices, AccountProfileServices>();

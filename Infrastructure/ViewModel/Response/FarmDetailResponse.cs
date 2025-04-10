@@ -15,9 +15,9 @@ namespace Infrastructure.ViewModel.Response
 
             public string? Location { get; set; }
 
-            public DateOnly? CreatedAt { get; set; }
+            public string? CreatedAt { get; set; }
 
-            public DateOnly? UpdatedAt { get; set; }
+            public string? UpdatedAt { get; set; }
         }
     }
 }

@@ -22,19 +22,27 @@ namespace Infrastructure.ViewModel.Request
             [Required]
             [EmailAddress]
             public string Email { get; set; }
+            [Required]
             public Gender? Gender { get; set; }
+            [Required]
             public int Role { get; set; }   
+            [Required]
             public string? Phone { get; set; }
+            [Required]
             public string? Fullname { get; set; }
+            [Required]
             public string? Address { get; set; }
             public string? Images { get; set; }
         }
         public class ChangePasswordDTO
         {
+            [Required]
             public string OldPassword { get; set; }
             [MinLength(6, ErrorMessage = "Password must be at least 6 characters.")]
+            [Required]
             public string NewPassword { get; set; }
             [MinLength(6, ErrorMessage = "Password must be at least 6 characters.")]
+            [Required]
             public string ConfirmPassword { get; set; }
 
         }
