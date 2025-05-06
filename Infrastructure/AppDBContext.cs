@@ -2,6 +2,7 @@
 using Domain.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Identity.Client;
 
 namespace Infrastructure
 {
@@ -47,7 +48,9 @@ namespace Infrastructure
         public DbSet<Product> Product { get; set; }
 
         public DbSet<Schedule> Schedule { get; set; }
-
+        public string rau3 = "https://www.hasfarmgreens.com/wp-content/uploads/2023/03/DSC_0255-Edit.jpg";
+        public string rau2 = "https://www.vinmec.com/static/uploads/small_20201226_005345_144787_rau_den_max_1800x1800_jpg_aaca13f0a2.jpg";
+        public string rau1 = "https://i1-vnexpress.vnecdn.net/2022/12/02/61lN5mpZAGL-SL1200-1-3093-1669931323.jpg?w=680&h=0&q=100&dpr=1&fit=crop&s=Cj5kP5ZFslHpx0ogALNRdA";
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
@@ -85,12 +88,13 @@ namespace Infrastructure
                 new Inventory { InventoryId = 2, Location = "HCM", StockQuantity = 500, Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/11/2025"), ExpiryDate = DateOnly.Parse("6/1/2025"), ProductId = 2 },
                 new Inventory { InventoryId = 3, Location = "HCM", StockQuantity = 666, Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/8/2025"), ExpiryDate = DateOnly.Parse("6/1/2025"), ProductId = 3 }
                  );
+            
             builder.Entity<Product>().HasData(
-                new Product { ProductId = 1, ProductName = "Vegetable 1", Images = null, Price = 10000, StockQuantity = 10000, Description = "Rau Den", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, },
-                new Product { ProductId = 2, ProductName = "Vegetable 2", Images = null, Price = 15000, StockQuantity = 10000, Description = "Salad", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, },
-                new Product { ProductId = 3, ProductName = "Vegetable 3", Images = null, Price = 20000, StockQuantity = 10000, Description = "Dau Ha Lan", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, },
-                new Product { ProductId = 4, ProductName = "Fruit 1", Images = null, Price = 35000, StockQuantity = 10000, Description = "Ca chua", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, },
-                new Product { ProductId = 5, ProductName = "Fruit 2", Images = null, Price = 55000, StockQuantity = 10000, Description = "Dua Hau", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, }
+                new Product { ProductId = 1, ProductName = "Morning Glory - Rau Muong", Images = rau1, Price = 10000, StockQuantity = 10000, Description = "Rau Muong", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, },
+                new Product { ProductId = 2, ProductName = "Amarant - Rau Den", Images = rau2, Price = 15000, StockQuantity = 10000, Description = "Rau Den", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, },
+                new Product { ProductId = 3, ProductName = "Turnip - Cai", Images = rau3, Price = 20000, StockQuantity = 10000, Description = "Cai", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, }
+                //new Product { ProductId = 4, ProductName = "Fruit 1", Images = null, Price = 35000, StockQuantity = 10000, Description = "Ca chua", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, },
+                //new Product { ProductId = 5, ProductName = "Fruit 2", Images = null, Price = 55000, StockQuantity = 10000, Description = "Dua Hau", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, }
                 );
             builder.Entity<Schedule>().HasData(
                new Schedule { ScheduleId = 1, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("4/3/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 3, FarmActivityId = 1, FarmDetailsId = 1, CropId = 1 },
