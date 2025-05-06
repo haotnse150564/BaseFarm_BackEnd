@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Domain.Enum;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,12 +15,12 @@ namespace Application.Services
         Task<ResponseDTO> CreateOrderAsync(CreateOrderDTO request, HttpContext context);
         //Task<ResponseDTO> CreateOrderAsync(CreateOrderDTO request);
         Task<ResponseDTO> GetAllOrderAsync(int pageIndex, int pageSize);
-        Task<ResponseDTO> GetAllOrderByCustomerIdAsync(long customerId, int pageIndex, int pageSize);
+        Task<ResponseDTO> GetAllOrderByCustomerIdAsync(long customerId, int pageIndex, int pageSize, Status? status);
         Task<ResponseDTO> GetOrderByIdAsync(long orderId);
         Task<ResponseDTO> UpdateOrderStatusAsync(long orderId, UpdateOrderStatusDTO request);
         Task<long> GetOrderIdByOrderIdAsync(long orderId);
         Task<ResponseDTO> GetAllOrderByCustomerNameAsync(string customerName, int pageIndex, int pageSize);
-        Task<ResponseDTO> GetAllOrderByCurrentCustomerAsync(int pageIndex, int pageSize);
+        Task<ResponseDTO> GetAllOrderByCurrentCustomerAsync(int pageIndex, int pageSize, Status? status);
         Task<ResponseDTO> SearchOrderbyEmail(string email, int pageIndex, int pageSize);
         Task<ResponseDTO> SearchOrderbyCreateDate(DateOnly date, int pageIndex, int pageSize);
 

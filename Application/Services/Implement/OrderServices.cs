@@ -155,11 +155,11 @@ namespace Application.Services.Implement
             }
         }
 
-        public async Task<ResponseDTO> GetAllOrderByCustomerIdAsync(long customerId, int pageIndex, int pageSize)
+        public async Task<ResponseDTO> GetAllOrderByCustomerIdAsync(long customerId, int pageIndex, int pageSize, Status? status)
         {
             try
             {
-                var listOrder = await _unitOfWork.orderRepository.GetOrdersByCustomerIdAsync(customerId, pageIndex, pageSize);
+                var listOrder = await _unitOfWork.orderRepository.GetOrdersByCustomerIdAsync(customerId, pageIndex, pageSize, status);
 
                 if (listOrder == null || !listOrder.Items.Any())
                 {
@@ -174,7 +174,7 @@ namespace Application.Services.Implement
             }
         }
 
-        public async Task<ResponseDTO> GetAllOrderByCurrentCustomerAsync(int pageIndex, int pageSize)
+        public async Task<ResponseDTO> GetAllOrderByCurrentCustomerAsync(int pageIndex, int pageSize, Status? status)
         {
             try
             {
@@ -184,7 +184,8 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.ERROR_EXCEPTION, "No Login Session Found!");
                 }
 
-                var listOrder = await _unitOfWork.orderRepository.GetOrdersByCustomerIdAsync(user.AccountId, pageIndex, pageSize);
+                var listOrder = await _unitOfWork.orderRepository
+                    .GetOrdersByCustomerIdAsync(user.AccountId, pageIndex, pageSize, status);
 
                 if (listOrder == null || !listOrder.Items.Any())
                 {
@@ -198,6 +199,7 @@ namespace Application.Services.Implement
                 return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
             }
         }
+
 
         public async Task<ResponseDTO> GetOrderByIdAsync(long orderId)
         {

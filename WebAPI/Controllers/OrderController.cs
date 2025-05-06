@@ -1,6 +1,7 @@
 ﻿using Application;
 using Application.Services;
 using Application.ViewModel.Request;
+using Domain.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static Application.ViewModel.Request.OrderRequest;
@@ -82,9 +83,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("order-list-by-customer/{id}")]
-        public async Task<IActionResult> GetListOrdersByCustomerId([FromRoute] long id, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetListOrdersByCustomerId([FromRoute] long id, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10, [FromQuery] Status? status = null)
         {
-            var result = await _orderService.GetAllOrderByCustomerIdAsync(id, pageIndex, pageSize);
+            var result = await _orderService.GetAllOrderByCustomerIdAsync(id, pageIndex, pageSize, status);
 
             if (result.Status != Const.SUCCESS_READ_CODE)
             {
@@ -95,16 +96,16 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("order-list-by-current-account")]
-        public async Task<IActionResult> GetListOrdersByCurrentCustomer([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetListOrdersByCurrentCustomer([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10, [FromQuery] Status? status = null)
         {
-            var result = await _orderService.GetAllOrderByCurrentCustomerAsync(pageIndex, pageSize);
+            var result = await _orderService.GetAllOrderByCurrentCustomerAsync(pageIndex, pageSize, status);
 
             if (result.Status != Const.SUCCESS_READ_CODE)
             {
-                return BadRequest(result); // Trả về lỗi 400 nếu thất bại
+                return BadRequest(result);
             }
 
-            return Ok(result); // Trả về danh sách sản phẩm với phân trang
+            return Ok(result);
         }
 
         [HttpGet("order/{orderId}")]

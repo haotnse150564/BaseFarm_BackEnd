@@ -1,4 +1,5 @@
 ﻿using Application.Commons;
+using Domain.Enum;
 using Domain.Model;
 using Microsoft.EntityFrameworkCore;
 using static Application.ViewModel.Response.OrderResponse;
@@ -48,14 +49,19 @@ namespace Infrastructure.Repositories.Implement
             };
         }
 
-        public async Task<Pagination<OrderResultDTO>> GetOrdersByCustomerIdAsync(long customerId, int pageIndex, int pageSize)
+        public async Task<Pagination<OrderResultDTO>> GetOrdersByCustomerIdAsync(long customerId, int pageIndex, int pageSize, Status? status)
         {
-            var totalItemCount = await _context.Order
-                .Where(o => o.CustomerId == customerId)
-                .CountAsync();
+            var query = _context.Order
+                .Where(o => o.CustomerId == customerId);
 
-            var orders = await _context.Order
-                .Where(o => o.CustomerId == customerId)
+            if (status.HasValue)
+            {
+                query = query.Where(o => o.Status == status);
+            }
+
+            var totalItemCount = await query.CountAsync();
+
+            var orders = await query
                 .Include(o => o.Customer)
                 .Include(o => o.OrderDetails)
                     .ThenInclude(od => od.Product)
@@ -66,7 +72,7 @@ namespace Infrastructure.Repositories.Implement
                 {
                     TotalPrice = o.TotalPrice,
                     Email = o.Customer.Email,
-                    Status = o.Status,
+                    Status = o.Status, // ép kiểu để trả về dưới dạng số
                     ShippingAddress = o.ShippingAddress,
                     CreatedAt = o.CreatedAt.HasValue ? o.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
                     OrderItems = o.OrderDetails.Select(od => new ViewProductDTO
@@ -86,6 +92,7 @@ namespace Infrastructure.Repositories.Implement
                 Items = orders
             };
         }
+
 
         public async Task<OrderResultDTO> GetOrderByIdAsync(long orderId)
         {
