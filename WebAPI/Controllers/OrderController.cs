@@ -70,17 +70,18 @@ namespace WebAPI.Controllers
         //    return Ok(result);
         //}
         [HttpGet("order-list")]
-        public async Task<IActionResult> GetListOrders([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetListOrders([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10, [FromQuery] Status? status = null)
         {
-            var result = await _orderService.GetAllOrderAsync(pageIndex, pageSize);
+            var result = await _orderService.GetAllOrderAsync(pageIndex, pageSize, status);
 
             if (result.Status != Const.SUCCESS_READ_CODE)
             {
                 return BadRequest(result); // Trả về lỗi 400 nếu thất bại
             }
 
-            return Ok(result); // Trả về danh sách sản phẩm với phân trang
+            return Ok(result); // Trả về danh sách đơn hàng với phân trang và lọc theo status nếu có
         }
+
 
         [HttpGet("order-list-by-customer/{id}")]
         public async Task<IActionResult> GetListOrdersByCustomerId([FromRoute] long id, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10, [FromQuery] Status? status = null)

@@ -136,11 +136,11 @@ namespace Application.Services.Implement
             }
         }
 
-        public async Task<ResponseDTO> GetAllOrderAsync(int pageIndex, int pageSize)
+        public async Task<ResponseDTO> GetAllOrderAsync(int pageIndex, int pageSize, Status? status)
         {
             try
             {
-                var listOrder = await _unitOfWork.orderRepository.GetAllOrdersAsync(pageIndex, pageSize);
+                var listOrder = await _unitOfWork.orderRepository.GetAllOrdersAsync(pageIndex, pageSize, status);
 
                 if (listOrder == null || !listOrder.Items.Any())
                 {
@@ -154,6 +154,7 @@ namespace Application.Services.Implement
                 return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
             }
         }
+
 
         public async Task<ResponseDTO> GetAllOrderByCustomerIdAsync(long customerId, int pageIndex, int pageSize, Status? status)
         {
