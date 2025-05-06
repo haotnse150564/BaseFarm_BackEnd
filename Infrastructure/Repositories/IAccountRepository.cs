@@ -1,4 +1,5 @@
 ﻿using Application.Repositories;
+using Domain.Enum;
 using Domain.Model;
 
 namespace Infrastructure.Repositories
@@ -7,7 +8,7 @@ namespace Infrastructure.Repositories
     {
         Task<Account?> GetByEmailAsync(string email);
         Task<Account> GetAccountProfileByAccountIdAsync(long accountID);
-        Task<List<Account>> GetAllAccountWithProfiles();
+        Task<List<Account>> GetAllAccountWithProfiles(Status? status, Roles? role);
         Task<Account> GetByEmail(string email);
 
     }

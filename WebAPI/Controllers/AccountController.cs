@@ -1,4 +1,5 @@
 ﻿using Application.Services;
+using Domain.Enum;
 using Infrastructure.ViewModel.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -62,15 +63,31 @@ namespace WebAPI.Controllers
                 return Ok(result);
             return BadRequest("Failed to update account.");
         }
+
         [HttpGet("get-all")]
         //[Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetAllAccount(int pageSize = 10, int pageIndex = 1)
+        public async Task<IActionResult> GetAllAccount(int pageSize = 10, int pageIndex = 1, Status? status = null, Roles? role = null)
         {
-            var result = await _accountServices.GetAllAccountAsync(pageSize, pageIndex);
-            if (result != null)
-                return Ok(result);
-            return BadRequest("Failed to get accounts.");
+            try
+            {
+                // Gọi dịch vụ để lấy danh sách tài khoản với bộ lọc status và role
+                var result = await _accountServices.GetAllAccountAsync(pageSize, pageIndex, status, role);
+
+                if (result != null)
+                {
+                    return Ok(result); // Trả về kết quả nếu tìm thấy
+                }
+
+                // Trả về BadRequest nếu không có dữ liệu
+                return BadRequest("Failed to get accounts.");
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi và trả về thông báo lỗi
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
+
         [HttpGet("get-by-email")]
         //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllEmailAccount(string email)
