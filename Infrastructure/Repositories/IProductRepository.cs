@@ -1,4 +1,6 @@
-﻿using Application.Repositories;
+﻿using Application.Commons;
+using Application.Repositories;
+using Domain.Enum;
 using Domain.Model;
 
 namespace Infrastructure.Repositories
@@ -12,5 +14,12 @@ namespace Infrastructure.Repositories
         Task<Product?> GetProductById(long productId);
         Task<List<Product?>> GetProductByNameAsync(string productName);
         Task<bool> ExistsByNameAsync(string name);
+        Task<Pagination<Product>> GetFilteredProductsAsync(
+            int pageIndex,
+            int pageSize,
+            Status? status = null,
+            long? categoryId = null,
+            bool sortByStockAsc = true);
+
     }
 }

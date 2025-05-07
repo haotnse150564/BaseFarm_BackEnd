@@ -1,5 +1,6 @@
 ﻿using Application;
 using Application.Services;
+using Domain.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static Application.ViewModel.Request.ProductRequest;
@@ -30,6 +31,22 @@ namespace WebAPI.Controllers
 
             return Ok(result); // Trả về danh sách sản phẩm với phân trang
         }
+
+        [HttpGet("product-filter")]
+        public async Task<IActionResult> GetAllProductsWithFilter([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10,
+                                                                    [FromQuery] Status? status = null,
+                                                                    [FromQuery] long? categoryId = null,
+                                                                    [FromQuery] bool sortByStockAsc = true)
+        {
+            var response = await _productService.GetAllProductWithFilterAsync(pageIndex, pageSize, status, categoryId, sortByStockAsc);
+            if (response.Status != Const.SUCCESS_READ_CODE)
+            {
+                return BadRequest(response); // Trả về lỗi 400 nếu thất bại
+            }
+
+            return Ok(response); // Trả về danh sách sản phẩm với phân trang
+        }
+
 
         [HttpGet("get-product/{productId}")]
         public async Task<IActionResult> GetProductById([FromRoute] long productId)

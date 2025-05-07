@@ -1,4 +1,6 @@
-﻿using Domain.Model;
+﻿using Application.Commons;
+using Domain.Enum;
+using Domain.Model;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -66,5 +68,51 @@ namespace Infrastructure.Repositories.Implement
         {
             return await _context.Product.AnyAsync(u => u.ProductName.ToLower() == name.ToLower());
         }
+
+        public async Task<Pagination<Product>> GetFilteredProductsAsync(int pageIndex, int pageSize, Status? status = null, long? categoryId = null, bool sortByStockAsc = true)
+        {
+            var query = _dbSet.AsQueryable();
+
+            if (status.HasValue)
+                query = query.Where(p => p.Status == status.Value);
+
+            if (categoryId.HasValue)
+                query = query.Where(p => p.CategoryId == categoryId.Value);
+
+            query = sortByStockAsc
+                ? query.OrderBy(p => p.StockQuantity)
+                : query.OrderByDescending(p => p.StockQuantity);
+
+            var itemCount = await query.CountAsync();
+
+            if (itemCount == 0)
+            {
+                return new Pagination<Product>()
+                {
+                    PageSize = pageSize,
+                    TotalItemCount = 0,
+                    PageIndex = pageIndex,
+                    Items = new List<Product>()
+                };
+            }
+
+            var totalPages = (int)Math.Ceiling(itemCount / (double)pageSize);
+            pageIndex = Math.Clamp(pageIndex, 1, totalPages);
+
+            var items = await query
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return new Pagination<Product>
+            {
+                PageSize = pageSize,
+                TotalItemCount = itemCount,
+                PageIndex = pageIndex,
+                Items = items
+            };
+        }
+
     }
 }
