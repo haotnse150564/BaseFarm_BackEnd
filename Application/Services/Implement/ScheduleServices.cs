@@ -46,6 +46,7 @@ namespace Application.Services.Implement
                 {
                     StartDate = request.StartDate,
                     EndDate = crop.HarvestDate,
+                    //EndDate = DateOnly.Parse("05/09/2025"),
                     AssignedTo = request.AssignedTo,
                     FarmActivityId = request.FarmActivityId,
                     FarmDetailsId = request.FarmDetailsId,

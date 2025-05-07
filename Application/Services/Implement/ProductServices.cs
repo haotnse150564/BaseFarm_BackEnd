@@ -131,15 +131,16 @@ namespace Application.Services.Implement
 
                 // Ánh xạ từ DTO sang Entity
                 var product = _mapper.Map<Product>(request);
+                product.ProductId = request.CropId;
                 product.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
 
                 // Gọi AddAsync nhưng không gán vào biến vì nó không có giá trị trả về
-                var added = _unitOfWork.productRepository.AddAsync(product);
-
+                await _unitOfWork.productRepository.AddAsync(product);
+                var check = await _unitOfWork.SaveChangesAsync(); 
                 // Kiểm tra xem sản phẩm có được thêm không bằng cách kiểm tra product.Id (hoặc khóa chính)
-                if (added==null) // Nếu Id chưa được gán, có thể việc thêm đã thất bại
+                if (check < 0) // Nếu Id chưa được gán, có thể việc thêm đã thất bại
                 {
-                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Failed to add product to repository.");
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Failed to add product.");
                 }
 
                 return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Product registered successfully");
@@ -186,11 +187,11 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Product not found !");
                 }
 
-                product.Status = (product.Status == Status.ACTIVE) ? Status.ACTIVE : Status.SUSPENDED;
+                product.Status = (product.Status == Status.ACTIVE) ? Status.SUSPENDED : Status.ACTIVE;
 
                 // Lưu các thay đổi vào cơ sở dữ liệu
                 await _unitOfWork.productRepository.UpdateAsync(product);
-
+                await _unitOfWork.SaveChangesAsync();
                 return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, "Change Status Succeed");
             }
             catch (Exception ex)
