@@ -110,11 +110,11 @@ namespace Infrastructure
                 new Farm { FarmId = 3, FarmName = "Cai", Location = "TP. Ho Chi Minh", CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("3/5/2025"), AccountId = 7 }
         );
             builder.Entity<Crop>().HasData(
-                new Crop { CropId = 1, CropName = "Cop 01", Description = "3x3 m2", Status = Domain.Enum.Status.ACTIVE, PlantingDate = DateOnly.Parse("3/1/2025"), HarvestDate = DateOnly.Parse("4/5/2025"), Quantity = 100 },
-                new Crop { CropId = 2, CropName = "Cop 02", Description = "2x3 m2", Status = Domain.Enum.Status.ACTIVE, PlantingDate = DateOnly.Parse("3/4/2025"), HarvestDate = DateOnly.Parse("4/5/2025"), Quantity = 100 },
-                new Crop { CropId = 3, CropName = "Cop 03", Description = "3x2 m2", Status = Domain.Enum.Status.ACTIVE, PlantingDate = DateOnly.Parse("4/4/2025"), HarvestDate = DateOnly.Parse("4/6/2025"), Quantity = 100 },
-                new Crop { CropId = 4, CropName = "Cop 04", Description = "3x5 m2", Status = Domain.Enum.Status.ACTIVE, PlantingDate = DateOnly.Parse("3/5/2025"), HarvestDate = DateOnly.Parse("4/3/2025"), Quantity = 100 },
-                new Crop { CropId = 5, CropName = "Cop 05", Description = "4x3 m2", Status = Domain.Enum.Status.ACTIVE, PlantingDate = DateOnly.Parse("3/5/2025"), HarvestDate = DateOnly.Parse("4/3/2025"), Quantity = 100 }
+                new Crop { CropId = 1, CropName = "Cop 01", Description = "3x3 m2", Status = Domain.Enum.Status.ACTIVE, PlantingDate = DateOnly.Parse("3/1/2025"), HarvestDate = DateOnly.Parse("10/10/2025"), Quantity = 100 },
+                new Crop { CropId = 2, CropName = "Cop 02", Description = "2x3 m2", Status = Domain.Enum.Status.ACTIVE, PlantingDate = DateOnly.Parse("3/4/2025"), HarvestDate = DateOnly.Parse("5/5/2025"), Quantity = 100 },
+                new Crop { CropId = 3, CropName = "Cop 03", Description = "3x2 m2", Status = Domain.Enum.Status.ACTIVE, PlantingDate = DateOnly.Parse("4/4/2025"), HarvestDate = DateOnly.Parse("11/10/2025"), Quantity = 100 },
+                new Crop { CropId = 4, CropName = "Cop 04", Description = "3x5 m2", Status = Domain.Enum.Status.ACTIVE, PlantingDate = DateOnly.Parse("3/5/2025"), HarvestDate = DateOnly.Parse("10/11/2025"), Quantity = 100 },
+                new Crop { CropId = 5, CropName = "Cop 05", Description = "4x3 m2", Status = Domain.Enum.Status.ACTIVE, PlantingDate = DateOnly.Parse("3/5/2025"), HarvestDate = DateOnly.Parse("7/8/2025"), Quantity = 100 }
                 );
             builder.Entity<Feedback>().HasData(
                 new Feedback { FeedbackId = 1, CustomerId = 4, CreatedAt = DateOnly.Parse("4/3/2025"), Rating = 4, Comment = "App very good, but load data slow" },
