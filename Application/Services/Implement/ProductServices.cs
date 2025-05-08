@@ -28,20 +28,20 @@ namespace Application.Services.Implement
         {
             try
             {
-                var listProduct = await _unitOfWork.productRepository.ToPaginationAsync(pageIndex, pageSize);
-
-                if (listProduct == null)
+                var listProduct = await _unitOfWork.productRepository.GetAllAsync();
+                var listFilter = listProduct.Where(x => x.Status == Status.ACTIVE).ToList();  
+                if (listFilter == null)
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, "No Products found.");
                 }
 
                 // Map dữ liệu sang DTO
-                var result = _mapper.Map<List<ViewProductDTO>>(listProduct.Items);
+                var result = _mapper.Map<List<ViewProductDTO>>(listFilter);
 
                 // Tạo đối tượng phân trang
                 var pagination = new Pagination<ViewProductDTO>
                 {
-                    TotalItemCount = listProduct.TotalItemCount,
+                    TotalItemCount = listFilter.Count,
                     PageSize = pageSize,
                     PageIndex = pageIndex,
                     Items = result
