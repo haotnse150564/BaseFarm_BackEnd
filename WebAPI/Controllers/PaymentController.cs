@@ -22,9 +22,7 @@ namespace WebAPI.Controllers
             _orderServices = orderServices;
         }
 
-        /// <summary>
         /// Tạo URL thanh toán VNPay
-        /// </summary>
         [HttpPost("create-payment-url")]
         public async Task<IActionResult> CreatePaymentUrl([FromBody] PaymentInformationModel model)
         {
@@ -87,6 +85,30 @@ namespace WebAPI.Controllers
                 return StatusCode(500, new { message = "An error occurred while processing the payment response." });
             }
         }
+
+        [HttpGet("ipn")]
+        public async Task<IActionResult> PaymentIpn()
+        {
+            try
+            {
+                var response = await Task.Run(() => _vnPayService.PaymentExecute(Request.Query));
+
+                if (response == null)
+                {
+                    return BadRequest("Invalid IPN request.");
+                }
+
+                await _vnPayService.SavePaymentAsync(response);
+
+                return Ok("IPN received and processed successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while processing VNPAY IPN.");
+                return StatusCode(500, "Internal Server Error while processing IPN.");
+            }
+        }
+
 
         [HttpGet("PaymentByOrderId/{orderId}")]
         public async Task<IActionResult> GetPaymentByOrderId(long orderId)

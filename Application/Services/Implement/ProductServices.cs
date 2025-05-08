@@ -211,7 +211,7 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Product not found !");
                 }
 
-                product.Status = (product.Status == Status.ACTIVE) ? Status.SUSPENDED : Status.ACTIVE;
+                product.Status = (product.Status == Status.ACTIVE) ? Status.DEACTIVATED : Status.ACTIVE;
 
                 // Lưu các thay đổi vào cơ sở dữ liệu
                 await _unitOfWork.productRepository.UpdateAsync(product);

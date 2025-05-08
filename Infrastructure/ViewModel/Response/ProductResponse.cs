@@ -38,13 +38,12 @@ namespace Application.ViewModel.Response
 
         public class ProductDetailDTO
         {
+            public string? Images { get; set; }
             public string? ProductName { get; set; }
-
             public decimal? Price { get; set; }
-
             public int? StockQuantity { get; set; }
-
             public string? Description { get; set; }
+            public long CategoryId { get; set; }
             public string? CategoryName { get; set; }
         }
 
