@@ -14,8 +14,8 @@ namespace Infrastructure.ViewModel.Request
         [Required(ErrorMessage = "StartDate is required.")]
         public DateOnly? StartDate { get; set; }
 
-        [Required(ErrorMessage = "EndDate is required.")]
-        public DateOnly? EndDate { get; set; }
+        //[Required(ErrorMessage = "EndDate is required.")]
+        //public DateOnly? EndDate { get; set; }
 
         [Required(ErrorMessage = "AssignedTo is required.")]
         [Range(1, long.MaxValue, ErrorMessage = "AssignedTo must be a positive number.")]
