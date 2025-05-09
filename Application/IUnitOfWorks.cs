@@ -21,6 +21,7 @@ namespace Application
         ICropRepository cropRepository { get; }
         IFarmActivityRepository farmActivityRepository { get; }
         IFarmRepository farmRepository { get; }
+        ICategoryRepository categoryRepository { get; }
 
     }
 }

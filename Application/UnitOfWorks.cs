@@ -25,12 +25,13 @@ namespace Infrastructure
         private ICropRepository _cropRepository;
         private IFarmActivityRepository _farmActivityRepository;
         private IFarmRepository _farmRepository;
+        private ICategoryRepository _categoryRepository;
 
         public UnitOfWorks(AppDbContext context, ICurrentTime currentTime, IClaimsServices claimsServices, IProductRepository productRepository
             , IFeedbackRepository feedbackRepository, IAccountProfileRepository accountProfileRepository, IOrderRepository orderRepository
             , IOrderDetailRepository orderDetailRepository, IPaymentRepository paymentRepository, IScheduleRepository scheduleRepository
             , IIoTdeviceRepository ioTdeviceRepository, ICropRepository cropRepository, IFarmActivityRepository farmActivityRepository, IFarmRepository farmRepository
-            
+            , ICategoryRepository categoryRepository
             )
         {
             _context = context;
@@ -50,6 +51,14 @@ namespace Infrastructure
             _cropRepository = cropRepository;
             _farmActivityRepository = farmActivityRepository;
             _farmRepository = farmRepository;
+            _categoryRepository = categoryRepository;
+        }
+        public ICategoryRepository categoryRepository
+        {
+            get
+            {
+                return _categoryRepository ??= new CategoryRepository(_context);
+            }
         }
         public ICropRepository cropRepository
         {

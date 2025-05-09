@@ -78,8 +78,10 @@ namespace Infrastructure
                 new AccountProfile { AccountProfileId = 9, Gender = Domain.Enum.Gender.Male, Phone = "0123456789", Fullname = "Staff 3", Address = "TP. Ho Chi Minh", Images = null, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("5/1/2025") }
             );
             builder.Entity<Category>().HasData(
-                new Category { CategoryId = 1, CategoryName = "Rau" },
-                new Category { CategoryId = 2, CategoryName = "Thiet bi" }
+                new Category { CategoryId = 1, CategoryName = "Leafy Vegetables - Rau An La" },
+                new Category { CategoryId = 2, CategoryName = "Root Vegetables - Rau Cu" },
+                new Category { CategoryId = 3, CategoryName = "Fruiting Vegetables - Rau Qua" },
+                new Category { CategoryId = 4, CategoryName = "Herbs and Spices - Rau Gia Vi" }
                 );
             builder.Entity<Inventory>().HasData(
                 new Inventory { InventoryId = 1, Location = "TP. Ho Chi Minh", StockQuantity = 1000, Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), ExpiryDate = DateOnly.Parse("6/1/2025"), ProductId = 1 },

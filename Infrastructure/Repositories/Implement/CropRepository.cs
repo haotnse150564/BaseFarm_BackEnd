@@ -10,7 +10,7 @@ namespace Infrastructure.Repositories.Implement
 {
     public class CropRepository : GenericRepository<Crop>, ICropRepository
     {
-        public CropRepository(AppDbContext context)
+        public CropRepository(AppDbContext context) 
         {
             _context = context;
             _dbSet = _context.Set<Crop>();
