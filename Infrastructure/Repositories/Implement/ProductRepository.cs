@@ -24,7 +24,7 @@ namespace Infrastructure.Repositories.Implement
 
         public async Task<IEnumerable<Product>> GetPagedAsync(int pageIndex, int pageSize)
         {
-            return await _context.Product
+            return await _context.Product.Include(x => x.ProductNavigation)
                 .OrderBy(p => p.ProductId) // Thay đổi sắp xếp theo nhu cầu
                 .Skip((pageIndex - 1) * pageSize) // Điều chỉnh Skip để trang đầu là 1
                 .Take(pageSize)
@@ -34,7 +34,7 @@ namespace Infrastructure.Repositories.Implement
         // Đếm tổng số sản phẩm theo tên
         public async Task<int> CountByNameAsync(string productName)
         {
-            return await _context.Product
+            return await _context.Product.Include(x => x.ProductNavigation)
                 .Where(p => p.ProductName.Contains(productName))
                 .CountAsync();
         }
@@ -42,7 +42,7 @@ namespace Infrastructure.Repositories.Implement
         // Lấy danh sách sản phẩm theo tên có phân trang
         public async Task<List<Product>> GetPagedByNameAsync(string productName, int pageIndex, int pageSize)
         {
-            return await _context.Product
+            return await _context.Product.Include(x => x.ProductNavigation)
                 .Where(p => p.ProductName.Contains(productName))
                 .OrderBy(p => p.ProductName) // Sắp xếp theo tên sản phẩm
                 .Skip((pageIndex - 1) * pageSize)
@@ -53,6 +53,7 @@ namespace Infrastructure.Repositories.Implement
         public async Task<Product?> GetProductById(long productId)
         {
             return await _context.Product
+                .Include(x => x.ProductNavigation)
                 .Include(u => u.Category)
                 .FirstOrDefaultAsync(u => u.ProductId == productId);
         }
@@ -60,6 +61,7 @@ namespace Infrastructure.Repositories.Implement
         public async Task<List<Product?>> GetProductByNameAsync(string productName)
         {
             return await _context.Product
+                .Include(x => x.ProductNavigation)
                 .Where(u => u.ProductName.ToLower().StartsWith(productName.ToLower()))
                 .ToListAsync(); // Trả về danh sách
         }
@@ -74,10 +76,10 @@ namespace Infrastructure.Repositories.Implement
             var query = _dbSet.AsQueryable();
 
             if (status.HasValue)
-                query = query.Where(p => p.Status == status.Value);
+                query = query.Include(x => x.ProductNavigation).Where(p => p.Status == status.Value);
 
             if (categoryId.HasValue)
-                query = query.Where(p => p.CategoryId == categoryId.Value);
+                query = query.Include(x => x.ProductNavigation).Where(p => p.CategoryId == categoryId.Value);
 
             query = sortByStockAsc
                 ? query.OrderBy(p => p.StockQuantity)
@@ -113,6 +115,9 @@ namespace Infrastructure.Repositories.Implement
                 Items = items
             };
         }
-
+        public override async Task<List<Product>> GetAllAsync()
+        {
+            return await _context.Product.Include(x => x.ProductNavigation).ToListAsync();
+        }
     }
 }

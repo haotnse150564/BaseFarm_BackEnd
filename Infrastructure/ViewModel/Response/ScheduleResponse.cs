@@ -24,6 +24,7 @@ namespace Infrastructure.ViewModel.Response
             public string? CreatedAt { get; set; }
 
             public string? UpdatedAt { get; set; }
+            public string? ActivityType { get; set; }
             public ViewAccount? accountView { get; set; }
             public FarmActivityView? farmActivityView { get; set; }
             public FarmView? farmDetailView { get; set; } 
