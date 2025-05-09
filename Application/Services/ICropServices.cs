@@ -1,5 +1,4 @@
-﻿using Infrastructure.ViewModel.Request;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +10,5 @@ namespace Application.Services
     public interface ICropServices
     {
         Task<List<CropView>> GetAllCropsAsync();
-        Task<ResponseDTO> CreateCropAsync(CropRequest request);
     }
 }

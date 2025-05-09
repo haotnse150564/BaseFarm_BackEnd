@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Domain.Model;
-using Infrastructure.ViewModel.Request;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +13,6 @@ namespace Infrastructure.Mapper
     {
         public CropMapping() {
             CreateMap<Crop, CropView>().ReverseMap();
-            CreateMap<Crop, CropRequest>().ReverseMap();
         }
     }
 }
