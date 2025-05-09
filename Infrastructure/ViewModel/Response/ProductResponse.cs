@@ -45,7 +45,6 @@ namespace Application.ViewModel.Response
             public string? Description { get; set; }
             public long CategoryId { get; set; }
             public string? CategoryName { get; set; }
-            public Status? Status { get; set; }
         }
 
 
