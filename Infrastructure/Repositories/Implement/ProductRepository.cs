@@ -18,7 +18,6 @@ namespace Infrastructure.Repositories.Implement
         public async Task<IEnumerable<Product>> GetPagedAsync(int pageIndex, int pageSize)
         {
             return await _context.Product
-                .Include(x => x.ProductNavigation)
                 .OrderBy(p => p.ProductId) // Thay đổi sắp xếp theo nhu cầu
                 .Skip((pageIndex - 1) * pageSize) // Điều chỉnh Skip để trang đầu là 1
                 .Take(pageSize)
@@ -30,7 +29,6 @@ namespace Infrastructure.Repositories.Implement
         {
             return await _context.Product
                 .Where(p => p.ProductName.Contains(productName))
-                .Include(x => x.ProductNavigation)
                 .CountAsync();
         }
 
@@ -38,7 +36,6 @@ namespace Infrastructure.Repositories.Implement
         public async Task<List<Product>> GetPagedByNameAsync(string productName, int pageIndex, int pageSize)
         {
             return await _context.Product
-                .Include(x => x.ProductNavigation)
                 .Where(p => p.ProductName.Contains(productName))
                 .OrderBy(p => p.ProductName) // Sắp xếp theo tên sản phẩm
                 .Skip((pageIndex - 1) * pageSize)
@@ -50,7 +47,6 @@ namespace Infrastructure.Repositories.Implement
         {
             return await _context.Product
                 .Include(u => u.Category)
-                .Include(x => x.ProductNavigation).Include(x => x.ProductNavigation)
                 .FirstOrDefaultAsync(u => u.ProductId == productId);
         }
 
@@ -58,19 +54,12 @@ namespace Infrastructure.Repositories.Implement
         {
             return await _context.Product
                 .Where(u => u.ProductName.ToLower().StartsWith(productName.ToLower()))
-                .Include(x => x.ProductNavigation)
                 .ToListAsync(); // Trả về danh sách
         }
 
         public async Task<bool> ExistsByNameAsync(string name)
         {
             return await _context.Product.AnyAsync(u => u.ProductName.ToLower() == name.ToLower());
-        }
-        public override async Task<List<Product>> GetAllAsync()
-        {
-            return await _context.Product
-                .Include(x => x.ProductNavigation)
-                .ToListAsync();
         }
     }
 }
