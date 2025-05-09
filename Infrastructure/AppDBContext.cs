@@ -100,9 +100,9 @@ namespace Infrastructure
                 new Schedule { ScheduleId = 3, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/3/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 6, FarmActivityId = 3, FarmDetailsId = 3, CropId = 3}
            );
             builder.Entity<FarmActivity>().HasData(
-                new FarmActivity { FarmActivitiesId = 1, ActivityType = 1, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("4/1/2025"), Status = Domain.Enum.Status.ACTIVE },
-                new FarmActivity { FarmActivitiesId = 2, ActivityType = 1, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/11/2025"), Status = Domain.Enum.Status.ACTIVE },
-                new FarmActivity { FarmActivitiesId = 3, ActivityType = 1, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/3/2025"), Status = Domain.Enum.Status.ACTIVE }
+                new FarmActivity { FarmActivitiesId = 1, ActivityType = Domain.Enum.ActivityType.Sowing, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("4/1/2025"), Status = Domain.Enum.Status.ACTIVE },
+                new FarmActivity { FarmActivitiesId = 2, ActivityType = Domain.Enum.ActivityType.Harvesting, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/11/2025"), Status = Domain.Enum.Status.ACTIVE },
+                new FarmActivity { FarmActivitiesId = 3, ActivityType = Domain.Enum.ActivityType.Fertilization, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/3/2025"), Status = Domain.Enum.Status.ACTIVE }
                 );
             builder.Entity<Farm>().HasData(
                 new Farm { FarmId = 1, FarmName = "Rau Muong ", Location = "TP. Ho Chi Minh", CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AccountId = 4 },

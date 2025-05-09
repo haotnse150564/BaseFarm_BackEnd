@@ -26,10 +26,10 @@ namespace Infrastructure.Mapper
                    .ForMember(dest => dest.AssignedTo, opt => opt.MapFrom(src => src.AssignedTo))
                    .ForMember(dest => dest.FarmActivityId, opt => opt.MapFrom(src => src.FarmActivityId))
                    .ForMember(dest => dest.FarmId, opt => opt.MapFrom(src => src.FarmDetailsId))
-
                    .ForMember(dest => dest.accountView, opt => opt.MapFrom(src => src.AssignedToNavigation))
                    .ForMember(dest => dest.farmActivityView, opt => opt.MapFrom(src => src.FarmActivity))
                    .ForMember(dest => dest.cropView, opt => opt.MapFrom(src => src.Crop))
+                   .ForMember(dest => dest.ActivityType, opt => opt.MapFrom(src => src.FarmActivity.ActivityType.Value.ToString()))
                    .ForMember(dest => dest.dailyLog, opt => opt.MapFrom(src => src.DailyLogs));
             ;
 

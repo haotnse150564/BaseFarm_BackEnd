@@ -15,9 +15,14 @@ namespace Infrastructure.Mapper
     {
         public ProductsMapping()
         {
-            CreateMap<Product, ViewProductDTO>().ReverseMap();
+            CreateMap<Product, ViewProductDTO>()
+                .ForMember(dest => dest.CropName, opt => opt.MapFrom(src => src.ProductNavigation.CropName))
+                .ForMember(dest => dest.CropId, opt => opt.MapFrom(src => src.ProductNavigation.CropId))
+                .ReverseMap();
             CreateMap<Product, ProductDetailDTO>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName))
+                .ForMember(dest => dest.CropName, opt => opt.MapFrom(src => src.ProductNavigation.CropName))
+                .ForMember(dest => dest.CropId, opt => opt.MapFrom(src => src.ProductNavigation.CropId))
                 .ReverseMap();
             CreateMap<Product, CreateProductDTO>().ReverseMap();
             CreateMap<Product, UpdateQuantityDTO>().ReverseMap();

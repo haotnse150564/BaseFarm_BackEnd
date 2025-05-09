@@ -34,6 +34,8 @@ namespace Application.ViewModel.Response
             public DateOnly? CreatedAt { get; set; }
             public DateOnly? UpdatedAt { get; set; }
             public long CategoryId { get; set; }
+            public string? CropId { get; set; }
+            public string? CropName { get; set; }
         }
 
         public class ProductDetailDTO
@@ -46,6 +48,8 @@ namespace Application.ViewModel.Response
             public long CategoryId { get; set; }
             public string? CategoryName { get; set; }
             public Status? Status { get; set; }
+            public string? CropId { get; set; }
+            public string? CropName { get; set; }
         }
 
 

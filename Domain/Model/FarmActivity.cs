@@ -8,7 +8,7 @@ public partial class FarmActivity
 {
     public long FarmActivitiesId { get; set; }
 
-    public int? ActivityType { get; set; }
+    public ActivityType? ActivityType { get; set; }
 
     public DateOnly? StartDate { get; set; }
 
