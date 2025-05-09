@@ -12,7 +12,7 @@ namespace Infrastructure.ViewModel.Request
         public class ProfileRequestDTO
         {
            
-            [Range(0, 2, ErrorMessage = "Gender must be 0 or 1 or 2")]
+            [Range(0, 1, ErrorMessage = "Gender must be 0 or 1")]
             public int? Gender { get; set; }
 
             [Phone(ErrorMessage = "Invalid phone number format")]

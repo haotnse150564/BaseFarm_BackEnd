@@ -1,5 +1,4 @@
 ﻿using Application.Commons;
-using Domain.Enum;
 using Infrastructure.ViewModel.Request;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using System;
@@ -19,7 +18,7 @@ namespace Application.Services
         Task<ViewAccount> UpdateAccountStatusAsync(long id);
         Task<ViewAccount> CreateAccountAsync(AccountForm request);
         Task<ViewAccount> UpdateAccountAsync(long id, AccountForm request);
-        Task<Pagination<ViewAccount>> GetAllAccountAsync(int pageSize, int pageIndex, Status? status, Roles? role);
+        Task<Pagination<ViewAccount>> GetAllAccountAsync(int pageSize, int pageIndex);
         Task<ViewAccount> GetAccountByEmail(string email);
         Task<ViewAccount> UpdateRoleForUser(long id, int roleId);
         Task<ResponseDTO> ChangePassword(long id, ChangePasswordDTO request);

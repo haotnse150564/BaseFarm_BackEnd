@@ -69,30 +69,25 @@ namespace WebAPI.Services
             return _mapper.Map<ViewAccount>(newAccount);
         }
 
-        public async Task<Pagination<ViewAccount>> GetAllAccountAsync(int pageSize, int pageIndex, Status? status, Roles? role)
+        public async Task<Pagination<ViewAccount>> GetAllAccountAsync(int pageSize, int pageIndex)
         {
             try
             {
-                // Lấy danh sách tài khoản từ repository với các bộ lọc status và role
-                var account = await _unitOfWork.accountRepository.GetAllAccountWithProfiles(status, role);
+                var account = await _unitOfWork.accountRepository.GetAllAccountWithProfiles();
                 await _unitOfWork.accountProfileRepository.GetAllAsync();
 
-                if (account == null || !account.Any())
+                if (account == null)
                 {
                     return null;
                 }
-
                 // Lọc tài khoản không phải Admin
                 var userAccount = account.Where(x => x.Role != Roles.Admin).ToList();
                 var result = _mapper.Map<List<ViewAccount>>(userAccount.OrderBy(x => x.Role));
-
-                // Tổng số tài khoản
-                var totalItem = result.Count;
-
-                // Phân trang dữ liệu
+                var tolalItem = result.Count;
+                // Map dữ liệu sang DTO
                 var pagination = new Pagination<ViewAccount>
                 {
-                    TotalItemCount = totalItem,
+                    TotalItemCount = tolalItem,
                     PageSize = pageSize,
                     PageIndex = pageIndex,
                     Items = result.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList()
@@ -102,11 +97,9 @@ namespace WebAPI.Services
             }
             catch (Exception ex)
             {
-                // Xử lý ngoại lệ nếu có
                 return null;
             }
         }
-
         public async Task<ViewAccount> GetAccountByEmail(string email)
         {
             try

@@ -13,7 +13,8 @@ namespace Application.Services
     public interface IOrderServices
     {
         Task<ResponseDTO> CreateOrderAsync(CreateOrderDTO request, HttpContext context);
-        Task<ResponseDTO> GetAllOrderAsync(int pageIndex, int pageSize, Status? status);
+        //Task<ResponseDTO> CreateOrderAsync(CreateOrderDTO request);
+        Task<ResponseDTO> GetAllOrderAsync(int pageIndex, int pageSize);
         Task<ResponseDTO> GetAllOrderByCustomerIdAsync(long customerId, int pageIndex, int pageSize, Status? status);
         Task<ResponseDTO> GetOrderByIdAsync(long orderId);
         Task<ResponseDTO> UpdateOrderStatusAsync(long orderId, UpdateOrderStatusDTO request);

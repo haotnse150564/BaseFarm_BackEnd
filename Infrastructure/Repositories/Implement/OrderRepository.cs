@@ -13,22 +13,15 @@ namespace Infrastructure.Repositories.Implement
 
         public OrderRepository(AppDbContext context) => _context = context;
 
-        public async Task<Pagination<OrderResultDTO>> GetAllOrdersAsync(int pageIndex, int pageSize, Status? status)
+        public async Task<Pagination<OrderResultDTO>> GetAllOrdersAsync(int pageIndex, int pageSize)
         {
-            var query = _context.Order.AsQueryable();
+            var totalItemCount = await _context.Order.CountAsync();
 
-            if (status.HasValue)
-            {
-                query = query.Where(o => o.Status == status);
-            }
-
-            var totalItemCount = await query.CountAsync();
-
-            var orders = await query
+            var orders = await _context.Order
                 .Include(o => o.Customer)
                 .Include(o => o.OrderDetails)
                     .ThenInclude(od => od.Product)
-                .OrderByDescending(o => o.CreatedAt)
+                .OrderByDescending(o => o.CreatedAt) // Sắp xếp theo ngày tạo mới nhất
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
                 .Select(o => new OrderResultDTO
@@ -37,7 +30,7 @@ namespace Infrastructure.Repositories.Implement
                     Email = o.Customer.Email,
                     ShippingAddress = o.ShippingAddress,
                     Status = o.Status,
-                    CreatedAt = o.CreatedAt.HasValue ? o.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
+                    CreatedAt = o.CreatedAt.HasValue ? o.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null, // Fix lỗi
                     OrderItems = o.OrderDetails.Select(od => new ViewProductDTO
                     {
                         ProductName = od.Product.ProductName,
@@ -55,7 +48,6 @@ namespace Infrastructure.Repositories.Implement
                 Items = orders
             };
         }
-
 
         public async Task<Pagination<OrderResultDTO>> GetOrdersByCustomerIdAsync(long customerId, int pageIndex, int pageSize, Status? status)
         {
@@ -100,6 +92,7 @@ namespace Infrastructure.Repositories.Implement
                 Items = orders
             };
         }
+
 
         public async Task<OrderResultDTO> GetOrderByIdAsync(long orderId)
         {

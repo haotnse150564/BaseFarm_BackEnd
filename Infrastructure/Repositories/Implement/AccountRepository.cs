@@ -1,5 +1,4 @@
-﻿using Domain.Enum;
-using Domain.Model;
+﻿using Domain.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 
@@ -21,27 +20,11 @@ namespace Infrastructure.Repositories.Implement
             return result;
         }
 
-        public async Task<List<Account>> GetAllAccountWithProfiles(Status? status, Roles? role)
+        public async Task<List<Account>> GetAllAccountWithProfiles()
         {
-            var query = _dbSet.Include(x => x.AccountProfile).AsQueryable();
-
-            // Nếu có trạng thái, lọc theo trạng thái
-            if (status.HasValue)
-            {
-                query = query.Where(x => x.Status == status);
-            }
-
-            // Nếu có role, lọc theo role
-            if (role.HasValue)
-            {
-                query = query.Where(x => x.Role == role);
-            }
-
-            // Thực thi truy vấn và trả về danh sách tài khoản
-            var result = await query.ToListAsync();
+            var result = await _dbSet.Include(x => x.AccountProfile).ToListAsync();
             return result;
         }
-
 
         public async Task<Account> GetByEmail(string email)
         {

@@ -1,5 +1,4 @@
-﻿using Domain.Enum;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +17,5 @@ namespace Application.Services
         Task<ResponseDTO> UpdateProductById(long productId, CreateProductDTO request);
         Task<ResponseDTO> ChangeProductStatusById(long productId);
         Task<ResponseDTO> ChangeProductQuantityById(long productId, UpdateQuantityDTO request);
-        Task<ResponseDTO> GetAllProductWithFilterAsync(int pageIndex, int pageSize, Status? status = null, long? categoryId = null,
-                                                                    bool sortByStockAsc = true);
     }
 }
