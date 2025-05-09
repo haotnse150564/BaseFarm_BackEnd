@@ -1,4 +1,4 @@
-﻿using Domain.Enum;
+using Domain.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,26 +28,22 @@ namespace Application.ViewModel.Response
             public string? ProductName { get; set; }
             public decimal? Price { get; set; }
             public int? StockQuantity { get; set; }
-            public string? Images { get; set; }
-            public string? Description { get; set; }
-            public Status? Status { get; set; }
-            public DateOnly? CreatedAt { get; set; }
-            public DateOnly? UpdatedAt { get; set; }
-            public long CategoryId { get; set; }
         }
 
         public class ProductDetailDTO
         {
-            public string? Images { get; set; }
             public string? ProductName { get; set; }
+
             public decimal? Price { get; set; }
+
             public int? StockQuantity { get; set; }
+
             public string? Description { get; set; }
-            public long CategoryId { get; set; }
             public string? CategoryName { get; set; }
-            public Status? Status { get; set; }
+            public string CropID { get; set; } = string.Empty;
+            public string? CropName { get; set; } = string.Empty;
+
+            //public Crop Crop { get; set; } = new Crop();
         }
-
-
     }
 }

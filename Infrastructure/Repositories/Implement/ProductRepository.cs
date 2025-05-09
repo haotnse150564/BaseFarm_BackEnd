@@ -1,12 +1,5 @@
-﻿using Application.Commons;
-using Domain.Enum;
 using Domain.Model;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories.Implement
 {
@@ -25,6 +18,7 @@ namespace Infrastructure.Repositories.Implement
         public async Task<IEnumerable<Product>> GetPagedAsync(int pageIndex, int pageSize)
         {
             return await _context.Product
+                .Include(x => x.ProductNavigation)
                 .OrderBy(p => p.ProductId) // Thay đổi sắp xếp theo nhu cầu
                 .Skip((pageIndex - 1) * pageSize) // Điều chỉnh Skip để trang đầu là 1
                 .Take(pageSize)
@@ -36,6 +30,7 @@ namespace Infrastructure.Repositories.Implement
         {
             return await _context.Product
                 .Where(p => p.ProductName.Contains(productName))
+                .Include(x => x.ProductNavigation)
                 .CountAsync();
         }
 
@@ -43,6 +38,7 @@ namespace Infrastructure.Repositories.Implement
         public async Task<List<Product>> GetPagedByNameAsync(string productName, int pageIndex, int pageSize)
         {
             return await _context.Product
+                .Include(x => x.ProductNavigation)
                 .Where(p => p.ProductName.Contains(productName))
                 .OrderBy(p => p.ProductName) // Sắp xếp theo tên sản phẩm
                 .Skip((pageIndex - 1) * pageSize)
@@ -54,6 +50,7 @@ namespace Infrastructure.Repositories.Implement
         {
             return await _context.Product
                 .Include(u => u.Category)
+                .Include(x => x.ProductNavigation).Include(x => x.ProductNavigation)
                 .FirstOrDefaultAsync(u => u.ProductId == productId);
         }
 
@@ -61,6 +58,7 @@ namespace Infrastructure.Repositories.Implement
         {
             return await _context.Product
                 .Where(u => u.ProductName.ToLower().StartsWith(productName.ToLower()))
+                .Include(x => x.ProductNavigation)
                 .ToListAsync(); // Trả về danh sách
         }
 
@@ -68,51 +66,11 @@ namespace Infrastructure.Repositories.Implement
         {
             return await _context.Product.AnyAsync(u => u.ProductName.ToLower() == name.ToLower());
         }
-
-        public async Task<Pagination<Product>> GetFilteredProductsAsync(int pageIndex, int pageSize, Status? status = null, long? categoryId = null, bool sortByStockAsc = true)
+        public override async Task<List<Product>> GetAllAsync()
         {
-            var query = _dbSet.AsQueryable();
-
-            if (status.HasValue)
-                query = query.Where(p => p.Status == status.Value);
-
-            if (categoryId.HasValue)
-                query = query.Where(p => p.CategoryId == categoryId.Value);
-
-            query = sortByStockAsc
-                ? query.OrderBy(p => p.StockQuantity)
-                : query.OrderByDescending(p => p.StockQuantity);
-
-            var itemCount = await query.CountAsync();
-
-            if (itemCount == 0)
-            {
-                return new Pagination<Product>()
-                {
-                    PageSize = pageSize,
-                    TotalItemCount = 0,
-                    PageIndex = pageIndex,
-                    Items = new List<Product>()
-                };
-            }
-
-            var totalPages = (int)Math.Ceiling(itemCount / (double)pageSize);
-            pageIndex = Math.Clamp(pageIndex, 1, totalPages);
-
-            var items = await query
-                .Skip((pageIndex - 1) * pageSize)
-                .Take(pageSize)
-                .AsNoTracking()
+            return await _context.Product
+                .Include(x => x.ProductNavigation)
                 .ToListAsync();
-
-            return new Pagination<Product>
-            {
-                PageSize = pageSize,
-                TotalItemCount = itemCount,
-                PageIndex = pageIndex,
-                Items = items
-            };
         }
-
     }
 }
