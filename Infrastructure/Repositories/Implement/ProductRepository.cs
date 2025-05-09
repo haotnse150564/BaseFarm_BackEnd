@@ -73,13 +73,13 @@ namespace Infrastructure.Repositories.Implement
 
         public async Task<Pagination<Product>> GetFilteredProductsAsync(int pageIndex, int pageSize, Status? status = null, long? categoryId = null, bool sortByStockAsc = true)
         {
-            var query = _dbSet.AsQueryable();
+            var query = _dbSet.Include(x => x.ProductNavigation).AsQueryable();
 
             if (status.HasValue)
-                query = query.Include(x => x.ProductNavigation).Where(p => p.Status == status.Value);
+                query = query/*.Include(x => x.ProductNavigation)*/.Where(p => p.Status == status.Value);
 
             if (categoryId.HasValue)
-                query = query.Include(x => x.ProductNavigation).Where(p => p.CategoryId == categoryId.Value);
+                query = query/*.Include(x => x.ProductNavigation)*/.Where(p => p.CategoryId == categoryId.Value);
 
             query = sortByStockAsc
                 ? query.OrderBy(p => p.StockQuantity)
