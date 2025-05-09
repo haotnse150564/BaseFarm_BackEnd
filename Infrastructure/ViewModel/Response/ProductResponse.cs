@@ -1,3 +1,4 @@
+using Domain.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +40,10 @@ namespace Application.ViewModel.Response
 
             public string? Description { get; set; }
             public string? CategoryName { get; set; }
+            public string CropID { get; set; } = string.Empty;
+            public string? CropName { get; set; } = string.Empty;
+
+            //public Crop Crop { get; set; } = new Crop();
         }
     }
 }
