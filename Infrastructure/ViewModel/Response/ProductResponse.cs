@@ -39,8 +39,6 @@ namespace Application.ViewModel.Response
 
             public string? Description { get; set; }
             public string? CategoryName { get; set; }
-            public string? CropId { get; set; }
-            public string? CropName { get; set; }
         }
     }
 }
