@@ -55,7 +55,31 @@ namespace Application.Services.Implement
             }
         }
 
+        public async Task<ResponseDTO> GetAllProductWithFilterAsync(int pageIndex, int pageSize, Status? status = null, long? categoryId = null,
+                                                                    bool sortByStockAsc = true)
+        {
+            try
+            {
+                var listProduct = await _unitOfWork.productRepository
+                    .GetFilteredProductsAsync(pageIndex, pageSize, status, categoryId, sortByStockAsc);
 
+                var result = _mapper.Map<List<ViewProductDTO>>(listProduct.Items);
+
+                var pagination = new Pagination<ViewProductDTO>
+                {
+                    TotalItemCount = listProduct.TotalItemCount,
+                    PageSize = pageSize,
+                    PageIndex = pageIndex,
+                    Items = result
+                };
+
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, pagination);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+            }
+        }
 
         public async Task<ResponseDTO> GetProductByIdAsync(long productId)
         {
@@ -187,7 +211,7 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Product not found !");
                 }
 
-                product.Status = (product.Status == Status.ACTIVE) ? Status.SUSPENDED : Status.ACTIVE;
+                product.Status = (product.Status == Status.ACTIVE) ? Status.DEACTIVATED : Status.ACTIVE;
 
                 // Lưu các thay đổi vào cơ sở dữ liệu
                 await _unitOfWork.productRepository.UpdateAsync(product);

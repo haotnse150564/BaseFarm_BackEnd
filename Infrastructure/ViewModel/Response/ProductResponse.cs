@@ -1,4 +1,4 @@
-﻿using Domain.Model;
+using Domain.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +45,5 @@ namespace Application.ViewModel.Response
 
             //public Crop Crop { get; set; } = new Crop();
         }
-
-
     }
 }
