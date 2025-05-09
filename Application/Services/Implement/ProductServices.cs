@@ -36,10 +36,10 @@ namespace Application.Services.Implement
                 }
 
                 // Map dữ liệu sang DTO
-                var result = _mapper.Map<List<ViewProductDTO>>(listFilter);
+                var result = _mapper.Map<List<ProductDetailDTO>>(listFilter);
 
                 // Tạo đối tượng phân trang
-                var pagination = new Pagination<ViewProductDTO>
+                var pagination = new Pagination<ProductDetailDTO>
                 {
                     TotalItemCount = listFilter.Count,
                     PageSize = pageSize,
@@ -100,10 +100,10 @@ namespace Application.Services.Implement
                 }
 
                 // Ánh xạ dữ liệu sang DTO
-                var result = _mapper.Map<List<ViewProductDTO>>(listProduct);
+                var result = _mapper.Map<List<ProductDetailDTO>>(listProduct);
 
                 // Tạo đối tượng phân trang
-                var pagination = new Pagination<ViewProductDTO>
+                var pagination = new Pagination<ProductDetailDTO>
                 {
                     TotalItemCount = totalItemCount,
                     PageSize = pageSize,

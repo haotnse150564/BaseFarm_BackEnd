@@ -18,6 +18,9 @@ namespace Infrastructure.Mapper
             CreateMap<Product, ViewProductDTO>().ReverseMap();
             CreateMap<Product, ProductDetailDTO>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName))
+                //.ForMember(dest => dest.Crop, opt => opt.MapFrom(src => src.ProductNavigation))
+                .ForMember(dest => dest.CropID, opt => opt.MapFrom(src => src.ProductNavigation.CropId))
+                .ForMember(dest => dest.CropName, opt => opt.MapFrom(src => src.ProductNavigation.CropName))
                 .ReverseMap();
             CreateMap<Product, CreateProductDTO>().ReverseMap();
             CreateMap<Product, UpdateQuantityDTO>().ReverseMap();
