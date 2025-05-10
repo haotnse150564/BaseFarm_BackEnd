@@ -230,15 +230,22 @@ namespace Application.Services.Implement
                     updatedProduct.Price = request.Price;
                     updatedProduct.Description = request.Description;
                     updatedProduct.UpdatedAt = DateOnly.FromDateTime(DateTime.Now);
+                    updatedProduct.Status = product.Status;
+                    updatedProduct.CreatedAt = product.CreatedAt;
                     #endregion
 
+                    // Lưu các thay đổi vào cơ sở dữ liệu
                     await _unitOfWork.productRepository.UpdateAsync(updatedProduct);
-                    await _unitOfWork.SaveChangesAsync();
-                    //------------------------------------------------------------
+                    var checkSave = await _unitOfWork.SaveChangesAsync();
+                    if(checkSave < 0)
+                    {
+                        return new ResponseDTO(Const.FAIL_CREATE_CODE, "Failed to update product.");
+                    }
                     var result = _mapper.Map<ProductDetailDTO>(updatedProduct);
-                    result.CropId = crop.CropId.ToString();
-                    result.CropName = crop.CropName;
+                    result.CropName = (await _unitOfWork.cropRepository.GetByIdAsync(request.CropId)).CropName;
+                    result.CropId = request.CropId.ToString();
                     result.CategoryName = category.Where(x => x.CategoryId == result.CategoryId).FirstOrDefault().CategoryName;
+
                     return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_UPDATE_MSG, result);
                 }
                 else
@@ -253,12 +260,18 @@ namespace Application.Services.Implement
                     updatedProduct.Price = request.Price;
                     updatedProduct.Description = request.Description;
                     updatedProduct.UpdatedAt = DateOnly.FromDateTime(DateTime.Now);
+                    updatedProduct.Status = product.Status;
+                    updatedProduct.CreatedAt = product.CreatedAt;
                     #endregion
 
 
                     // Lưu các thay đổi vào cơ sở dữ liệu
                     await _unitOfWork.productRepository.UpdateAsync(updatedProduct);
-                    await _unitOfWork.SaveChangesAsync();
+                    var checkSave = await _unitOfWork.SaveChangesAsync();
+                    if (checkSave < 0)
+                    {
+                        return new ResponseDTO(Const.FAIL_CREATE_CODE, "Failed to update product.");
+                    }
                     var result = _mapper.Map<ProductDetailDTO>(updatedProduct);
                     result.CropId = product.ProductNavigation.CropId.ToString();
                     result.CropName = product.ProductNavigation.CropName;
