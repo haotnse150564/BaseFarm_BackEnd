@@ -99,9 +99,9 @@ namespace WebAPI.Controllers
         }
 
         ////[Authorize(Roles = "Admin")]
-        [HttpPost("update/{id}")]
+        [HttpPut("update/{id}")]
         //[Authorize(Roles = "Staff, Manager")]
-        public async Task<IActionResult> UpdateProductAsync([FromBody] CreateProductDTO request, [FromRoute] long id)
+        public async Task<IActionResult> UpdateProductAsync([FromBody] UpdateProductDTO request, [FromRoute] long id)
         {
 
             // Kiểm tra xem request có hợp lệ không
@@ -122,7 +122,7 @@ namespace WebAPI.Controllers
         }
 
         ////[Authorize(Roles = "Admin, Manager")]
-        [HttpPost("change-product-status/{id}")]
+        [HttpPut("change-product-status/{id}")]
         //[Authorize(Roles = "Staff, Manager")]
 
         public async Task<IActionResult> ChangeProductStatus([FromRoute] long id)
@@ -139,7 +139,7 @@ namespace WebAPI.Controllers
             return Ok(response); // Trả về mã 200 nếu cập nhật thành công với thông tin trong ResponseDTO
         }
 
-        [HttpPost("change-product-Quantity/{id}")]
+        [HttpPut("change-product-Quantity/{id}")]
         //[Authorize(Roles = "Staff, Manager")]
         public async Task<IActionResult> ChangeProductQuantity([FromRoute] long id, [FromBody] UpdateQuantityDTO request)
         {

@@ -24,7 +24,9 @@ namespace Infrastructure.Repositories.Implement
 
         public async Task<IEnumerable<Product>> GetPagedAsync(int pageIndex, int pageSize)
         {
-            return await _context.Product.Include(x => x.ProductNavigation)
+            return await _context.Product
+                .Include(x => x.ProductNavigation)
+                .Include(X => X.Category)
                 .OrderBy(p => p.ProductId) // Thay đổi sắp xếp theo nhu cầu
                 .Skip((pageIndex - 1) * pageSize) // Điều chỉnh Skip để trang đầu là 1
                 .Take(pageSize)
@@ -34,7 +36,8 @@ namespace Infrastructure.Repositories.Implement
         // Đếm tổng số sản phẩm theo tên
         public async Task<int> CountByNameAsync(string productName)
         {
-            return await _context.Product.Include(x => x.ProductNavigation)
+            return await _context.Product
+                .Include(x => x.ProductNavigation)
                 .Where(p => p.ProductName.Contains(productName))
                 .CountAsync();
         }
@@ -42,7 +45,9 @@ namespace Infrastructure.Repositories.Implement
         // Lấy danh sách sản phẩm theo tên có phân trang
         public async Task<List<Product>> GetPagedByNameAsync(string productName, int pageIndex, int pageSize)
         {
-            return await _context.Product.Include(x => x.ProductNavigation)
+            return await _context.Product
+                .Include(x => x.ProductNavigation)
+                .Include(X => X.Category)
                 .Where(p => p.ProductName.Contains(productName))
                 .OrderBy(p => p.ProductName) // Sắp xếp theo tên sản phẩm
                 .Skip((pageIndex - 1) * pageSize)
@@ -62,6 +67,7 @@ namespace Infrastructure.Repositories.Implement
         {
             return await _context.Product
                 .Include(x => x.ProductNavigation)
+                .Include(u => u.Category)
                 .Where(u => u.ProductName.ToLower().StartsWith(productName.ToLower()))
                 .ToListAsync(); // Trả về danh sách
         }
@@ -73,7 +79,10 @@ namespace Infrastructure.Repositories.Implement
 
         public async Task<Pagination<Product>> GetFilteredProductsAsync(int pageIndex, int pageSize, Status? status = null, long? categoryId = null, bool sortByStockAsc = true)
         {
-            var query = _dbSet.Include(x => x.ProductNavigation).AsQueryable();
+            var query = _dbSet
+                .Include(x => x.ProductNavigation)
+                .Include(u => u.Category)
+                .AsQueryable();
 
             if (status.HasValue)
                 query = query/*.Include(x => x.ProductNavigation)*/.Where(p => p.Status == status.Value);
@@ -117,7 +126,10 @@ namespace Infrastructure.Repositories.Implement
         }
         public override async Task<List<Product>> GetAllAsync()
         {
-            return await _context.Product.Include(x => x.ProductNavigation).ToListAsync();
+            return await _context.Product
+                .Include(x => x.ProductNavigation)
+                .Include(X => X.Category)
+                .ToListAsync();
         }
     }
 }

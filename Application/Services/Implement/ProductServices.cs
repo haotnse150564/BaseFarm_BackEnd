@@ -29,7 +29,7 @@ namespace Application.Services.Implement
             try
             {
                 var listProduct = await _unitOfWork.productRepository.GetAllAsync();
-                var listFilter = listProduct.Where(x => x.Status == Status.ACTIVE).ToList();  
+                var listFilter = listProduct.Where(x => x.Status == Status.ACTIVE).ToList();
                 if (listFilter == null)
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, "No Products found.");
@@ -156,11 +156,21 @@ namespace Application.Services.Implement
                 // Ánh xạ từ DTO sang Entity
                 var product = _mapper.Map<Product>(request);
                 product.ProductId = request.CropId;
+                product.Status = Status.ACTIVE;
                 product.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
-
                 // Gọi AddAsync nhưng không gán vào biến vì nó không có giá trị trả về
                 await _unitOfWork.productRepository.AddAsync(product);
-                var check = await _unitOfWork.SaveChangesAsync(); 
+                if (await _unitOfWork.SaveChangesAsync() < 0) ;
+                {
+                    var crop = await _unitOfWork.cropRepository.GetByIdAsync(request.CropId);
+                    if (crop == null)
+                    {
+                        return new ResponseDTO(Const.FAIL_CREATE_CODE, "Crop not exists.");
+                    }
+                    crop.Status = Status.DEACTIVATED;
+                    await _unitOfWork.cropRepository.UpdateAsync(crop);
+                }
+                var check = await _unitOfWork.SaveChangesAsync();
                 // Kiểm tra xem sản phẩm có được thêm không bằng cách kiểm tra product.Id (hoặc khóa chính)
                 if (check < 0) // Nếu Id chưa được gán, có thể việc thêm đã thất bại
                 {
@@ -175,25 +185,82 @@ namespace Application.Services.Implement
             }
         }
 
-        public async Task<ResponseDTO> UpdateProductById(long productId, CreateProductDTO request)
+        public async Task<ResponseDTO> UpdateProductById(long productId, UpdateProductDTO request)
         {
             try
             {
                 var product = await _unitOfWork.productRepository.GetProductById(productId);
+                var category = await _unitOfWork.categoryRepository.GetAllAsync();
+                var updatedProduct = new Product();
                 if (product == null)
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Product not found !");
                 }
+                else if (!category.Exists(x => x.CategoryId == request.CategoryId))
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Category not exist!");
+                }
+                else if (product.ProductNavigation.CropId != request.CropId)
+                {
+                    var products = product;
 
-                // Sử dụng AutoMapper để ánh xạ thông tin từ DTO
-                var updatedProduct = _mapper.Map(request, product);
+                    //Đổi status và đổi product sang crop nếu cropId có thay đổi
+                    var crop = await _unitOfWork.cropRepository.GetByIdAsync(product.ProductNavigation.CropId);
+                    crop.Status = Status.ACTIVE;
+                    crop.Product = null;
+                    await _unitOfWork.cropRepository.UpdateAsync(crop);
 
-                var result = _mapper.Map<ProductDetailDTO>(updatedProduct);
+                    var cropUpdate = await _unitOfWork.cropRepository.GetByIdAsync(request.CropId);
+                    cropUpdate.Product = products;
+                    cropUpdate.Status = Status.DEACTIVATED;
+                    await _unitOfWork.cropRepository.UpdateAsync(cropUpdate);
 
-                // Lưu các thay đổi vào cơ sở dữ liệu
-                await _unitOfWork.productRepository.UpdateAsync(product);
+                    // ------------------------------------------------------------
+                    #region product update
+                    updatedProduct.ProductId = product.ProductId;
+                    updatedProduct.ProductName = request.ProductName;
+                    updatedProduct.CategoryId = (long)request.CategoryId;
+                    updatedProduct.StockQuantity = request.StockQuantity;
+                    updatedProduct.Images = request.Images;
+                    updatedProduct.Price = request.Price;
+                    updatedProduct.Description = request.Description;
+                    updatedProduct.UpdatedAt = DateOnly.FromDateTime(DateTime.Now);
+                    #endregion
 
-                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_UPDATE_MSG, result);
+                    await _unitOfWork.productRepository.UpdateAsync(updatedProduct);
+                    await _unitOfWork.SaveChangesAsync();
+                    //------------------------------------------------------------
+                    var result = _mapper.Map<ProductDetailDTO>(updatedProduct);
+                    result.CropId = crop.CropId.ToString();
+                    result.CropName = crop.CropName;
+                    result.CategoryName = category.Where(x => x.CategoryId == result.CategoryId).FirstOrDefault().CategoryName;
+                    return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_UPDATE_MSG, result);
+                }
+                else
+                {
+                    // Sử dụng AutoMapper để ánh xạ thông tin từ DTO
+                    #region product update
+                    updatedProduct.ProductId = product.ProductId;
+                    updatedProduct.ProductName = request.ProductName;
+                    updatedProduct.CategoryId = (long)request.CategoryId;
+                    updatedProduct.StockQuantity = request.StockQuantity;
+                    updatedProduct.Images = request.Images;
+                    updatedProduct.Price = request.Price;
+                    updatedProduct.Description = request.Description;
+                    updatedProduct.UpdatedAt = DateOnly.FromDateTime(DateTime.Now);
+                    #endregion
+
+
+                    // Lưu các thay đổi vào cơ sở dữ liệu
+                    await _unitOfWork.productRepository.UpdateAsync(updatedProduct);
+                    await _unitOfWork.SaveChangesAsync();
+                    var result = _mapper.Map<ProductDetailDTO>(updatedProduct);
+                    result.CropId = product.ProductNavigation.CropId.ToString();
+                    result.CropName = product.ProductNavigation.CropName;
+                    result.CategoryName = category.Where(x => x.CategoryId == result.CategoryId).FirstOrDefault().CategoryName;
+
+                    return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_UPDATE_MSG, result);
+                }
             }
             catch (Exception ex)
             {

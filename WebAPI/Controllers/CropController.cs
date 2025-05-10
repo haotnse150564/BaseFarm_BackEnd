@@ -20,10 +20,22 @@ namespace WebAPI.Controllers
             var result = await _cropServices.GetAllCropsAsync();
             return Ok(result);
         }
+        [HttpGet("get-all-active")]
+        public async Task<IActionResult> GetAllCropsActive()
+        {
+            var result = await _cropServices.GetAllCropsActiveAsync();
+            return Ok(result);
+        }
         [HttpPost("create")]
         public async Task<IActionResult> CreateCrop([FromBody] CropRequest request)
         {
             var result = await _cropServices.CreateCropAsync(request);
+            return Ok(result);
+        }
+        [HttpPut("chang-status")]
+        public async Task<IActionResult> ChangeStatus(long cropId)
+        {
+            var result = await _cropServices.UpdateCropStatusAsync(cropId);
             return Ok(result);
         }
     }

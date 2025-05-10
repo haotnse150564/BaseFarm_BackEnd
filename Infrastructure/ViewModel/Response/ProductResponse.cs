@@ -33,7 +33,7 @@ namespace Application.ViewModel.Response
             public Status? Status { get; set; }
             public DateOnly? CreatedAt { get; set; }
             public DateOnly? UpdatedAt { get; set; }
-            public long CategoryId { get; set; }
+            public string? Categoryname { get; set; }
             public string? CropId { get; set; }
             public string? CropName { get; set; }
         }

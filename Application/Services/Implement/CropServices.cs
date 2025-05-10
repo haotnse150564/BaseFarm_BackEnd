@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces;
 using AutoMapper;
+using Domain.Enum;
 using Domain.Model;
 using Infrastructure.Repositories;
 using Infrastructure.ViewModel.Request;
@@ -39,6 +40,21 @@ namespace Application.Services.Implement
                 return resultView;
             }
         }
+        public async Task<List<CropView>> GetAllCropsActiveAsync()
+        {
+            var result = await _unitOfWork.cropRepository.GetAllAsync();
+            var cropFilter = result.Where(x => x.Status == Domain.Enum.Status.ACTIVE).ToList();
+            if (cropFilter.IsNullOrEmpty())
+            {
+                throw new Exception();
+            }
+            else
+            {
+                // Map dữ liệu sang DTO
+                var resultView = _mapper.Map<List<CropView>>(cropFilter);
+                return resultView;
+            }
+        }
         public async Task<ResponseDTO> CreateCropAsync(CropRequest request)
         {
             try
@@ -55,7 +71,7 @@ namespace Application.Services.Implement
                 // Gọi AddAsync nhưng không gán vào biến vì nó không có giá trị trả về
                 await _unitOfWork.cropRepository.AddAsync(crop);
                 var check = await _unitOfWork.SaveChangesAsync();
-                // Kiểm tra xem sản phẩm có được thêm không bằng cách kiểm tra product.Id (hoặc khóa chính)
+                // Kiểm tra xem sản phẩm có được thêm không bằng cách kiểm tra crop.Id (hoặc khóa chính)
                 if (check < 0) // Nếu Id chưa được gán, có thể việc thêm đã thất bại
                 {
                     return new ResponseDTO(Const.FAIL_CREATE_CODE, "Failed to add crop.");
@@ -67,6 +83,30 @@ namespace Application.Services.Implement
             {
                 return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
             }
+        }
+
+        public async Task<ResponseDTO> UpdateCropStatusAsync(long cropId)
+        {
+            try
+            {
+                var crop = await _unitOfWork.cropRepository.GetByIdAsync(cropId);
+                if (crop == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "crop not found !");
+                }
+
+                crop.Status = (crop.Status == Status.ACTIVE) ? Status.DEACTIVATED : Status.ACTIVE;
+
+                // Lưu các thay đổi vào cơ sở dữ liệu
+                await _unitOfWork.cropRepository.UpdateAsync(crop);
+                await _unitOfWork.SaveChangesAsync();
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, "Change Status Succeed");
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+            }
+
         }
     }
 }

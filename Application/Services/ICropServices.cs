@@ -11,6 +11,8 @@ namespace Application.Services
     public interface ICropServices
     {
         Task<List<CropView>> GetAllCropsAsync();
+        Task<List<CropView>> GetAllCropsActiveAsync();
         Task<ResponseDTO> CreateCropAsync(CropRequest request);
+        Task<ResponseDTO> UpdateCropStatusAsync(long cropId);
     }
 }
