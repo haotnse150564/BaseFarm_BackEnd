@@ -148,14 +148,18 @@ namespace Application.Services.Implement
         {
             try
             {
+                var category = await _unitOfWork.categoryRepository.GetAllAsync();
+
                 if (await _unitOfWork.productRepository.ExistsByNameAsync(request.ProductName))
                 {
                     return new ResponseDTO(Const.FAIL_CREATE_CODE, "The Product Name already exists. Please choose a different Product Name.");
                 }
-
+                else if (!category.Exists(x => x.CategoryId == request.CategoryId))
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Category not exist!");
+                }
                 // Ánh xạ từ DTO sang Entity
                 var product = _mapper.Map<Product>(request);
-                product.Status = Status.ACTIVE;
                 product.ProductId = request.CropId;
                 product.Status = Status.ACTIVE;
                 product.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
