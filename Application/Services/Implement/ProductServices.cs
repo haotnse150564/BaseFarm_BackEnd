@@ -205,49 +205,52 @@ namespace Application.Services.Implement
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Category not exist!");
                 }
-                else if (product.ProductNavigation.CropId != request.CropId)
-                {
-                    var products = product;
+                #region crop-cropother
 
-                    //Đổi status và đổi product sang crop nếu cropId có thay đổi
-                    var crop = await _unitOfWork.cropRepository.GetByIdAsync(product.ProductNavigation.CropId);
-                    crop.Status = Status.ACTIVE;
-                    crop.Product = null;
-                    await _unitOfWork.cropRepository.UpdateAsync(crop);
+                //else if (product.ProductNavigation.CropId != request.CropId)
+                //{
+                //    var products = product;
 
-                    var cropUpdate = await _unitOfWork.cropRepository.GetByIdAsync(request.CropId);
-                    cropUpdate.Product = products;
-                    cropUpdate.Status = Status.DEACTIVATED;
-                    await _unitOfWork.cropRepository.UpdateAsync(cropUpdate);
+                //    //Đổi status và đổi product sang crop nếu cropId có thay đổi
+                //    var crop = await _unitOfWork.cropRepository.GetByIdAsync(product.ProductNavigation.CropId);
+                //    crop.Status = Status.ACTIVE;
+                //    crop.Product = null;
+                //    await _unitOfWork.cropRepository.UpdateAsync(crop);
 
-                    // ------------------------------------------------------------
-                    #region product update
-                    updatedProduct.ProductId = product.ProductId;
-                    updatedProduct.ProductName = request.ProductName;
-                    updatedProduct.CategoryId = (long)request.CategoryId;
-                    updatedProduct.StockQuantity = request.StockQuantity;
-                    updatedProduct.Images = request.Images;
-                    updatedProduct.Price = request.Price;
-                    updatedProduct.Description = request.Description;
-                    updatedProduct.UpdatedAt = DateOnly.FromDateTime(DateTime.Now);
-                    updatedProduct.Status = product.Status;
-                    updatedProduct.CreatedAt = product.CreatedAt;
-                    #endregion
+                //    var cropUpdate = await _unitOfWork.cropRepository.GetByIdAsync(request.CropId);
+                //    cropUpdate.Product = products;
+                //    cropUpdate.Status = Status.DEACTIVATED;
+                //    await _unitOfWork.cropRepository.UpdateAsync(cropUpdate);
+                //    // ------------------------------------------------------------
+                //    #region product update
+                //    updatedProduct.ProductId = product.ProductId;
+                //    updatedProduct.ProductName = request.ProductName;
+                //    updatedProduct.CategoryId = (long)request.CategoryId;
+                //    updatedProduct.StockQuantity = request.StockQuantity;
+                //    updatedProduct.Images = request.Images;
+                //    updatedProduct.Price = request.Price;
+                //    updatedProduct.Description = request.Description;
+                //    updatedProduct.UpdatedAt = DateOnly.FromDateTime(DateTime.Now);
+                //    updatedProduct.Status = product.Status;
+                //    updatedProduct.CreatedAt = product.CreatedAt;
+                //    #endregion
 
-                    // Lưu các thay đổi vào cơ sở dữ liệu
-                    await _unitOfWork.productRepository.UpdateAsync(updatedProduct);
-                    var checkSave = await _unitOfWork.SaveChangesAsync();
-                    if(checkSave < 0)
-                    {
-                        return new ResponseDTO(Const.FAIL_CREATE_CODE, "Failed to update product.");
-                    }
-                    var result = _mapper.Map<ProductDetailDTO>(updatedProduct);
-                    result.CropName = (await _unitOfWork.cropRepository.GetByIdAsync(request.CropId)).CropName;
-                    result.CropId = request.CropId.ToString();
-                    result.CategoryName = category.Where(x => x.CategoryId == result.CategoryId).FirstOrDefault().CategoryName;
+                //    // Lưu các thay đổi vào cơ sở dữ liệu
+                //    await _unitOfWork.productRepository.UpdateAsync(updatedProduct);
+                //    var checkSave = await _unitOfWork.SaveChangesAsync();
+                //    if(checkSave < 0)
+                //    {
+                //        return new ResponseDTO(Const.FAIL_CREATE_CODE, "Failed to update product.");
+                //    }
+                //    var result = _mapper.Map<ProductDetailDTO>(updatedProduct);
+                //    result.CropName = (await _unitOfWork.cropRepository.GetByIdAsync(request.CropId)).CropName;
+                //    result.CropId = request.CropId.ToString();
+                //    result.CategoryName = category.Where(x => x.CategoryId == result.CategoryId).FirstOrDefault().CategoryName;
 
-                    return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_UPDATE_MSG, result);
-                }
+                //    return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_UPDATE_MSG, result);
+                //}
+                #endregion
+
                 else
                 {
                     // Sử dụng AutoMapper để ánh xạ thông tin từ DTO
