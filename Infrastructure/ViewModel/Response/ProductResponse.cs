@@ -40,6 +40,7 @@ namespace Application.ViewModel.Response
 
         public class ProductDetailDTO
         {
+            public long ProductId { get; set; }
             public string? Images { get; set; }
             public string? ProductName { get; set; }
             public decimal? Price { get; set; }
