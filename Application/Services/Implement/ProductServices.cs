@@ -155,6 +155,7 @@ namespace Application.Services.Implement
 
                 // Ánh xạ từ DTO sang Entity
                 var product = _mapper.Map<Product>(request);
+                product.Status = Status.ACTIVE;
                 product.ProductId = request.CropId;
                 product.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
 
