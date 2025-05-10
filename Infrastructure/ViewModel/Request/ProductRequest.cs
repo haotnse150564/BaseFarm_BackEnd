@@ -30,10 +30,8 @@ namespace Application.ViewModel.Request
             [Required(ErrorMessage = "Category ID is required.")]
             [Range(1, long.MaxValue, ErrorMessage = "Category ID must be a positive number.")]
             public long CategoryId { get; set; }
-            //public int Status { get; set; }
-            //public int Status { get; set; }
-            //[Required(ErrorMessage = "Category ID is required.")]
-            //[Range(1, long.MaxValue, ErrorMessage = "Crop ID must be a positive number.")]
+            [Required(ErrorMessage = "Category ID is required.")]
+            [Range(1, long.MaxValue, ErrorMessage = "Crop ID must be a positive number.")]
             public long CropId { get; set; }
 
         }
@@ -59,9 +57,8 @@ namespace Application.ViewModel.Request
             [Range(1, long.MaxValue, ErrorMessage = "Category ID must be a positive number.")]
 
             public long? CategoryId { get; set; }
-            //public int Status { get; set; }
-            //[Required(ErrorMessage = "Category ID is required.")]
-            //[Range(1, long.MaxValue, ErrorMessage = "Crop ID must be a positive number.")]
+            [Required(ErrorMessage = "Category ID is required.")]
+            [Range(1, long.MaxValue, ErrorMessage = "Crop ID must be a positive number.")]
             public long CropId { get; set; }
 
         }
