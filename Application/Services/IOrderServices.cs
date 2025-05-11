@@ -20,7 +20,7 @@ namespace Application.Services
         Task<long> GetOrderIdByOrderIdAsync(long orderId);
         Task<ResponseDTO> GetAllOrderByCustomerNameAsync(string customerName, int pageIndex, int pageSize);
         Task<ResponseDTO> GetAllOrderByCurrentCustomerAsync(int pageIndex, int pageSize, Status? status);
-        Task<ResponseDTO> SearchOrderbyEmail(string email, int pageIndex, int pageSize);
+        Task<ResponseDTO> SearchOrderbyEmail(string email, int pageIndex, int pageSize, Status? status);
         Task<ResponseDTO> SearchOrderbyCreateDate(DateOnly date, int pageIndex, int pageSize);
 
     }
