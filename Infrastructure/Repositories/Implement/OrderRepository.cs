@@ -174,15 +174,26 @@ namespace Infrastructure.Repositories.Implement
             };
         }
 
-        public Task<List<Order>> SearchOrdersByEmailAsync(string email)
+        public Task<List<Order>> SearchOrdersByEmailAsync(string email, Status? status)
         {
-            var result = _context.Order
+            
+            if (status.HasValue)
+            {
+               var result = _context.Order
+                    .Where(o => o.Customer.Email.Contains(email) && o.Status == status)
+                    .Include(o => o.Customer)
+                    .Include(o => o.OrderDetails)
+                        .ThenInclude(od => od.Product)
+                    .ToListAsync();
+                return result;
+            }
+            var results = _context.Order
                 .Where(o => o.Customer.Email.Contains(email))
                 .Include(o => o.Customer)
                 .Include(o => o.OrderDetails)
                     .ThenInclude(od => od.Product)
                 .ToListAsync();
-            return result;
+            return results;
         }
 
         public Task<List<Order>> SearchOrdersByDateAsync(DateOnly date)

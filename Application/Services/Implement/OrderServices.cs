@@ -1,4 +1,5 @@
-﻿using Application.Utils;
+﻿using Application.Commons;
+using Application.Utils;
 using Application.ViewModel.Request;
 using AutoMapper;
 using Domain.Enum;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 using static Application.ViewModel.Request.OrderRequest;
 using static Application.ViewModel.Response.OrderResponse;
 using static Application.ViewModel.Response.ProductResponse;
+using static Infrastructure.ViewModel.Response.ScheduleResponse;
 using ResponseDTO = Application.ViewModel.Response.OrderResponse.ResponseDTO;
 
 namespace Application.Services.Implement
@@ -286,23 +288,31 @@ namespace Application.Services.Implement
             }
         }
 
-        public async Task<ResponseDTO> SearchOrderbyEmail(string email, int pageIndex, int pageSize)
+        public async Task<ResponseDTO> SearchOrderbyEmail(string email, int pageIndex, int pageSize, Status? status)
         {
             try
             {
-                var listOrder = await _unitOfWork.orderRepository.SearchOrdersByEmailAsync(email);
+                var listOrder = await _unitOfWork.orderRepository.SearchOrdersByEmailAsync(email, status);
 
                 if (listOrder == null)
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, "No Order found.");
                 }
                 var result = _mapper.Map<List<OrderResultDTO>>(listOrder);
-                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+                var pagination = new Pagination<OrderResultDTO>
+                {
+                    TotalItemCount = result.Count(),
+                    PageSize = pageSize,
+                    PageIndex = pageIndex,
+                    Items = result.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList()
+                };
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, pagination);
             }
             catch (Exception ex)
             {
                 return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
             }
+
         }
 
         public async Task<ResponseDTO> SearchOrderbyCreateDate(DateOnly date, int pageIndex, int pageSize)
