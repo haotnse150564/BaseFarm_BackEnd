@@ -1,4 +1,5 @@
-﻿using Application.Interfaces;
+﻿using Application.Commons;
+using Application.Interfaces;
 using AutoMapper;
 using Domain.Enum;
 using Domain.Model;
@@ -6,7 +7,9 @@ using Infrastructure.Repositories;
 using Infrastructure.ViewModel.Request;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using System.Drawing.Printing;
 using static Infrastructure.ViewModel.Response.CropResponse;
+using static Infrastructure.ViewModel.Response.ScheduleResponse;
 using ResponseDTO = Infrastructure.ViewModel.Response.CropResponse.ResponseDTO;
 
 namespace Application.Services.Implement
@@ -26,20 +29,36 @@ namespace Application.Services.Implement
             _mapper = mapper;
             _cropRepository = cropRepository;
         }
-        public async Task<List<CropView>> GetAllCropsAsync()
+        public async Task<Pagination<CropView>> GetAllCropsAsync(int pageIndex, int pageSize)
         {
-            var result = await _unitOfWork.cropRepository.GetAllAsync();
-            if (result.IsNullOrEmpty())
+            try
             {
-                throw new Exception();
+                var crop = await _unitOfWork.cropRepository.GetAllAsync();
+
+                if (crop.IsNullOrEmpty())
+                {
+                    throw new Exception();
+                }
+                else
+                {
+                    // Map dữ liệu sang DTO
+                    var result = _mapper.Map<List<CropView>>(crop);
+                    var pagination = new Pagination<CropView>
+                    {
+                        TotalItemCount = result.Count,
+                        PageSize = pageSize,
+                        PageIndex = pageIndex,
+                        Items = result.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList()
+                    };
+                    return pagination;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                // Map dữ liệu sang DTO
-                var resultView = _mapper.Map<List<CropView>>(result);
-                return resultView;
+                throw new Exception(ex.Message);
             }
         }
+
         public async Task<List<CropView>> GetAllCropsActiveAsync()
         {
             var result = await _unitOfWork.cropRepository.GetAllAsync();
@@ -55,6 +74,7 @@ namespace Application.Services.Implement
                 return resultView;
             }
         }
+
         public async Task<ResponseDTO> CreateCropAsync(CropRequest request)
         {
             try
@@ -107,6 +127,67 @@ namespace Application.Services.Implement
                 return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
             }
 
+        }
+
+        public async Task<ResponseDTO> SearchCrop(CropFilter filter, Status? status, int pageIndex, int pageSize)
+        {
+            try
+            {
+                var crop = await _unitOfWork.cropRepository.GetAllAsync();
+                if (crop == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "crop not found !");
+                }
+                else if (filter.cropId != null && filter.cropId != 0)
+                {
+                    crop = crop.Where(x => x.CropId == filter.cropId).ToList();
+                }
+                else if (filter.CropName != null && !filter.CropName.Equals("string"))
+                {
+                    crop = crop.Where(x => x.CropName.ToLower().Contains(filter.CropName.ToLower())).ToList();
+                }
+                else if (status != null)
+                {
+                    crop = crop.Where(x => x.Status.Equals(status)).ToList();
+                }
+
+                var result = _mapper.Map<List<CropView>>(crop);
+                var pagination = new Pagination<CropView>
+                {
+                    TotalItemCount = result.Count,
+                    PageSize = pageSize,
+                    PageIndex = pageIndex,
+                    Items = result.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList()
+                };
+
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, pagination);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+            }
+        }
+
+        public async Task<ResponseDTO> UpdateCrop(CropUpdate cropUpdate, long cropId)
+        {
+            var crop = await _unitOfWork.cropRepository.GetByIdAsync(cropId);
+            try
+            {
+                if (crop == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Crop not found !");
+                }
+                var crops = _mapper.Map<Crop>(cropUpdate);
+                // Lưu các thay đổi vào cơ sở dữ liệu
+                await _unitOfWork.cropRepository.UpdateAsync(crop);
+                await _unitOfWork.SaveChangesAsync();
+                var result = _mapper.Map<CropView>(crop);
+                return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, result);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+            }
         }
     }
 }
