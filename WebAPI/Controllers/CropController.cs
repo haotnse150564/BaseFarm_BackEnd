@@ -1,7 +1,9 @@
 ﻿using Application.Services;
+using Domain.Enum;
 using Infrastructure.Repositories.Implement;
 using Infrastructure.ViewModel.Request;
 using Microsoft.AspNetCore.Mvc;
+using System.Drawing.Printing;
 
 namespace WebAPI.Controllers
 {
@@ -15,9 +17,9 @@ namespace WebAPI.Controllers
             _cropServices = cropServices;
         }
         [HttpGet("get-all")]
-        public async Task<IActionResult> GetAllCrops()
+        public async Task<IActionResult> GetAllCrops(int pageIndex = 1, int pageSize = 10)
         {
-            var result = await _cropServices.GetAllCropsAsync();
+            var result = await _cropServices.GetAllCropsAsync( pageIndex,  pageSize);
             return Ok(result);
         }
         [HttpGet("get-all-active")]
@@ -36,6 +38,18 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> ChangeStatus(long cropId)
         {
             var result = await _cropServices.UpdateCropStatusAsync(cropId);
+            return Ok(result);
+        }
+        [HttpPost("search")]
+        public async Task<IActionResult> SearchCrop(CropFilter filter, Status? status, int pageIndex = 1, int pageSize = 10)
+        {
+            var result = await _cropServices.SearchCrop(filter, status, pageIndex, pageSize);
+            return Ok(result);
+        }
+        [HttpPut("update/{cropId}")]
+        public async Task<IActionResult> UpdateCrop([FromBody] CropUpdate cropUpdate, long cropId)
+        {
+            var result = await _cropServices.UpdateCrop(cropUpdate, cropId);
             return Ok(result);
         }
     }

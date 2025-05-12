@@ -15,6 +15,7 @@ namespace Infrastructure.Mapper
         public CropMapping() {
             CreateMap<Crop, CropView>().ReverseMap();
             CreateMap<Crop, CropRequest>().ReverseMap();
+            CreateMap<Crop, CropUpdate>().ReverseMap();
         }
     }
 }
