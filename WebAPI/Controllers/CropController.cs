@@ -1,9 +1,7 @@
 ﻿using Application.Services;
 using Domain.Enum;
-using Infrastructure.Repositories.Implement;
 using Infrastructure.ViewModel.Request;
 using Microsoft.AspNetCore.Mvc;
-using System.Drawing.Printing;
 
 namespace WebAPI.Controllers
 {
@@ -41,9 +39,9 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
         [HttpPost("search")]
-        public async Task<IActionResult> SearchCrop(CropFilter filter, Status? status, int pageIndex = 1, int pageSize = 10)
+        public async Task<IActionResult> SearchCrop(string? cropName, Status? status, int pageIndex = 1, int pageSize = 10)
         {
-            var result = await _cropServices.SearchCrop(filter, status, pageIndex, pageSize);
+            var result = await _cropServices.SearchCrop(cropName, status, pageIndex, pageSize);
             return Ok(result);
         }
         [HttpPut("update/{cropId}")]

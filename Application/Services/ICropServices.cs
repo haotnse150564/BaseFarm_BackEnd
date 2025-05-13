@@ -16,7 +16,7 @@ namespace Application.Services
         Task<List<CropView>> GetAllCropsActiveAsync();
         Task<ResponseDTO> CreateCropAsync(CropRequest request);
         Task<ResponseDTO> UpdateCropStatusAsync(long cropId);
-        Task<ResponseDTO> SearchCrop(CropFilter filter, Status? status, int pageIndex, int pageSize);
+        Task<ResponseDTO> SearchCrop(string? cropName, Status? status, int pageIndex, int pageSize);
         Task<ResponseDTO> UpdateCrop(CropUpdate cropUpdate, long cropId);
     }
 }
