@@ -30,9 +30,4 @@ namespace Infrastructure.ViewModel.Request
         public DateOnly? PlantingDate { get; set; }
 
     }
-    public class CropFilter
-    {
-        public long? cropId { get; set; }
-        public string? CropName { get; set; }
-    }
 }

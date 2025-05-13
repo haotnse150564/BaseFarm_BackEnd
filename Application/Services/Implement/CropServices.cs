@@ -129,7 +129,7 @@ namespace Application.Services.Implement
 
         }
 
-        public async Task<ResponseDTO> SearchCrop(CropFilter filter, Status? status, int pageIndex, int pageSize)
+        public async Task<ResponseDTO> SearchCrop(string? cropName, Status? status, int pageIndex, int pageSize)
         {
             try
             {
@@ -138,13 +138,9 @@ namespace Application.Services.Implement
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "crop not found !");
                 }
-                else if (filter.cropId != null && filter.cropId != 0)
+                else if (cropName != null)
                 {
-                    crop = crop.Where(x => x.CropId == filter.cropId).ToList();
-                }
-                else if (filter.CropName != null && !filter.CropName.Equals("string"))
-                {
-                    crop = crop.Where(x => x.CropName.ToLower().Contains(filter.CropName.ToLower())).ToList();
+                    crop = crop.Where(x => x.CropName.ToLower().Contains(cropName.ToLower())).ToList();
                 }
                 else if (status != null)
                 {
@@ -177,11 +173,11 @@ namespace Application.Services.Implement
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Crop not found !");
                 }
-                var crops = _mapper.Map<Crop>(cropUpdate);
+                var crops = _mapper.Map(cropUpdate, crop);
                 // Lưu các thay đổi vào cơ sở dữ liệu
-                await _unitOfWork.cropRepository.UpdateAsync(crop);
+                await _unitOfWork.cropRepository.UpdateAsync(crops);
                 await _unitOfWork.SaveChangesAsync();
-                var result = _mapper.Map<CropView>(crop);
+                var result = _mapper.Map<CropView>(crops);
                 return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, result);
             }
             catch (Exception ex)
