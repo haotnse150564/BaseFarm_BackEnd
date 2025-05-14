@@ -61,23 +61,14 @@ namespace WebAPI.Controllers
                     return BadRequest(new { message = "Invalid payment response." });
                 }
 
-                // ✅ Lưu thông tin thanh toán vào database
+                // ✅ Save payment to the database
                 await _vnPayService.SavePaymentAsync(response);
 
-                // 🔥 Trả về thông tin payment như bình thường
-                return Ok(new
-                {
-                    message = "Payment processed successfully.",
-                    payment = new
-                    {
-                        response.TransactionId,
-                        response.OrderId, // Đây là OrderId của Payment, không phải Order thực tế
-                        response.Amount,
-                        response.PaymentMethod,
-                        response.VnPayResponseCode,
-                        response.Success
-                    }
-                });
+                // 🔥 Redirect to frontend with payment status
+                string frontendUrl = "http://localhost:5173/vnpay-callback";
+                string redirectUrl = $"{frontendUrl}?vnp_ResponseCode={response.VnPayResponseCode}&vnp_TransactionNo={response.TransactionId}&vnp_TxnRef={response.OrderId}&vnp_Amount={response.Amount}";
+
+                return Redirect(redirectUrl);
             }
             catch (Exception ex)
             {
