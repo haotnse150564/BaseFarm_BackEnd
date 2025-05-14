@@ -178,7 +178,7 @@ namespace Application.Services.Implement
                 await _unitOfWork.cropRepository.UpdateAsync(crops);
                 await _unitOfWork.SaveChangesAsync();
                 var result = _mapper.Map<CropView>(crops);
-                return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, result);
+                return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, result);
             }
             catch (Exception ex)
             {
