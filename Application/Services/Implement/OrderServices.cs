@@ -243,7 +243,7 @@ namespace Application.Services.Implement
         }
 
 
-        public async Task<ResponseDTO> UpdateOrderStatusAsync(long orderId, UpdateOrderStatusDTO request)
+        public async Task<ResponseDTO> UpdateOrderDeliveryStatusAsync(long orderId)
         {
             try
             {
@@ -253,13 +253,10 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Order not found !");
                 }
 
-                // Sử dụng AutoMapper để ánh xạ thông tin từ DTO
-                var updatedOrderStatus = _mapper.Map(request, order);
-
-                var result = _mapper.Map<UpdateOrderStatusDTO>(updatedOrderStatus);
+                order.Status = Status.DELIVERED;
 
                 // Lưu các thay đổi vào cơ sở dữ liệu
-                await _unitOfWork.orderRepository.UpdateAsync(updatedOrderStatus);
+                await _unitOfWork.orderRepository.UpdateAsync(order);
 
                 return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, "Change Status Succeed");
             }
@@ -331,6 +328,29 @@ namespace Application.Services.Implement
                 }
                 var result = _mapper.Map<List<OrderResultDTO>>(listOrder);
                 return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+            }
+        }
+
+        public async Task<ResponseDTO> UpdateOrderCompletedStatusAsync(long orderId)
+        {
+            try
+            {
+                var order = await _unitOfWork.orderRepository.GetOrderById(orderId);
+                if (order == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Order not found !");
+                }
+
+                order.Status = Status.COMPLETED;
+
+                // Lưu các thay đổi vào cơ sở dữ liệu
+                await _unitOfWork.orderRepository.UpdateAsync(order);
+
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, "Change Status Succeed");
             }
             catch (Exception ex)
             {

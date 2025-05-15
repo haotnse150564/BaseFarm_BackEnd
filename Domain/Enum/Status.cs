@@ -14,6 +14,9 @@ namespace Domain.Enum
         BANNED,
         PAID,
         UNDISCHARGED,
-        PENDING
+        PENDING,
+        CANCELLED,
+        COMPLETED,
+        DELIVERED
     }
 }

@@ -51,24 +51,6 @@ namespace WebAPI.Controllers
             }
         }
 
-
-        //[HttpPost("createOrder")]
-        //public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDTO request)
-        //{
-        //    if (request == null || request.OrderItems.Count == 0)
-        //    {
-        //        return BadRequest(new ResponseDTO(Const.FAIL_CREATE_CODE, "Order is Empty!!!."));
-        //    }
-
-        //    var result = await _orderService.CreateOrderAsync(request);
-
-        //    if (result.Status != Const.SUCCESS_CREATE_CODE)
-        //    {
-        //        return BadRequest(result);
-        //    }
-
-        //    return Ok(result);
-        //}
         [HttpGet("order-list")]
         public async Task<IActionResult> GetListOrders([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10, [FromQuery] Status? status = null)
         {
@@ -157,6 +139,32 @@ namespace WebAPI.Controllers
             }
 
             return Ok(result); // Trả về danh sách đơn hàng với phân trang
+        }
+
+        [HttpGet("updateDeliveryStatus/{orderId}")]
+        public async Task<IActionResult> UpdateOrderDeliveryStatus(long orderId)
+        {
+            var result = await _orderService.UpdateOrderDeliveryStatusAsync(orderId);
+
+            if (result.Status == Const.FAIL_READ_CODE)
+            {
+                return NotFound(result);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpGet("updateCompletedStatus/{orderId}")]
+        public async Task<IActionResult> UpdateOrderCompletedStatus(long orderId)
+        {
+            var result = await _orderService.UpdateOrderCompletedStatusAsync(orderId);
+
+            if (result.Status == Const.FAIL_READ_CODE)
+            {
+                return NotFound(result);
+            }
+
+            return Ok(result);
         }
     }
 }

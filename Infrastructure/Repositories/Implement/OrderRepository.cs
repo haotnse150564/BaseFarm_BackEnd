@@ -78,6 +78,7 @@ namespace Infrastructure.Repositories.Implement
                 .Take(pageSize)
                 .Select(o => new OrderResultDTO
                 {
+                    OrderId = o.OrderId,
                     TotalPrice = o.TotalPrice,
                     Email = o.Customer.Email,
                     Status = o.Status, // ép kiểu để trả về dưới dạng số

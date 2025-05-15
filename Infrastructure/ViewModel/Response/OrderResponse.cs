@@ -25,6 +25,7 @@ namespace Application.ViewModel.Response
 
         public class OrderResultDTO
         {
+            public long OrderId { get; set; }
             public decimal? TotalPrice { get; set; }
             public string? Email { get; set; }
             public DateTime? CreatedAt { get; set; }
