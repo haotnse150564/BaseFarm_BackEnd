@@ -141,7 +141,7 @@ namespace WebAPI.Controllers
             return Ok(result); // Trả về danh sách đơn hàng với phân trang
         }
 
-        [HttpGet("updateDeliveryStatus/{orderId}")]
+        [HttpPut("updateDeliveryStatus/{orderId}")]
         public async Task<IActionResult> UpdateOrderDeliveryStatus(long orderId)
         {
             var result = await _orderService.UpdateOrderDeliveryStatusAsync(orderId);
@@ -154,7 +154,7 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
 
-        [HttpGet("updateCompletedStatus/{orderId}")]
+        [HttpPut("updateCompletedStatus/{orderId}")]
         public async Task<IActionResult> UpdateOrderCompletedStatus(long orderId)
         {
             var result = await _orderService.UpdateOrderCompletedStatusAsync(orderId);
