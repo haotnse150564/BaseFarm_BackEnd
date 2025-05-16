@@ -166,5 +166,18 @@ namespace WebAPI.Controllers
 
             return Ok(result);
         }
+
+        [HttpPut("updateCancelStatus/{orderId}")]
+        public async Task<IActionResult> UpdateOrderCancelledStatus(long orderId)
+        {
+            var result = await _orderService.UpdateOrderCancelStatusAsync(orderId);
+
+            if (result.Status == Const.FAIL_READ_CODE)
+            {
+                return NotFound(result);
+            }
+
+            return Ok(result);
+        }
     }
 }

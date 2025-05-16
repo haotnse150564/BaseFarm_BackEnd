@@ -351,5 +351,28 @@ namespace Application.Services.Implement
                 return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
             }
         }
+
+        public async Task<ResponseDTO> UpdateOrderCancelStatusAsync(long orderId)
+        {
+            try
+            {
+                var order = await _unitOfWork.orderRepository.GetOrderById(orderId);
+                if (order == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Order not found !");
+                }
+
+                order.Status = Status.CANCELLED;
+
+                // Lưu các thay đổi vào cơ sở dữ liệu
+                await _unitOfWork.orderRepository.UpdateAsync(order);
+
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, "Change Status Succeed");
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+            }
+        }
     }
 }
