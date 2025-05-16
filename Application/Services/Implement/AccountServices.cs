@@ -141,6 +141,10 @@ namespace WebAPI.Services
             {
                 throw new UnauthorizedAccessException("Invalid password.");
             }
+            if (account.Status != Status.ACTIVE)
+            {
+                throw new UnauthorizedAccessException("Account is not accitve.");
+            }
             // Tạo JWT Token
             string token = _jwtUtils.GenerateToken(account);
 

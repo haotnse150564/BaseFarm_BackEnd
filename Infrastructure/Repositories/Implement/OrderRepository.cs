@@ -33,6 +33,7 @@ namespace Infrastructure.Repositories.Implement
                 .Take(pageSize)
                 .Select(o => new OrderResultDTO
                 {
+                    OrderId = o.OrderId,
                     TotalPrice = o.TotalPrice,
                     Email = o.Customer.Email,
                     ShippingAddress = o.ShippingAddress,
@@ -40,6 +41,7 @@ namespace Infrastructure.Repositories.Implement
                     CreatedAt = o.CreatedAt.HasValue ? o.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
                     OrderItems = o.OrderDetails.Select(od => new ViewProductDTO
                     {
+                        ProductId = od.ProductId,   
                         ProductName = od.Product.ProductName,
                         Price = od.UnitPrice,
                         StockQuantity = od.Quantity
@@ -78,6 +80,7 @@ namespace Infrastructure.Repositories.Implement
                 .Take(pageSize)
                 .Select(o => new OrderResultDTO
                 {
+                    OrderId = o.OrderId,
                     TotalPrice = o.TotalPrice,
                     Email = o.Customer.Email,
                     Status = o.Status, // ép kiểu để trả về dưới dạng số
@@ -85,6 +88,7 @@ namespace Infrastructure.Repositories.Implement
                     CreatedAt = o.CreatedAt.HasValue ? o.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
                     OrderItems = o.OrderDetails.Select(od => new ViewProductDTO
                     {
+                        ProductId = od.ProductId,
                         ProductName = od.Product.ProductName,
                         Price = od.UnitPrice,
                         StockQuantity = od.Quantity
