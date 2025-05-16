@@ -179,5 +179,13 @@ namespace WebAPI.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("createOrderPayment/{orderId}")]
+        public async Task<IActionResult> CreateOrderPayment(long orderId)
+        {
+            var result = await _orderService.CreateOrderPaymentAsync(orderId, HttpContext);
+            return Ok(result);
+        }
+
     }
 }

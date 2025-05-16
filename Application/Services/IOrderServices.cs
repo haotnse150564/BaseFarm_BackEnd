@@ -24,6 +24,7 @@ namespace Application.Services
         Task<ResponseDTO> GetAllOrderByCurrentCustomerAsync(int pageIndex, int pageSize, Status? status);
         Task<ResponseDTO> SearchOrderbyEmail(string email, int pageIndex, int pageSize, Status? status);
         Task<ResponseDTO> SearchOrderbyCreateDate(DateOnly date, int pageIndex, int pageSize);
+        Task<ResponseDTO> CreateOrderPaymentAsync(long orderId, HttpContext context);
 
     }
 }

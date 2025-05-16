@@ -374,5 +374,45 @@ namespace Application.Services.Implement
                 return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
             }
         }
+
+        public async Task<ResponseDTO> CreateOrderPaymentAsync(long orderId, HttpContext context)
+        {
+            try
+            {
+                var order = await _unitOfWork.orderRepository.GetByIdAsync(orderId);
+                if (order == null)
+                {
+                    return new ResponseDTO(Const.ERROR_EXCEPTION, $"Order ID {orderId} not found.");
+                }
+
+                if (order.Status != Status.PENDING && order.Status != Status.UNDISCHARGED)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, $"Order ID {orderId} is not in a valid state for payment.");
+                }
+
+                var paymentModel = new PaymentInformationModel
+                {
+                    OrderId = order.OrderId,
+                    Amount = (double)(order.TotalPrice ?? 0),
+                    OrderDescription = $"Thanh toán đơn hàng #{order.OrderId}",
+                    OrderType = "billpayment",
+                    Name = "IOT Base Farm"
+                };
+
+                var paymentUrl = _vnPayService.CreatePaymentUrl(paymentModel, context);
+
+                return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Payment URL generated successfully.", new
+                {
+                    OrderId = order.OrderId,
+                    PaymentUrl = paymentUrl
+                });
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "An error occurred while creating payment.", ex.Message);
+            }
+        }
+
+
     }
 }
