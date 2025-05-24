@@ -1,5 +1,4 @@
-﻿using Domain.Enum;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Domain.Model;
@@ -12,21 +11,15 @@ public partial class Account
 
     public string? PasswordHash { get; set; }
 
-    public Roles? Role { get; set; }
+    public int? Role { get; set; }
 
-    public Status? Status { get; set; }
-
-    public string? RefreshToken { get; set; }
-
-    public int? ExpireMinute { get; set; }
+    public int? Status { get; set; }
 
     public DateOnly? CreatedAt { get; set; }
 
     public DateOnly? UpdatedAt { get; set; }
 
     public virtual AccountProfile? AccountProfile { get; set; }
-
-    public virtual ICollection<DailyLog> DailyLogs { get; set; } = new List<DailyLog>();
 
     public virtual ICollection<Farm> Farms { get; set; } = new List<Farm>();
 

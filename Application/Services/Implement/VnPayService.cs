@@ -100,12 +100,12 @@ public class VnPayService : IVnPayService
 
             if (response.Success)
             {
-                order.Status = Status.PAID;
+                order.Status = (int?)Status.PAID;
                 await _orderRepository.UpdateAsync(order);
             }
             else
             {
-                order.Status = Status.UNDISCHARGED;
+                order.Status = (int?)Status.UNDISCHARGED;
                 await _orderRepository.UpdateAsync(order);
 
                 // 🔥 Hoàn lại số lượng sản phẩm nếu thanh toán thất bại
@@ -119,7 +119,7 @@ public class VnPayService : IVnPayService
 
                         // Nếu trước đó sản phẩm hết hàng thì cập nhật lại trạng thái
                         if (product.StockQuantity > 0)
-                            product.Status = Status.ACTIVE; // Đổi sang trạng thái phù hợp
+                            product.Status = (int?)Status.ACTIVE; // Đổi sang trạng thái phù hợp
 
                         await _unitOfWork.productRepository.UpdateAsync(product);
                     }

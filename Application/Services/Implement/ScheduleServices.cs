@@ -45,18 +45,18 @@ namespace Application.Services.Implement
                 var result = new Schedule
                 {
                     StartDate = request.StartDate,
-                    EndDate = crop.HarvestDate,
+                    EndDate = request.EndDate,
                     //EndDate = DateOnly.Parse("05/09/2025"),
                     AssignedTo = request.AssignedTo,
-                    FarmActivityId = request.FarmActivityId,
+                    //FarmActivityId = request.FarmActivityId,
                     FarmDetailsId = request.FarmDetailsId,
                     CropId = request.CropId,
                     UpdatedAt = _currentTime.GetCurrentTime(),
                     CreatedAt = _currentTime.GetCurrentTime(),
-                    Status = Status.ACTIVE,
+                    Status = (int?)Status.ACTIVE,
                 };
                 var listSchedule = await _unitOfWork.scheduleRepository.GetAllAsync();
-                var getduplicateCrop = listSchedule.FirstOrDefault(x => x.CropId == result.CropId && x.Status == Status.ACTIVE);
+                var getduplicateCrop = listSchedule.FirstOrDefault(x => x.CropId == result.CropId && x.Status == (int?)Status.ACTIVE);
                 if (result.StartDate < DateOnly.FromDateTime(DateTime.Today) || result.EndDate < DateOnly.FromDateTime(DateTime.Today))
                 {
                     return new ResponseDTO(Const.ERROR_EXCEPTION, "Start Date and End Date at least is today");
@@ -102,7 +102,7 @@ namespace Application.Services.Implement
                 }
 
                 // Map dữ liệu sang DTO
-                schedule.Status = (Status)Enum.Parse(typeof(Status), status); // Chuyển chuỗi sang Enum
+                schedule.Status = (int?)(Status)Enum.Parse(typeof(Status), status); // Chuyển chuỗi sang Enum
                 await _unitOfWork.scheduleRepository.UpdateAsync(schedule);
                 await _unitOfWork.SaveChangesAsync();
 

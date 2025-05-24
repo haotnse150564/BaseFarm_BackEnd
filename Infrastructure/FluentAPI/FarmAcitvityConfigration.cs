@@ -15,10 +15,19 @@ namespace Infrastructure.FluentAPI
         {
 
             builder.HasKey(e => e.FarmActivitiesId);
+
+            builder.ToTable("FarmActivity");
+
             builder.Property(e => e.ActivityType).HasColumnName("activityType");
             builder.Property(e => e.EndDate).HasColumnName("endDate");
+            builder.Property(e => e.ScheduleId).HasColumnName("scheduleId");
             builder.Property(e => e.StartDate).HasColumnName("startDate");
             builder.Property(e => e.Status).HasColumnName("status");
+
+            builder.HasOne(d => d.Schedule).WithMany(p => p.FarmActivities)
+                .HasForeignKey(d => d.ScheduleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKFarmActivi709275");
         }
     }
 }

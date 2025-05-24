@@ -85,7 +85,7 @@ namespace Infrastructure.Repositories.Implement
                 .AsQueryable();
 
             if (status.HasValue)
-                query = query/*.Include(x => x.ProductNavigation)*/.Where(p => p.Status == status.Value);
+                query = query/*.Include(x => x.ProductNavigation)*/.Where(p => (Status?)p.Status == status.Value);
 
             if (categoryId.HasValue)
                 query = query/*.Include(x => x.ProductNavigation)*/.Where(p => p.CategoryId == categoryId.Value);

@@ -1,5 +1,4 @@
-﻿using Domain.Enum;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Domain.Model;
@@ -12,9 +11,7 @@ public partial class IoTdevice
 
     public string? DeviceType { get; set; }
 
-    public Status? Status { get; set; }
-
-    public string? SensorValue { get; set; }
+    public int? Status { get; set; }
 
     public string? Unit { get; set; }
 
@@ -27,6 +24,4 @@ public partial class IoTdevice
     public virtual ICollection<CropRequirement> CropRequirements { get; set; } = new List<CropRequirement>();
 
     public virtual Farm FarmDetails { get; set; } = null!;
-
-    public virtual ICollection<IoTdeviceLog> IoTdeviceLogs { get; set; } = new List<IoTdeviceLog>();
 }

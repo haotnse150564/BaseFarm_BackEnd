@@ -15,10 +15,10 @@ namespace Infrastructure.Repositories.Implement
         {
             var result = await _dbSet.Where(x => x.ScheduleId == id)
                                      .Include(a => a.AssignedToNavigation)
-                                     .Include(a => a.FarmActivity)
+                                     //.Include(a => a.FarmActivity)
                                      .Include(a => a.Crop)
                                      .Include(a => a.FarmDetails)
-                                     .Include(a => a.DailyLogs)
+                                    // .Include(a => a.DailyLogs)
                                      .FirstOrDefaultAsync();
             return result;
         }
@@ -26,10 +26,10 @@ namespace Infrastructure.Repositories.Implement
         {
             var result = await _context.Schedule // Thêm _context.Schedules vào đây
             .Include(a => a.AssignedToNavigation)
-            .Include(a => a.FarmActivity)
+            //.Include(a => a.FarmActivity)
             .Include(a => a.Crop)
             .Include(a => a.FarmDetails)
-            .Include(a => a.DailyLogs)
+           // .Include(a => a.DailyLogs)
             .ToListAsync();
             return result;
         }

@@ -24,19 +24,19 @@ namespace Infrastructure.Mapper
                    .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt.ToString()))
                    .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt.ToString()))
                    .ForMember(dest => dest.AssignedTo, opt => opt.MapFrom(src => src.AssignedTo))
-                   .ForMember(dest => dest.FarmActivityId, opt => opt.MapFrom(src => src.FarmActivityId))
+                   //.ForMember(dest => dest.FarmActivityId, opt => opt.MapFrom(src => src.FarmActivityId))
                    .ForMember(dest => dest.FarmId, opt => opt.MapFrom(src => src.FarmDetailsId))
                    .ForMember(dest => dest.accountView, opt => opt.MapFrom(src => src.AssignedToNavigation))
-                   .ForMember(dest => dest.farmActivityView, opt => opt.MapFrom(src => src.FarmActivity))
+                   // .ForMember(dest => dest.farmActivityView, opt => opt.MapFrom(src => src.FarmActivity))
                    .ForMember(dest => dest.cropView, opt => opt.MapFrom(src => src.Crop))
-                   .ForMember(dest => dest.ActivityType, opt => opt.MapFrom(src => src.FarmActivity.ActivityType.Value.ToString()))
-                   .ForMember(dest => dest.dailyLog, opt => opt.MapFrom(src => src.DailyLogs));
+                   // .ForMember(dest => dest.ActivityType, opt => opt.MapFrom(src => src.FarmActivity.ActivityType.Value.ToString()))
+                   // .ForMember(dest => dest.dailyLog, opt => opt.MapFrom(src => src.DailyLogs));
             ;
 
             CreateMap<FarmActivity, FarmActivityView>().ReverseMap();
             CreateMap<Crop, CropView>().ReverseMap();
             CreateMap<Farm, FarmView>().ReverseMap();
-            CreateMap<DailyLog, DailyLogView>().ReverseMap();
+            //  CreateMap<DailyLog, DailyLogView>().ReverseMap();
 
             CreateMap<Account, ViewAccount>().ReverseMap()
                 .ForMember(dest => dest.AccountProfile, opt => opt.Condition(src => src.AccountProfile != null));

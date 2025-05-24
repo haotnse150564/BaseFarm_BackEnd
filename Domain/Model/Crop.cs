@@ -1,5 +1,4 @@
-﻿using Domain.Enum;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Domain.Model;
@@ -12,13 +11,15 @@ public partial class Crop
 
     public string? Description { get; set; }
 
-    public int? Quantity { get; set; }
+    public string? ImageUrl { get; set; }
 
-    public Status? Status { get; set; }
+    public string? Origin { get; set; }
 
-    public DateOnly? PlantingDate { get; set; }
+    public int? Status { get; set; }
 
-    public DateOnly? HarvestDate { get; set; }
+    public long CategoryId { get; set; }
+
+    public virtual Category Category { get; set; } = null!;
 
     public virtual CropRequirement? CropRequirement { get; set; }
 

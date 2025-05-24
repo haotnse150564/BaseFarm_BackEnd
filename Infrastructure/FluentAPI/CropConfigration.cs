@@ -11,7 +11,8 @@ namespace Infrastructure.FluentAPI
         {
             builder.ToTable("Crop");
 
-            builder.HasKey(e => e.CropId);
+            builder.HasKey(e => e.CropId); 
+            builder.Property(e => e.CategoryId);
             builder.Property(e => e.CropName)
                 .HasMaxLength(255)
                 .IsUnicode(false)
@@ -20,10 +21,20 @@ namespace Infrastructure.FluentAPI
                 .HasMaxLength(255)
                 .IsUnicode(false)
                 .HasColumnName("description");
-            builder.Property(e => e.HarvestDate).HasColumnName("harvestDate");
-            builder.Property(e => e.PlantingDate).HasColumnName("plantingDate");
-            builder.Property(e => e.Quantity).HasColumnName("quantity");
+            builder.Property(e => e.ImageUrl)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("imageUrl");
+            builder.Property(e => e.Origin)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("origin");
             builder.Property(e => e.Status).HasColumnName("status");
+
+            builder.HasOne(d => d.Category).WithMany(p => p.Crops)
+                .HasForeignKey(d => d.CategoryId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKCrop824568");
 
         }
     }

@@ -60,7 +60,7 @@ namespace Application.Services.Implement
                 {
                     CustomerId = user.AccountId,
                     TotalPrice = 0,
-                    Status = Status.PENDING, // Đang xử lý
+                    Status = (int?)Status.PENDING, // Đang xử lý
                     CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow),
                     ShippingAddress = request.ShippingAddress,
                 };
@@ -247,7 +247,7 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Order not found !");
                 }
 
-                order.Status = Status.DELIVERED;
+                order.Status = (int?)Status.DELIVERED;
 
                 // Lưu các thay đổi vào cơ sở dữ liệu
                 await _unitOfWork.orderRepository.UpdateAsync(order);
@@ -339,7 +339,7 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Order not found !");
                 }
 
-                order.Status = Status.COMPLETED;
+                order.Status = (int?)Status.COMPLETED;
 
                 // Lưu các thay đổi vào cơ sở dữ liệu
                 await _unitOfWork.orderRepository.UpdateAsync(order);
@@ -362,7 +362,7 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Order not found !");
                 }
 
-                order.Status = Status.CANCELLED;
+                order.Status = (int?)Status.CANCELLED;
 
                 // Lưu các thay đổi vào cơ sở dữ liệu
                 await _unitOfWork.orderRepository.UpdateAsync(order);
@@ -423,7 +423,7 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.ERROR_EXCEPTION, $"Order ID {orderId} not found.");
                 }
 
-                if (order.Status != Status.PENDING && order.Status != Status.UNDISCHARGED)
+                if (order.Status != (int?)Status.PENDING && order.Status != (int?)Status.UNDISCHARGED)
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, $"Order ID {orderId} is not in a valid state for payment.");
                 }

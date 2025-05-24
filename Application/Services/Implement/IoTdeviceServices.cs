@@ -32,7 +32,7 @@ namespace Application.Services.Implement
             try
             {
                 var result = _mapper.Map<IoTdevice>(request);
-                result.Status = Status.ACTIVE; // Gán trạng thái mặc định là Active
+                result.Status = (int?)(int?)Status.ACTIVE; // Gán trạng thái mặc định là Active
                 result.LastUpdate = _currentTime.GetCurrentTime(); // Cập nhật thời gian hiện tại
                 // Map dữ liệu sang DTO
                 await _unitOfWork.ioTdeviceRepository.AddAsync(result);
@@ -141,7 +141,7 @@ namespace Application.Services.Implement
                 }
 
                 // Map dữ liệu sang DTO
-                ioTdevice.Status = (Status)Enum.Parse(typeof(Status), status); // Chuyển chuỗi sang Enum
+                ioTdevice.Status = (int?)(Status)Enum.Parse(typeof(Status), status); // Chuyển chuỗi sang Enum
                 await _unitOfWork.ioTdeviceRepository.UpdateAsync(ioTdevice);
                 await _unitOfWork.SaveChangesAsync();
 

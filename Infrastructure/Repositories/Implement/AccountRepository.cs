@@ -28,13 +28,13 @@ namespace Infrastructure.Repositories.Implement
             // Nếu có trạng thái, lọc theo trạng thái
             if (status.HasValue)
             {
-                query = query.Where(x => x.Status == status);
+                query = query.Where(x => x.Status == (int?)status);
             }
 
             // Nếu có role, lọc theo role
             if (role.HasValue)
             {
-                query = query.Where(x => x.Role == role);
+                query = query.Where(x => x.Role == (int?)role);
             }
 
             // Thực thi truy vấn và trả về danh sách tài khoản

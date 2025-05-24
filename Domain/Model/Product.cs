@@ -1,5 +1,4 @@
-﻿using Domain.Enum;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Domain.Model;
@@ -18,7 +17,7 @@ public partial class Product
 
     public string? Description { get; set; }
 
-    public Status? Status { get; set; }
+    public int? Status { get; set; }
 
     public DateOnly? CreatedAt { get; set; }
 

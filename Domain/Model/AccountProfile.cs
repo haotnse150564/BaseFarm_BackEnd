@@ -1,5 +1,4 @@
-﻿using Domain.Enum;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Domain.Model;
@@ -8,7 +7,7 @@ public partial class AccountProfile
 {
     public long AccountProfileId { get; set; }
 
-    public Gender? Gender { get; set; }
+    public int? Gender { get; set; }
 
     public string? Phone { get; set; }
 

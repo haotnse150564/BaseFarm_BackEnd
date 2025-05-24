@@ -7,7 +7,7 @@ public partial class CropRequirement
 {
     public long RequirementId { get; set; }
 
-    public string? EstimatedDate { get; set; }
+    public int? EstimatedDate { get; set; }
 
     public decimal? Moisture { get; set; }
 

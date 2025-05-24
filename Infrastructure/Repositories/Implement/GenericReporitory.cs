@@ -37,9 +37,9 @@ namespace Infrastructure.Repositories.Implement
             _dbSet.Entry(model).State = EntityState.Added;
         }
 
-        public virtual async Task AddRangeAsync(List<TModel> models)
+        public virtual async Task AddRangeAsync(List<TModel> Model)
         {
-            await _dbSet.AddRangeAsync(models);
+            await _dbSet.AddRangeAsync(Model);
         }
 
         public virtual async Task<List<TModel>> GetAllAsync() => await _dbSet.ToListAsync();
@@ -75,9 +75,9 @@ namespace Infrastructure.Repositories.Implement
             return await _context.SaveChangesAsync();
         }
 
-        public void UpdateRange(List<TModel> models)
+        public void UpdateRange(List<TModel> Model)
         {
-            _dbSet.UpdateRange(models);
+            _dbSet.UpdateRange(Model);
         }
 
         // Implement to pagination method

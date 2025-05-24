@@ -19,9 +19,9 @@ namespace Application.Repositories
         void AddEntry(TModel model);
         void Update(TModel model);
         Task<int> UpdateAsync(TModel model);
-        void UpdateRange(List<TModel> models);
+        void UpdateRange(List<TModel> Model);
 
-        Task AddRangeAsync(List<TModel> models);
+        Task AddRangeAsync(List<TModel> Model);
 
         // Add paging method to generic interface 
         Task<Pagination<TModel>> ToPaginationAsync(int pageIndex = 1, int pageSize = 10);

@@ -15,34 +15,28 @@ namespace Infrastructure.FluentAPI
         {
             builder.ToTable("Inventory");
 
+            builder.HasIndex(e => e.ProductId, "IX_Inventory_productId");
             builder.HasKey(e => e.InventoryId);
-
+            builder.Property(e => e.CreatedAt).HasColumnName("createdAt");
+            builder.Property(e => e.ExpiryDate).HasColumnName("expiryDate");
             builder.Property(e => e.Location)
                 .HasMaxLength(255)
                 .IsUnicode(false)
                 .HasColumnName("location");
+            builder.Property(e => e.ProductId).HasColumnName("productId");
+            builder.Property(e => e.ScheduleId).HasColumnName("scheduleId");
+            builder.Property(e => e.Status).HasColumnName("status");
+            builder.Property(e => e.StockQuantity).HasColumnName("stockQuantity");
 
-            builder.Property(e => e.StockQuantity)
-                .HasColumnName("stockQuantity");
-
-            builder.Property(e => e.Status)
-                .HasColumnName("status");
-
-            builder.Property(e => e.CreatedAt)
-                .HasColumnName("createdAt");
-
-            builder.Property(e => e.ExpiryDate)
-                .HasColumnName("expiryDate");
-
-            builder.Property(e => e.ProductId)
-                .HasColumnName("productId");
-
-            builder.HasOne(d => d.Product)
-                .WithMany(p => p.Inventories)
+            builder.HasOne(d => d.Product).WithMany(p => p.Inventories)
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Inventory_Product_productID");
+                .HasConstraintName("FKInventory855573");
 
+            builder.HasOne(d => d.Schedule).WithMany(p => p.Inventories)
+                .HasForeignKey(d => d.ScheduleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKInventory560231");
         }
     }
 }

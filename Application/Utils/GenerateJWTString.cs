@@ -1,5 +1,5 @@
 ﻿//using Domain.Enums;
-//using Domain.Models;
+//using Domain.Model;
 //using Microsoft.Extensions.Configuration;
 //using Microsoft.IdentityModel.Tokens;
 //using Microsoft.OpenApi.Extensions;

@@ -10,7 +10,8 @@ namespace Infrastructure.FluentAPI
         {
             builder.ToTable("Product");
 
-            builder.HasKey(e => e.ProductId);
+            builder.HasIndex(e => e.CategoryId, "IX_Product_categoryID");
+            builder.Property(e => e.ProductId).ValueGeneratedNever();
             builder.Property(e => e.CategoryId).HasColumnName("categoryID");
             builder.Property(e => e.Description)
                 .HasMaxLength(255)
@@ -33,11 +34,12 @@ namespace Infrastructure.FluentAPI
             builder.HasOne(d => d.Category).WithMany(p => p.Products)
                 .HasForeignKey(d => d.CategoryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                ;
+                .HasConstraintName("FKProduct896000");
 
             builder.HasOne(d => d.ProductNavigation).WithOne(p => p.Product)
                 .HasForeignKey<Product>(d => d.ProductId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKProduct309661");
         }
     }
 }

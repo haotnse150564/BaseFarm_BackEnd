@@ -19,7 +19,7 @@ namespace Infrastructure.Repositories.Implement
 
             if (status.HasValue)
             {
-                query = query.Where(o => o.Status == status);
+                query = query.Where(o => o.Status == (int?)status);
             }
 
             var totalItemCount = await query.CountAsync();
@@ -37,7 +37,7 @@ namespace Infrastructure.Repositories.Implement
                     TotalPrice = o.TotalPrice,
                     Email = o.Customer.Email,
                     ShippingAddress = o.ShippingAddress,
-                    Status = o.Status,
+                    Status = (Status?)o.Status,
                     CreatedAt = o.CreatedAt.HasValue ? o.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
                     OrderItems = o.OrderDetails.Select(od => new ViewProductDTO
                     {
@@ -66,7 +66,7 @@ namespace Infrastructure.Repositories.Implement
 
             if (status.HasValue)
             {
-                query = query.Where(o => o.Status == status);
+                query = query.Where(o => (Status?)o.Status == status);
             }
 
             var totalItemCount = await query.CountAsync();
@@ -83,7 +83,7 @@ namespace Infrastructure.Repositories.Implement
                     OrderId = o.OrderId,
                     TotalPrice = o.TotalPrice,
                     Email = o.Customer.Email,
-                    Status = o.Status, // ép kiểu để trả về dưới dạng số
+                    Status = (Status?)o.Status, // ép kiểu để trả về dưới dạng số
                     ShippingAddress = o.ShippingAddress,
                     CreatedAt = o.CreatedAt.HasValue ? o.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
                     OrderItems = o.OrderDetails.Select(od => new ViewProductDTO
@@ -158,7 +158,7 @@ namespace Infrastructure.Repositories.Implement
                 {
                     TotalPrice = o.TotalPrice,
                     Email = o.Customer.Email,
-                    Status = o.Status,
+                    Status = (Status?)o.Status,
                     CreatedAt = o.CreatedAt.HasValue ? o.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
                     OrderItems = o.OrderDetails.Select(od => new ViewProductDTO
                     {
@@ -184,7 +184,7 @@ namespace Infrastructure.Repositories.Implement
             if (status.HasValue)
             {
                var result = _context.Order
-                    .Where(o => o.Customer.Email.Contains(email) && o.Status == status)
+                    .Where(o => o.Customer.Email.Contains(email) && (Status?)o.Status == status)
                     .Include(o => o.Customer)
                     .Include(o => o.OrderDetails)
                         .ThenInclude(od => od.Product)

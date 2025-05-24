@@ -1,5 +1,4 @@
-﻿using Domain.Enum;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Domain.Model;
@@ -12,7 +11,7 @@ public partial class Order
 
     public string? ShippingAddress { get; set; }
 
-    public Status? Status { get; set; }
+    public int? Status { get; set; }
 
     public DateOnly? CreatedAt { get; set; }
 
@@ -22,9 +21,9 @@ public partial class Order
 
     public virtual Account Customer { get; set; } = null!;
 
-    public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+    public virtual Feedback? Feedback { get; set; }
 
-    public virtual Feedback OrderNavigation { get; set; } = null!;
+    public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 
     public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
 }

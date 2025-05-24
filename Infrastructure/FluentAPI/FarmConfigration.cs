@@ -15,6 +15,7 @@ namespace Infrastructure.FluentAPI
         {
             builder.ToTable("Farm");
 
+            builder.HasIndex(e => e.AccountId, "IX_Farm_accountID");
             builder.HasKey(e => e.FarmId);
             builder.Property(e => e.AccountId).HasColumnName("accountID");
             builder.Property(e => e.CreatedAt).HasColumnName("createdAt");
@@ -31,7 +32,7 @@ namespace Infrastructure.FluentAPI
             builder.HasOne(d => d.Account).WithMany(p => p.Farms)
                 .HasForeignKey(d => d.AccountId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-               ;
+                .HasConstraintName("FKFarm576533");
         }
     }
 }

@@ -9,20 +9,16 @@ namespace Infrastructure.FluentAPI
         public void Configure(EntityTypeBuilder<Payment> builder)
         {
             builder.ToTable("Payment");
-
             builder.HasKey(e => e.PaymentId);
-            builder.Property(e => e.OrderId);
-            builder.Property(e => e.TransactionId);
-            builder.Property(e => e.Amount);
-            builder.Property(e => e.PaymentMethod);
-            builder.Property(e => e.VnPayResponseCode);
-            builder.Property(e => e.Success);
-            builder.Property(e => e.PaymentTime);
-            builder.Property(e => e.CreateDate);
-            builder.Property(e => e.UpdateDate);
+
+            builder.HasIndex(e => e.OrderId, "IX_Payment_OrderId");
+
+            builder.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
+
             builder.HasOne(d => d.Order).WithMany(p => p.Payments)
                 .HasForeignKey(d => d.OrderId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FKPayment513267");
         }
     }
 }

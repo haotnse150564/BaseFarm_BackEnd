@@ -1,6 +1,4 @@
-﻿using Domain.Enum;
-using Domain.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Domain.Model;
@@ -13,15 +11,19 @@ public partial class Schedule
 
     public DateOnly? EndDate { get; set; }
 
-    public Status? Status { get; set; }
+    public int? Quantity { get; set; }
+
+    public int? Status { get; set; }
+
+    public DateOnly? PlantingDate { get; set; }
+
+    public DateOnly? HarvestDate { get; set; }
 
     public DateOnly? CreatedAt { get; set; }
 
     public DateOnly? UpdatedAt { get; set; }
 
     public long AssignedTo { get; set; }
-
-    public long FarmActivityId { get; set; }
 
     public long FarmDetailsId { get; set; }
 
@@ -31,9 +33,9 @@ public partial class Schedule
 
     public virtual Crop Crop { get; set; } = null!;
 
-    public virtual ICollection<DailyLog> DailyLogs { get; set; } = new List<DailyLog>();
-
-    public virtual FarmActivity FarmActivity { get; set; } = null!;
+    public virtual ICollection<FarmActivity> FarmActivities { get; set; } = new List<FarmActivity>();
 
     public virtual Farm FarmDetails { get; set; } = null!;
+
+    public virtual ICollection<Inventory> Inventories { get; set; } = new List<Inventory>();
 }
