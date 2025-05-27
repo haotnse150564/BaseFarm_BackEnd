@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Domain.Enum
 {
-    public enum Status
+    public enum CropStatus
     {
-        DEACTIVATED,
-        ACTIVE, 
+        ACTIVE,
+        INACTIVE,
+        CANCELED,
     }
 }

@@ -60,7 +60,7 @@ namespace Application.Services.Implement
                 {
                     CustomerId = user.AccountId,
                     TotalPrice = 0,
-                    Status = (int?)Status.PENDING, // Đang xử lý
+                    Status = PaymentStatus.PENDING, // Đang xử lý
                     CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow),
                     ShippingAddress = request.ShippingAddress,
                 };
@@ -132,7 +132,7 @@ namespace Application.Services.Implement
             }
         }
 
-        public async Task<ResponseDTO> GetAllOrderAsync(int pageIndex, int pageSize, Status? status)
+        public async Task<ResponseDTO> GetAllOrderAsync(int pageIndex, int pageSize, PaymentStatus? status)
         {
             try
             {
@@ -152,7 +152,7 @@ namespace Application.Services.Implement
         }
 
 
-        public async Task<ResponseDTO> GetAllOrderByCustomerIdAsync(long customerId, int pageIndex, int pageSize, Status? status)
+        public async Task<ResponseDTO> GetAllOrderByCustomerIdAsync(long customerId, int pageIndex, int pageSize, PaymentStatus? status)
         {
             try
             {
@@ -171,7 +171,7 @@ namespace Application.Services.Implement
             }
         }
 
-        public async Task<ResponseDTO> GetAllOrderByCurrentCustomerAsync(int pageIndex, int pageSize, Status? status)
+        public async Task<ResponseDTO> GetAllOrderByCurrentCustomerAsync(int pageIndex, int pageSize, PaymentStatus? status)
         {
             try
             {
@@ -247,7 +247,7 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Order not found !");
                 }
 
-                order.Status = (int?)Status.DELIVERED;
+                order.Status = PaymentStatus.DELIVERED;
 
                 // Lưu các thay đổi vào cơ sở dữ liệu
                 await _unitOfWork.orderRepository.UpdateAsync(order);
@@ -279,7 +279,7 @@ namespace Application.Services.Implement
             }
         }
 
-        public async Task<ResponseDTO> SearchOrderbyEmail(string email, int pageIndex, int pageSize, Status? status)
+        public async Task<ResponseDTO> SearchOrderbyEmail(string email, int pageIndex, int pageSize, PaymentStatus? status)
         {
             try
             {
@@ -339,7 +339,7 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Order not found !");
                 }
 
-                order.Status = (int?)Status.COMPLETED;
+                order.Status = PaymentStatus.COMPLETED;
 
                 // Lưu các thay đổi vào cơ sở dữ liệu
                 await _unitOfWork.orderRepository.UpdateAsync(order);
@@ -362,7 +362,7 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Order not found !");
                 }
 
-                order.Status = (int?)Status.CANCELLED;
+                order.Status = PaymentStatus.CANCELLED;
 
                 // Lưu các thay đổi vào cơ sở dữ liệu
                 await _unitOfWork.orderRepository.UpdateAsync(order);
@@ -385,7 +385,7 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.ERROR_EXCEPTION, $"Order ID {orderId} not found.");
                 }
 
-                if (order.Status != (int?)Status.PENDING && order.Status != (int?)Status.UNDISCHARGED)
+                if (order.Status != PaymentStatus.PENDING && order.Status != PaymentStatus.UNDISCHARGED)
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, $"Order ID {orderId} is not in a valid state for payment.");
                 }

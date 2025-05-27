@@ -13,13 +13,13 @@ namespace Infrastructure.Repositories.Implement
 
         public OrderRepository(AppDbContext context) => _context = context;
 
-        public async Task<Pagination<OrderResultDTO>> GetAllOrdersAsync(int pageIndex, int pageSize, Status? status)
+        public async Task<Pagination<OrderResultDTO>> GetAllOrdersAsync(int pageIndex, int pageSize, PaymentStatus? status)
         {
             var query = _context.Order.AsQueryable();
 
             if (status.HasValue)
             {
-                query = query.Where(o => o.Status == (int?)status);
+                query = query.Where(o => o.Status == status);
             }
 
             var totalItemCount = await query.CountAsync();
@@ -59,14 +59,14 @@ namespace Infrastructure.Repositories.Implement
         }
 
 
-        public async Task<Pagination<OrderResultDTO>> GetOrdersByCustomerIdAsync(long customerId, int pageIndex, int pageSize, Status? status)
+        public async Task<Pagination<OrderResultDTO>> GetOrdersByCustomerIdAsync(long customerId, int pageIndex, int pageSize, PaymentStatus? status)
         {
             var query = _context.Order
                 .Where(o => o.CustomerId == customerId);
 
             if (status.HasValue)
             {
-                query = query.Where(o => (Status?)o.Status == status);
+                query = query.Where(o => o.Status == status);
             }
 
             var totalItemCount = await query.CountAsync();
@@ -178,13 +178,13 @@ namespace Infrastructure.Repositories.Implement
             };
         }
 
-        public Task<List<Order>> SearchOrdersByEmailAsync(string email, Status? status)
+        public Task<List<Order>> SearchOrdersByEmailAsync(string email, PaymentStatus? status)
         {
             
             if (status.HasValue)
             {
                var result = _context.Order
-                    .Where(o => o.Customer.Email.Contains(email) && (Status?)o.Status == status)
+                    .Where(o => o.Customer.Email.Contains(email) && o.Status == status)
                     .Include(o => o.Customer)
                     .Include(o => o.OrderDetails)
                         .ThenInclude(od => od.Product)
