@@ -28,5 +28,14 @@ namespace Infrastructure.Repositories.Implement
                 .ToListAsync();
         }
 
+        public override async Task<Feedback> GetByIdAsync(long id)
+        {
+            return await _context.Feedback
+                .Include(f => f.Customer) 
+                .ThenInclude(a => a.AccountProfile) 
+                .Include(f => f.OrderDetail)
+                .ThenInclude(od => od.Product)
+                .FirstOrDefaultAsync(f => f.FeedbackId == id);
+        }
     }
 }

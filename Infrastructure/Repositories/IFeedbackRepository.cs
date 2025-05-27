@@ -7,5 +7,6 @@ namespace Infrastructure.Repositories
     {
         Task<int> CountAsync();
         Task<IEnumerable<Feedback>> GetPagedAsync(int pageIndex, int pageSize);
+        Task<Feedback> GetByIdAsync(long id);
     }
 }
