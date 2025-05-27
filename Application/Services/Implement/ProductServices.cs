@@ -172,7 +172,7 @@ namespace Application.Services.Implement
                     {
                         return new ResponseDTO(Const.FAIL_CREATE_CODE, "Crop not exists.");
                     }
-                    crop.Status = CropStatusStatus.DEACTIVATED;
+                    crop.Status = CropStatus.INACTIVE;
                     await _unitOfWork.cropRepository.UpdateAsync(crop);
                 }
                 var check = await _unitOfWork.SaveChangesAsync();
@@ -299,7 +299,7 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Product not found !");
                 }
 
-                product.Status = (product.Status == (int?)Status.ACTIVE) ? (int?)Status.DEACTIVATED : (int?)Status.ACTIVE;
+                product.Status = (product.Status == Status.ACTIVE) ? Status.DEACTIVATED : Status.ACTIVE;
 
                 // Lưu các thay đổi vào cơ sở dữ liệu
                 await _unitOfWork.productRepository.UpdateAsync(product);

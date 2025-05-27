@@ -62,7 +62,7 @@ namespace Application.Services.Implement
         public async Task<List<CropView>> GetAllCropsActiveAsync()
         {
             var result = await _unitOfWork.cropRepository.GetAllAsync();
-            var cropFilter = result.Where(x => (int?)x.Status == (int?)Domain.Enum.Status.ACTIVE).ToList();
+            var cropFilter = result.Where(x => x.Status == CropStatus.ACTIVE).ToList();
             if (cropFilter.IsNullOrEmpty())
             {
                 throw new Exception();

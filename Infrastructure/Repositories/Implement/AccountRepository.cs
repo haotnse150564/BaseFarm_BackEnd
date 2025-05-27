@@ -21,20 +21,20 @@ namespace Infrastructure.Repositories.Implement
             return result;
         }
 
-        public async Task<List<Account>> GetAllAccountWithProfiles(Status? status, Roles? role)
+        public async Task<List<Account>> GetAllAccountWithProfiles(AccountStatus? status, Roles? role)
         {
             var query = _dbSet.Include(x => x.AccountProfile).AsQueryable();
 
             // Nếu có trạng thái, lọc theo trạng thái
             if (status.HasValue)
             {
-                query = query.Where(x => x.Status == (int?)status);
+                query = query.Where(x => x.Status == status);
             }
 
             // Nếu có role, lọc theo role
             if (role.HasValue)
             {
-                query = query.Where(x => x.Role == (int?)role);
+                query = query.Where(x => x.Role == role);
             }
 
             // Thực thi truy vấn và trả về danh sách tài khoản
