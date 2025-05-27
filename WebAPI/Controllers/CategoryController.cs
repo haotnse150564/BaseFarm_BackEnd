@@ -1,4 +1,5 @@
 ﻿using Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
@@ -13,12 +14,14 @@ namespace WebAPI.Controllers
             _categoryServices = categoryServices;
         }
         [HttpGet("get-all")]
+        [Authorize(Roles = "3")]
         public async Task<IActionResult> GetAllCategories()
         {
             var categories = await _categoryServices.GetAllCategoriesAsync();
             return Ok(categories);
         }
         [HttpGet("{id}")]
+        [Authorize(Roles = "3")]
         public async Task<IActionResult> GetCategoryById(long id)
         {
             var category = await _categoryServices.GetCategoryByIdAsync(id);
@@ -29,6 +32,7 @@ namespace WebAPI.Controllers
             return Ok(category);
         }
         [HttpPost("create")]
+        [Authorize(Roles = "3")]
         public async Task<IActionResult> CreateCategory([FromBody] string categoryName)
         {
             var category = await _categoryServices.CreateCategoryAsync(categoryName);
@@ -39,6 +43,7 @@ namespace WebAPI.Controllers
             return Ok(category);
         }
         [HttpPut("{id}")]
+        [Authorize(Roles = "3")]
         public async Task<IActionResult> UpdateCategory(long id, [FromBody] string categoryName)
         {
             if (string.IsNullOrEmpty(categoryName))
@@ -53,6 +58,7 @@ namespace WebAPI.Controllers
             return Ok(category);
         }
         [HttpDelete("{id}")]
+        [Authorize(Roles = "3")]
         public async Task<IActionResult> DeleteCategory(long id)
         {
             var result = await _categoryServices.DeleteCategoryAsync(id);

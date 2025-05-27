@@ -23,7 +23,7 @@ namespace WebAPI.Controllers
             _logger = logger;
         }
 
-        [Authorize(Roles = "Customer")]
+        [Authorize(Roles = "0")]
         [HttpPost("create")]
         public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDTO request)
         {
@@ -52,6 +52,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("order-list")]
+        [Authorize(Roles = "3")]
         public async Task<IActionResult> GetListOrders([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10, [FromQuery] Status? status = null)
         {
             var result = await _orderService.GetAllOrderAsync(pageIndex, pageSize, status);
@@ -66,6 +67,7 @@ namespace WebAPI.Controllers
 
 
         [HttpGet("order-list-by-customer/{id}")]
+        [Authorize(Roles = "3")]
         public async Task<IActionResult> GetListOrdersByCustomerId([FromRoute] long id, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10, [FromQuery] Status? status = null)
         {
             var result = await _orderService.GetAllOrderByCustomerIdAsync(id, pageIndex, pageSize, status);
@@ -79,6 +81,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("order-list-by-current-account")]
+        [Authorize]
         public async Task<IActionResult> GetListOrdersByCurrentCustomer([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10, [FromQuery] Status? status = null)
         {
             var result = await _orderService.GetAllOrderByCurrentCustomerAsync(pageIndex, pageSize, status);
@@ -92,6 +95,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("order/{orderId}")]
+        [Authorize(Roles = "3")]
         public async Task<IActionResult> GetOrderById(long orderId)
         {
             var result = await _orderService.GetOrderByIdAsync(orderId);
@@ -105,6 +109,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("order-list-by-customer-name/{name}")]
+        [Authorize(Roles = "3")]
         public async Task<IActionResult> GetListOrdersByCustomerName([FromRoute] string name, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
             var result = await _orderService.GetAllOrderByCustomerNameAsync(name, pageIndex, pageSize);
@@ -117,6 +122,7 @@ namespace WebAPI.Controllers
             return Ok(result); // Trả về danh sách đơn hàng với phân trang
         }
         [HttpGet("order-list-by-emal/{email}")]
+        [Authorize(Roles = "3")]
         public async Task<IActionResult> GetListOrderbyEmail([FromRoute] string email, [FromQuery] Status? status , [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
             var result = await _orderService.SearchOrderbyEmail(email, pageIndex, pageSize, status);
@@ -129,6 +135,7 @@ namespace WebAPI.Controllers
             return Ok(result); // Trả về danh sách đơn hàng với phân trang
         }
         [HttpPost("order-list-by-date")]
+        [Authorize(Roles = "3")]
         public async Task<IActionResult> GetListOrdersByCustomerName([FromBody] DateOnly date, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
             var result = await _orderService.SearchOrderbyCreateDate(date, pageIndex, pageSize);
@@ -142,6 +149,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("updateDeliveryStatus/{orderId}")]
+        [Authorize(Roles = "3")]
         public async Task<IActionResult> UpdateOrderDeliveryStatus(long orderId)
         {
             var result = await _orderService.UpdateOrderDeliveryStatusAsync(orderId);
@@ -155,6 +163,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("updateCompletedStatus/{orderId}")]
+        [Authorize(Roles = "3")]
         public async Task<IActionResult> UpdateOrderCompletedStatus(long orderId)
         {
             var result = await _orderService.UpdateOrderCompletedStatusAsync(orderId);
@@ -168,6 +177,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("updateCancelStatus/{orderId}")]
+        [Authorize(Roles = "3")]
         public async Task<IActionResult> UpdateOrderCancelledStatus(long orderId)
         {
             var result = await _orderService.UpdateOrderCancelStatusAsync(orderId);

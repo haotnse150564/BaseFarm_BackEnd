@@ -37,7 +37,7 @@ namespace WebAPI.Controllers
             return BadRequest(response);
         }
         [HttpPost("create")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "1")]
         public async Task<IActionResult> CreateAccount([FromBody] AccountForm request)
         {
             var result = await _accountServices.CreateAccountAsync(request);
@@ -46,7 +46,7 @@ namespace WebAPI.Controllers
             return BadRequest("Failed to create account.");
         }
         [HttpPut("update-status/{id}")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "1")]
         public async Task<IActionResult> UpdateAccount(long id)
         {
             var result = await _accountServices.UpdateAccountStatusAsync(id);
@@ -55,7 +55,7 @@ namespace WebAPI.Controllers
             return BadRequest("Failed to update account.");
         }
         [HttpPut("update/{id}")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "1")]
         public async Task<IActionResult> UpdateAccount(long id, [FromBody] AccountForm request)
         {
             var result = await _accountServices.UpdateAccountAsync(id, request);
@@ -65,7 +65,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("get-all")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "1")]
         public async Task<IActionResult> GetAllAccount(int pageSize = 10, int pageIndex = 1, Status? status = null, Roles? role = null)
         {
             try
@@ -89,7 +89,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("get-by-email")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "1")]
         public async Task<IActionResult> GetAllEmailAccount(string email)
         {
             var result = await _accountServices.GetAccountByEmail(email);
@@ -98,7 +98,7 @@ namespace WebAPI.Controllers
             return BadRequest("Failed to get accounts.");
         }
         [HttpPut("update-role")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "1")]
         public async Task<IActionResult> UpdateAccountRole(long accountId, int roleId)
         {
             var result = await _accountServices.UpdateRoleForUser(accountId, roleId);
@@ -107,7 +107,7 @@ namespace WebAPI.Controllers
             return BadRequest("Failed to update roles.");
         }
         [HttpPut("update-password")]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "1")]
         public async Task<IActionResult> ChangPassword(long id, [FromBody] ChangePasswordDTO request)
         {
             var result = await _accountServices.ChangePassword(id, request);

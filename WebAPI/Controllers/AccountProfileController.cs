@@ -26,6 +26,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("update")]
+        [Authorize]
         public async Task<IActionResult> UpdateProfile([FromBody] AccountProfileRequest.ProfileRequestDTO request)
         {
             var result = await _accountProfileServices.UpdateProfileAsync(request);

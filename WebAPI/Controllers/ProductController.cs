@@ -76,9 +76,8 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        ////[Authorize(Roles = "Manager")]
         [HttpPost("create")]
-        //[Authorize(Roles = "Staff, Manager")]
+        [Authorize(Roles = "3")]
         public async Task<IActionResult> CreateProduct([FromBody] CreateProductDTO createRequest)
         {
             if (!ModelState.IsValid)
@@ -98,9 +97,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        ////[Authorize(Roles = "Admin")]
         [HttpPut("update/{id}")]
-        //[Authorize(Roles = "Staff, Manager")]
+        [Authorize(Roles = "3")]
         public async Task<IActionResult> UpdateProductAsync([FromBody] UpdateProductDTO request, [FromRoute] long id)
         {
 
@@ -123,7 +121,7 @@ namespace WebAPI.Controllers
 
         ////[Authorize(Roles = "Admin, Manager")]
         [HttpPut("change-product-status/{id}")]
-        //[Authorize(Roles = "Staff, Manager")]
+        [Authorize(Roles = "3")]
 
         public async Task<IActionResult> ChangeProductStatus([FromRoute] long id)
         {
@@ -140,7 +138,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("change-product-Quantity/{id}")]
-        //[Authorize(Roles = "Staff, Manager")]
+        [Authorize(Roles = "3")]
         public async Task<IActionResult> ChangeProductQuantity([FromRoute] long id, [FromBody] UpdateQuantityDTO request)
         {
 
