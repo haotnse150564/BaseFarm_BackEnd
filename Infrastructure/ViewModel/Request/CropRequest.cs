@@ -13,19 +13,14 @@ namespace Infrastructure.ViewModel.Request
 
         public string? Description { get; set; }
 
-        public int? Quantity { get; set; }
+
+        public string? ImageUrl { get; set; }
+
+        public string? Origin { get; set; }
 
 
-    }
-    public class CropUpdate
-    {
-        public string? CropName { get; set; }
+        public long CategoryId { get; set; }
 
-        public string? Description { get; set; }
-
-        public int? Quantity { get; set; }
-
-       // public DateOnly? PlantingDate { get; set; }
 
     }
 }

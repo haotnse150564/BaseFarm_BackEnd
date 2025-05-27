@@ -34,7 +34,6 @@ namespace Application.Services.Implement
             try
             {
                 var crop = await _unitOfWork.cropRepository.GetAllAsync();
-
                 if (crop.IsNullOrEmpty())
                 {
                     throw new Exception();
@@ -164,7 +163,7 @@ namespace Application.Services.Implement
             }
         }
 
-        public async Task<ResponseDTO> UpdateCrop(CropUpdate cropUpdate, long cropId)
+        public async Task<ResponseDTO> UpdateCrop(CropRequest cropUpdate, long cropId)
         {
             var crop = await _unitOfWork.cropRepository.GetByIdAsync(cropId);
             try

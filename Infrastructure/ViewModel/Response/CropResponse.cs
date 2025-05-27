@@ -1,9 +1,11 @@
 ﻿using Domain.Enum;
+using Domain.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Infrastructure.ViewModel.Response.CategoryResponse;
 
 namespace Infrastructure.ViewModel.Response
 {
@@ -16,13 +18,12 @@ namespace Infrastructure.ViewModel.Response
 
             public string? Description { get; set; }
 
-            public int? Quantity { get; set; }
+            public string? ImageUrl { get; set; }
 
-            public string Status { get; set; }
+            public string? Origin { get; set; }
 
-            public DateOnly? PlantingDate { get; set; }
+            public CategoryView Category { get; set; }
 
-            public DateOnly? HarvestDate { get; set; }
         }
         public class ResponseDTO
         {
