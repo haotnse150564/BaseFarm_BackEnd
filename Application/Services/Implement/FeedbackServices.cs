@@ -74,6 +74,7 @@ namespace Application.Services.Implement
                 var feedback = _mapper.Map<Feedback>(request);
                 feedback.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
                 feedback.CustomerId = user.AccountId;
+                feedback.Status = Domain.Enum.Status.ACTIVE;
                 // Gọi AddAsync nhưng không gán vào biến vì nó không có giá trị trả về
                 var create = _unitOfWork.feedbackRepository.AddAsync(feedback);
               
