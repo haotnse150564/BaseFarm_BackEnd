@@ -66,7 +66,7 @@ namespace WebAPI.Controllers
 
         [HttpGet("get-all")]
         [Authorize(Roles = "1")]
-        public async Task<IActionResult> GetAllAccount(int pageSize = 10, int pageIndex = 1, Status? status = null, Roles? role = null)
+        public async Task<IActionResult> GetAllAccount(int pageSize = 10, int pageIndex = 1, AccountStatus? status = null, Roles? role = null)
         {
             try
             {

@@ -53,7 +53,7 @@ namespace WebAPI.Controllers
 
         [HttpGet("order-list")]
         [Authorize(Roles = "2,3")]
-        public async Task<IActionResult> GetListOrders([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10, [FromQuery] Status? status = null)
+        public async Task<IActionResult> GetListOrders([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10, [FromQuery] PaymentStatus? status = null)
         {
             var result = await _orderService.GetAllOrderAsync(pageIndex, pageSize, status);
 
@@ -68,7 +68,7 @@ namespace WebAPI.Controllers
 
         [HttpGet("order-list-by-customer/{id}")]
         [Authorize(Roles = "2,3")]
-        public async Task<IActionResult> GetListOrdersByCustomerId([FromRoute] long id, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10, [FromQuery] Status? status = null)
+        public async Task<IActionResult> GetListOrdersByCustomerId([FromRoute] long id, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10, [FromQuery] PaymentStatus? status = null)
         {
             var result = await _orderService.GetAllOrderByCustomerIdAsync(id, pageIndex, pageSize, status);
 
@@ -82,7 +82,7 @@ namespace WebAPI.Controllers
 
         [HttpGet("order-list-by-current-account")]
         [Authorize]
-        public async Task<IActionResult> GetListOrdersByCurrentCustomer([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10, [FromQuery] Status? status = null)
+        public async Task<IActionResult> GetListOrdersByCurrentCustomer([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10, [FromQuery] PaymentStatus? status = null)
         {
             var result = await _orderService.GetAllOrderByCurrentCustomerAsync(pageIndex, pageSize, status);
 
@@ -123,7 +123,7 @@ namespace WebAPI.Controllers
         }
         [HttpGet("order-list-by-emal/{email}")]
         [Authorize(Roles = "2,3")]
-        public async Task<IActionResult> GetListOrderbyEmail([FromRoute] string email, [FromQuery] Status? status , [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetListOrderbyEmail([FromRoute] string email, [FromQuery] PaymentStatus? status , [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
             var result = await _orderService.SearchOrderbyEmail(email, pageIndex, pageSize, status);
 

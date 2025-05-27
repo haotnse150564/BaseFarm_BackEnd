@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace Domain.Enum
 {
-    public enum Status
+    public enum AccountStatus
     {
         DEACTIVATED,
-        ACTIVE, 
+        ACTIVE,
+        SUSPENDED,
+        BANNED,
     }
 }

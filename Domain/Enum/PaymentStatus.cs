@@ -6,9 +6,13 @@ using System.Threading.Tasks;
 
 namespace Domain.Enum
 {
-    public enum Status
+    public enum PaymentStatus
     {
-        DEACTIVATED,
-        ACTIVE, 
+        PAID,
+        UNDISCHARGED,
+        PENDING,
+        CANCELLED,
+        COMPLETED,
+        DELIVERED
     }
 }

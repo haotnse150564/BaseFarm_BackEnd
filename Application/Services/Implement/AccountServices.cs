@@ -45,8 +45,8 @@ namespace WebAPI.Services
             {
                 Email = request.Email,
                 PasswordHash = hashedPassword,
-                Role = (int?)(Roles)request.Role, // Explicit cast to Roles enum
-                Status = (int?)Status.ACTIVE, // Active
+                Role = (Roles)request.Role, // Explicit cast to Roles enum
+                Status = AccountStatus.ACTIVE, // Active
                 CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow)
             };
             await _unitOfWork.accountRepository.AddAsync(newAccount);
@@ -55,7 +55,7 @@ namespace WebAPI.Services
                 AccountProfileId = newAccount.AccountId,
                 Phone = request.Phone,
                 Fullname = request.Fullname,
-                Gender = (int?)request.Gender,
+                Gender = request.Gender,
                 Address = request.Address,
                 Images = request.Images,
                 CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow)
@@ -69,7 +69,7 @@ namespace WebAPI.Services
             return _mapper.Map<ViewAccount>(newAccount);
         }
 
-        public async Task<Pagination<ViewAccount>> GetAllAccountAsync(int pageSize, int pageIndex, Status? status, Roles? role)
+        public async Task<Pagination<ViewAccount>> GetAllAccountAsync(int pageSize, int pageIndex, AccountStatus? status, Roles? role)
         {
             try
             {
@@ -83,7 +83,7 @@ namespace WebAPI.Services
                 }
 
                 // Lọc tài khoản không phải Admin
-                var userAccount = account.Where(x => x.Role != (int?)Roles.Admin).ToList();
+                var userAccount = account.Where(x => x.Role != Roles.Admin).ToList();
                 var result = _mapper.Map<List<ViewAccount>>(userAccount.OrderBy(x => x.Role));
 
                 // Tổng số tài khoản
@@ -141,7 +141,7 @@ namespace WebAPI.Services
             {
                 throw new UnauthorizedAccessException("Invalid password.");
             }
-            if (account.Status != (int?)Status.ACTIVE)
+            if (account.Status != AccountStatus.ACTIVE)
             {
                 throw new UnauthorizedAccessException("Account is not accitve.");
             }
@@ -172,8 +172,8 @@ namespace WebAPI.Services
             {
                 Email = request.Email,
                 PasswordHash = hashedPassword,
-                Role = (int?)Roles.Customer,
-                Status = (int?)Status.ACTIVE, // Active
+                Role = Roles.Customer,
+                Status = AccountStatus.ACTIVE, // Active
                 CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow)
             };
 
@@ -214,7 +214,7 @@ namespace WebAPI.Services
                 //update account profile
                 var accountProfile = await _unitOfWork.accountProfileRepository.GetByIdAsync(account.AccountProfile.AccountProfileId);
                 accountProfile.Phone = request.Phone;
-                accountProfile.Gender = (int?)request.Gender;
+                accountProfile.Gender = request.Gender;
                 accountProfile.Images = request.Images;
                 accountProfile.Address = request.Address;
                 accountProfile.Fullname = request.Fullname;
@@ -255,13 +255,13 @@ namespace WebAPI.Services
                 }
 
                 // Map dữ liệu sang DTO
-                if (account.Status == (int?)Status.ACTIVE)
+                if (account.Status == AccountStatus.ACTIVE)
                 {
-                    account.Status = (int?)Status.BANNED;
+                    account.Status = AccountStatus.BANNED;
                 }
                 else
                 {
-                    account.Status = (int?)Status.ACTIVE;
+                    account.Status = AccountStatus.ACTIVE;
                 }
                 await _unitOfWork.accountRepository.UpdateAsync(account);
                 await _unitOfWork.SaveChangesAsync();
@@ -286,7 +286,7 @@ namespace WebAPI.Services
                 }
                 else
                 {
-                    account.Role = (int?)(Roles)roleId;
+                    account.Role = (Roles)roleId;
                     await _unitOfWork.accountRepository.UpdateAsync(account);
                     await _unitOfWork.SaveChangesAsync();
                     var result = _mapper.Map<ViewAccount>(account);
