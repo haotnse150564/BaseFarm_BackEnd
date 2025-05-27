@@ -6,17 +6,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Infrastructure.ViewModel.Response.CategoryResponse;
 using static Infrastructure.ViewModel.Response.CropResponse;
 
 namespace Infrastructure.Mapper
 {
-    public class CropMapping : Profile
+    public class CategoryMapping : Profile
     {
-        public CropMapping() {
-            CreateMap<Crop, CropView>().ReverseMap()
-                .ForPath(dest => dest.Category, opt => opt.MapFrom(src => src.Category));
-                
-            CreateMap<Crop, CropRequest>().ReverseMap();
+        public CategoryMapping()
+        {
+            CreateMap<Category, CategoryView>().ReverseMap();
         }
     }
 }

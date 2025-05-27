@@ -51,8 +51,7 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
         [HttpPut("update/{cropId}")]
-        [Authorize(Roles = "2")]
-        public async Task<IActionResult> UpdateCrop([FromBody] CropUpdate cropUpdate, long cropId)
+        public async Task<IActionResult> UpdateCrop([FromBody] CropRequest cropUpdate, long cropId)
         {
             var result = await _cropServices.UpdateCrop(cropUpdate, cropId);
             return Ok(result);

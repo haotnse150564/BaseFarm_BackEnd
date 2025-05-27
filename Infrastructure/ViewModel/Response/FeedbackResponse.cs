@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Application.ViewModel.Response.OrderResponse;
 
 namespace Infrastructure.ViewModel.Response
 {
@@ -29,6 +30,7 @@ namespace Infrastructure.ViewModel.Response
 
             public DateOnly? CreatedAt { get; set; }
             public string? Phone { get; set; }
+            public OrderDetailDTO OrderDetail { get; set; } = new OrderDetailDTO();
         }
     }
 }

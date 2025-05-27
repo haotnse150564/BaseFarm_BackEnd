@@ -19,8 +19,15 @@ namespace Infrastructure.Repositories.Implement
 
         public virtual async Task AddAsync(TModel model)
         {
-            await _dbSet.AddAsync(model);
-            await _context.SaveChangesAsync();
+            try {
+                await _dbSet.AddAsync(model);
+                await _context.SaveChangesAsync();
+            }catch (Exception ex)
+            {
+                // Log the exception or handle it as needed
+                throw new Exception("An error occurred while adding the model.", ex);
+            }
+            
         }
 
         public async Task<TModel?> FirstOrDefaultAsync(Expression<Func<TModel, bool>> predicate)

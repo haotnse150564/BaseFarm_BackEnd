@@ -1,5 +1,6 @@
 ﻿using Application.Commons;
 using Application.Interfaces;
+using Application.Utils;
 using AutoMapper;
 using Domain.Model;
 using Microsoft.Extensions.Configuration;
@@ -14,13 +15,14 @@ namespace Application.Services.Implement
         private readonly ICurrentTime _currentTime;
         private readonly IConfiguration configuration;
         private readonly IMapper _mapper;
-
-        public FeedbackServices(IUnitOfWorks unitOfWork, ICurrentTime currentTime, IConfiguration configuration, IMapper mapper)
+        private readonly JWTUtils _jwtUtils;
+        public FeedbackServices(IUnitOfWorks unitOfWork, ICurrentTime currentTime, IConfiguration configuration, IMapper mapper, JWTUtils jwtUtils)
         {
             _unitOfWork = unitOfWork;
             _currentTime = currentTime;
             this.configuration = configuration;
             _mapper = mapper;
+            _jwtUtils = jwtUtils;
         }
 
         public async Task<ResponseDTO> GetAllFeedbackAsync(int pageIndex, int pageSize)
@@ -60,16 +62,23 @@ namespace Application.Services.Implement
         {
             try
             {
-
+                var user = await _jwtUtils.GetCurrentUserAsync();
+                if (user == null)
+                    throw new Exception("User not found");
+                var orderDetail = await _unitOfWork.orderDetailRepository.GetByIdAsync(request.OrderDetailId);
+                if (orderDetail == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Order detail not found.");
+                }
                 // Ánh xạ từ DTO sang Entity
                 var feedback = _mapper.Map<Feedback>(request);
                 feedback.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
-
+                feedback.CustomerId = user.AccountId;
+                feedback.Status = Domain.Enum.Status.ACTIVE;
                 // Gọi AddAsync nhưng không gán vào biến vì nó không có giá trị trả về
                 var create = _unitOfWork.feedbackRepository.AddAsync(feedback);
-
-                // Kiểm tra xem sản phẩm có được thêm không bằng cách kiểm tra product.Id (hoặc khóa chính)
-                if (create == null) // Nếu Id chưa được gán, có thể việc thêm đã thất bại
+              
+                if (create == null) 
                 {
                     return new ResponseDTO(Const.FAIL_CREATE_CODE, "Failed to Cteate Feedback to repository.");
                 }

@@ -113,11 +113,11 @@ namespace Infrastructure
                 new Farm { FarmId = 3, FarmName = "Cai", Location = "TP. Ho Chi Minh", CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("3/5/2025"), AccountId = 7 }
         );
             builder.Entity<Crop>().HasData(
-                new Crop { CropId = 1, CropName = "Cop 01", Description = "3x3 m2", Status = Domain.Enum.CropStatus.ACTIVE, CategoryId = 1 },
-                new Crop { CropId = 2, CropName = "Cop 02", Description = "2x3 m2", Status = Domain.Enum.CropStatus.ACTIVE, CategoryId = 1 },
-                new Crop { CropId = 3, CropName = "Cop 03", Description = "3x2 m2", Status = Domain.Enum.CropStatus.ACTIVE, CategoryId = 1 },
-                new Crop { CropId = 4, CropName = "Cop 04", Description = "3x5 m2", Status = Domain.Enum.CropStatus.ACTIVE, CategoryId = 3 },
-                new Crop { CropId = 5, CropName = "Cop 05", Description = "4x3 m2", Status = Domain.Enum.CropStatus.ACTIVE, CategoryId = 3 }
+                new Crop { CropId = 1, CropName = "Cop 01", Description = "3x3 m2", Status = Domain.Enum.Status.ACTIVE, CategoryId = 1 },
+                new Crop { CropId = 2, CropName = "Cop 02", Description = "2x3 m2", Status = Domain.Enum.Status.ACTIVE, CategoryId = 1 },
+                new Crop { CropId = 3, CropName = "Cop 03", Description = "3x2 m2", Status = Domain.Enum.Status.ACTIVE, CategoryId = 1 },
+                new Crop { CropId = 4, CropName = "Cop 04", Description = "3x5 m2", Status = Domain.Enum.Status.ACTIVE, CategoryId = 3 },
+                new Crop { CropId = 5, CropName = "Cop 05", Description = "4x3 m2", Status = Domain.Enum.Status.ACTIVE, CategoryId = 3 }
                 );
 
             builder.Entity<IoTdevice>().HasData(
@@ -132,9 +132,9 @@ namespace Infrastructure
                 new IoTdevice { IoTdevicesId = 9, DeviceName = "Soil Moisture Sensor 3", DeviceType = "Soil Moisture Sensor IC", Status = Domain.Enum.Status.ACTIVE, Unit = null, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 3 }
                 );
             builder.Entity<Order>().HasData(
-                new Order { OrderId = 1, CustomerId = 8, TotalPrice = 200, ShippingAddress = "TP. Ho Chi Minh", Status = Domain.Enum.PaymentStatus.COMPLETED, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") },
-                new Order { OrderId = 2, CustomerId = 8, TotalPrice = 105, ShippingAddress = "TP. Ho Chi Minh", Status = Domain.Enum.PaymentStatus.COMPLETED, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") },
-                new Order { OrderId = 3, CustomerId = 8, TotalPrice = 315, ShippingAddress = "TP. Ho Chi Minh", Status = Domain.Enum.PaymentStatus.COMPLETED, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") }
+                new Order { OrderId = 1, CustomerId = 8, TotalPrice = 200, ShippingAddress = "TP. Ho Chi Minh", Status = Domain.Enum.PaymentStatus.PAID, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") },
+                new Order { OrderId = 2, CustomerId = 8, TotalPrice = 105, ShippingAddress = "TP. Ho Chi Minh", Status = Domain.Enum.PaymentStatus.PAID, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") },
+                new Order { OrderId = 3, CustomerId = 8, TotalPrice = 315, ShippingAddress = "TP. Ho Chi Minh", Status = Domain.Enum.PaymentStatus.PAID, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") }
                 );
             builder.Entity<OrderDetail>().HasData(
                 new OrderDetail { OrderDetailId = 1, OrderId = 1, Quantity = 20, UnitPrice = 10, ProductId = 1 },

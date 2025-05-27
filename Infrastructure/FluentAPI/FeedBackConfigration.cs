@@ -27,10 +27,6 @@ namespace Infrastructure.FluentAPI
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKFeedback770592");
 
-            builder.HasOne(d => d.FeedbackNavigation).WithOne(p => p.Feedback)
-                .HasForeignKey<Feedback>(d => d.FeedbackId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
             builder.HasOne(d => d.OrderDetail).WithMany(p => p.Feedbacks)
                 .HasForeignKey(d => d.OrderDetailId)
                 .OnDelete(DeleteBehavior.ClientSetNull)

@@ -184,6 +184,7 @@ namespace WebAPI.Services
             var newProfile = new AccountProfile
             {
                 AccountProfileId = newAccount.AccountId,
+                Fullname = request.Email.Split('@')[0],
                 CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow)
             };
 

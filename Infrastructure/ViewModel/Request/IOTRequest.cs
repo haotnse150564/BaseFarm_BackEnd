@@ -9,11 +9,10 @@ namespace Infrastructure.ViewModel.Request
 {
     public class IOTRequest
     {
+
         public string? DeviceName { get; set; }
 
         public string? DeviceType { get; set; }
-
-        public string? SensorValue { get; set; }
 
         public string? Unit { get; set; }
 

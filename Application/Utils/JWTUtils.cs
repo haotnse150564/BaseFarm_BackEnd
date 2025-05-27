@@ -81,16 +81,15 @@ namespace Application.Utils
             var userIdClaim = claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null)
             {
-                throw new Exception("User not found in token."); // Hoặc trả về một ResponseDTO nếu cần
+                throw new Exception("User not found in token."); 
             }
 
             int userId = int.Parse(userIdClaim.Value);
 
-            // Lấy người dùng hiện tại
             var user = await _unitOfWork.accountRepository.GetByIdAsync(userId);
             if (user == null)
             {
-                throw new Exception("User not found!"); // Hoặc trả về một ResponseDTO nếu cần
+                throw new Exception("User not found!"); 
             }
 
             return user;

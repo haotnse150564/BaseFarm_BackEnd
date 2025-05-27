@@ -11,6 +11,7 @@ namespace Domain.Enum
         DEACTIVATED,
         ACTIVE,
         SUSPENDED,
-        BANNED,
+        BANNED
+        
     }
 }

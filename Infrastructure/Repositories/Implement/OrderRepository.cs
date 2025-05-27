@@ -66,7 +66,7 @@ namespace Infrastructure.Repositories.Implement
 
             if (status.HasValue)
             {
-                query = query.Where(o => o.Status == status);
+                query = query.Where(o => (PaymentStatus?)o.Status == status);
             }
 
             var totalItemCount = await query.CountAsync();

@@ -18,7 +18,7 @@ namespace WebAPI.Controllers
             _feedbackService = feedbackService;
         }
 
-        [HttpGet("feedBackList")]
+        [HttpGet("feed-back-list")]
         public async Task<IActionResult> GetListFeedback([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
             var result = await _feedbackService.GetAllFeedbackAsync(pageIndex, pageSize);
@@ -31,7 +31,7 @@ namespace WebAPI.Controllers
             return Ok(result); // Trả về danh sách sản phẩm với phân trang
         }
 
-        [HttpPost("CreateFeedback")]
+        [HttpPost("create-feedback")]
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> CreateFeedback([FromBody] CreateFeedbackDTO createRequest)
         {
@@ -52,7 +52,7 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPost("updateFeedback/{id}")]
+        [HttpPost("update-feedback/{id}")]
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> UpdateFeedbackAsync([FromBody] CreateFeedbackDTO request, [FromRoute] long id)
         {

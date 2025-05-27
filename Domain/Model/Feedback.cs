@@ -22,7 +22,5 @@ public partial class Feedback
 
     public virtual Account Customer { get; set; } = null!;
 
-    public virtual Order FeedbackNavigation { get; set; } = null!;
-
     public virtual OrderDetail OrderDetail { get; set; } = null!;
 }

@@ -17,8 +17,8 @@ namespace Infrastructure.ViewModel.Request
             [Range(1, 5, ErrorMessage = "Rating must be between 1 and 5")]
             public int? Rating { get; set; }
 
-            [Required(ErrorMessage = "CustomerId is required")]
-            public long CustomerId { get; set; }
+            [Required(ErrorMessage = "Order Detail Id is required")]
+            public long OrderDetailId { get; set; }
 
         }
     }

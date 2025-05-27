@@ -17,8 +17,6 @@ namespace Infrastructure.ViewModel.Response
 
             public Status? Status { get; set; }
 
-            public string? SensorValue { get; set; }
-
             public string? Unit { get; set; }
 
             public DateOnly? LastUpdate { get; set; }

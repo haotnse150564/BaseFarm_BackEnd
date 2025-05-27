@@ -65,7 +65,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("get-all")]
-        [Authorize(Roles = "1")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllAccount(int pageSize = 10, int pageIndex = 1, AccountStatus? status = null, Roles? role = null)
         {
             try

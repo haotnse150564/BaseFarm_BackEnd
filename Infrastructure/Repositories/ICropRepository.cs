@@ -11,5 +11,6 @@ namespace Infrastructure.Repositories
     public interface ICropRepository : IGenericRepository<Crop>
     {
         Task<bool> CheckDuplicateCropName(string cropName);
+        Task<List<Crop>> GetAllAsync();
     }
 }
