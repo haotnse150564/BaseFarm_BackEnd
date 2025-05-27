@@ -23,7 +23,7 @@ namespace WebAPI.Controllers
             _logger = logger;
         }
 
-        [Authorize(Roles = "0")]
+        [Authorize(Roles = "Customer")]
         [HttpPost("create")]
         public async Task<IActionResult> CreateOrder([FromBody] CreateOrderDTO request)
         {
