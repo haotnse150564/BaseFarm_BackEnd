@@ -20,6 +20,8 @@ namespace Infrastructure.Repositories.Implement
             return await _context.Feedback
                 .Include(f => f.Customer) // Include Account
                 .ThenInclude(a => a.AccountProfile) // Include AccountProfile để lấy Email
+                .Include(f => f.OrderDetail) 
+                .ThenInclude(od => od.Product) 
                 .OrderBy(f => f.FeedbackId) // Sắp xếp theo ID hoặc có thể thay đổi theo nhu cầu
                 .Skip((pageIndex - 1) * pageSize) // Skip các bản ghi trước đó
                 .Take(pageSize) // Lấy số bản ghi theo pageSize
