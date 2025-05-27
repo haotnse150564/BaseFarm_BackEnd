@@ -31,7 +31,7 @@ namespace Infrastructure
             , IFeedbackRepository feedbackRepository, IAccountProfileRepository accountProfileRepository, IOrderRepository orderRepository
             , IOrderDetailRepository orderDetailRepository, IPaymentRepository paymentRepository, IScheduleRepository scheduleRepository
             , IIoTdeviceRepository ioTdeviceRepository, ICropRepository cropRepository, IFarmActivityRepository farmActivityRepository, IFarmRepository farmRepository
-            , ICategoryRepository categoryRepository
+            , ICategoryRepository categoryRepository, IAccountRepository accountRepository
             )
         {
             _context = context;
@@ -48,10 +48,8 @@ namespace Infrastructure
             _cropRepository = cropRepository;
             _farmActivityRepository = farmActivityRepository;
             _farmRepository = farmRepository;
-            _cropRepository = cropRepository;
-            _farmActivityRepository = farmActivityRepository;
-            _farmRepository = farmRepository;
             _categoryRepository = categoryRepository;
+            _accountRepository = accountRepository;
         }
         public ICategoryRepository categoryRepository
         {

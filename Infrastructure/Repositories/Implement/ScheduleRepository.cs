@@ -15,7 +15,7 @@ namespace Infrastructure.Repositories.Implement
         {
             var result = await _dbSet.Where(x => x.ScheduleId == id)
                                      .Include(a => a.AssignedToNavigation)
-                                     //.Include(a => a.FarmActivity)
+                                     .Include(a => a.FarmActivities)
                                      .Include(a => a.Crop)
                                      .Include(a => a.FarmDetails)
                                     // .Include(a => a.DailyLogs)
@@ -26,8 +26,8 @@ namespace Infrastructure.Repositories.Implement
         {
             var result = await _context.Schedule // Thêm _context.Schedules vào đây
             .Include(a => a.AssignedToNavigation)
-            //.Include(a => a.FarmActivity)
             .Include(a => a.Crop)
+            .Include(a => a.FarmActivities)
             .Include(a => a.FarmDetails)
            // .Include(a => a.DailyLogs)
             .ToListAsync();

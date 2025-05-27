@@ -21,7 +21,7 @@ namespace WebAPI.Controllers
             _logger = logger;
         }
         [HttpPost("schedule-create")]
-        [Authorize(Roles = "2")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> CreateSchedule([FromBody] ScheduleRequest request)
         {
             var result = await _schedule.CreateScheduleAsync(request);
@@ -34,7 +34,7 @@ namespace WebAPI.Controllers
             return Ok(result); // Trả về danh sách sản phẩm với phân trang
         }
         [HttpPut("schedule-assign-staff")]
-        [Authorize(Roles = "2")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> AssidnStaff(long scheduleId, [FromBody] long staffId)
         {
             var result = await _schedule.AssignStaff(scheduleId, staffId);
@@ -47,7 +47,7 @@ namespace WebAPI.Controllers
             return Ok(result); // Trả về danh sách sản phẩm với phân trang
         }
         [HttpGet("schedule-list")]
-        [Authorize(Roles = "2")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetListSchedule([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
             var result = await _schedule.GetAllScheduleAsync(pageIndex, pageSize);
@@ -60,7 +60,7 @@ namespace WebAPI.Controllers
             return Ok(result); // Trả về danh sách sản phẩm với phân trang
         }
         [HttpGet("schedule-byId")]
-        [Authorize(Roles = "2")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetScheduleByID(long id)
         {
             var result = await _schedule.GetScheduleByIdAsync(id);
@@ -73,7 +73,7 @@ namespace WebAPI.Controllers
             return Ok(result); // Trả về danh sách sản phẩm với phân trang
         }
         [HttpPut("schedule-update-status")]
-        [Authorize(Roles = "2")]
+        [Authorize(Roles = "Manager")]
 
         public async Task<IActionResult> UpdateScheduleStatus(long scheduleId,[FromBody] string status)
         {
@@ -87,7 +87,7 @@ namespace WebAPI.Controllers
             return Ok(result); // Trả về danh sách sản phẩm với phân trang
         }
         [HttpPut("schedule-update")]
-        [Authorize(Roles = "2")]
+        [Authorize(Roles = "Manager")]
 
         public async Task<IActionResult> UpdateSchedule(long scheduleId, [FromBody] ScheduleRequest request)
         {

@@ -103,7 +103,8 @@ namespace Infrastructure
            );
             builder.Entity<FarmActivity>().HasData(
                 new FarmActivity { FarmActivitiesId = 1, ActivityType = Domain.Enum.ActivityType.Sowing, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("4/1/2025"), Status = Domain.Enum.Status.ACTIVE, ScheduleId = 1 },
-                //new FarmActivity { FarmActivitiesId = 2, ActivityType = Domain.Enum.ActivityType.Protection, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("2/11/2025"), Status = Domain.Enum.Status.ACTIVE , ScheduleId = 1},
+                new FarmActivity { FarmActivitiesId = 2, ActivityType = Domain.Enum.ActivityType.Irrigation, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("2/11/2025"), Status = Domain.Enum.Status.ACTIVE , ScheduleId = 1},
+                new FarmActivity { FarmActivitiesId = 5, ActivityType = Domain.Enum.ActivityType.Protection, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("2/11/2025"), Status = Domain.Enum.Status.ACTIVE , ScheduleId = 1},
                 new FarmActivity { FarmActivitiesId = 3, ActivityType = Domain.Enum.ActivityType.Harvesting, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/11/2025"), Status = Domain.Enum.Status.ACTIVE, ScheduleId = 2 },
                 new FarmActivity { FarmActivitiesId = 4, ActivityType = Domain.Enum.ActivityType.Fertilization, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/3/2025"), Status = Domain.Enum.Status.ACTIVE, ScheduleId = 3 }
                 );

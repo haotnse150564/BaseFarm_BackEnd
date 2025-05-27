@@ -6,7 +6,6 @@ using Domain.Model;
 using Infrastructure.Repositories;
 using Infrastructure.ViewModel.Request;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using static Infrastructure.ViewModel.Response.ScheduleResponse;
 using ResponseDTO = Infrastructure.ViewModel.Response.ScheduleResponse.ResponseDTO;
 
@@ -41,12 +40,12 @@ namespace Application.Services.Implement
         {
             try
             {
-                var crop = await _unitOfWork.cropRepository.GetByIdAsync(request.CropId);
+                //var crop = await _unitOfWork.cropRepository.GetByIdAsync(request.CropId);
                 var result = new Schedule
                 {
                     StartDate = request.StartDate,
-                    EndDate = request.EndDate,
-                    //EndDate = DateOnly.Parse("05/09/2025"),
+                    //EndDate = request.EndDate,
+                    EndDate = DateOnly.Parse("09/09/2025"),
                     AssignedTo = request.AssignedTo,
                     //FarmActivityId = request.FarmActivityId,
                     FarmDetailsId = request.FarmDetailsId,
