@@ -1,4 +1,5 @@
 ﻿using Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
@@ -15,6 +16,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("get-blynk-data")]
+        [Authorize(Roles = "2")]
         public async Task<IActionResult> GetBlynkData()
         {
             var data = await _blynkService.GetAllDatastreamValuesAsync();
