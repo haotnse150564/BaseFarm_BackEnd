@@ -15,9 +15,7 @@ namespace Infrastructure.ViewModel.Request
 
         public int? Quantity { get; set; }
 
-        public DateOnly? PlantingDate { get; set; }
 
-        public DateOnly? HarvestDate { get; set; }
     }
     public class CropUpdate
     {
@@ -27,7 +25,7 @@ namespace Infrastructure.ViewModel.Request
 
         public int? Quantity { get; set; }
 
-        public DateOnly? PlantingDate { get; set; }
+       // public DateOnly? PlantingDate { get; set; }
 
     }
 }

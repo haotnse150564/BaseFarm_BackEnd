@@ -29,7 +29,7 @@ namespace Application.Services.Implement
             try
             {
                 var listProduct = await _unitOfWork.productRepository.GetAllAsync();
-                var listFilter = listProduct.Where(x => x.Status == (int?)Status.ACTIVE).ToList();
+                var listFilter = listProduct.Where(x => x.Status == Status.ACTIVE).ToList();
                 if (listFilter == null)
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, "No Products found.");
@@ -161,7 +161,7 @@ namespace Application.Services.Implement
                 // Ánh xạ từ DTO sang Entity
                 var product = _mapper.Map<Product>(request);
                 product.ProductId = request.CropId;
-                product.Status = (int?)Status.ACTIVE;
+                product.Status = Status.ACTIVE;
                 product.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
                 // Gọi AddAsync nhưng không gán vào biến vì nó không có giá trị trả về
                 await _unitOfWork.productRepository.AddAsync(product);
@@ -172,7 +172,7 @@ namespace Application.Services.Implement
                     {
                         return new ResponseDTO(Const.FAIL_CREATE_CODE, "Crop not exists.");
                     }
-                    crop.Status = (int?)Status.DEACTIVATED;
+                    crop.Status = Status.DEACTIVATED;
                     await _unitOfWork.cropRepository.UpdateAsync(crop);
                 }
                 var check = await _unitOfWork.SaveChangesAsync();
@@ -299,7 +299,7 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Product not found !");
                 }
 
-                product.Status = (product.Status == (int?)Status.ACTIVE) ? (int?)Status.DEACTIVATED : (int?)Status.ACTIVE;
+                product.Status = (product.Status == Status.ACTIVE) ? Status.DEACTIVATED : Status.ACTIVE;
 
                 // Lưu các thay đổi vào cơ sở dữ liệu
                 await _unitOfWork.productRepository.UpdateAsync(product);
