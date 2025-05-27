@@ -375,44 +375,6 @@ namespace Application.Services.Implement
             }
         }
 
-        //public async Task<ResponseDTO> CreateOrderPaymentAsync(long orderId, HttpContext context)
-        //{
-        //    try
-        //    {
-        //        var order = await _unitOfWork.orderRepository.GetByIdAsync(orderId);
-        //        if (order == null)
-        //        {
-        //            return new ResponseDTO(Const.ERROR_EXCEPTION, $"Order ID {orderId} not found.");
-        //        }
-
-        //        if (order.Status != Status.PENDING && order.Status != Status.UNDISCHARGED)
-        //        {
-        //            return new ResponseDTO(Const.FAIL_READ_CODE, $"Order ID {orderId} is not in a valid state for payment.");
-        //        }
-
-        //        var paymentModel = new PaymentInformationModel
-        //        {
-        //            OrderId = order.OrderId,
-        //            Amount = (double)(order.TotalPrice ?? 0),
-        //            OrderDescription = $"Thanh toán đơn hàng #{order.OrderId}",
-        //            OrderType = "billpayment",
-        //            Name = "IOT Base Farm"
-        //        };
-
-        //        var paymentUrl = _vnPayService.CreatePaymentUrl(paymentModel, context);
-
-        //        return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Payment URL generated successfully.", new
-        //        {
-        //            OrderId = order.OrderId,
-        //            PaymentUrl = paymentUrl
-        //        });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return new ResponseDTO(Const.ERROR_EXCEPTION, "An error occurred while creating payment.", ex.Message);
-        //    }
-        //}
-
         public async Task<ResponseDTO> CreateOrderPaymentAsync(long orderId, HttpContext context)
         {
             try
@@ -428,58 +390,6 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_READ_CODE, $"Order ID {orderId} is not in a valid state for payment.");
                 }
 
-                // Bắt đầu transaction
-                using var transaction = await _unitOfWork.BeginTransactionAsync();
-
-                // Lấy danh sách OrderDetail
-                var orderDetails = await _unitOfWork.orderDetailRepository.GetOrderDetailsByOrderId(orderId);
-
-                var productList = new Dictionary<long, Product>();
-                var errorMessages = new List<string>();
-
-                foreach (var item in orderDetails)
-                {
-                    var product = await _unitOfWork.productRepository.GetProductById(item.ProductId);
-                    if (product == null)
-                    {
-                        errorMessages.Add($"Product ID {item.ProductId} not found.");
-                    }
-                    else if (product.Status == 0)
-                    {
-                        errorMessages.Add($"Product ID {item.ProductId} is unavailable.");
-                    }
-                    else if (product.StockQuantity < item.Quantity)
-                    {
-                        errorMessages.Add($"Product ID {item.ProductId} does not have enough stock.");
-                    }
-                    else
-                    {
-                        productList[item.ProductId] = product;
-                    }
-                }
-
-                if (errorMessages.Any())
-                {
-                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Cannot proceed with payment due to stock issues.", errorMessages);
-                }
-
-                // Cập nhật số lượng tồn kho và trạng thái sản phẩm
-                foreach (var item in orderDetails)
-                {
-                    var product = productList[item.ProductId];
-                    product.StockQuantity -= item.Quantity;
-                    if (product.StockQuantity <= 0)
-                    {
-                        product.Status = 0; // hết hàng
-                    }
-
-                    await _unitOfWork.productRepository.UpdateAsync(product);
-                }
-
-                await _unitOfWork.SaveChangesAsync();
-                await transaction.CommitAsync();
-
-                // Tạo URL thanh toán
                 var paymentModel = new PaymentInformationModel
                 {
                     OrderId = order.OrderId,
@@ -502,7 +412,6 @@ namespace Application.Services.Implement
                 return new ResponseDTO(Const.ERROR_EXCEPTION, "An error occurred while creating payment.", ex.Message);
             }
         }
-
 
 
     }
