@@ -14,14 +14,12 @@ namespace WebAPI.Controllers
             _categoryServices = categoryServices;
         }
         [HttpGet("get-all")]
-        [Authorize(Roles = "3")]
         public async Task<IActionResult> GetAllCategories()
         {
             var categories = await _categoryServices.GetAllCategoriesAsync();
             return Ok(categories);
         }
         [HttpGet("{id}")]
-        [Authorize(Roles = "3")]
         public async Task<IActionResult> GetCategoryById(long id)
         {
             var category = await _categoryServices.GetCategoryByIdAsync(id);
