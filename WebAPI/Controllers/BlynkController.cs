@@ -16,7 +16,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("get-blynk-data")]
-        [Authorize(Roles = "2")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetBlynkData()
         {
             var data = await _blynkService.GetAllDatastreamValuesAsync();

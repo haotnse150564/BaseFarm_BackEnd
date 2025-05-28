@@ -47,7 +47,7 @@ namespace WebAPI.Controllers
             return Ok(result); // Trả về danh sách sản phẩm với phân trang
         }
         [HttpGet("schedule-list")]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager,Staff")]
         public async Task<IActionResult> GetListSchedule([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
             var result = await _schedule.GetAllScheduleAsync(pageIndex, pageSize);
