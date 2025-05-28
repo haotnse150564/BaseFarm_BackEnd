@@ -149,7 +149,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("updateDeliveryStatus/{orderId}")]
-        [Authorize(Roles = "2,3")]
+        [Authorize]
         public async Task<IActionResult> UpdateOrderDeliveryStatus(long orderId)
         {
             var result = await _orderService.UpdateOrderDeliveryStatusAsync(orderId);
