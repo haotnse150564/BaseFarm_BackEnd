@@ -21,7 +21,7 @@ namespace WebAPI.Controllers
             _logger = logger;
         }
         [HttpPost("iotDevices-create")]
-        [Authorize(Roles = "Staff, Manager, Admin")]
+        //[Authorize(Roles = "Staff, Manager, Admin")]
         public async Task<IActionResult> CreateiotDevices([FromBody] IOTRequest request)
         {
             var result = await _ioTdevice.CreateDeviceAsync(request);
@@ -35,7 +35,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("iotDevices-list")]
-        [Authorize(Roles = "Manager")]
+        //[Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetListiotDevices([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
             var result = await _ioTdevice.GetAllDevices(pageIndex, pageSize);

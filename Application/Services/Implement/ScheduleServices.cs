@@ -65,10 +65,10 @@ namespace Application.Services.Implement
                 {
                     return new ResponseDTO(Const.ERROR_EXCEPTION, "The start date cannot be set after the end date.");
                 }
-                else if (getduplicateCrop.EndDate >= result.StartDate)
-                {
-                    return new ResponseDTO(Const.ERROR_EXCEPTION, "Crop is in the process of cultivation");
-                }
+                //else if (getduplicateCrop.EndDate <= result.StartDate)
+                //{
+                //    return new ResponseDTO(Const.ERROR_EXCEPTION, "Crop is in the process of cultivation");
+                //}
                 else if (result.StartDate > result.EndDate)
                 {
                     return new ResponseDTO(Const.ERROR_EXCEPTION, "The start date cannot be set before the end date.");
