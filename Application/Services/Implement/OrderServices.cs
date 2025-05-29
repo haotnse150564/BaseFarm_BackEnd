@@ -383,7 +383,7 @@ namespace Application.Services.Implement
                         // Nếu sản phẩm trước đó hết hàng thì cập nhật lại trạng thái
                         if (product.StockQuantity > 0)
                         {
-                            product.Status = Status.ACTIVE;
+                            product.Status = ProductStatus.ACTIVE;
                         }
 
                         await _unitOfWork.productRepository.UpdateAsync(product);

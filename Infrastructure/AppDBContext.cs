@@ -90,9 +90,9 @@ namespace Infrastructure
                  );
 
             builder.Entity<Product>().HasData(
-                new Product { ProductId = 1, ProductName = "Morning Glory - Rau Muong", Images = rau1, Price = 10000, StockQuantity = 10000, Description = "Rau Muong", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, },
-                new Product { ProductId = 2, ProductName = "Amarant - Rau Den", Images = rau2, Price = 15000, StockQuantity = 10000, Description = "Rau Den", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, },
-                new Product { ProductId = 3, ProductName = "Turnip - Cai", Images = rau3, Price = 20000, StockQuantity = 10000, Description = "Cai", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, }
+                new Product { ProductId = 1, ProductName = "Morning Glory - Rau Muong", Images = rau1, Price = 10000, StockQuantity = 10000, Description = "Rau Muong", Status = Domain.Enum.ProductStatus.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, },
+                new Product { ProductId = 2, ProductName = "Amarant - Rau Den", Images = rau2, Price = 15000, StockQuantity = 10000, Description = "Rau Den", Status = Domain.Enum.ProductStatus.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, },
+                new Product { ProductId = 3, ProductName = "Turnip - Cai", Images = rau3, Price = 20000, StockQuantity = 10000, Description = "Cai", Status = Domain.Enum.ProductStatus.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, }
                 //new Product { ProductId = 4, ProductName = "Fruit 1", Images = null, Price = 35000, StockQuantity = 10000, Description = "Ca chua", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, },
                 //new Product { ProductId = 5, ProductName = "Fruit 2", Images = null, Price = 55000, StockQuantity = 10000, Description = "Dua Hau", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, }
                 );

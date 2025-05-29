@@ -29,7 +29,7 @@ namespace Application.Services.Implement
             try
             {
                 var listProduct = await _unitOfWork.productRepository.GetAllAsync();
-                var listFilter = listProduct.Where(x => x.Status == Status.ACTIVE).ToList();
+                var listFilter = listProduct.Where(x => x.Status == ProductStatus.ACTIVE).ToList();
                 if (listFilter == null)
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, "No Products found.");
@@ -161,7 +161,7 @@ namespace Application.Services.Implement
                 // Ánh xạ từ DTO sang Entity
                 var product = _mapper.Map<Product>(request);
                 product.ProductId = request.CropId;
-                product.Status = Status.ACTIVE;
+                product.Status = ProductStatus.ACTIVE;
                 product.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
                 product.StockQuantity = 0;
                 // Gọi AddAsync nhưng không gán vào biến vì nó không có giá trị trả về
@@ -301,7 +301,7 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Product not found !");
                 }
 
-                product.Status = (product.Status == Status.ACTIVE) ? Status.DEACTIVATED : Status.ACTIVE;
+                product.Status = (product.Status == ProductStatus.ACTIVE) ? ProductStatus.DEACTIVED : ProductStatus.ACTIVE;
 
                 // Lưu các thay đổi vào cơ sở dữ liệu
                 await _unitOfWork.productRepository.UpdateAsync(product);

@@ -18,7 +18,7 @@ public partial class Product
 
     public string? Description { get; set; }
 
-    public Status? Status { get; set; }
+    public ProductStatus? Status { get; set; }
 
     public DateOnly? CreatedAt { get; set; }
 
