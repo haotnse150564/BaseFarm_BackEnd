@@ -150,7 +150,7 @@ namespace Application.Services.Implement
             {
                 return new ResponseDTO(Const.FAIL_READ_CODE, "There are do not any feedback for this product.");
             }
-            else if (getUser == null || !getUser.Role.Equals(Roles.Manager))
+            else if (getUser == null || !getUser.Role.Equals(Roles.Staff))
             {
                 return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result.Where(x => x.Status == Status.ACTIVE.ToString()).ToList());
             }
