@@ -24,6 +24,7 @@ namespace Infrastructure.ViewModel.Response
 
         public class ViewFeedbackDTO
         {
+            public long FeedbackId { get; set; }
             public string? Comment { get; set; }
 
             public int? Rating { get; set; }
