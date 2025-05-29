@@ -29,7 +29,7 @@ namespace Infrastructure
 
         public DbSet<Farm> Farm { get; set; }
 
-        //public DbSet<FarmActivity> FarmActivitie { get; set; }
+        public DbSet<FarmActivity> FarmActivity { get; set; }
 
         public DbSet<Feedback> Feedback { get; set; }
 

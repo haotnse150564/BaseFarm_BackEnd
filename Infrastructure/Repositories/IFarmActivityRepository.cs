@@ -10,5 +10,6 @@ namespace Infrastructure.Repositories
 {
     public interface IFarmActivityRepository : IGenericRepository<FarmActivity>
     {
+        Task<List<FarmActivity>>GetAllActive();
     }
 }
