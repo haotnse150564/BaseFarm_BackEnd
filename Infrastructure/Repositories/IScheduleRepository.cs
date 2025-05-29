@@ -10,5 +10,6 @@ namespace Infrastructure.Repositories
 {
     public interface IScheduleRepository : IGenericRepository<Schedule>
     {
+        Task<List<Schedule?>> GetByStaffIdAsync(long staffId);
     }
 }

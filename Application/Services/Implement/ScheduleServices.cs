@@ -229,6 +229,25 @@ namespace Application.Services.Implement
             }
         }
 
+        public async Task<ResponseDTO> GetScheduleByStaffIdAsync(long staffId)
+        {
+            try
+            {
+                var schedule = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(staffId);
 
+                if (schedule.Count == 0)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "No Schedule found.");
+                }
+
+                // Map dữ liệu sang DTO
+                var result = _mapper.Map<List<ViewSchedule>>(schedule);
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+            }
+        }
     }
 }

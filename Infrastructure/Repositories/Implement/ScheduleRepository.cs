@@ -33,5 +33,19 @@ namespace Infrastructure.Repositories.Implement
             .ToListAsync();
             return result;
         }
+
+        public async Task<List<Schedule?>> GetByStaffIdAsync(long staffId)
+        {
+            var result = await _context.Schedule 
+            .Include(a => a.AssignedToNavigation)
+            .Include(a => a.Crop)
+            .Include(a => a.AssignedToNavigation)
+            .ThenInclude(a => a.AccountProfile)
+            .Include(a => a.FarmActivities)
+            .Include(a => a.FarmDetails)
+            .Where(x => x.AssignedTo == staffId)
+            .ToListAsync();
+            return result;
+        }
     }
 }
