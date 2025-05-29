@@ -139,5 +139,19 @@ namespace Application.Services.Implement
                 return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
             }
         }
+
+        public async Task<ResponseDTO> GetFeedbackByProductIdAsync(long productId)
+        {
+            var feedbacks = await _unitOfWork.feedbackRepository.GetByProductIdAsync(productId);
+
+            if (feedbacks == null || !feedbacks.Any())
+            {
+                return new ResponseDTO(Const.FAIL_READ_CODE, "There are do not any feedback for this product.");
+            }
+
+            // Map dữ liệu sang DTO
+            var result = _mapper.Map<List<ViewFeedbackDTO>>(feedbacks);
+            return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+        }
     }
 }
