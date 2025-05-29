@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Domain.Model;
+using Infrastructure.ViewModel.Request;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace Infrastructure.Mapper
             CreateMap<FarmActivity, FarmActivityView>()
                 .ForMember(dest => dest.FarmActivitiesId, opt => opt.MapFrom(src => src.FarmActivitiesId))
                 .ReverseMap();
-
+            CreateMap<FarmActivity,FarmActivityRequest>().ReverseMap();
         }
     }
 }
