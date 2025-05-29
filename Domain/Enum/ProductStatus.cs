@@ -8,8 +8,8 @@ namespace Domain.Enum
 {
     public enum ProductStatus
     {
-        ACTIVE,
         DEACTIVED,
+        ACTIVE,
         //OUT_OF_STOCK,
         //DISCONTINUED
     }
