@@ -10,7 +10,7 @@ namespace Domain.Enum
     {
         ACTIVE,
         DEACTIVED,
-        OUT_OF_STOCK,
-        DISCONTINUED
+        //OUT_OF_STOCK,
+        //DISCONTINUED
     }
 }
