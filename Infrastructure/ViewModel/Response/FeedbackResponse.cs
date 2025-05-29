@@ -31,6 +31,7 @@ namespace Infrastructure.ViewModel.Response
             public DateOnly? CreatedAt { get; set; }
             public string? FullName { get; set; }
             public string? Email { get; set; }
+            public string? Status { get; set; }
             public OrderDetailDTO OrderDetail { get; set; } = new OrderDetailDTO();
         }
     }
