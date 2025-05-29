@@ -46,7 +46,7 @@ namespace Application.ViewModel.Response
         public class OrderDetailDTO
         {
             public long ProductId { get; set; } // ID của Product
-            public string ProductName { get; set; } = string.Empty; // 🔥 Thêm ProductName
+            public string ProductName { get; set; } = string.Empty; 
             public decimal? UnitPrice { get; set; }
             public int? Quantity { get; set; }
         }

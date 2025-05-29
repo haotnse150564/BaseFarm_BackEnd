@@ -165,5 +165,18 @@ namespace Application.Services.Implement
 
 
         }
+        
+        public async Task<ResponseDTO> GetFeedbackByOrderIdAsync(long orderId)
+        {
+            var feedbacks = await _unitOfWork.feedbackRepository.GetByOrderIdAsync(orderId);
+            var result = _mapper.Map<List<ViewFeedbackDTO>>(feedbacks);
+            if (feedbacks == null || !feedbacks.Any())
+            {
+                return new ResponseDTO(Const.FAIL_READ_CODE, "There are do not any feedback for this Order.");
+            }
+
+            return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+
+        }
     }
 }

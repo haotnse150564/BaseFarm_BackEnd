@@ -88,6 +88,7 @@ namespace WebAPI.Controllers
 
             return Ok(response); // Trả về mã 200 nếu cập nhật thành công với thông tin trong ResponseDTO
         }
+
         [HttpGet("feedback-by-product/{productId}")]
         public async Task<IActionResult> GetFeedbackByProductIdAsync([FromRoute] long productId)
         {
@@ -97,6 +98,17 @@ namespace WebAPI.Controllers
                 return BadRequest(result); // Trả về lỗi 400 nếu thất bại
             }
             return Ok(result); // Trả về danh sách phản hồi cho sản phẩm
+        }
+
+        [HttpGet("feedback-by-order/{orderId}")]
+        public async Task<IActionResult> GetFeedbackByOrderIdAsync([FromRoute] long orderId)
+        {
+            var result = await _feedbackService.GetFeedbackByOrderIdAsync(orderId);
+            if (result.Status != Const.SUCCESS_READ_CODE)
+            {
+                return BadRequest(result); 
+            }
+            return Ok(result); 
         }
     }
 }

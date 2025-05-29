@@ -15,5 +15,6 @@ namespace Application.Services
         Task<ResponseDTO> UpdateFeedbackById(long feedbackId, CreateFeedbackDTO request);
         Task<ResponseDTO> UpdateFeedbackStatusById(long feedbackId);
         Task<ResponseDTO> GetFeedbackByProductIdAsync(long productId);
+        Task<ResponseDTO> GetFeedbackByOrderIdAsync(long orderId);
     }
 }

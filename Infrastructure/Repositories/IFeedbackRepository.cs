@@ -9,5 +9,6 @@ namespace Infrastructure.Repositories
         Task<IEnumerable<Feedback>> GetPagedAsync(int pageIndex, int pageSize);
         Task<Feedback> GetByIdAsync(long id);
         Task<List<Feedback>> GetByProductIdAsync(long productId);
+        Task<List<Feedback>> GetByOrderIdAsync(long orderId);
     }
 }
