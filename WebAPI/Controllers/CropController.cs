@@ -38,9 +38,9 @@ namespace WebAPI.Controllers
         }
         [HttpPut("chang-status")]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> ChangeStatus(long cropId)
+        public async Task<IActionResult> ChangeStatus(long cropId, int status)
         {
-            var result = await _cropServices.UpdateCropStatusAsync(cropId);
+            var result = await _cropServices.UpdateCropStatusAsync(cropId, status);
             return Ok(result);
         }
         [HttpPost("search")]

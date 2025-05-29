@@ -10,7 +10,6 @@ namespace Domain.Enum
     {
         ACTIVE,
         INACTIVE,
-        CLEAR,
         IN_STOCK
     }
 }

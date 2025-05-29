@@ -104,7 +104,7 @@ namespace Application.Services.Implement
             }
         }
 
-        public async Task<ResponseDTO> UpdateCropStatusAsync(long cropId)
+        public async Task<ResponseDTO> UpdateCropStatusAsync(long cropId, int status)
         {
             try
             {
@@ -114,7 +114,7 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "crop not found !");
                 }
 
-                crop.Status = (crop.Status == CropStatus.ACTIVE) ? CropStatus.INACTIVE : CropStatus.ACTIVE;
+                crop.Status = (CropStatus)status;
 
                 // Lưu các thay đổi vào cơ sở dữ liệu
                 await _unitOfWork.cropRepository.UpdateAsync(crop);
