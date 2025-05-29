@@ -173,7 +173,7 @@ namespace Application.Services.Implement
                     {
                         return new ResponseDTO(Const.FAIL_CREATE_CODE, "Crop not exists.");
                     }
-                    crop.Status = CropStatus.INACTIVE;
+                    crop.Status = CropStatus.HARVESTED;
                     await _unitOfWork.cropRepository.UpdateAsync(crop);
                 }
                 var check = await _unitOfWork.SaveChangesAsync();
