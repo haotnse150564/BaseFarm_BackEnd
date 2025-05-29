@@ -23,7 +23,7 @@ namespace Infrastructure.ViewModel.Response
 
             public string? CreatedAt { get; set; }
 
-            public DateOnly? PlantingDate { get; set; }
+            public string? PlantingDate { get; set; }
             public string? UpdatedAt { get; set; }
             public string? ActivityType { get; set; }
             public ViewAccount? accountView { get; set; }
