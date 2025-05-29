@@ -13,6 +13,7 @@ namespace Infrastructure.Mapper
         {
             CreateMap<Feedback, ViewFeedbackDTO>()
             .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.Customer.AccountProfile.Fullname))
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Customer.Email))
             .ForMember(dest => dest.OrderDetail, opt => opt.MapFrom(src => src.OrderDetail));
 
             CreateMap<Feedback, CreateFeedbackDTO>().ReverseMap();

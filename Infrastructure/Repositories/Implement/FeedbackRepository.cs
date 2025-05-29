@@ -37,5 +37,17 @@ namespace Infrastructure.Repositories.Implement
                 .ThenInclude(od => od.Product)
                 .FirstOrDefaultAsync(f => f.FeedbackId == id);
         }
+
+        public Task<List<Feedback>> GetByProductIdAsync(long productId)
+        {
+            var feedbacks = _context.Feedback
+                .Include(f => f.Customer)
+                .ThenInclude(a => a.AccountProfile)
+                .Include(f => f.OrderDetail)
+                .ThenInclude(od => od.Product)
+                .Where(f => f.OrderDetail.ProductId == productId)
+                .ToListAsync();
+            return feedbacks;
+        }
     }
 }
