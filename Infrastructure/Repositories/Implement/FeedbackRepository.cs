@@ -45,7 +45,7 @@ namespace Infrastructure.Repositories.Implement
                 .ThenInclude(a => a.AccountProfile)
                 .Include(f => f.OrderDetail)
                 .ThenInclude(od => od.Product)
-                .Where(f => f.OrderDetail.ProductId == productId && f.Status == Domain.Enum.Status.ACTIVE)
+                .Where(f => f.OrderDetail.ProductId == productId)
                 .ToListAsync();
             return feedbacks;
         }

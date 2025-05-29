@@ -2,6 +2,7 @@
 using Application.Interfaces;
 using Application.Utils;
 using AutoMapper;
+using Domain.Enum;
 using Domain.Model;
 using Microsoft.Extensions.Configuration;
 using static Infrastructure.ViewModel.Request.FeedbackRequest;
@@ -142,16 +143,27 @@ namespace Application.Services.Implement
 
         public async Task<ResponseDTO> GetFeedbackByProductIdAsync(long productId)
         {
+            var getUser = await _jwtUtils.GetCurrentUserAsync();
             var feedbacks = await _unitOfWork.feedbackRepository.GetByProductIdAsync(productId);
-
+            var result = _mapper.Map<List<ViewFeedbackDTO>>(feedbacks);
             if (feedbacks == null || !feedbacks.Any())
             {
                 return new ResponseDTO(Const.FAIL_READ_CODE, "There are do not any feedback for this product.");
             }
+            else if (getUser == null || !getUser.Role.Equals(Roles.Manager))
+            {
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result.Where(x => x.Status == Status.ACTIVE.ToString()).ToList());
+            }
+            else
+            {
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+            }
+
+
 
             // Map dữ liệu sang DTO
-            var result = _mapper.Map<List<ViewFeedbackDTO>>(feedbacks);
-            return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+
+
         }
     }
 }

@@ -165,7 +165,7 @@ public class VnPayService : IVnPayService
 
                         // Nếu trước đó sản phẩm hết hàng thì cập nhật lại trạng thái
                         if (product.StockQuantity > 0)
-                            product.Status = Status.ACTIVE; // Đổi sang trạng thái phù hợp
+                            product.Status = ProductStatus.ACTIVE; // Đổi sang trạng thái phù hợp
 
                         await _unitOfWork.productRepository.UpdateAsync(product);
                     }
