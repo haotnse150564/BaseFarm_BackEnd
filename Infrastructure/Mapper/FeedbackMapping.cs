@@ -12,7 +12,7 @@ namespace Infrastructure.Mapper
         public FeedbackMapping()
         {
             CreateMap<Feedback, ViewFeedbackDTO>()
-            .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Customer.AccountProfile.Phone))
+            .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.Customer.AccountProfile.Fullname))
             .ForMember(dest => dest.OrderDetail, opt => opt.MapFrom(src => src.OrderDetail));
 
             CreateMap<Feedback, CreateFeedbackDTO>().ReverseMap();

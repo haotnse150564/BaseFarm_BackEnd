@@ -29,7 +29,7 @@ namespace Infrastructure.ViewModel.Response
             public int? Rating { get; set; }
 
             public DateOnly? CreatedAt { get; set; }
-            public string? Phone { get; set; }
+            public string? FullName { get; set; }
             public OrderDetailDTO OrderDetail { get; set; } = new OrderDetailDTO();
         }
     }
