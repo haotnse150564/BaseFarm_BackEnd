@@ -114,11 +114,11 @@ namespace Infrastructure
                 new Farm { FarmId = 3, FarmName = "Cai", Location = "TP. Ho Chi Minh", CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("3/5/2025"), AccountId = 7 }
         );
             builder.Entity<Crop>().HasData(
-                new Crop { CropId = 1, CropName = "Cop 01", Description = "3x3 m2", Status = Domain.Enum.Status.ACTIVE, CategoryId = 1 },
-                new Crop { CropId = 2, CropName = "Cop 02", Description = "2x3 m2", Status = Domain.Enum.Status.ACTIVE, CategoryId = 1 },
-                new Crop { CropId = 3, CropName = "Cop 03", Description = "3x2 m2", Status = Domain.Enum.Status.ACTIVE, CategoryId = 1 },
-                new Crop { CropId = 4, CropName = "Cop 04", Description = "3x5 m2", Status = Domain.Enum.Status.ACTIVE, CategoryId = 3 },
-                new Crop { CropId = 5, CropName = "Cop 05", Description = "4x3 m2", Status = Domain.Enum.Status.ACTIVE, CategoryId = 3 }
+                new Crop { CropId = 1, CropName = "Cop 01", Description = "3x3 m2", Status = Domain.Enum.CropStatus.ACTIVE, CategoryId = 1 },
+                new Crop { CropId = 2, CropName = "Cop 02", Description = "2x3 m2", Status = Domain.Enum.CropStatus.ACTIVE, CategoryId = 1 },
+                new Crop { CropId = 3, CropName = "Cop 03", Description = "3x2 m2", Status = Domain.Enum.CropStatus.ACTIVE, CategoryId = 1 },
+                new Crop { CropId = 4, CropName = "Cop 04", Description = "3x5 m2", Status = Domain.Enum.CropStatus.ACTIVE, CategoryId = 3 },
+                new Crop { CropId = 5, CropName = "Cop 05", Description = "4x3 m2", Status = Domain.Enum.CropStatus.ACTIVE, CategoryId = 3 }
                 );
 
             builder.Entity<IoTdevice>().HasData(
