@@ -154,9 +154,9 @@ namespace Infrastructure
                 new CropRequirement { RequirementId = 3, EstimatedDate = 30, Moisture = 1, Temperature = 26, Fertilizer = "NPK", DeviceId = 2 }
                 );
             builder.Entity<Feedback>().HasData(
-                new Feedback { FeedbackId = 1, OrderDetailId = 1, CustomerId = 4, CreatedAt = DateOnly.Parse("4/3/2025"), Rating = 4, Comment = "App very good, but load data slow" },
-                new Feedback { FeedbackId = 2, OrderDetailId = 2, CustomerId = 7, CreatedAt = DateOnly.Parse("4/10/2025"), Rating = 5, Comment = "My avt so cute <3" },
-                new Feedback { FeedbackId = 3, OrderDetailId = 3, CustomerId = 8, CreatedAt = DateOnly.Parse("3/3/2025"), Rating = 5, Comment = "Test FeedBack <3" }
+                new Feedback { FeedbackId = 1, OrderDetailId = 1, CustomerId = 4, CreatedAt = DateOnly.Parse("4/3/2025"),Status = Domain.Enum.Status.ACTIVE, Rating = 4, Comment = "App very good, but load data slow" },
+                new Feedback { FeedbackId = 2, OrderDetailId = 2, CustomerId = 7, CreatedAt = DateOnly.Parse("4/10/2025"), Status = Domain.Enum.Status.ACTIVE, Rating = 5, Comment = "My avt so cute <3" },
+                new Feedback { FeedbackId = 3, OrderDetailId = 3, CustomerId = 8, CreatedAt = DateOnly.Parse("3/3/2025"), Status = Domain.Enum.Status.ACTIVE, Rating = 5, Comment = "Test FeedBack <3" }
     );
             #endregion
         }
