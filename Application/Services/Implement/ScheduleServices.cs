@@ -48,6 +48,7 @@ namespace Application.Services.Implement
                     EndDate = DateOnly.Parse("09/09/2025"),
                     AssignedTo = request.AssignedTo,
                     //FarmActivityId = request.FarmActivityId,
+                    PlantingDate = request.PlantingDate,
                     FarmActivities = farmActivity == null ? new List<FarmActivity>() : new List<FarmActivity> { farmActivity },
                     FarmDetailsId = request.FarmDetailsId,
                     CropId = request.CropId,

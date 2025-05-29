@@ -76,13 +76,9 @@ namespace Application.Services.Implement
                 feedback.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
                 feedback.CustomerId = user.AccountId;
                 feedback.Status = Domain.Enum.Status.ACTIVE;
-                // Gọi AddAsync nhưng không gán vào biến vì nó không có giá trị trả về
-                var create = _unitOfWork.feedbackRepository.AddAsync(feedback);
 
-                if (create == null)
-                {
-                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Failed to Cteate Feedback to repository.");
-                }
+                await _unitOfWork.feedbackRepository.AddAsync(feedback);
+                await _unitOfWork.SaveChangesAsync();
 
                 return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Feedback created!");
             }
