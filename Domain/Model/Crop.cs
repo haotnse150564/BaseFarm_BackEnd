@@ -16,7 +16,7 @@ public partial class Crop
 
     public string? Origin { get; set; }
 
-    public Status? Status { get; set; }
+    public CropStatus? Status { get; set; }
 
     public long? CategoryId { get; set; }
 

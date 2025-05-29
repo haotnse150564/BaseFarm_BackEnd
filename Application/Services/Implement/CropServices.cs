@@ -61,7 +61,7 @@ namespace Application.Services.Implement
         public async Task<List<CropView>> GetAllCropsActiveAsync()
         {
             var result = await _unitOfWork.cropRepository.GetAllAsync();
-            var cropFilter = result.Where(x => x.Status == Domain.Enum.Status.ACTIVE).ToList();
+            var cropFilter = result.Where(x => x.Status == Domain.Enum.CropStatus.ACTIVE).ToList();
             if (cropFilter.IsNullOrEmpty())
             {
                 throw new Exception();
@@ -85,7 +85,7 @@ namespace Application.Services.Implement
 
                 // Ánh xạ từ DTO sang Entity
                 var crop = _mapper.Map<Crop>(request);
-                crop.Status = Domain.Enum.Status.ACTIVE;
+                crop.Status = Domain.Enum.CropStatus.ACTIVE;
 
                 // Gọi AddAsync nhưng không gán vào biến vì nó không có giá trị trả về
                 await _unitOfWork.cropRepository.AddAsync(crop);
@@ -114,7 +114,7 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "crop not found !");
                 }
 
-                crop.Status = (crop.Status == Status.ACTIVE) ? Status.DEACTIVATED : Status.ACTIVE;
+                crop.Status = (crop.Status == CropStatus.ACTIVE) ? CropStatus.INACTIVE : CropStatus.ACTIVE;
 
                 // Lưu các thay đổi vào cơ sở dữ liệu
                 await _unitOfWork.cropRepository.UpdateAsync(crop);

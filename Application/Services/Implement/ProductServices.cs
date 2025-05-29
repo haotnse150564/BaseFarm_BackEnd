@@ -163,6 +163,7 @@ namespace Application.Services.Implement
                 product.ProductId = request.CropId;
                 product.Status = Status.ACTIVE;
                 product.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
+                product.StockQuantity = 0;
                 // Gọi AddAsync nhưng không gán vào biến vì nó không có giá trị trả về
                 await _unitOfWork.productRepository.AddAsync(product);
                 if (await _unitOfWork.SaveChangesAsync() < 0) ;
@@ -172,7 +173,7 @@ namespace Application.Services.Implement
                     {
                         return new ResponseDTO(Const.FAIL_CREATE_CODE, "Crop not exists.");
                     }
-                    crop.Status = Status.DEACTIVATED;
+                    crop.Status = CropStatus.INACTIVE;
                     await _unitOfWork.cropRepository.UpdateAsync(crop);
                 }
                 var check = await _unitOfWork.SaveChangesAsync();
@@ -258,7 +259,7 @@ namespace Application.Services.Implement
                     updatedProduct.ProductId = product.ProductId;
                     updatedProduct.ProductName = request.ProductName;
                     updatedProduct.CategoryId = (long)request.CategoryId;
-                    updatedProduct.StockQuantity = request.StockQuantity;
+                    updatedProduct.StockQuantity = 0;
                     updatedProduct.Images = request.Images;
                     updatedProduct.Price = request.Price;
                     updatedProduct.Description = request.Description;
@@ -279,6 +280,7 @@ namespace Application.Services.Implement
                     result.CropId = product.ProductNavigation.CropId.ToString();
                     result.CropName = product.ProductNavigation.CropName;
                     result.CategoryName = category.Where(x => x.CategoryId == result.CategoryId).FirstOrDefault().CategoryName;
+                    result.StockQuantity = product.StockQuantity;
 
                     return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_UPDATE_MSG, result);
                 }
