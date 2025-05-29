@@ -23,7 +23,7 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
         [HttpGet("get-all-active")]
-        [Authorize(Roles = "Manager")]
+        [Authorize]
         public async Task<IActionResult> GetAllCropsActive()
         {
             var result = await _cropServices.GetAllCropsActiveAsync();

@@ -21,7 +21,7 @@ namespace WebAPI.Controllers
             _logger = logger;
         }
         [HttpPost("iotDevices-create")]
-        [Authorize(Roles = "Manager")]
+        //[Authorize(Roles = "Manager")]
         public async Task<IActionResult> CreateiotDevices([FromBody] IOTRequest request)
         {
             var result = await _ioTdevice.CreateDeviceAsync(request);
@@ -35,7 +35,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("iotDevices-list")]
-        [Authorize(Roles = "Manager")]
+        //[Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetListiotDevices([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
             var result = await _ioTdevice.GetAllDevices(pageIndex, pageSize);
@@ -48,7 +48,7 @@ namespace WebAPI.Controllers
             return Ok(result); // Trả về danh sách sản phẩm với phân trang
         }
         [HttpGet("iotDevices-byId")]
-        [Authorize(Roles = "Manager")]
+        //[Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetiotDevicesByID(long id)
         {
             var result = await _ioTdevice.GetDeviceById(id);
@@ -61,7 +61,7 @@ namespace WebAPI.Controllers
             return Ok(result); // Trả về danh sách sản phẩm với phân trang
         }
         [HttpPut("iotDevices-update-status")]
-        [Authorize(Roles = "Manager")]
+        //[Authorize(Roles = "Manager")]
         public async Task<IActionResult> UpdateiotDevicesStatus(long iotDevicesId, [FromBody] string status)
         {
             var result = await _ioTdevice.UpdateStatusDeviceAsync(iotDevicesId, status.ToUpper());
@@ -74,7 +74,7 @@ namespace WebAPI.Controllers
             return Ok(result); // Trả về danh sách sản phẩm với phân trang
         }
         [HttpPatch("iotDevices-update")]
-        [Authorize(Roles = "Manager")]
+        //[Authorize(Roles = "Manager")]
         public async Task<IActionResult> UpdateiotDevices(long iotDevicesId, [FromBody] IOTRequest request)
         {
             var result = await _ioTdevice.UpdateDeviceAsync(iotDevicesId, request);
