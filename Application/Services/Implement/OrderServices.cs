@@ -359,21 +359,47 @@ namespace Application.Services.Implement
                 var order = await _unitOfWork.orderRepository.GetOrderById(orderId);
                 if (order == null)
                 {
-                    return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Order not found !");
+                    return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Order not found!");
                 }
 
-                order.Status = PaymentStatus.CANCELLED;
+                if (order.Status == PaymentStatus.CANCELLED)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Order is already cancelled.");
+                }
 
-                // Lưu các thay đổi vào cơ sở dữ liệu
+                // Đổi trạng thái sang CANCELLED
+                order.Status = PaymentStatus.CANCELLED;
                 await _unitOfWork.orderRepository.UpdateAsync(order);
 
-                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, "Change Status Succeed");
+                // 🔁 Hoàn lại số lượng sản phẩm nếu đơn bị hủy
+                var orderDetails = await _unitOfWork.orderDetailRepository.GetOrderDetailsByOrderId(order.OrderId);
+                foreach (var item in orderDetails)
+                {
+                    var product = await _unitOfWork.productRepository.GetByIdAsync(item.ProductId);
+                    if (product != null)
+                    {
+                        product.StockQuantity += item.Quantity ?? 0;
+
+                        // Nếu sản phẩm trước đó hết hàng thì cập nhật lại trạng thái
+                        if (product.StockQuantity > 0)
+                        {
+                            product.Status = Status.ACTIVE;
+                        }
+
+                        await _unitOfWork.productRepository.UpdateAsync(product);
+                    }
+                }
+
+                await _unitOfWork.SaveChangesAsync();
+
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, "Order cancelled and stock quantity restored.");
             }
             catch (Exception ex)
             {
                 return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
             }
         }
+
 
         public async Task<ResponseDTO> CreateOrderPaymentAsync(long orderId, HttpContext context)
         {
