@@ -18,11 +18,9 @@ namespace Infrastructure.ViewModel.Response
 
             public string? Description { get; set; }
 
-            public string? ImageUrl { get; set; }
-
+            public string Status { get; set; }
             public string? Origin { get; set; }
 
-            public CategoryView Category { get; set; }
 
         }
         public class ResponseDTO

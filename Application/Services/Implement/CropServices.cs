@@ -119,7 +119,7 @@ namespace Application.Services.Implement
                 // Lưu các thay đổi vào cơ sở dữ liệu
                 await _unitOfWork.cropRepository.UpdateAsync(crop);
                 await _unitOfWork.SaveChangesAsync();
-                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, "Change Status Succeed");
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_UPDATE_MSG, "Change Status Succeed");
             }
             catch (Exception ex)
             {

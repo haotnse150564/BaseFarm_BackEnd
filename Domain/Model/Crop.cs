@@ -18,9 +18,9 @@ public partial class Crop
 
     public Status? Status { get; set; }
 
-    public long CategoryId { get; set; }
+    public long? CategoryId { get; set; }
 
-    public virtual Category Category { get; set; } = null!;
+    public virtual Category? Category { get; set; } = null!;
 
     public virtual CropRequirement? CropRequirement { get; set; }
 

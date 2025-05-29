@@ -13,8 +13,9 @@ namespace Infrastructure.Mapper
     public class CropMapping : Profile
     {
         public CropMapping() {
-            CreateMap<Crop, CropView>().ReverseMap()
-                .ForPath(dest => dest.Category, opt => opt.MapFrom(src => src.Category));
+            CreateMap<Crop, CropView>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+                .ReverseMap();
                 
             CreateMap<Crop, CropRequest>().ReverseMap();
         }
