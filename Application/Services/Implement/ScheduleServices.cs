@@ -40,7 +40,7 @@ namespace Application.Services.Implement
         {
             try
             {
-                //var crop = await _unitOfWork.cropRepository.GetByIdAsync(request.CropId);
+                var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(request.FarmActivityId);
                 var result = new Schedule
                 {
                     StartDate = request.StartDate,
@@ -48,6 +48,7 @@ namespace Application.Services.Implement
                     EndDate = DateOnly.Parse("09/09/2025"),
                     AssignedTo = request.AssignedTo,
                     //FarmActivityId = request.FarmActivityId,
+                    FarmActivities = farmActivity == null ? new List<FarmActivity>() : new List<FarmActivity> { farmActivity },
                     FarmDetailsId = request.FarmDetailsId,
                     CropId = request.CropId,
                     UpdatedAt = _currentTime.GetCurrentTime(),

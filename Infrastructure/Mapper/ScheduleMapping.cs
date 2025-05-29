@@ -17,8 +17,7 @@ namespace Infrastructure.Mapper
         {
             CreateMap<Schedule, ScheduleRequest>().ReverseMap()
                    .ForMember(dest => dest.CropId, opt => opt.MapFrom(src => src.CropId))
-                ;
-
+                ;            
             CreateMap<ViewSchedule, Schedule>().ReverseMap()
                    .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
                    .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate.ToString()))
@@ -31,8 +30,10 @@ namespace Infrastructure.Mapper
                    .ForMember(dest => dest.accountView, opt => opt.MapFrom(src => src.AssignedToNavigation))
                    .ForMember(dest => dest.farmActivityView, opt => opt.MapFrom(src => src.FarmActivities))
                    .ForMember(dest => dest.cropView, opt => opt.MapFrom(src => src.Crop))
-                   //.ForMember(dest => dest.ActivityType, opt => opt.MapFrom(src => src.FarmActivities..Value.ToString()))
-                   // .ForMember(dest => dest.dailyLog, opt => opt.MapFrom(src => src.DailyLogs));
+                   .ForMember(dest => dest.FarmActivityId, opt => opt.MapFrom(src => src.FarmActivities))
+                   .ForMember(dest => dest.FarmActivityId, opt => opt.MapFrom(src => src.FarmActivities.Select(x => x.FarmActivitiesId).ToList()))
+            //.ForMember(dest => dest.ActivityType, opt => opt.MapFrom(src => src.FarmActivities..Value.ToString()))
+            // .ForMember(dest => dest.dailyLog, opt => opt.MapFrom(src => src.DailyLogs));
             ;
 
             CreateMap<FarmActivity, FarmActivityView>().ReverseMap();

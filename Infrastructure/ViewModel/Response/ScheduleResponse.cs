@@ -23,6 +23,7 @@ namespace Infrastructure.ViewModel.Response
 
             public string? CreatedAt { get; set; }
 
+            public DateOnly? PlantingDate { get; set; }
             public string? UpdatedAt { get; set; }
             public string? ActivityType { get; set; }
             public ViewAccount? accountView { get; set; }
@@ -32,7 +33,7 @@ namespace Infrastructure.ViewModel.Response
             public List<DailyLogView>? dailyLog { get; set; }
 
             public long AssignedTo { get; set; }
-            public int FarmActivityId { get; set; }
+            public List<int> FarmActivityId { get; set; }
             public long FarmId { get; set; }
             public long CropId { get; set; }
         }
