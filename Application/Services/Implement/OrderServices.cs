@@ -416,6 +416,41 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_READ_CODE, $"Order ID {orderId} is not in a valid state for payment.");
                 }
 
+                // ❗️Chỉ trừ stock nếu order đang ở trạng thái UNDISHCHARGED
+                if (order.Status == PaymentStatus.UNDISCHARGED)
+                {
+                    using var transaction = await _unitOfWork.BeginTransactionAsync();
+
+                    var orderDetails = await _unitOfWork.orderDetailRepository.GetOrderDetailsByOrderId(orderId);
+
+                    foreach (var detail in orderDetails)
+                    {
+                        var product = await _unitOfWork.productRepository.GetProductById(detail.ProductId);
+                        if (product == null)
+                        {
+                            return new ResponseDTO(Const.ERROR_EXCEPTION, $"Product ID {detail.ProductId} not found.");
+                        }
+
+                        if (product.StockQuantity < detail.Quantity)
+                        {
+                            return new ResponseDTO(Const.FAIL_CREATE_CODE, $"Not enough stock for product ID {detail.ProductId}.");
+                        }
+
+                        product.StockQuantity -= detail.Quantity;
+
+                        if (product.StockQuantity == 0)
+                        {
+                            product.Status = 0; // hết hàng
+                        }
+
+                        await _unitOfWork.productRepository.UpdateAsync(product);
+                    }
+
+                    await _unitOfWork.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+
+                // ✅ Tạo URL thanh toán cho cả hai trạng thái
                 var paymentModel = new PaymentInformationModel
                 {
                     OrderId = order.OrderId,
@@ -438,7 +473,6 @@ namespace Application.Services.Implement
                 return new ResponseDTO(Const.ERROR_EXCEPTION, "An error occurred while creating payment.", ex.Message);
             }
         }
-
 
     }
 }
