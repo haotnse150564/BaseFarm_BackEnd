@@ -18,5 +18,6 @@ namespace Application.Services
         Task<ResponseDTO> UpdateCropStatusAsync(long cropId);
         Task<ResponseDTO> SearchCrop(string? cropName, Status? status, int pageIndex, int pageSize);
         Task<ResponseDTO> UpdateCrop(CropRequest cropUpdate, long cropId);
+        Task<ResponseDTO> GetCropExcludingInativeAsync();
     }
 }
