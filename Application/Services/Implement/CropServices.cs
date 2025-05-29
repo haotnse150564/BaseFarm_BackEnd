@@ -184,5 +184,19 @@ namespace Application.Services.Implement
                 return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
             }
         }
+
+        public async Task<ResponseDTO> GetCropExcludingInativeAsync()
+        {
+            var crop = await _unitOfWork.cropRepository.GetAllexcludingInactiveAsync();
+            if (crop.IsNullOrEmpty())
+            {
+                return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "No crops found.");
+            }
+            else
+            {
+                var result = _mapper.Map<List<CropView>>(crop);
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+            }
+        }
     }
 }

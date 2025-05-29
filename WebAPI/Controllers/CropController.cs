@@ -19,7 +19,7 @@ namespace WebAPI.Controllers
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetAllCrops(int pageIndex = 1, int pageSize = 10)
         {
-            var result = await _cropServices.GetAllCropsAsync( pageIndex,  pageSize);
+            var result = await _cropServices.GetAllCropsAsync(pageIndex, pageSize);
             return Ok(result);
         }
         [HttpGet("get-all-active")]
@@ -54,6 +54,12 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> UpdateCrop([FromBody] CropRequest cropUpdate, long cropId)
         {
             var result = await _cropServices.UpdateCrop(cropUpdate, cropId);
+            return Ok(result);
+        }
+        [HttpGet("get-excluding-inactive")]
+        public async Task<IActionResult> GetCropExcludingInative()
+        {
+            var result = await _cropServices.GetCropExcludingInativeAsync();
             return Ok(result);
         }
     }

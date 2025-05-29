@@ -27,6 +27,15 @@ namespace Infrastructure.Repositories.Implement
                 .Include(c => c.Category)
                 .ToListAsync();
         }
+
+        public async Task<List<Crop>> GetAllexcludingInactiveAsync()
+        {
+            var result = await _context.Crops
+                .Where(c => c.Status != Domain.Enum.CropStatus.INACTIVE)
+                .Include(c => c.Category)
+                .ToListAsync();
+            return result;
+        }
     }
 }
 

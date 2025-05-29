@@ -12,5 +12,6 @@ namespace Infrastructure.Repositories
     {
         Task<bool> CheckDuplicateCropName(string cropName);
         Task<List<Crop>> GetAllAsync();
+        Task<List<Crop>> GetAllexcludingInactiveAsync();
     }
 }
