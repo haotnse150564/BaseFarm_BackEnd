@@ -28,6 +28,7 @@ namespace Application.ViewModel.Response
             public long OrderId { get; set; }
             public decimal? TotalPrice { get; set; }
             public string? Email { get; set; }
+            public List<long> OrderDetailIds { get; set; } = new();
             public DateTime? CreatedAt { get; set; }
             public Status? Status { get; set; }
             public string? ShippingAddress { get; set; }
