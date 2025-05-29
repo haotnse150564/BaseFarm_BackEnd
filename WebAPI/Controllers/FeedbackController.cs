@@ -53,7 +53,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("update-feedback/{id}")]
-        [Authorize(Roles = "Customer")]
+        [Authorize(Roles = "Customer,Staff")]
         public async Task<IActionResult> UpdateFeedbackAsync([FromBody] CreateFeedbackDTO request, [FromRoute] long id)
         {
 
@@ -64,6 +64,21 @@ namespace WebAPI.Controllers
             }
 
             var response = await _feedbackService.UpdateFeedbackById(id, request);
+
+            // Kiểm tra kết quả và trả về phản hồi phù hợp
+            if (response.Status != Const.SUCCESS_READ_CODE)
+            {
+                return BadRequest(response); // Trả về mã lỗi 400 với thông báo lỗi từ ResponseDTO
+            }
+
+            return Ok(response); // Trả về mã 200 nếu cập nhật thành công với thông tin trong ResponseDTO
+        }
+
+        [HttpPost("update-feedback-status/{id}")]
+        [Authorize(Roles = "Staff")]
+        public async Task<IActionResult> UpdateFeedbackStatusAsync([FromRoute] long id)
+        {
+            var response = await _feedbackService.UpdateFeedbackStatusById(id);
 
             // Kiểm tra kết quả và trả về phản hồi phù hợp
             if (response.Status != Const.SUCCESS_READ_CODE)

@@ -77,8 +77,8 @@ namespace Application.Services.Implement
                 feedback.Status = Domain.Enum.Status.ACTIVE;
                 // Gọi AddAsync nhưng không gán vào biến vì nó không có giá trị trả về
                 var create = _unitOfWork.feedbackRepository.AddAsync(feedback);
-              
-                if (create == null) 
+
+                if (create == null)
                 {
                     return new ResponseDTO(Const.FAIL_CREATE_CODE, "Failed to Cteate Feedback to repository.");
                 }
@@ -110,6 +110,29 @@ namespace Application.Services.Implement
                 await _unitOfWork.feedbackRepository.UpdateAsync(feedback);
 
                 return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_UPDATE_MSG, result);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+            }
+        }
+
+        public async Task<ResponseDTO> UpdateFeedbackStatusById(long feedbackId)
+        {
+            try
+            {
+                var feedback = await _unitOfWork.feedbackRepository.GetByIdAsync(feedbackId);
+                if (feedback == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Feedback not found !");
+                }
+                feedback.Status = feedback.Status == Domain.Enum.Status.ACTIVE
+                    ? Domain.Enum.Status.DEACTIVATED
+                    : Domain.Enum.Status.ACTIVE;
+                // Lưu các thay đổi vào cơ sở dữ liệu
+                await _unitOfWork.feedbackRepository.UpdateAsync(feedback);
+
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_UPDATE_MSG);
             }
             catch (Exception ex)
             {
