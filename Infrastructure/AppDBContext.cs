@@ -133,14 +133,18 @@ namespace Infrastructure
                 new IoTdevice { IoTdevicesId = 9, DeviceName = "Soil Moisture Sensor 3", DeviceType = "Soil Moisture Sensor IC", Status = Domain.Enum.Status.ACTIVE, Unit = null, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 3 }
                 );
             builder.Entity<Order>().HasData(
-                new Order { OrderId = 1, CustomerId = 8, TotalPrice = 200, ShippingAddress = "TP. Ho Chi Minh", Status = Domain.Enum.PaymentStatus.PAID, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") },
-                new Order { OrderId = 2, CustomerId = 8, TotalPrice = 105, ShippingAddress = "TP. Ho Chi Minh", Status = Domain.Enum.PaymentStatus.PAID, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") },
-                new Order { OrderId = 3, CustomerId = 8, TotalPrice = 315, ShippingAddress = "TP. Ho Chi Minh", Status = Domain.Enum.PaymentStatus.PAID, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") }
+                new Order { OrderId = 1, CustomerId = 8, TotalPrice = 200000, ShippingAddress = "TP. Ho Chi Minh", Status = Domain.Enum.PaymentStatus.PAID, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") },
+                new Order { OrderId = 2, CustomerId = 8, TotalPrice = 105000, ShippingAddress = "TP. Ho Chi Minh", Status = Domain.Enum.PaymentStatus.PAID, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") },
+                new Order { OrderId = 3, CustomerId = 8, TotalPrice = 315000, ShippingAddress = "TP. Ho Chi Minh", Status = Domain.Enum.PaymentStatus.PAID, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") },
+                new Order { OrderId = 4, CustomerId = 8, TotalPrice = 300000, ShippingAddress = "TP. Ho Chi Minh", Status = Domain.Enum.PaymentStatus.PAID, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") },
+                new Order { OrderId = 5, CustomerId = 8, TotalPrice = 150000, ShippingAddress = "TP. Ho Chi Minh", Status = Domain.Enum.PaymentStatus.PAID, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") }
                 );
             builder.Entity<OrderDetail>().HasData(
                 new OrderDetail { OrderDetailId = 1, OrderId = 1, Quantity = 20, UnitPrice = 10, ProductId = 1 },
                 new OrderDetail { OrderDetailId = 2, OrderId = 2, Quantity = 10, UnitPrice = 15, ProductId = 2 },
-                new OrderDetail { OrderDetailId = 3, OrderId = 3, Quantity = 21, UnitPrice = 10, ProductId = 2 }
+                new OrderDetail { OrderDetailId = 3, OrderId = 3, Quantity = 21, UnitPrice = 10, ProductId = 2 },
+                new OrderDetail { OrderDetailId = 4, OrderId = 3, Quantity = 20, UnitPrice = 10, ProductId = 2 },
+                new OrderDetail { OrderDetailId = 5, OrderId = 3, Quantity = 10, UnitPrice = 10, ProductId = 2 }
                 );
             builder.Entity<Payment>().HasData(
                 new Payment { PaymentId = 1, OrderId = 1, TransactionId = "VNPay01", Amount = 10, PaymentMethod = "VNPay", VnPayResponseCode = "VNPayPayment01", Success = true, PaymentTime = DateTime.Parse("3/1/2025"), CreateDate = DateTime.Parse("3/1/2025"), UpdateDate = null },
