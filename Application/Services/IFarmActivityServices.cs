@@ -12,8 +12,8 @@ namespace Application.Services
 {
     public interface IFarmActivityServices
     {
-        Task<List<FarmActivityView>> GetFarmActivitiesAsync();
-        Task<ResponseDTO> GetFarmActivitiesActiveAsync();
+        Task<ResponseDTO> GetFarmActivitiesAsync(int pageIndex, int pageSize);
+        Task<ResponseDTO> GetFarmActivitiesActiveAsync(int pageIndex, int pageSize);
         Task<ResponseDTO> CreateFarmActivityAsync(FarmActivityRequest farmActivityRequest, ActivityType activityType);
         Task<ResponseDTO> UpdateFarmActivityAsync(long farmActivityId, FarmActivityRequest farmActivityRequest, ActivityType? activityType);
         Task<ResponseDTO> GetFarmActivityByIdAsync(long farmActivityId);

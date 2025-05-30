@@ -1,4 +1,5 @@
 ﻿using Application;
+using Application.Commons;
 using Application.Interfaces;
 using Application.Services;
 using AutoMapper;
@@ -8,6 +9,7 @@ using Infrastructure.Repositories;
 using Infrastructure.ViewModel.Request;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using System.Drawing.Printing;
 using static Infrastructure.ViewModel.Response.FarmActivityResponse;
 
 namespace WebAPI.Services
@@ -74,7 +76,7 @@ namespace WebAPI.Services
             }
         }
 
-        public async Task<ResponseDTO> GetFarmActivitiesActiveAsync()
+        public async Task<ResponseDTO> GetFarmActivitiesActiveAsync(int pageIndex, int pageSize)
         {
             var list = await _unitOfWork.farmActivityRepository.GetAllAsync();
             if (list.IsNullOrEmpty())
@@ -91,12 +93,19 @@ namespace WebAPI.Services
                 else
                 {
                     var resultView = _mapper.Map<List<FarmActivityView>>(result);
-                    return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, resultView);
+                    var pagination = new Pagination<FarmActivityView>
+                    {
+                        TotalItemCount = resultView.Count,
+                        PageSize = pageSize,
+                        PageIndex = pageIndex,
+                        Items = resultView.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList()
+                    };
+                    return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, pagination);
                 }
             }
         }
 
-        public async Task<List<FarmActivityView>> GetFarmActivitiesAsync()
+        public async Task<ResponseDTO> GetFarmActivitiesAsync(int pageIndex, int pageSize)
         {
             var result = await _unitOfWork.farmActivityRepository.GetAllAsync();
             if (result.IsNullOrEmpty())
@@ -107,7 +116,15 @@ namespace WebAPI.Services
             {
                 // Map dữ liệu sang DTO
                 var resultView = _mapper.Map<List<FarmActivityView>>(result);
-                return resultView;
+
+                var pagination = new Pagination<FarmActivityView>
+                {
+                    TotalItemCount = resultView.Count,
+                    PageSize = pageSize,
+                    PageIndex = pageIndex,
+                    Items = resultView.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList()
+                };
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, pagination);
             }
 
         }

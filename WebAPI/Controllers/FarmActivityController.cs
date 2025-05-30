@@ -17,16 +17,16 @@ namespace WebAPI.Controllers
         }
         [HttpGet("get-all")]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> GetFarmActivities()
+        public async Task<IActionResult> GetFarmActivities([FromQuery]int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
-            var result = await _farmActivityServices.GetFarmActivitiesAsync();
+            var result = await _farmActivityServices.GetFarmActivitiesAsync(pageIndex, pageSize);
             return Ok(result);
         }
         [HttpGet("get-active")]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> GetFarmActivitiesActive()
+        public async Task<IActionResult> GetFarmActivitiesActive([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
-            var result = await _farmActivityServices.GetFarmActivitiesActiveAsync();
+            var result = await _farmActivityServices.GetFarmActivitiesActiveAsync(pageIndex, pageSize);
             return Ok(result);
         }
         [HttpPost("create")]
