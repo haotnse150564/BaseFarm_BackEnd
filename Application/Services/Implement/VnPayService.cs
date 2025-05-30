@@ -23,10 +23,9 @@ public class VnPayService : IVnPayService
     private readonly IOrderRepository _orderRepository;
     private readonly IPaymentRepository _paymentRepository;
     private readonly ILogger<VnPayService> _logger;
-    private readonly IOrderServices _orderServices;
 
     public VnPayService( IConfiguration configuration, IUnitOfWorks unitOfWorks, IMapper mapper
-        , IOrderRepository orderRepository, IPaymentRepository paymentRepository, ILogger<VnPayService> logger, IOrderServices orderServices)
+        , IOrderRepository orderRepository, IPaymentRepository paymentRepository, ILogger<VnPayService> logger)
     {
         _configuration = configuration;
         _unitOfWork = unitOfWorks;
@@ -34,7 +33,7 @@ public class VnPayService : IVnPayService
         _orderRepository = orderRepository;
         _paymentRepository = paymentRepository;
         _logger = logger;
-        _orderServices = orderServices;
+        
     }
 
     public string CreatePaymentUrl(PaymentInformationModel model, HttpContext context)
@@ -152,7 +151,11 @@ public class VnPayService : IVnPayService
                 await _orderRepository.UpdateAsync(order);
 
                 // 🔥 Cập nhật số lượng tồn kho sau khi thanh toán thành công
-                await _orderServices.UpdateStockAfterOrderAsync(order);
+                foreach (var detail in order.OrderDetails)
+                {
+                    // Trừ tồn kho từng sản phẩm theo số lượng đặt mua
+                    await _unitOfWork.productRepository.UpdateStockByOrderAsync(detail.ProductId, detail.Quantity ?? 0);
+                }
             }
             else
             {
