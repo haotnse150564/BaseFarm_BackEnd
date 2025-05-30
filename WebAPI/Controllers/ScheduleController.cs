@@ -101,11 +101,11 @@ namespace WebAPI.Controllers
             return Ok(result); // Trả về danh sách sản phẩm với phân trang
         }
 
-        [HttpGet("schedule-by-staff/{staffID}")]
-        [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> GetScheduleByStaffID([FromRoute]long staffID)
+        [HttpGet("schedule-by-staff")]
+        [Authorize(Roles = "Staff")]
+        public async Task<IActionResult> GetScheduleByStaffID()
         {
-            var result = await _schedule.GetScheduleByStaffIdAsync(staffID);
+            var result = await _schedule.GetScheduleByCurrentStaffAsync();
 
             if (result.Status != Const.SUCCESS_READ_CODE)
             {

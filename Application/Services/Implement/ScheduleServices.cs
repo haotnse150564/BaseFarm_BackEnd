@@ -1,5 +1,6 @@
 ﻿using Application.Commons;
 using Application.Interfaces;
+using Application.Utils;
 using AutoMapper;
 using Domain.Enum;
 using Domain.Model;
@@ -21,9 +22,10 @@ namespace Application.Services.Implement
         private readonly ICropRepository _cropRepository;
         private readonly IFarmActivityRepository _farmActivityRepository;
         private readonly IFarmRepository _farmRepository;
+        private readonly JWTUtils _jwtUtils;
         public ScheduleServices(IUnitOfWorks unitOfWork, ICurrentTime currentTime, IConfiguration configuration, IMapper mapper
                 , IAccountRepository account, ICropRepository cropRepositorym, IFarmActivityRepository farmActivityRepository
-                , IFarmRepository farmRepository)
+                , IFarmRepository farmRepository, JWTUtils jwtUtils)
         {
             _unitOfWork = unitOfWork;
             _currentTime = currentTime;
@@ -33,6 +35,7 @@ namespace Application.Services.Implement
             _cropRepository = cropRepositorym;
             _farmActivityRepository = farmActivityRepository;
             _farmRepository = farmRepository;
+            _jwtUtils = jwtUtils;
         }
 
 
@@ -231,11 +234,12 @@ namespace Application.Services.Implement
             }
         }
 
-        public async Task<ResponseDTO> GetScheduleByStaffIdAsync(long staffId)
+        public async Task<ResponseDTO> GetScheduleByCurrentStaffAsync()
         {
             try
             {
-                var schedule = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(staffId);
+                var user = await _jwtUtils.GetCurrentUserAsync();
+                var schedule = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(user.AccountId);
 
                 if (schedule.Count == 0)
                 {
