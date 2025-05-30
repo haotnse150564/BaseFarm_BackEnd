@@ -2,6 +2,7 @@
 using Application.Services;
 using Application.Services.Implement;
 using Application.ViewModel.Request;
+using Domain.Model;
 using Microsoft.AspNetCore.Mvc;
 using static Application.ViewModel.Request.OrderRequest;
 
@@ -64,11 +65,20 @@ namespace WebAPI.Controllers
                 // ✅ Save payment to the database
                 await _vnPayService.SavePaymentAsync(response);
 
-                // 🔥 Redirect to frontend with payment status
-                string frontendUrl = "https://iotbasedfarm.netlify.app/vnpay-callback";
-                string redirectUrl = $"{frontendUrl}?vnp_ResponseCode={response.VnPayResponseCode}&vnp_TransactionNo={response.TransactionId}&vnp_TxnRef={response.OrderId}&vnp_Amount={response.Amount}";
+                //// 🔥 Redirect to frontend with payment status
+                //string frontendUrl = "https://iotbasedfarm.netlify.app/vnpay-callback";
+                //string redirectUrl = $"{frontendUrl}?vnp_ResponseCode={response.VnPayResponseCode}&vnp_TransactionNo={response.TransactionId}&vnp_TxnRef={response.OrderId}&vnp_Amount={response.Amount}";
 
-                return Redirect(redirectUrl);
+                //return Redirect(redirectUrl);
+                var result = new Payment
+                {
+                    OrderId = response.OrderId,
+                    TransactionId = response.TransactionId,
+                    Amount = response.Amount,
+                    VnPayResponseCode = response.VnPayResponseCode,
+                };
+
+                return Ok(result);
             }
             catch (Exception ex)
             {
