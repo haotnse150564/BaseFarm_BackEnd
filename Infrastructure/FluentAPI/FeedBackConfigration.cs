@@ -12,7 +12,7 @@ namespace Infrastructure.FluentAPI
 
             builder.HasIndex(e => e.CustomerId, "IX_Feedback_customerID");
             builder.HasKey(e => e.FeedbackId);
-            builder.Property(e => e.FeedbackId).ValueGeneratedNever();
+            builder.Property(e => e.FeedbackId);
             builder.Property(e => e.Comment)
                 .HasMaxLength(255)
                 .IsUnicode(false)
