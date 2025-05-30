@@ -371,24 +371,24 @@ namespace Application.Services.Implement
                 order.Status = PaymentStatus.CANCELLED;
                 await _unitOfWork.orderRepository.UpdateAsync(order);
 
-                // 🔁 Hoàn lại số lượng sản phẩm nếu đơn bị hủy
-                var orderDetails = await _unitOfWork.orderDetailRepository.GetOrderDetailsByOrderId(order.OrderId);
-                foreach (var item in orderDetails)
-                {
-                    var product = await _unitOfWork.productRepository.GetByIdAsync(item.ProductId);
-                    if (product != null)
-                    {
-                        product.StockQuantity += item.Quantity ?? 0;
+                //// 🔁 Hoàn lại số lượng sản phẩm nếu đơn bị hủy
+                //var orderDetails = await _unitOfWork.orderDetailRepository.GetOrderDetailsByOrderId(order.OrderId);
+                //foreach (var item in orderDetails)
+                //{
+                //    var product = await _unitOfWork.productRepository.GetByIdAsync(item.ProductId);
+                //    if (product != null)
+                //    {
+                //        product.StockQuantity += item.Quantity ?? 0;
 
-                        // Nếu sản phẩm trước đó hết hàng thì cập nhật lại trạng thái
-                        if (product.StockQuantity > 0)
-                        {
-                            product.Status = ProductStatus.ACTIVE;
-                        }
+                //        // Nếu sản phẩm trước đó hết hàng thì cập nhật lại trạng thái
+                //        if (product.StockQuantity > 0)
+                //        {
+                //            product.Status = ProductStatus.ACTIVE;
+                //        }
 
-                        await _unitOfWork.productRepository.UpdateAsync(product);
-                    }
-                }
+                //        await _unitOfWork.productRepository.UpdateAsync(product);
+                //    }
+                //}
 
                 await _unitOfWork.SaveChangesAsync();
 
@@ -423,27 +423,11 @@ namespace Application.Services.Implement
 
                     var orderDetails = await _unitOfWork.orderDetailRepository.GetOrderDetailsByOrderId(orderId);
 
-                    foreach (var detail in orderDetails)
+                    // 🔥 Cập nhật số lượng tồn kho sau khi thanh toán thành công
+                    foreach (var detail in order.OrderDetails)
                     {
-                        var product = await _unitOfWork.productRepository.GetProductById(detail.ProductId);
-                        if (product == null)
-                        {
-                            return new ResponseDTO(Const.ERROR_EXCEPTION, $"Product ID {detail.ProductId} not found.");
-                        }
-
-                        if (product.StockQuantity < detail.Quantity)
-                        {
-                            return new ResponseDTO(Const.FAIL_CREATE_CODE, $"Not enough stock for product ID {detail.ProductId}.");
-                        }
-
-                        product.StockQuantity -= detail.Quantity;
-
-                        if (product.StockQuantity == 0)
-                        {
-                            product.Status = 0; // hết hàng
-                        }
-
-                        await _unitOfWork.productRepository.UpdateAsync(product);
+                        // Trừ tồn kho từng sản phẩm theo số lượng đặt mua
+                        await _unitOfWork.productRepository.UpdateStockByOrderAsync(detail.ProductId, detail.Quantity ?? 0);
                     }
 
                     await _unitOfWork.SaveChangesAsync();
