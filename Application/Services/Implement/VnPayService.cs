@@ -127,7 +127,7 @@ public class VnPayService : IVnPayService
     {
         try
         {
-            var order = await _orderRepository.GetByIdAsync(response.OrderId);
+            var order = await _orderRepository.GetOrderById(response.OrderId);
             if (order == null)
                 throw new Exception($"Order ID {response.OrderId} not found.");
 
