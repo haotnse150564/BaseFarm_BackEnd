@@ -9,11 +9,7 @@ namespace Infrastructure.ViewModel.Request
 {
     public class FarmActivityRequest
     {
-
         public DateOnly? StartDate { get; set; }
-
         public DateOnly? EndDate { get; set; }
-
-        public long ScheduleId { get; set; }
     }
 }
