@@ -11,4 +11,12 @@ namespace Domain.Enum
         DEACTIVATED,
         ACTIVE
     }
+
+    public enum FarmActivityStatus
+    {
+        DEACTIVATED,
+        ACTIVE,
+        COMPLETED,
+        IN_PROGRESS
+    }
 }

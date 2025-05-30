@@ -36,7 +36,7 @@ namespace Infrastructure.ViewModel.Request
         [Required(ErrorMessage = "PlantingDate is required.")]
         //[Range(1, long.MaxValue, ErrorMessage = "CropId must be a positive number.")]
         public DateOnly? PlantingDate { get; set; }
-
+        public string? Location { get; set; }
         //[Required(ErrorMessage = "HarvestDate is required.")]
         //[Range(1, long.MaxValue, ErrorMessage = "CropId must be a positive number.")]
         //public DateOnly? HarvestDate { get; set; }

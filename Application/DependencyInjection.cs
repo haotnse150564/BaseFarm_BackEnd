@@ -49,6 +49,7 @@ public static class DependencyInjection
         services.AddScoped<IFarmActivityRepository, FarmActivityRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IFarmRepository, FarmRepository>();
+        services.AddScoped<IInventoryRepository, InventoryRepository>();
         //service
         services.AddScoped<IProductServices, ProductServices>();
         services.AddScoped<IFeedbackSevices, FeedbackServices>();
@@ -63,6 +64,7 @@ public static class DependencyInjection
         services.AddScoped<ICategoryServices, CategoryServices>();
         services.AddScoped<IFarmServices, FarmServices>();
         services.AddScoped<IBlynkService, BlynkService>();
+        services.AddScoped<IInventoryService, InventoryService>();
 
         //services.AddScoped<IOrderDetailServices, OrderDetailServices>();
         //services.AddScoped<IAccountProfileServices, AccountProfileServices>();

@@ -34,7 +34,7 @@ namespace WebAPI.Services
         public async Task<ResponseDTO> CreateFarmActivityAsync(FarmActivityRequest farmActivityRequest, ActivityType activityType)
         {
             var farmActivity = _mapper.Map<FarmActivity>(farmActivityRequest);
-            farmActivity.Status = Domain.Enum.Status.ACTIVE;
+            farmActivity.Status = Domain.Enum.FarmActivityStatus.ACTIVE;
             farmActivity.ActivityType = activityType;
             if (!CheckDate(farmActivity.StartDate, farmActivity.EndDate))
             {
@@ -63,7 +63,7 @@ namespace WebAPI.Services
             }
             else
             {
-                farmActivity.Status = (farmActivity.Status == Domain.Enum.Status.ACTIVE) ? Domain.Enum.Status.DEACTIVATED : Domain.Enum.Status.ACTIVE;
+                farmActivity.Status = (farmActivity.Status == Domain.Enum.FarmActivityStatus.ACTIVE) ? Domain.Enum.FarmActivityStatus.DEACTIVATED : Domain.Enum.FarmActivityStatus.ACTIVE;
                 await _unitOfWork.farmActivityRepository.UpdateAsync(farmActivity);
                 if (await _unitOfWork.SaveChangesAsync() < 0)
                 {
@@ -85,7 +85,7 @@ namespace WebAPI.Services
             }
             else
             {
-                var result = list.Where(x => x.Status == Domain.Enum.Status.ACTIVE).ToList();
+                var result = list.Where(x => x.Status == Domain.Enum.FarmActivityStatus.ACTIVE).ToList();
                 if (list.IsNullOrEmpty())
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);

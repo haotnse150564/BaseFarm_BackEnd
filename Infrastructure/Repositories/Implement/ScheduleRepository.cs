@@ -17,6 +17,7 @@ namespace Infrastructure.Repositories.Implement
                                      .Include(a => a.AssignedToNavigation)
                                      .Include(a => a.FarmActivities)
                                      .Include(a => a.Crop)
+                                     .ThenInclude(c => c.Product)
                                      .Include(a => a.FarmDetails)
                                     // .Include(a => a.DailyLogs)
                                      .FirstOrDefaultAsync();
@@ -46,6 +47,15 @@ namespace Infrastructure.Repositories.Implement
             .Where(x => x.AssignedTo == staffId)
             .ToListAsync();
             return result;
+        }
+
+        public async Task<Schedule?> GetByIdWithFarmActivitiesAsync(long scheduleId)
+        {
+            return await _context.Schedule
+                .Include(s => s.FarmActivities)
+                .Include (s => s.Crop)
+                .ThenInclude(c => c.Product)
+                .FirstOrDefaultAsync(s => s.ScheduleId == scheduleId);
         }
     }
 }

@@ -23,9 +23,10 @@ namespace Application.Services.Implement
         private readonly IFarmActivityRepository _farmActivityRepository;
         private readonly IFarmRepository _farmRepository;
         private readonly JWTUtils _jwtUtils;
+        private readonly IInventoryService _inventory;
         public ScheduleServices(IUnitOfWorks unitOfWork, ICurrentTime currentTime, IConfiguration configuration, IMapper mapper
                 , IAccountRepository account, ICropRepository cropRepositorym, IFarmActivityRepository farmActivityRepository
-                , IFarmRepository farmRepository, JWTUtils jwtUtils)
+                , IFarmRepository farmRepository, JWTUtils jwtUtils, IInventoryService inventory)
         {
             _unitOfWork = unitOfWork;
             _currentTime = currentTime;
@@ -36,6 +37,7 @@ namespace Application.Services.Implement
             _farmActivityRepository = farmActivityRepository;
             _farmRepository = farmRepository;
             _jwtUtils = jwtUtils;
+            _inventory = inventory;
         }
 
 
@@ -176,7 +178,13 @@ namespace Application.Services.Implement
                 // Map dữ liệu sang DTO
                 _unitOfWork.scheduleRepository.Update(update);
                 await _unitOfWork.SaveChangesAsync();
-
+                
+                //xu ly inventory neu farmactivitytype là harvest và status là completed
+                var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(request.FarmActivityId);
+                if( farmActivity != null && farmActivity.ActivityType == Domain.Enum.ActivityType.Harvesting && farmActivity.Status == FarmActivityStatus.COMPLETED)
+                {
+                    await _inventory.CalculateAndCreateInventoryAsync(schedule.Quantity, request.Location, schedule.CropId, ScheduleId);
+                }
                 var result = _mapper.Map<ViewSchedule>(update);
                 result.FullNameStaff = (await _account.GetAccountProfileByAccountIdAsync(result.AssignedTo)).AccountProfile?.Fullname;
                 return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);

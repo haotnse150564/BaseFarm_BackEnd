@@ -8,9 +8,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public interface IScheduleRepository : IGenericRepository<Schedule>
+    public interface IInventoryRepository : IGenericRepository<Inventory>
     {
-        Task<List<Schedule?>> GetByStaffIdAsync(long staffId);
-        Task<Schedule?> GetByIdWithFarmActivitiesAsync(long scheduleId);
     }
 }

@@ -14,7 +14,7 @@ public partial class FarmActivity
 
     public DateOnly? EndDate { get; set; }
 
-    public Status? Status { get; set; }
+    public FarmActivityStatus? Status { get; set; }
 
     public long ScheduleId { get; set; }
 
