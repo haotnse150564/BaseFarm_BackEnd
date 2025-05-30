@@ -163,6 +163,7 @@ namespace Infrastructure.Repositories.Implement
                     inventory.Status = Status.DEACTIVATED;
                 }
                 _context.Inventorie.Update(inventory);
+                await _context.SaveChangesAsync();
             }
 
             // Sau khi trừ, cập nhật lại tổng tồn kho vào Product

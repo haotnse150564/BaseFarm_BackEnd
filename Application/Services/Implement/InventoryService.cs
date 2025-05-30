@@ -1,6 +1,7 @@
 ﻿using Domain.Enum;
 using Domain.Model;
 using Infrastructure.Repositories;
+using Infrastructure.Repositories.Implement;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +15,13 @@ namespace Application.Services.Implement
     {
         private readonly IScheduleRepository _scheduleRepository;
         private readonly IInventoryRepository _inventoryRepository;
+        private readonly IUnitOfWorks _unitOfWork;
 
-        public InventoryService(IScheduleRepository scheduleRepository, IInventoryRepository inventoryRepository)
+        public InventoryService(IScheduleRepository scheduleRepository, IInventoryRepository inventoryRepository, IUnitOfWorks unitOfWork)
         {
             _scheduleRepository = scheduleRepository;
             _inventoryRepository = inventoryRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<ResponseDTO> CalculateAndCreateInventoryAsync(int? quantity, string? location, long productID, long scheduleID)
@@ -41,6 +44,17 @@ namespace Application.Services.Implement
 
             await _inventoryRepository.AddAsync(inventory);
             return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG);
+        }
+
+        public async Task SyncProductStockQuantityAsync(long productId)
+        {
+            var totalStock = await _inventoryRepository.GetTotalStockByProductIdAsync(productId);
+            var product = await _unitOfWork.productRepository.GetByIdAsync(productId);
+            if (product != null)
+            {
+                product.StockQuantity = totalStock;
+                await _unitOfWork.productRepository.UpdateAsync(product);
+            }
         }
     }
 }
