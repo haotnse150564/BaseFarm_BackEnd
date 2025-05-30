@@ -11,5 +11,6 @@ namespace Application.Services
     public interface IInventoryService
     {
         Task<ResponseDTO> CalculateAndCreateInventoryAsync(int? quantity, string? location, long productID, long scheduleID);
+        Task SyncProductStockQuantityAsync(long productId);
     }
 }

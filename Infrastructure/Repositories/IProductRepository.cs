@@ -20,6 +20,6 @@ namespace Infrastructure.Repositories
             Status? status = null,
             long? categoryId = null,
             bool sortByStockAsc = true);
-
+        Task UpdateStockByOrderAsync(long productId, int quantityToReduce);
     }
 }
