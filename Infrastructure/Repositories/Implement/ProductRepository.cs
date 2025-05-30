@@ -131,5 +131,53 @@ namespace Infrastructure.Repositories.Implement
                 .Include(X => X.Category)
                 .ToListAsync();
         }
+
+
+        /// <summary>
+        /// Trừ tồn kho ở từng đợt Inventory theo FIFO và cập nhật lại Product.StockQuantity
+        /// </summary>
+        public async Task UpdateStockByOrderAsync(long productId, int quantityToReduce)
+        {
+            // Lấy các Inventory ACTIVE, theo FIFO (CreatedAt tăng dần)
+            var inventories = await _context.Inventorie
+                .Where(i => i.ProductId == productId && i.Status == Status.ACTIVE && i.StockQuantity > 0)
+                .OrderBy(i => i.CreatedAt)
+                .ToListAsync();
+
+            int remaining = quantityToReduce;
+            foreach (var inventory in inventories)
+            {
+                if (remaining <= 0) break;
+
+                if (inventory.StockQuantity >= remaining)
+                {
+                    inventory.StockQuantity -= remaining;
+                    if (inventory.StockQuantity == 0)
+                        inventory.Status = Status.DEACTIVATED; // Nếu hết hàng thì chuyển trạng thái
+                    remaining = 0;
+                }
+                else
+                {
+                    remaining -= inventory.StockQuantity ?? 0;
+                    inventory.StockQuantity = 0;
+                    inventory.Status = Status.DEACTIVATED;
+                }
+                _context.Inventorie.Update(inventory);
+            }
+
+            // Sau khi trừ, cập nhật lại tổng tồn kho vào Product
+            var totalStock = await _context.Inventorie
+                .Where(i => i.ProductId == productId && i.Status == Status.ACTIVE)
+                .SumAsync(i => i.StockQuantity ?? 0);
+
+            var product = await _context.Product.FindAsync(productId);
+            if (product != null)
+            {
+                product.StockQuantity = totalStock;
+                _context.Product.Update(product);
+            }
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

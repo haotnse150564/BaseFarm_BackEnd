@@ -1,4 +1,5 @@
 ﻿using Domain.Enum;
+using Domain.Model;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,7 @@ namespace Application.Services
         Task<ResponseDTO> SearchOrderbyEmail(string email, int pageIndex, int pageSize, PaymentStatus? status);
         Task<ResponseDTO> SearchOrderbyCreateDate(DateOnly date, int pageIndex, int pageSize);
         Task<ResponseDTO> CreateOrderPaymentAsync(long orderId, HttpContext context);
+        Task UpdateStockAfterOrderAsync(Order order);
 
     }
 }

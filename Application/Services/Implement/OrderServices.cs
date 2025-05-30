@@ -310,7 +310,7 @@ namespace Application.Services.Implement
         {
             try
             {
-                if(!_checkDate.IsValidDate(date))
+                if (!_checkDate.IsValidDate(date))
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, "Date is not valid.");
                 }
@@ -474,5 +474,13 @@ namespace Application.Services.Implement
             }
         }
 
+        public async Task UpdateStockAfterOrderAsync(Order order)
+        {
+            foreach (var detail in order.OrderDetails)
+            {
+                // Trừ tồn kho từng sản phẩm theo số lượng đặt mua
+                await _unitOfWork.productRepository.UpdateStockByOrderAsync(detail.ProductId, detail.Quantity ?? 0);
+            }
+        }
     }
 }

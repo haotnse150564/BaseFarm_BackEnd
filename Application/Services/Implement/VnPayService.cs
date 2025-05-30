@@ -23,9 +23,10 @@ public class VnPayService : IVnPayService
     private readonly IOrderRepository _orderRepository;
     private readonly IPaymentRepository _paymentRepository;
     private readonly ILogger<VnPayService> _logger;
+    private readonly IOrderServices _orderServices;
 
     public VnPayService( IConfiguration configuration, IUnitOfWorks unitOfWorks, IMapper mapper
-        , IOrderRepository orderRepository, IPaymentRepository paymentRepository, ILogger<VnPayService> logger)
+        , IOrderRepository orderRepository, IPaymentRepository paymentRepository, ILogger<VnPayService> logger, IOrderServices orderServices)
     {
         _configuration = configuration;
         _unitOfWork = unitOfWorks;
@@ -33,6 +34,7 @@ public class VnPayService : IVnPayService
         _orderRepository = orderRepository;
         _paymentRepository = paymentRepository;
         _logger = logger;
+        _orderServices = orderServices;
     }
 
     public string CreatePaymentUrl(PaymentInformationModel model, HttpContext context)
@@ -148,6 +150,9 @@ public class VnPayService : IVnPayService
             {
                 order.Status = PaymentStatus.PAID;
                 await _orderRepository.UpdateAsync(order);
+
+                // 🔥 Cập nhật số lượng tồn kho sau khi thanh toán thành công
+                await _orderServices.UpdateStockAfterOrderAsync(order);
             }
             else
             {
@@ -155,21 +160,21 @@ public class VnPayService : IVnPayService
                 await _orderRepository.UpdateAsync(order);
 
                 // 🔥 Hoàn lại số lượng sản phẩm nếu thanh toán thất bại
-                var orderDetails = await _unitOfWork.orderDetailRepository.GetOrderDetailsByOrderId(order.OrderId);
-                foreach (var item in orderDetails)
-                {
-                    var product = await _unitOfWork.productRepository.GetByIdAsync(item.ProductId);
-                    if (product != null)
-                    {
-                        product.StockQuantity += item.Quantity ?? 0; // Đảm bảo không bị null
+                //var orderDetails = await _unitOfWork.orderDetailRepository.GetOrderDetailsByOrderId(order.OrderId);
+                //foreach (var item in orderDetails)
+                //{
+                //    var product = await _unitOfWork.productRepository.GetByIdAsync(item.ProductId);
+                //    if (product != null)
+                //    {
+                //        product.StockQuantity += item.Quantity ?? 0; // Đảm bảo không bị null
 
-                        // Nếu trước đó sản phẩm hết hàng thì cập nhật lại trạng thái
-                        if (product.StockQuantity > 0)
-                            product.Status = ProductStatus.ACTIVE; // Đổi sang trạng thái phù hợp
+                //        // Nếu trước đó sản phẩm hết hàng thì cập nhật lại trạng thái
+                //        if (product.StockQuantity > 0)
+                //            product.Status = ProductStatus.ACTIVE; // Đổi sang trạng thái phù hợp
 
-                        await _unitOfWork.productRepository.UpdateAsync(product);
-                    }
-                }
+                //        await _unitOfWork.productRepository.UpdateAsync(product);
+                //    }
+                //}
 
                 // 🔥 Gọi `SaveChangesAsync()` để lưu thay đổi trong `Product`
                 //await _unitOfWork.SaveChangesAsync();
