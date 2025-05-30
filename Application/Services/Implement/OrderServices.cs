@@ -86,8 +86,8 @@ namespace Application.Services.Implement
                     await _unitOfWork.orderDetailRepository.AddAsync(orderDetail);
                     orderItems.Add(orderDetail); // 🔥 Lưu ngay OrderDetail
 
-                    //product.StockQuantity -= item.StockQuantity;
-                    //if (product.StockQuantity == 0) product.Status = 0;
+                    product.StockQuantity -= item.StockQuantity;
+                    if (product.StockQuantity == 0) product.Status = 0;
                     await _unitOfWork.productRepository.UpdateAsync(product);
                     totalPrice += (decimal)((product.Price ?? 0) * item.StockQuantity);
                 }
