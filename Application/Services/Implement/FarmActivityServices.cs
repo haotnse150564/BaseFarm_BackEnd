@@ -1,16 +1,14 @@
-﻿using Application.Interfaces;
-using Application;
+﻿using Application;
+using Application.Interfaces;
 using Application.Services;
 using AutoMapper;
-using Infrastructure.ViewModel.Response;
-using Microsoft.Extensions.Configuration;
-using Infrastructure.Repositories;
-using static Infrastructure.ViewModel.Response.FarmActivityResponse;
-using Microsoft.IdentityModel.Tokens;
-using Infrastructure.ViewModel.Request;
-using Domain.Model;
 using Domain.Enum;
-using Application.Utils;
+using Domain.Model;
+using Infrastructure.Repositories;
+using Infrastructure.ViewModel.Request;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using static Infrastructure.ViewModel.Response.FarmActivityResponse;
 
 namespace WebAPI.Services
 {
@@ -141,7 +139,6 @@ namespace WebAPI.Services
                 farmActivity.StartDate = farmActivityrequest.StartDate;
                 farmActivity.EndDate = farmActivityrequest.EndDate;
                 farmActivity.ActivityType = activityType;
-                farmActivity.ScheduleId = farmActivityrequest.ScheduleId;
                 if(!CheckDate(farmActivity.StartDate, farmActivity.EndDate))
                 {
                     return new ResponseDTO(Const.FAIL_UPDATE_CODE, "Start date or end date is wrong!");
