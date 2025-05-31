@@ -37,15 +37,19 @@ namespace Infrastructure.Repositories.Implement
 
         public async Task<List<Schedule?>> GetByStaffIdAsync(long staffId, int month)
         {
-            var result = await _context.Schedule 
+            var result = await _context.Schedule
             .Include(a => a.AssignedToNavigation)
             .Include(a => a.Crop)
             .Include(a => a.AssignedToNavigation)
             .ThenInclude(a => a.AccountProfile)
             .Include(a => a.FarmActivities)
             .Include(a => a.FarmDetails)
-            .Where(x => x.AssignedTo == staffId && x.StartDate.HasValue && x.StartDate.Value.Month == month)
+            .Where(x => x.AssignedTo == staffId)
             .ToListAsync();
+            if(month > 0 && month < 12)
+            {
+                result = result.Where(x => x.StartDate.HasValue && x.StartDate.Value.Month == month).ToList();
+            }
             return result;
         }
 
