@@ -29,8 +29,8 @@ namespace Application.Services.Implement
         {
             try
             {
-                var products = await _unitOfWork.productRepository.GetAllAsync();
-                    
+                var list = await _unitOfWork.productRepository.GetAllAsync();
+                var products = list.Where(x => x.Status == ProductStatus.ACTIVE).ToList();  
                 // Map dữ liệu sang DTO
                 var result = _mapper.Map<List<ViewProductDTO>>(products);
 
