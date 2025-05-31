@@ -34,7 +34,26 @@ namespace Application.Services.Implement
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, "No Products found.");
                 }
-
+                var inventoryList = await _unitOfWork.inventoryRepository.GetAllAsync();  
+                listFilter = listFilter
+                    .Select(product =>
+                    {
+                        var inventory = inventoryList.FirstOrDefault(i => i.ProductId == product.ProductId);
+                        product.StockQuantity = 0;
+                        if (inventory != null)
+                        {
+                            product.StockQuantity += inventory.StockQuantity;
+                        }
+                        return product;
+                    })
+                    .ToList();
+                foreach(var item in listFilter)
+                {
+                   var product = await _unitOfWork.productRepository.GetProductById(item.ProductId);
+                    product.StockQuantity = item.StockQuantity;
+                    await _unitOfWork.productRepository.UpdateAsync(product);
+                }
+                await _unitOfWork.SaveChangesAsync();
                 // Map dữ liệu sang DTO
                 var result = _mapper.Map<List<ViewProductDTO>>(listFilter);
 
