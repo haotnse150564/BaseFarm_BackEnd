@@ -12,6 +12,6 @@ namespace Application.Services
         Task<ResponseDTO> AssignStaff(long scheduleID, long staffId);
         Task<ResponseDTO> UpdateScheduleById(long ScheduleId, ScheduleRequest request);
         Task<ResponseDTO> ChangeScheduleStatusById(long ScheduleId, string status);
-        Task<ResponseDTO> GetScheduleByCurrentStaffAsync();
+        Task<ResponseDTO> GetScheduleByCurrentStaffAsync(int month);
     }
 }
