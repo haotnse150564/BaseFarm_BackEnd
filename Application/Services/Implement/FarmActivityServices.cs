@@ -158,7 +158,7 @@ namespace WebAPI.Services
                 farmActivity.ActivityType = activityType;
                 if(!CheckDate(farmActivity.StartDate, farmActivity.EndDate))
                 {
-                    return new ResponseDTO(Const.FAIL_UPDATE_CODE, "Start date or end date is wrong!");
+                    return new ResponseDTO(Const.FAIL_UPDATE_CODE, "Start date or end date is wrong required!");
                 }   
                 await _unitOfWork.farmActivityRepository.UpdateAsync(farmActivity);
                 if (await _unitOfWork.SaveChangesAsync() < 0)
@@ -179,6 +179,10 @@ namespace WebAPI.Services
                 return false;
             }
             else if (startDate > endDate)
+            {
+                return false;
+            }
+            else if((startDate.Value.DayNumber - endDate.Value.DayNumber) >7)
             {
                 return false;
             }
