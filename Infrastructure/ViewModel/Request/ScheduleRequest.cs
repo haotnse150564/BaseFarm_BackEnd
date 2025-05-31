@@ -22,8 +22,7 @@ namespace Infrastructure.ViewModel.Request
         public long AssignedTo { get; set; }
 
         [Required(ErrorMessage = "FarmActivityId is required.")]
-        [Range(1, long.MaxValue, ErrorMessage = "FarmActivityId must be a positive number.")]
-        public long FarmActivityId { get; set; }
+        public IEnumerable<long>? FarmActivityId { get; set; }
 
         [Required(ErrorMessage = "FarmDetailsId is required.")]
         [Range(1, long.MaxValue, ErrorMessage = "FarmDetailsId must be a positive number.")]

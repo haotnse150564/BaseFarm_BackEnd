@@ -11,5 +11,8 @@ namespace Infrastructure.Repositories
     public interface IFarmActivityRepository : IGenericRepository<FarmActivity>
     {
         Task<List<FarmActivity>>GetAllActive();
+        Task<FarmActivity> GetHarvestFarmActivityId(long scheduleId);
+        Task<List<FarmActivity>> GetListFarmActivityByScheduleId(long scheduleId);
+        Task<List<FarmActivity>> GetListFarmActivityUpdate(IEnumerable<long>? farmActivityId);
     }
 }
