@@ -22,6 +22,7 @@ namespace Application
         IFarmActivityRepository farmActivityRepository { get; }
         IFarmRepository farmRepository { get; }
         ICategoryRepository categoryRepository { get; }
+        IInventoryRepository inventoryRepository { get; }
 
     }
 }

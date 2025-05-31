@@ -3,6 +3,7 @@ using Application.Commons;
 using Application.Interfaces;
 using Application.Services;
 using AutoMapper;
+using Azure.Core;
 using Domain.Enum;
 using Domain.Model;
 using Infrastructure.Repositories;
@@ -22,13 +23,15 @@ namespace WebAPI.Services
         private readonly IConfiguration configuration;
         private readonly IMapper _mapper;
         private readonly IFarmActivityRepository _farmActivityRepository;
-        public FarmActivityServices(IUnitOfWorks unitOfWork, ICurrentTime currentTime, IConfiguration configuration, IMapper mapper, IFarmActivityRepository farmActivityRepository)
+        private readonly IInventoryService _inventory;
+        public FarmActivityServices(IUnitOfWorks unitOfWork, ICurrentTime currentTime, IConfiguration configuration, IMapper mapper, IFarmActivityRepository farmActivityRepository, IInventoryService inventory)
         {
             _unitOfWork = unitOfWork;
             _currentTime = currentTime;
             this.configuration = configuration;
             _mapper = mapper;
             _farmActivityRepository = farmActivityRepository;
+            _inventory = inventory;
         }
 
         public async Task<ResponseDTO> CreateFarmActivityAsync(FarmActivityRequest farmActivityRequest, ActivityType activityType)
@@ -169,6 +172,47 @@ namespace WebAPI.Services
                 {
                     var result = _mapper.Map<FarmActivityView>(farmActivity);
                     return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, result);
+                }
+            }
+        }
+        public async Task<ResponseDTO> CompleteFarmActivity(long id, string? location)
+        {
+            var farmActivity = await _farmActivityRepository.GetByIdAsync(id);
+            if (farmActivity == null)
+            {
+                return new ResponseDTO(Const.FAIL_READ_CODE, "Not Found Farm Activity");
+            }else if (farmActivity.ScheduleId == null)
+            {
+                return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity Don't Have Any Schedule");
+            }            
+            farmActivity.Status = Domain.Enum.FarmActivityStatus.COMPLETED;
+            await _unitOfWork.farmActivityRepository.UpdateAsync(farmActivity);
+            if (farmActivity.ActivityType == ActivityType.Harvesting)
+            {
+                var schedule = await _unitOfWork.scheduleRepository.GetByIdAsync(farmActivity.ScheduleId.Value);
+                //xu ly inventory neu farmactivitytype là harvest và status là completed
+                if (farmActivity != null && schedule!=null &&farmActivity.ActivityType == Domain.Enum.ActivityType.Harvesting && farmActivity.Status == FarmActivityStatus.COMPLETED)
+                {
+                    await _inventory.CalculateAndCreateInventoryAsync(schedule.Quantity, location, schedule.CropId, schedule.ScheduleId);
+                }
+                if (await _unitOfWork.SaveChangesAsync() < 0)
+                {
+                    return new ResponseDTO(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);
+                }
+                else
+                {
+                    return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG);
+                }
+            }
+            else
+            {
+                if (await _unitOfWork.SaveChangesAsync() < 0)
+                {
+                    return new ResponseDTO(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);
+                }
+                else
+                {
+                    return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG);
                 }
             }
         }
