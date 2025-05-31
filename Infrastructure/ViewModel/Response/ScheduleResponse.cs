@@ -26,6 +26,8 @@ namespace Infrastructure.ViewModel.Response
             public string? PlantingDate { get; set; }
             public string? UpdatedAt { get; set; }
             public string? ActivityType { get; set; }
+            public string? HarvestDate { get; set; }
+            public int? Quantity { get; set; }
             public ViewAccount? accountView { get; set; }
             public IEnumerable <FarmActivityView>? farmActivityView { get; set; }
             public FarmView? farmDetailView { get; set; } 

@@ -1,5 +1,6 @@
 ﻿using Application.Services;
 using Domain.Enum;
+using Domain.Model;
 using Infrastructure.ViewModel.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,9 +25,9 @@ namespace WebAPI.Controllers
         }
         [HttpGet("get-active")]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> GetFarmActivitiesActive([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetFarmActivitiesActive(long scheduleId, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
-            var result = await _farmActivityServices.GetFarmActivitiesActiveAsync(pageIndex, pageSize);
+            var result = await _farmActivityServices.GetFarmActivitiesActiveAsync(pageIndex, pageSize, scheduleId);
             return Ok(result);
         }
         [HttpPost("create")]
