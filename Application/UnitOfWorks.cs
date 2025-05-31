@@ -57,7 +57,7 @@ namespace Infrastructure
             _inventoryRepository = inventoryRepository;
             _cropRequirementRepository = cropRequirementRepository;
         }
-        public ICropRequirementRepository cropRequirmentRepository
+        public ICropRequirementRepository cropRequirementRepository
         {
             get
             {
@@ -169,8 +169,7 @@ namespace Infrastructure
             }
         }
 
-        public ICropRequirmentRepository cropRequirmentRepository => throw new NotImplementedException();
-
+ 
         public void Dispose()
         {
             _context.Dispose();

@@ -36,6 +36,15 @@ namespace Infrastructure.Repositories.Implement
                 .ToListAsync();
             return result;
         }
+        public override async Task<Crop?> GetByIdAsync(long id)
+        {
+            var result = await _context.Crops
+                .Include(x => x.CropRequirement)
+                .Include(x => x.Category)
+                .Include(x => x.Product)
+                .FirstOrDefaultAsync(x => x.CropId == id);
+           return result;
+        }
     }
 }
 

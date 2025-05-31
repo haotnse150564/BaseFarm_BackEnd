@@ -46,7 +46,7 @@ namespace Application.Services.Implement
             try
             {
                 var crop = await _unitOfWork.cropRepository.GetByIdAsync(request.CropId);
-                var ReqCrop = await _unitOfWork.cropRequirmentRepository.GetbyIdAsync(crop.CropRequirement.RequirementId);
+                var ReqCrop = await _unitOfWork.cropRequirementRepository.GetByIdAsync(crop.CropRequirement.RequirementId);
                 var result = new Schedule
                 {
                     StartDate = request.StartDate,
@@ -55,7 +55,7 @@ namespace Application.Services.Implement
                     AssignedTo = request.AssignedTo,
                     //FarmActivityId = request.FarmActivityId,
                     PlantingDate = request.PlantingDate,
-                    HarvestDate = result.PlantingDate.Value.AddDays(ReqCrop.HarvestDays),
+                    HarvestDate = request.PlantingDate.Value.AddDays((int)ReqCrop.EstimatedDate),
                     FarmDetailsId = request.FarmDetailsId,
                     CropId = request.CropId,
                     UpdatedAt = _currentTime.GetCurrentTime(),

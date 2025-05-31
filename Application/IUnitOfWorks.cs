@@ -19,7 +19,7 @@ namespace Application
         IScheduleRepository scheduleRepository { get; }
         IIoTdeviceRepository ioTdeviceRepository { get; }
         ICropRepository cropRepository { get; }
-        ICropRequirmentRepository cropRequirmentRepository { get; }
+        ICropRequirementRepository cropRequirementRepository { get; }
         IFarmActivityRepository farmActivityRepository { get; }
         IFarmRepository farmRepository { get; }
         ICategoryRepository categoryRepository { get; }

@@ -15,7 +15,4 @@ namespace Infrastructure.Repositories.Implement
             _dbSet = _context.Set<CropRequirement>();
         }
     }
-    {
-        
-    }
 }
