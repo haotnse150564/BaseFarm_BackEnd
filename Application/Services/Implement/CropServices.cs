@@ -86,9 +86,21 @@ namespace Application.Services.Implement
                 // Ánh xạ từ DTO sang Entity
                 var crop = _mapper.Map<Crop>(request);
                 crop.Status = Domain.Enum.CropStatus.ACTIVE;
+                var cropRequirement = new CropRequirement
+                {
+                    RequirementId = crop.CropId,
+                    EstimatedDate = 30,
+                    Moisture = 1,
+                    Temperature = 30,
+                    Fertilizer = "Nito",
+                    DeviceId = 4,
+                    Requirement = crop // Thiết lập quan hệ với Crop
+                };
 
                 // Gọi AddAsync nhưng không gán vào biến vì nó không có giá trị trả về
                 await _unitOfWork.cropRepository.AddAsync(crop);
+                await _unitOfWork.cropRequirementRepository.AddAsync(cropRequirement);
+
                 var check = await _unitOfWork.SaveChangesAsync();
                 // Kiểm tra xem sản phẩm có được thêm không bằng cách kiểm tra crop.Id (hoặc khóa chính)
                 if (check < 0) // Nếu Id chưa được gán, có thể việc thêm đã thất bại
