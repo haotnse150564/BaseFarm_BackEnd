@@ -18,7 +18,7 @@ namespace Application.Services
         Task<ResponseDTO> UpdateFarmActivityAsync(long farmActivityId, FarmActivityRequest farmActivityRequest, ActivityType? activityType);
         Task<ResponseDTO> GetFarmActivityByIdAsync(long farmActivityId);
         Task<ResponseDTO> ChangeFarmActivityStatusAsync(long farmActivityId);
-        Task<ResponseDTO> CompleteFarmActivity(long id);
+        Task<ResponseDTO> CompleteFarmActivity(long id, string? location);
 
     }
 }

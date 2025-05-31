@@ -58,9 +58,9 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
         [HttpPut("complete/{id}")]
-        public async Task<IActionResult> CompleteFarmActivity(long id)
+        public async Task<IActionResult> CompleteFarmActivity(long id, string? location)
         {
-            var result =await _farmActivityServices.CompleteFarmActivity(id);
+            var result =await _farmActivityServices.CompleteFarmActivity(id, location);
             return Ok(result);
         }
     }

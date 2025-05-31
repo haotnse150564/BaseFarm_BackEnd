@@ -26,12 +26,13 @@ namespace Infrastructure
         private IFarmActivityRepository _farmActivityRepository;
         private IFarmRepository _farmRepository;
         private ICategoryRepository _categoryRepository;
+        private IInventoryRepository _inventoryRepository;
 
         public UnitOfWorks(AppDbContext context, ICurrentTime currentTime, IClaimsServices claimsServices, IProductRepository productRepository
             , IFeedbackRepository feedbackRepository, IAccountProfileRepository accountProfileRepository, IOrderRepository orderRepository
             , IOrderDetailRepository orderDetailRepository, IPaymentRepository paymentRepository, IScheduleRepository scheduleRepository
             , IIoTdeviceRepository ioTdeviceRepository, ICropRepository cropRepository, IFarmActivityRepository farmActivityRepository, IFarmRepository farmRepository
-            , ICategoryRepository categoryRepository, IAccountRepository accountRepository
+            , ICategoryRepository categoryRepository, IAccountRepository accountRepository, IInventoryRepository inventoryRepository
             )
         {
             _context = context;
@@ -50,6 +51,7 @@ namespace Infrastructure
             _farmRepository = farmRepository;
             _categoryRepository = categoryRepository;
             _accountRepository = accountRepository;
+            _inventoryRepository = inventoryRepository;
         }
         public ICategoryRepository categoryRepository
         {
@@ -148,6 +150,13 @@ namespace Infrastructure
             }
         }
 
+        public IInventoryRepository inventoryRepository
+        {
+            get
+            {
+                return _inventoryRepository ??= new InventoryRepository(_context);
+            }
+        }
         public void Dispose()
         {
             _context.Dispose();
