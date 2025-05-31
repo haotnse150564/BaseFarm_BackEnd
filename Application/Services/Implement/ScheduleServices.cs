@@ -46,7 +46,11 @@ namespace Application.Services.Implement
             try
             {
                 var crop = await _unitOfWork.cropRepository.GetByIdAsync(request.CropId);
-                var ReqCrop = await _unitOfWork.cropRequirementRepository.GetByIdAsync(crop.CropRequirement.RequirementId);
+                var reqCrop = await _unitOfWork.cropRequirementRepository.GetByIdAsync(crop.CropRequirement.RequirementId);
+                if (reqCrop == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Crop Requirement not found.");
+                }
                 var result = new Schedule
                 {
                     StartDate = request.StartDate,
@@ -55,7 +59,7 @@ namespace Application.Services.Implement
                     AssignedTo = request.AssignedTo,
                     //FarmActivityId = request.FarmActivityId,
                     PlantingDate = request.PlantingDate,
-                    HarvestDate = request.PlantingDate.Value.AddDays((int)ReqCrop.EstimatedDate),
+                    HarvestDate = request.PlantingDate.Value.AddDays((int)reqCrop.EstimatedDate),
                     FarmDetailsId = request.FarmDetailsId,
                     CropId = request.CropId,
                     UpdatedAt = _currentTime.GetCurrentTime(),
