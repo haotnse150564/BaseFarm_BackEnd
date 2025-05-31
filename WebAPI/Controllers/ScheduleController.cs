@@ -103,9 +103,9 @@ namespace WebAPI.Controllers
 
         [HttpGet("schedule-by-staff")]
         [Authorize(Roles = "Staff")]
-        public async Task<IActionResult> GetScheduleByStaffID()
+        public async Task<IActionResult> GetScheduleByStaffID(int month)
         {
-            var result = await _schedule.GetScheduleByCurrentStaffAsync();
+            var result = await _schedule.GetScheduleByCurrentStaffAsync(month);
 
             if (result.Status != Const.SUCCESS_READ_CODE)
             {

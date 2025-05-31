@@ -32,7 +32,7 @@ namespace Infrastructure.Repositories.Implement
             }
             if (month > 0 && month <= 12)
             {
-                list = list.Where(fa => fa.StartDate.HasValue && fa.StartDate.Value.Month == month || fa.EndDate.HasValue).ToList();
+                list = list.Where(fa => fa.StartDate.HasValue && fa.StartDate.Value.Month == month).ToList();
             }
             return list;
         }

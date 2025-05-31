@@ -305,12 +305,12 @@ namespace Application.Services.Implement
             }
         }
 
-        public async Task<ResponseDTO> GetScheduleByCurrentStaffAsync()
+        public async Task<ResponseDTO> GetScheduleByCurrentStaffAsync(int month)
         {
             try
             {
                 var user = await _jwtUtils.GetCurrentUserAsync();
-                var schedule = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(user.AccountId);
+                var schedule = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(user.AccountId, month);
 
                 if (schedule.Count == 0)
                 {
