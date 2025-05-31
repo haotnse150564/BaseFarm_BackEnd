@@ -10,6 +10,7 @@ using Infrastructure.Repositories;
 using Infrastructure.ViewModel.Request;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics;
 using System.Drawing.Printing;
 using static Infrastructure.ViewModel.Response.FarmActivityResponse;
 
@@ -108,12 +109,12 @@ namespace WebAPI.Services
             }
         }
 
-        public async Task<ResponseDTO> GetFarmActivitiesAsync(int pageIndex, int pageSize)
+        public async Task<ResponseDTO> GetFarmActivitiesAsync(int pageIndex, int pageSize, ActivityType? type, FarmActivityStatus? status, int? month)
         {
-            var result = await _unitOfWork.farmActivityRepository.GetAllAsync();
+            var result = await _unitOfWork.farmActivityRepository.GetAllFiler(type, status, month);
             if (result.IsNullOrEmpty())
             {
-                throw new Exception();
+                return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG,"Not Found");
             }
             else
             {
@@ -161,7 +162,7 @@ namespace WebAPI.Services
                 farmActivity.ActivityType = activityType;
                 if(!CheckDate(farmActivity.StartDate, farmActivity.EndDate))
                 {
-                    return new ResponseDTO(Const.FAIL_UPDATE_CODE, "Start date or end date is wrong!");
+                    return new ResponseDTO(Const.FAIL_UPDATE_CODE, "Start date or end date is wrong required!");
                 }   
                 await _unitOfWork.farmActivityRepository.UpdateAsync(farmActivity);
                 if (await _unitOfWork.SaveChangesAsync() < 0)
@@ -223,6 +224,10 @@ namespace WebAPI.Services
                 return false;
             }
             else if (startDate > endDate)
+            {
+                return false;
+            }
+            else if((startDate.Value.DayNumber - endDate.Value.DayNumber) >7)
             {
                 return false;
             }

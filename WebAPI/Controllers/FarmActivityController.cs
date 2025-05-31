@@ -17,9 +17,9 @@ namespace WebAPI.Controllers
         }
         [HttpGet("get-all")]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> GetFarmActivities([FromQuery]int pageIndex = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetFarmActivities(ActivityType? type, FarmActivityStatus? status, int? month, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
-            var result = await _farmActivityServices.GetFarmActivitiesAsync(pageIndex, pageSize);
+            var result = await _farmActivityServices.GetFarmActivitiesAsync(pageIndex, pageSize, type, status, month);
             return Ok(result);
         }
         [HttpGet("get-active")]

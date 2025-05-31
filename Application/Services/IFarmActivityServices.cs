@@ -12,7 +12,7 @@ namespace Application.Services
 {
     public interface IFarmActivityServices
     {
-        Task<ResponseDTO> GetFarmActivitiesAsync(int pageIndex, int pageSize);
+        Task<ResponseDTO> GetFarmActivitiesAsync(int pageIndex, int pageSize, ActivityType? type, FarmActivityStatus? status, int? month);
         Task<ResponseDTO> GetFarmActivitiesActiveAsync(int pageIndex, int pageSize);
         Task<ResponseDTO> CreateFarmActivityAsync(FarmActivityRequest farmActivityRequest, ActivityType activityType);
         Task<ResponseDTO> UpdateFarmActivityAsync(long farmActivityId, FarmActivityRequest farmActivityRequest, ActivityType? activityType);
