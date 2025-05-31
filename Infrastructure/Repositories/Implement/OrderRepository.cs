@@ -41,7 +41,7 @@ namespace Infrastructure.Repositories.Implement
                     CreatedAt = o.CreatedAt.HasValue ? o.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
                     OrderItems = o.OrderDetails.Select(od => new ViewProductDTO
                     {
-                        ProductId = od.ProductId,   
+                        ProductId = od.ProductId,
                         ProductName = od.Product.ProductName,
                         Price = od.UnitPrice,
                         StockQuantity = od.Quantity
@@ -181,15 +181,16 @@ namespace Infrastructure.Repositories.Implement
 
         public Task<List<Order>> SearchOrdersByEmailAsync(string email, PaymentStatus? status)
         {
-            
+
             if (status.HasValue)
             {
-               var result = _context.Order
-                    .Where(o => o.Customer.Email.Contains(email) && o.Status == status)
-                    .Include(o => o.Customer)
-                    .Include(o => o.OrderDetails)
-                        .ThenInclude(od => od.Product)
-                    .ToListAsync();
+                var result = _context.Order
+                     .Where(o => o.Customer.Email.Contains(email) && o.Status == status)
+                     .Include(o => o.Customer)
+                     .Include(o => o.OrderDetails)
+                         .ThenInclude(od => od.Product)
+                         .OrderByDescending(o => o.CreatedAt)
+                     .ToListAsync();
                 return result;
             }
             var results = _context.Order
@@ -208,6 +209,7 @@ namespace Infrastructure.Repositories.Implement
                 .Include(o => o.Customer)
                 .Include(o => o.OrderDetails)
                     .ThenInclude(od => od.Product)
+                        .OrderByDescending(o => o.CreatedAt)
                 .ToListAsync();
             return result;
         }

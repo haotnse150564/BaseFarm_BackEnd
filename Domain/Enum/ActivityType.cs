@@ -8,10 +8,10 @@ namespace Domain.Enum
 {
     public enum ActivityType
     {
-        Sowing,
-        Protection,
-        Irrigation,
-        Fertilization,
-        Harvesting
+        Sowing, //gieo hạt
+        Protection, //trừ sâu bệnh
+        Irrigation, //tưới tiêu
+        Fertilization, //bón phân
+        Harvesting //thu hoạch
     }
 }

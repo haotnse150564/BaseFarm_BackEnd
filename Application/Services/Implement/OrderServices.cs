@@ -297,6 +297,7 @@ namespace Application.Services.Implement
                     PageIndex = pageIndex,
                     Items = result.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList()
                 };
+                result.OrderBy(o => o.CreatedAt);
                 return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, pagination);
             }
             catch (Exception ex)
@@ -321,6 +322,7 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_READ_CODE, "No Order found.");
                 }
                 var result = _mapper.Map<List<OrderResultDTO>>(listOrder);
+                result.OrderBy(o => o.CreatedAt);
                 return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
             }
             catch (Exception ex)

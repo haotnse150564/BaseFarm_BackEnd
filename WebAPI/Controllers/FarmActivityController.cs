@@ -58,7 +58,7 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
         [HttpPut("complete/{id}")]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager, Staff")]
         public async Task<IActionResult> CompleteFarmActivity(long id, string? location)
         {
             var result =await _farmActivityServices.CompleteFarmActivity(id, location);
