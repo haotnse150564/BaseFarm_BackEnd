@@ -219,7 +219,8 @@ namespace Application.Services.Implement
                 var newListFarmActivity = await _unitOfWork.farmActivityRepository.GetListFarmActivityUpdate(request.FarmActivityId);
                 
                 var notInListFarmActivity = oldListFarmActivity.Except(newListFarmActivity).ToList();
-                var InListFarmActivity = newListFarmActivity.Except(oldListFarmActivity).ToList();
+                var list = oldListFarmActivity.Concat(newListFarmActivity).ToList();
+                list = list.Except(notInListFarmActivity).ToList();
 
                 // Xử lý các FarmActivity không còn trong danh sách
                 foreach (var item in notInListFarmActivity)
@@ -229,9 +230,9 @@ namespace Application.Services.Implement
                     await _unitOfWork.farmActivityRepository.UpdateAsync(item);
                 }
                 // Xử lý các FarmActivity mới được thêm vào
-                foreach (var item in InListFarmActivity)
+                foreach (var item in list)
                 {
-                    if (item.Status != FarmActivityStatus.ACTIVE)
+                    if (item.Status == FarmActivityStatus.DEACTIVATED || item.Status == FarmActivityStatus.COMPLETED)
                     {
                         return new ResponseDTO(Const.FAIL_READ_CODE, "Some Farm Activity is in process or deactived.");
                     }
@@ -239,7 +240,7 @@ namespace Application.Services.Implement
                     {
                         return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity date range does not match with Schedule date range.");
                     }
-                    else if (item.ScheduleId != null && item.ScheduleId != 0)
+                    else if (item.ScheduleId != null && item.ScheduleId != 0 && item.ScheduleId != schedule.ScheduleId)
                     {
                         return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity is already assigned to another Schedule.");
                     }

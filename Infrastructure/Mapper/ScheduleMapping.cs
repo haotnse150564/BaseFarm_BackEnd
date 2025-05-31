@@ -32,6 +32,8 @@ namespace Infrastructure.Mapper
                    .ForMember(dest => dest.cropView, opt => opt.MapFrom(src => src.Crop))
                    .ForMember(dest => dest.FarmActivityId, opt => opt.MapFrom(src => src.FarmActivities))
                    .ForMember(dest => dest.FarmActivityId, opt => opt.MapFrom(src => src.FarmActivities.Select(x => x.FarmActivitiesId).ToList()))
+                   .ForMember(dest => dest.HarvestDate, opt => opt.MapFrom(src => src.HarvestDate.ToString()))
+                   .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
             //.ForMember(dest => dest.ActivityType, opt => opt.MapFrom(src => src.FarmActivities..Value.ToString()))
             // .ForMember(dest => dest.dailyLog, opt => opt.MapFrom(src => src.DailyLogs));
             ;

@@ -80,7 +80,7 @@ namespace WebAPI.Services
             }
         }
 
-        public async Task<ResponseDTO> GetFarmActivitiesActiveAsync(int pageIndex, int pageSize)
+        public async Task<ResponseDTO> GetFarmActivitiesActiveAsync(int pageIndex, int pageSize, long scheduleId)
         {
             var list = await _unitOfWork.farmActivityRepository.GetAllAsync();
             if (list.IsNullOrEmpty())
@@ -90,6 +90,10 @@ namespace WebAPI.Services
             else
             {
                 var result = list.Where(x => x.Status == Domain.Enum.FarmActivityStatus.ACTIVE).ToList();
+                if(scheduleId != 0)
+                {
+                    result = result.Where(x => x.ScheduleId == scheduleId).ToList();
+                }
                 if (list.IsNullOrEmpty())
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);
