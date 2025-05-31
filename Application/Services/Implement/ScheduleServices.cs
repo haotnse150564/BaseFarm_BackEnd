@@ -45,7 +45,6 @@ namespace Application.Services.Implement
         {
             try
             {
-                var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(request.FarmActivityId);
                 var result = new Schedule
                 {
                     StartDate = request.StartDate,
@@ -54,15 +53,13 @@ namespace Application.Services.Implement
                     AssignedTo = request.AssignedTo,
                     //FarmActivityId = request.FarmActivityId,
                     PlantingDate = request.PlantingDate,
-                    FarmActivities = farmActivity == null ? new List<FarmActivity>() : new List<FarmActivity> { farmActivity },
                     FarmDetailsId = request.FarmDetailsId,
                     CropId = request.CropId,
                     UpdatedAt = _currentTime.GetCurrentTime(),
                     CreatedAt = _currentTime.GetCurrentTime(),
                     Status = Status.ACTIVE,
                 };
-                var listSchedule = await _unitOfWork.scheduleRepository.GetAllAsync();
-                var getduplicateCrop = listSchedule.FirstOrDefault(x => x.CropId == result.CropId && x.Status == Status.ACTIVE);
+                #region checkValidate and add FarmActivity
                 if (result.StartDate < DateOnly.FromDateTime(DateTime.Today) || result.EndDate < DateOnly.FromDateTime(DateTime.Today))
                 {
                     return new ResponseDTO(Const.ERROR_EXCEPTION, "Start Date and End Date at least is today");
@@ -77,10 +74,41 @@ namespace Application.Services.Implement
                 }
                 else
                 {
-
-
-                    // Map dữ liệu sang DTO
                     await _unitOfWork.scheduleRepository.AddAsync(result);
+                    //check farmActivity is ACTIVE and date range match with Schedule date range
+                    foreach (var farmActId in request.FarmActivityId)
+                    {
+                        var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(farmActId);
+                        if (farmActivity.Status != Domain.Enum.FarmActivityStatus.ACTIVE)
+                            return new ResponseDTO(Const.FAIL_READ_CODE, "All Farm Activity must in ACTIVE status.");
+                    }
+                    foreach (var farmActivityId in request.FarmActivityId)
+                    {
+                        var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(farmActivityId);
+                        if (farmActivity == null)
+                        {
+                            return new ResponseDTO(Const.FAIL_READ_CODE, "No Farm Activity found with the given ID.");
+                        }
+                        if (item.Status != FarmActivityStatus.ACTIVE || item.Status != FarmActivityStatus.COMPLETED)
+                        {
+                            return new ResponseDTO(Const.FAIL_READ_CODE, "Some Farm Activity is in process or deactived.");
+                        }
+                        else if (farmActivity.StartDate < result.StartDate || farmActivity.EndDate > result.EndDate)
+                        {
+                            return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity date range does not match with Schedule date range.");
+                        }
+                        else if (farmActivity.ScheduleId != null && farmActivity.ScheduleId != 0)
+                        {
+                            return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity is already assigned to another Schedule.");
+                        }
+                        else
+                        {
+                            farmActivity.ScheduleId = result.ScheduleId;
+                            farmActivity.Status = FarmActivityStatus.IN_PROGRESS; // Cập nhật trạng thái FarmActivity
+                            await _unitOfWork.farmActivityRepository.UpdateAsync(farmActivity);
+                        }
+                    }
+                    #endregion
                     await _unitOfWork.SaveChangesAsync();
 
                     var resultView = _mapper.Map<ViewSchedule>(result);
@@ -169,18 +197,57 @@ namespace Application.Services.Implement
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, "No Schedule found.");
                 }
+
                 var update = _mapper.Map(request, schedule);
                 update.UpdatedAt = _currentTime.GetCurrentTime();
                 // Map dữ liệu sang DTO
                 _unitOfWork.scheduleRepository.Update(update);
-                await _unitOfWork.SaveChangesAsync();
+
+                var oldListFarmActivity = await _unitOfWork.farmActivityRepository.GetListFarmActivityByScheduleId(ScheduleId);
+                var newListFarmActivity = await _unitOfWork.farmActivityRepository.GetListFarmActivityUpdate(request.FarmActivityId);
                 
+                var notInListFarmActivity = oldListFarmActivity.Except(newListFarmActivity).ToList();
+                var InListFarmActivity = newListFarmActivity.Except(oldListFarmActivity).ToList();
+
+                // Xử lý các FarmActivity không còn trong danh sách
+                foreach (var item in notInListFarmActivity)
+                {
+                    item.ScheduleId = null; // Xóa liên kết với Schedule
+                    item.Status = FarmActivityStatus.ACTIVE; // Đặt lại trạng thái FarmActivity
+                    await _unitOfWork.farmActivityRepository.UpdateAsync(item);
+                }
+                // Xử lý các FarmActivity mới được thêm vào
+                foreach (var item in InListFarmActivity)
+                {
+                    if (item.Status != FarmActivityStatus.ACTIVE || item.Status != FarmActivityStatus.COMPLETED)
+                    {
+                        return new ResponseDTO(Const.FAIL_READ_CODE, "Some Farm Activity is in process or deactived.");
+                    }
+                    else if (item.StartDate < update.StartDate || item.EndDate > update.EndDate)
+                    {
+                        return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity date range does not match with Schedule date range.");
+                    }
+                    else if (item.ScheduleId != null && item.ScheduleId != 0)
+                    {
+                        return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity is already assigned to another Schedule.");
+                    }
+                    else
+                    {
+                        item.ScheduleId = ScheduleId; // Gán lại ScheduleId
+                        item.Status = FarmActivityStatus.IN_PROGRESS; // Cập nhật trạng thái FarmActivity
+                        await _unitOfWork.farmActivityRepository.UpdateAsync(item);
+                    }
+                }
+
+                await _unitOfWork.SaveChangesAsync();
+
                 //xu ly inventory neu farmactivitytype là harvest và status là completed
-                var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(request.FarmActivityId);
-                if( farmActivity != null && farmActivity.ActivityType == Domain.Enum.ActivityType.Harvesting && farmActivity.Status == FarmActivityStatus.COMPLETED)
+                var farmActivity = await _unitOfWork.farmActivityRepository.GetHarvestFarmActivityId(ScheduleId);
+                if (farmActivity != null && farmActivity.ActivityType == Domain.Enum.ActivityType.Harvesting && farmActivity.Status == FarmActivityStatus.COMPLETED)
                 {
                     await _inventory.CalculateAndCreateInventoryAsync(schedule.Quantity, request.Location, schedule.CropId, ScheduleId);
                 }
+
                 var result = _mapper.Map<ViewSchedule>(update);
                 result.FullNameStaff = (await _account.GetAccountProfileByAccountIdAsync(result.AssignedTo)).AccountProfile?.Fullname;
                 return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
