@@ -58,9 +58,17 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
         [HttpPut("complete/{id}")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> CompleteFarmActivity(long id, string? location)
         {
             var result =await _farmActivityServices.CompleteFarmActivity(id, location);
+            return Ok(result);
+        }
+        [HttpGet("get-by-staff")]
+        [Authorize(Roles = "Staff")]
+        public async Task<IActionResult> GetFarmActivitiesByStaff(ActivityType? type, FarmActivityStatus? status, int? month, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
+        {
+            var result = await _farmActivityServices.GetFarmActivitiesByStaffAsync(pageIndex, pageSize, type, status, month);
             return Ok(result);
         }
     }
