@@ -61,5 +61,17 @@ namespace Infrastructure.Repositories.Implement
                 .ToListAsync();
             return feedbacks;
         }
+
+        public Task<List<Feedback>> GetByOrderDetailIdAsync(long orderDetailId)
+        {
+            var feedbacks = _context.Feedback
+                .Include(f => f.Customer)
+                .ThenInclude(a => a.AccountProfile)
+                .Include(f => f.OrderDetail)
+                .ThenInclude(od => od.Product)
+                .Where(f => f.OrderDetail.OrderDetailId == orderDetailId)
+                .ToListAsync();
+            return feedbacks;
+        }
     }
 }

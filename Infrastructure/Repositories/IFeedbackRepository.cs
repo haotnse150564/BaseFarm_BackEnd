@@ -10,5 +10,6 @@ namespace Infrastructure.Repositories
         Task<Feedback> GetByIdAsync(long id);
         Task<List<Feedback>> GetByProductIdAsync(long productId);
         Task<List<Feedback>> GetByOrderIdAsync(long orderId);
+        Task<List<Feedback>> GetByOrderDetailIdAsync(long orderDetailId);
     }
 }

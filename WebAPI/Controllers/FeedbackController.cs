@@ -110,5 +110,16 @@ namespace WebAPI.Controllers
             }
             return Ok(result); 
         }
+
+        [HttpGet("feedback-by-order-detail/{orderDetailId}")]
+        public async Task<IActionResult> GetFeedbackByOrderDetailIdAsync([FromRoute] long orderDetailId)
+        {
+            var result = await _feedbackService.GetFeedbackByOrderDetailIdAsync(orderDetailId);
+            if (result.Status != Const.SUCCESS_READ_CODE)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result);
+        }
     }
 }
