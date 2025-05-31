@@ -21,5 +21,6 @@ namespace Infrastructure.Repositories
             long? categoryId = null,
             bool sortByStockAsc = true);
         Task UpdateStockByOrderAsync(long productId, int quantityToReduce);
+        Task <List<Product>> GetProductTotals();
     }
 }
