@@ -61,6 +61,7 @@ namespace Application.Services.Implement
                     UpdatedAt = _currentTime.GetCurrentTime(),
                     CreatedAt = _currentTime.GetCurrentTime(),
                     Status = Status.ACTIVE,
+                    Quantity = request.Quantity
                 };
                 #region checkValidate and add FarmActivity
                 if (result.StartDate < DateOnly.FromDateTime(DateTime.Today) || result.EndDate < DateOnly.FromDateTime(DateTime.Today))
