@@ -11,19 +11,16 @@ namespace Infrastructure.ViewModel.Request
     public class IOTRequest
     {
 
-        [Required(ErrorMessage = "FarmActivityName is required.")]
+        //[Required(ErrorMessage = "FarmActivityName is required.")]
         public string? DeviceName { get; set; }
 
-        [Required(ErrorMessage = "FarmActivityName is required.")]
+        //[Required(ErrorMessage = "FarmActivityName is required.")]
         public string? DeviceType { get; set; }
 
-        [Required(ErrorMessage = "FarmActivityName is required.")]
-        public string? Unit { get; set; }
-
-        [Required(ErrorMessage = "FarmActivityName is required.")]
+        //[Required(ErrorMessage = "FarmActivityName is required.")]
         public DateOnly? ExpiryDate { get; set; }
 
-        [Required(ErrorMessage = "FarmActivityName is required.")]
+        //[Required(ErrorMessage = "FarmActivityName is required.")]
         public long FarmDetailsId { get; set; }
     }
 }

@@ -33,13 +33,10 @@ namespace Infrastructure.ViewModel.Request
         public long CropId { get; set; }
 
         [Required(ErrorMessage = "PlantingDate is required.")]
-        //[Range(1, long.MaxValue, ErrorMessage = "CropId must be a positive number.")]
         public DateOnly? PlantingDate { get; set; }
         public string? Location { get; set; }
-        //[Required(ErrorMessage = "HarvestDate is required.")]
-        //[Range(1, long.MaxValue, ErrorMessage = "CropId must be a positive number.")]
-        //public DateOnly? HarvestDate { get; set; }
-        //public long DailyLogId { get; set; }
-
+        [Required(ErrorMessage = "Quantity is required.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Quantity must be a positive number.")]
+        public int Quantity { get; set; }
     }
 }
