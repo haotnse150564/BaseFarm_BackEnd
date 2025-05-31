@@ -153,7 +153,13 @@ namespace Infrastructure.Repositories.Implement
                 {
                     inventory.StockQuantity -= remaining;
                     if (inventory.StockQuantity == 0)
+                    {
                         inventory.Status = Status.DEACTIVATED; // Nếu hết hàng thì chuyển trạng thái
+                    }
+                    else
+                    {
+                        inventory.Status = Status.ACTIVE; // Cập nhật lại trạng thái ACTIVE
+                    }
                     remaining = 0;
                 }
                 else
@@ -170,10 +176,18 @@ namespace Infrastructure.Repositories.Implement
             var totalStock = await _context.Inventorie
                 .Where(i => i.ProductId == productId && i.Status == Status.ACTIVE)
                 .SumAsync(i => i.StockQuantity ?? 0);
-
+            
             var product = await _context.Product.FindAsync(productId);
             if (product != null)
             {
+                if (totalStock == 0)
+                {
+                    product.Status = ProductStatus.DEACTIVED;
+                }
+                else
+                {
+                    product.Status = ProductStatus.ACTIVE;
+                }
                 product.StockQuantity = totalStock;
                 _context.Product.Update(product);
             }
