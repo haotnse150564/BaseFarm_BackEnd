@@ -89,7 +89,7 @@ namespace Application.Services.Implement
                         {
                             return new ResponseDTO(Const.FAIL_READ_CODE, "No Farm Activity found with the given ID.");
                         }
-                        if (item.Status != FarmActivityStatus.ACTIVE || item.Status != FarmActivityStatus.COMPLETED)
+                        if (farmActivity.Status != FarmActivityStatus.ACTIVE || farmActivity.Status != FarmActivityStatus.COMPLETED)
                         {
                             return new ResponseDTO(Const.FAIL_READ_CODE, "Some Farm Activity is in process or deactived.");
                         }

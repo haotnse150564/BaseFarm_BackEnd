@@ -1,4 +1,5 @@
-﻿using Domain.Model;
+﻿using Domain.Enum;
+using Domain.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories.Implement
@@ -18,7 +19,23 @@ namespace Infrastructure.Repositories.Implement
                 .ToListAsync();
             return result;
         }
-
+        public async Task<List<FarmActivity>> GetAllFiler(ActivityType? type, FarmActivityStatus? status, int? month)
+        {
+            var list = await _context.FarmActivity.ToListAsync();
+            if (type != null)
+            {
+                list = list.Where(fa => fa.ActivityType == type).ToList();
+            }
+            if (status != null)
+            {
+                list = list.Where(fa => fa.Status == status).ToList();
+            }
+            if (month > 0 && month <= 12)
+            {
+                list = list.Where(fa => fa.StartDate.HasValue && fa.StartDate.Value.Month == month || fa.EndDate.HasValue && fa.EndDate.Value.Month == month).ToList();
+            }
+            return list;
+        }
         public async Task<FarmActivity> GetHarvestFarmActivityId(long scheduleId)
         {
             return await _context.FarmActivity

@@ -9,6 +9,7 @@ using Infrastructure.Repositories;
 using Infrastructure.ViewModel.Request;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics;
 using System.Drawing.Printing;
 using static Infrastructure.ViewModel.Response.FarmActivityResponse;
 
@@ -105,12 +106,12 @@ namespace WebAPI.Services
             }
         }
 
-        public async Task<ResponseDTO> GetFarmActivitiesAsync(int pageIndex, int pageSize)
+        public async Task<ResponseDTO> GetFarmActivitiesAsync(int pageIndex, int pageSize, ActivityType? type, FarmActivityStatus? status, int? month)
         {
-            var result = await _unitOfWork.farmActivityRepository.GetAllAsync();
+            var result = await _unitOfWork.farmActivityRepository.GetAllFiler(type, status, month);
             if (result.IsNullOrEmpty())
             {
-                throw new Exception();
+                return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG,"Not Found");
             }
             else
             {
@@ -169,6 +170,27 @@ namespace WebAPI.Services
                 {
                     var result = _mapper.Map<FarmActivityView>(farmActivity);
                     return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, result);
+                }
+            }
+        }
+        public async Task<ResponseDTO> CompleteFarmActivity(long id)
+        {
+            var farmActivity = await _farmActivityRepository.GetByIdAsync(id);
+            if (farmActivity == null)
+            {
+                return new ResponseDTO(Const.FAIL_READ_CODE, "Not Found Farm Activity");
+            }
+            else
+            {
+                farmActivity.Status = Domain.Enum.FarmActivityStatus.COMPLETED;
+                await _unitOfWork.farmActivityRepository.UpdateAsync(farmActivity);
+                if (await _unitOfWork.SaveChangesAsync() < 0)
+                {
+                    return new ResponseDTO(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);
+                }
+                else
+                {
+                    return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG);
                 }
             }
         }

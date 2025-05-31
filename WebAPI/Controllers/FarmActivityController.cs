@@ -17,9 +17,9 @@ namespace WebAPI.Controllers
         }
         [HttpGet("get-all")]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> GetFarmActivities([FromQuery]int pageIndex = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetFarmActivities(ActivityType? type, FarmActivityStatus? status, int? month, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
-            var result = await _farmActivityServices.GetFarmActivitiesAsync(pageIndex, pageSize);
+            var result = await _farmActivityServices.GetFarmActivitiesAsync(pageIndex, pageSize, type, status, month);
             return Ok(result);
         }
         [HttpGet("get-active")]
@@ -55,6 +55,12 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> ChangeFarmActivityStatus(long farmActivityId)
         {
             var result = await _farmActivityServices.ChangeFarmActivityStatusAsync(farmActivityId);
+            return Ok(result);
+        }
+        [HttpPut("complete/{id}")]
+        public async Task<IActionResult> CompleteFarmActivity(long id)
+        {
+            var result =await _farmActivityServices.CompleteFarmActivity(id);
             return Ok(result);
         }
     }
