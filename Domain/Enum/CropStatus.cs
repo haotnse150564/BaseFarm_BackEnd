@@ -10,6 +10,6 @@ namespace Domain.Enum
     {
         ACTIVE,
         INACTIVE,
-        IN_STOCK
+        IN_STOCK // đang được lên product
     }
 }
