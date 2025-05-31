@@ -80,6 +80,10 @@ namespace Application.Services.Implement
                 {
                     await _unitOfWork.scheduleRepository.AddAsync(result);
                     //check farmActivity is ACTIVE and date range match with Schedule date range
+                    if (request.FarmActivityId == null || !request.FarmActivityId.Any())
+                    {
+                        return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity ID is required.");
+                    }
                     foreach (var farmActId in request.FarmActivityId)
                     {
                         var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(farmActId);

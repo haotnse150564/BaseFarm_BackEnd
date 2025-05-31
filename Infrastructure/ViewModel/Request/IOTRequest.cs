@@ -18,9 +18,6 @@ namespace Infrastructure.ViewModel.Request
         public string? DeviceType { get; set; }
 
         //[Required(ErrorMessage = "FarmActivityName is required.")]
-        public string? Unit { get; set; }
-
-        //[Required(ErrorMessage = "FarmActivityName is required.")]
         public DateOnly? ExpiryDate { get; set; }
 
         //[Required(ErrorMessage = "FarmActivityName is required.")]
