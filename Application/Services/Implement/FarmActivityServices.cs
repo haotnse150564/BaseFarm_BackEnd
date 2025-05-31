@@ -130,6 +130,28 @@ namespace WebAPI.Services
                 };
                 return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, pagination);
             }
+        }
+        public async Task<ResponseDTO> GetFarmActivitiesByStaffAsync(int pageIndex, int pageSize, ActivityType? type, FarmActivityStatus? status, int? month)
+        {
+            var result = await _unitOfWork.farmActivityRepository.GetAllFiler(type, status, month);
+            if (result.IsNullOrEmpty())
+            {
+                return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Not Found");
+            }
+            else
+            {
+                // Map dữ liệu sang DTO
+                var resultView = _mapper.Map<List<FarmActivityView>>(result);
+
+                var pagination = new Pagination<FarmActivityView>
+                {
+                    TotalItemCount = resultView.Count,
+                    PageSize = pageSize,
+                    PageIndex = pageIndex,
+                    Items = resultView.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList()
+                };
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, pagination);
+            }
 
         }
 
@@ -185,7 +207,11 @@ namespace WebAPI.Services
             }else if (farmActivity.ScheduleId == null)
             {
                 return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity Don't Have Any Schedule");
-            }            
+            }    
+            else if (farmActivity.Status != FarmActivityStatus.IN_PROGRESS)
+            {
+                return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity Already Completed or do not used by any Schedule");
+            }
             farmActivity.Status = Domain.Enum.FarmActivityStatus.COMPLETED;
             await _unitOfWork.farmActivityRepository.UpdateAsync(farmActivity);
             if (farmActivity.ActivityType == ActivityType.Harvesting)
