@@ -2,11 +2,7 @@
 using Domain.Enum;
 using Domain.Model;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Infrastructure.Repositories.Implement
 {
@@ -193,6 +189,25 @@ namespace Infrastructure.Repositories.Implement
             }
 
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<Product>> GetProductTotals()
+        {
+            List<Product> list = new List<Product>();
+            var products = await _context.Product
+             .Include(p => p.Inventories)
+             .ToListAsync();
+
+            // Lọc các Product có StockQuantity bằng tổng StockQuantity của các Inventory liên quan
+            foreach (var product in products)
+            {
+                product.StockQuantity = product.Inventories
+                    .Where(i => i.ProductId == product.ProductId)
+                    .Sum(i => i.StockQuantity) ?? 0;
+                list.Add(product);
+            }
+
+            return list;
         }
     }
 }

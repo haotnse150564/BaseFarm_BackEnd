@@ -4,6 +4,7 @@ using AutoMapper;
 using Domain.Enum;
 using Domain.Model;
 using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
 using static Application.ViewModel.Request.ProductRequest;
 using static Application.ViewModel.Response.ProductResponse;
 
@@ -28,39 +29,20 @@ namespace Application.Services.Implement
         {
             try
             {
-                var listProduct = await _unitOfWork.productRepository.GetAllAsync();
-                var listFilter = listProduct.Where(x => x.Status == ProductStatus.ACTIVE).ToList();
-                if (listFilter == null)
+                var products = await _unitOfWork.productRepository.GetProductTotals();
+                if (products == null)
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, "No Products found.");
                 }
-                var inventoryList = await _unitOfWork.inventoryRepository.GetAllAsync();  
-                listFilter = listFilter
-                    .Select(product =>
-                    {
-                        var inventory = inventoryList.FirstOrDefault(i => i.ProductId == product.ProductId);
-                        product.StockQuantity = 0;
-                        if (inventory != null)
-                        {
-                            product.StockQuantity += inventory.StockQuantity;
-                        }
-                        return product;
-                    })
-                    .ToList();
-                foreach(var item in listFilter)
-                {
-                   var product = await _unitOfWork.productRepository.GetProductById(item.ProductId);
-                    product.StockQuantity = item.StockQuantity;
-                    await _unitOfWork.productRepository.UpdateAsync(product);
-                }
+
                 await _unitOfWork.SaveChangesAsync();
                 // Map dữ liệu sang DTO
-                var result = _mapper.Map<List<ViewProductDTO>>(listFilter);
+                var result = _mapper.Map<List<ViewProductDTO>>(products);
 
                 // Tạo đối tượng phân trang
                 var pagination = new Pagination<ViewProductDTO>
                 {
-                    TotalItemCount = listFilter.Count,
+                    TotalItemCount = products.Count,
                     PageSize = pageSize,
                     PageIndex = pageIndex,
                     Items = result
