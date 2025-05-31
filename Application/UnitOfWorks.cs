@@ -1,6 +1,7 @@
 ﻿using Application;
 using Application.Interfaces;
 using Application.Services;
+using Domain.Model;
 using Infrastructure.Repositories;
 using Infrastructure.Repositories.Implement;
 using Microsoft.EntityFrameworkCore;
@@ -27,12 +28,14 @@ namespace Infrastructure
         private IFarmRepository _farmRepository;
         private ICategoryRepository _categoryRepository;
         private IInventoryRepository _inventoryRepository;
+        private ICropRequirementRepository _cropRequirementRepository;    
 
         public UnitOfWorks(AppDbContext context, ICurrentTime currentTime, IClaimsServices claimsServices, IProductRepository productRepository
             , IFeedbackRepository feedbackRepository, IAccountProfileRepository accountProfileRepository, IOrderRepository orderRepository
             , IOrderDetailRepository orderDetailRepository, IPaymentRepository paymentRepository, IScheduleRepository scheduleRepository
             , IIoTdeviceRepository ioTdeviceRepository, ICropRepository cropRepository, IFarmActivityRepository farmActivityRepository, IFarmRepository farmRepository
             , ICategoryRepository categoryRepository, IAccountRepository accountRepository, IInventoryRepository inventoryRepository
+            , ICropRequirementRepository cropRequirementRepository
             )
         {
             _context = context;
@@ -52,6 +55,14 @@ namespace Infrastructure
             _categoryRepository = categoryRepository;
             _accountRepository = accountRepository;
             _inventoryRepository = inventoryRepository;
+            _cropRequirementRepository = cropRequirementRepository;
+        }
+        public ICropRequirementRepository cropRequirmentRepository
+        {
+            get
+            {
+                return _cropRequirementRepository ??= new CropRequirementtRepository(_context);
+            }
         }
         public ICategoryRepository categoryRepository
         {
@@ -157,6 +168,9 @@ namespace Infrastructure
                 return _inventoryRepository ??= new InventoryRepository(_context);
             }
         }
+
+        public ICropRequirmentRepository cropRequirmentRepository => throw new NotImplementedException();
+
         public void Dispose()
         {
             _context.Dispose();

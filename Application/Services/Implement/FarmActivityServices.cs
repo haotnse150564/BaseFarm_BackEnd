@@ -212,7 +212,9 @@ namespace WebAPI.Services
             {
                 return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity Already Completed or do not used by any Schedule");
             }
-            farmActivity.Status = Domain.Enum.FarmActivityStatus.COMPLETED;
+            farmActivity.Status = Domain.Enum.FarmActivityStatus.COMPLETED; 
+
+
             await _unitOfWork.farmActivityRepository.UpdateAsync(farmActivity);
             if (farmActivity.ActivityType == ActivityType.Harvesting)
             {

@@ -45,14 +45,17 @@ namespace Application.Services.Implement
         {
             try
             {
+                var crop = await _unitOfWork.cropRepository.GetByIdAsync(request.CropId);
+                var ReqCrop = await _unitOfWork.cropRequirmentRepository.GetbyIdAsync(crop.CropRequirement.RequirementId);
                 var result = new Schedule
                 {
                     StartDate = request.StartDate,
-                    //EndDate = request.EndDate,
-                    EndDate = DateOnly.Parse("09/09/2025"),
+                    EndDate = request.EndDate,
+                    //EndDate = DateOnly.Parse("09/09/2025"),
                     AssignedTo = request.AssignedTo,
                     //FarmActivityId = request.FarmActivityId,
                     PlantingDate = request.PlantingDate,
+                    HarvestDate = result.PlantingDate.Value.AddDays(ReqCrop.HarvestDays),
                     FarmDetailsId = request.FarmDetailsId,
                     CropId = request.CropId,
                     UpdatedAt = _currentTime.GetCurrentTime(),
@@ -93,7 +96,7 @@ namespace Application.Services.Implement
                         {
                             return new ResponseDTO(Const.FAIL_READ_CODE, "Some Farm Activity is in process or deactived.");
                         }
-                        else if (farmActivity.StartDate < result.StartDate || farmActivity.EndDate > result.EndDate)
+                        else if (farmActivity.StartDate < result.StartDate && farmActivity.EndDate > result.EndDate)
                         {
                             return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity date range does not match with Schedule date range.");
                         }
@@ -223,7 +226,7 @@ namespace Application.Services.Implement
                     {
                         return new ResponseDTO(Const.FAIL_READ_CODE, "Some Farm Activity is in process or deactived.");
                     }
-                    else if (item.StartDate < update.StartDate || item.EndDate > update.EndDate)
+                    else if (item.StartDate < update.StartDate && item.EndDate > update.EndDate)
                     {
                         return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity date range does not match with Schedule date range.");
                     }
