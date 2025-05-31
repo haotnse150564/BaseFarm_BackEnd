@@ -56,7 +56,7 @@ namespace WebAPI.Controllers
             try
             {
                 var response = await Task.Run(() => _vnPayService.PaymentExecute(Request.Query));
-
+                Console.WriteLine($"Response: {response}");
                 if (response == null)
                 {
                     return BadRequest(new { message = "Invalid payment response." });
@@ -66,7 +66,7 @@ namespace WebAPI.Controllers
                 await _vnPayService.SavePaymentAsync(response);
 
                 // 🔥 Redirect to frontend with payment status
-                string frontendUrl = "https://iotbasedfarm.netlify.app/vnpay-callback";
+                string frontendUrl = response.Success ? "https://iotbasedfarm.netlify.app/vnpay-callback" : "https://iotbasedfarm.netlify.app/order-failed";
                 string redirectUrl = $"{frontendUrl}?vnp_ResponseCode={response.VnPayResponseCode}&vnp_TransactionNo={response.TransactionId}&vnp_TxnRef={response.OrderId}&vnp_Amount={response.Amount}";
 
                 return Redirect(redirectUrl);
