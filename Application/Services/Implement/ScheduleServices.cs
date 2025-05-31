@@ -89,7 +89,7 @@ namespace Application.Services.Implement
                         {
                             return new ResponseDTO(Const.FAIL_READ_CODE, "No Farm Activity found with the given ID.");
                         }
-                        if (farmActivity.Status != FarmActivityStatus.ACTIVE || farmActivity.Status != FarmActivityStatus.COMPLETED)
+                        if (farmActivity.Status != FarmActivityStatus.ACTIVE)
                         {
                             return new ResponseDTO(Const.FAIL_READ_CODE, "Some Farm Activity is in process or deactived.");
                         }
@@ -219,7 +219,7 @@ namespace Application.Services.Implement
                 // Xử lý các FarmActivity mới được thêm vào
                 foreach (var item in InListFarmActivity)
                 {
-                    if (item.Status != FarmActivityStatus.ACTIVE || item.Status != FarmActivityStatus.COMPLETED)
+                    if (item.Status != FarmActivityStatus.ACTIVE)
                     {
                         return new ResponseDTO(Const.FAIL_READ_CODE, "Some Farm Activity is in process or deactived.");
                     }

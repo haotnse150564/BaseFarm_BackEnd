@@ -26,10 +26,6 @@ namespace Infrastructure.FluentAPI
             builder.Property(e => e.FarmDetailsId).HasColumnName("farmDetailsID");
             builder.Property(e => e.LastUpdate).HasColumnName("lastUpdate");
             builder.Property(e => e.Status).HasColumnName("status");
-            builder.Property(e => e.Unit)
-                .HasMaxLength(255)
-                .IsUnicode(false)
-                .HasColumnName("unit");
 
             builder.HasOne(d => d.FarmDetails).WithMany(p => p.IoTdevices)
                 .HasForeignKey(d => d.FarmDetailsId)
