@@ -43,6 +43,9 @@ namespace Application.Services.Implement
             };
 
             await _inventoryRepository.AddAsync(inventory);
+
+            // Cập nhật lại số lượng tồn kho của sản phẩm
+            await SyncProductStockQuantityAsync(productID);
             return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG);
         }
 
