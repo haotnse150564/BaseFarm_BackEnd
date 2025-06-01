@@ -80,13 +80,12 @@ namespace Application.Services.Implement
                 {
                     return new ResponseDTO(Const.ERROR_EXCEPTION, "The start date cannot be set after the end date.");
                 }
-                else if (result.StartDate > result.EndDate)
+                else if (result.StartDate >= result.EndDate)
                 {
                     return new ResponseDTO(Const.ERROR_EXCEPTION, "The start date cannot be set before the end date.");
                 }
                 else
                 {
-                    await _unitOfWork.scheduleRepository.AddAsync(result);
                     //check farmActivity is ACTIVE and date range match with Schedule date range
                     if (request.FarmActivityId == null || !request.FarmActivityId.Any())
                     {
@@ -95,6 +94,10 @@ namespace Application.Services.Implement
                     foreach (var farmActId in request.FarmActivityId)
                     {
                         var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(farmActId);
+                        if (farmActivity == null) 
+                        {
+                            return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity is required.");
+                        }
                         if (farmActivity.Status != Domain.Enum.FarmActivityStatus.ACTIVE)
                             return new ResponseDTO(Const.FAIL_READ_CODE, "All Farm Activity must in ACTIVE status.");
                     }
@@ -125,6 +128,7 @@ namespace Application.Services.Implement
                         }
                     }
                     #endregion
+                    await _unitOfWork.scheduleRepository.AddAsync(result);
                     await _unitOfWork.SaveChangesAsync();
 
                     var resultView = _mapper.Map<ViewSchedule>(result);
