@@ -51,6 +51,10 @@ namespace Application.Services.Implement
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, "Crop Requirement not found.");
                 }
+                if (request.StartDate < request.PlantingDate)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Start Date can not smaller than Planting Date.");
+                }
                 var result = new Schedule
                 {
                     StartDate = request.StartDate,
