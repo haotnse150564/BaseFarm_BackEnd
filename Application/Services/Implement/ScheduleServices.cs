@@ -105,7 +105,7 @@ namespace Application.Services.Implement
                         {
                             return new ResponseDTO(Const.FAIL_READ_CODE, "Some Farm Activity is in process or deactived.");
                         }
-                        else if (farmActivity.StartDate < result.StartDate && farmActivity.EndDate > result.EndDate)
+                        else if (farmActivity.StartDate < result.StartDate || farmActivity.EndDate > result.EndDate)
                         {
                             return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity date range does not match with Schedule date range.");
                         }
