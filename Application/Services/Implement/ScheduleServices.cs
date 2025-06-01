@@ -163,14 +163,15 @@ namespace Application.Services.Implement
             try
             {
                 var list = await _unitOfWork.scheduleRepository.GetAllAsync();
+                var slist = list.OrderByDescending(x => x.CreatedAt); // Sắp xếp theo StartDate
 
-                if (list == null)
+                if (slist == null)
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, "No Schedule found.");
                 }
 
                 // Map dữ liệu sang DTO
-                var result = _mapper.Map<List<ViewSchedule>>(list);
+                var result = _mapper.Map<List<ViewSchedule>>(slist);
                 var totalItem = result.Count();
                 foreach (var item in result)
                 {

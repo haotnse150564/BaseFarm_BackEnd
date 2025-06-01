@@ -83,6 +83,8 @@ namespace WebAPI.Services
         public async Task<ResponseDTO> GetFarmActivitiesActiveAsync(int pageIndex, int pageSize, long scheduleId)
         {
             var list = await _unitOfWork.farmActivityRepository.GetAllAsync();
+            list.Sort((y, x) => x.FarmActivitiesId.CompareTo(y.FarmActivitiesId));
+
             if (list.IsNullOrEmpty())
             {
                 return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);
@@ -116,6 +118,8 @@ namespace WebAPI.Services
         public async Task<ResponseDTO> GetFarmActivitiesAsync(int pageIndex, int pageSize, ActivityType? type, FarmActivityStatus? status, int? month)
         {
             var result = await _unitOfWork.farmActivityRepository.GetAllFiler(type, status, month);
+            result.Sort((y, x) => x.FarmActivitiesId.CompareTo(y.FarmActivitiesId));
+
             if (result.IsNullOrEmpty())
             {
                 return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG,"Not Found");
@@ -138,6 +142,7 @@ namespace WebAPI.Services
         public async Task<ResponseDTO> GetFarmActivitiesByStaffAsync(int pageIndex, int pageSize, ActivityType? type, FarmActivityStatus? status, int? month)
         {
             var result = await _unitOfWork.farmActivityRepository.GetAllFiler(type, status, month);
+            result.Sort((y, x) => x.FarmActivitiesId.CompareTo(y.FarmActivitiesId));
             if (result.IsNullOrEmpty())
             {
                 return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Not Found");
