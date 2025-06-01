@@ -51,9 +51,9 @@ namespace Application.Services.Implement
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, "Crop Requirement not found.");
                 }
-                if (request.StartDate < request.PlantingDate)
+                if (request.StartDate > request.PlantingDate)
                 {
-                    return new ResponseDTO(Const.FAIL_READ_CODE, "Start Date can not smaller than Planting Date.");
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Start Date can not be after than Planting Date.");
                 }
                 var result = new Schedule
                 {
@@ -86,6 +86,7 @@ namespace Application.Services.Implement
                 }
                 else
                 {
+                    await _unitOfWork.scheduleRepository.AddAsync(result);
                     //check farmActivity is ACTIVE and date range match with Schedule date range
                     if (request.FarmActivityId == null || !request.FarmActivityId.Any())
                     {
@@ -128,7 +129,6 @@ namespace Application.Services.Implement
                         }
                     }
                     #endregion
-                    await _unitOfWork.scheduleRepository.AddAsync(result);
                     await _unitOfWork.SaveChangesAsync();
 
                     var resultView = _mapper.Map<ViewSchedule>(result);
