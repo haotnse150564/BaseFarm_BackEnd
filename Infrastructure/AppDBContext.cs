@@ -9,12 +9,14 @@ namespace Infrastructure
     public class AppDbContext : DbContext
     {
         public AppDbContext() { }
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        {
+ 
+        }
         //protected override void OnConfiguring(DbContextOptionsBuilder optionBuilder)
         //{
         //    optionBuilder.UseSqlServer("ConnectionsString");
         //}
-
         public DbSet<Account> Account { get; set; }
 
         public DbSet<AccountProfile> AccountProfile { get; set; }
@@ -84,7 +86,7 @@ namespace Infrastructure
                 new Category { CategoryId = 4, CategoryName = "Herbs and Spices - Rau Gia Vi" }
                 );
             builder.Entity<Inventory>().HasData(
-                new Inventory { InventoryId = 1, Location = "TP. Ho Chi Minh", StockQuantity = 1000, Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), ExpiryDate = DateOnly.Parse("6/1/2025"), ProductId = 1 , ScheduleId = 1},
+                new Inventory { InventoryId = 1, Location = "TP. Ho Chi Minh", StockQuantity = 1000, Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), ExpiryDate = DateOnly.Parse("6/1/2025"), ProductId = 1, ScheduleId = 1 },
                 new Inventory { InventoryId = 2, Location = "TP. Ho Chi Minh", StockQuantity = 500, Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/11/2025"), ExpiryDate = DateOnly.Parse("6/1/2025"), ProductId = 2, ScheduleId = 2 },
                 new Inventory { InventoryId = 3, Location = "TP. Ho Chi Minh", StockQuantity = 666, Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/8/2025"), ExpiryDate = DateOnly.Parse("6/1/2025"), ProductId = 3, ScheduleId = 3 }
                  );
@@ -97,14 +99,14 @@ namespace Infrastructure
                 //new Product { ProductId = 5, ProductName = "Fruit 2", Images = null, Price = 55000, StockQuantity = 10000, Description = "Dua Hau", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, }
                 );
             builder.Entity<Schedule>().HasData(
-               new Schedule { ScheduleId = 1, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("4/3/2025"),PlantingDate = DateOnly.Parse("3/1/2025"), HarvestDate = DateOnly.Parse("3/2/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 3, FarmDetailsId = 1, CropId = 1, Quantity = 100 },
+               new Schedule { ScheduleId = 1, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("4/3/2025"), PlantingDate = DateOnly.Parse("3/1/2025"), HarvestDate = DateOnly.Parse("3/2/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 3, FarmDetailsId = 1, CropId = 1, Quantity = 100 },
                 new Schedule { ScheduleId = 2, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/11/2025"), PlantingDate = DateOnly.Parse("3/1/2025"), HarvestDate = DateOnly.Parse("3/2/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 9, FarmDetailsId = 2, CropId = 2, Quantity = 100 },
                 new Schedule { ScheduleId = 3, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/3/2025"), PlantingDate = DateOnly.Parse("3/1/2025"), HarvestDate = DateOnly.Parse("3/2/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 6, FarmDetailsId = 3, CropId = 3, Quantity = 100, }
            );
             builder.Entity<FarmActivity>().HasData(
                 new FarmActivity { FarmActivitiesId = 1, ActivityType = Domain.Enum.ActivityType.Sowing, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("4/1/2025"), Status = Domain.Enum.FarmActivityStatus.ACTIVE, ScheduleId = 1 },
-                new FarmActivity { FarmActivitiesId = 2, ActivityType = Domain.Enum.ActivityType.Irrigation, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("2/11/2025"), Status = Domain.Enum.FarmActivityStatus.ACTIVE , ScheduleId = 1},
-                new FarmActivity { FarmActivitiesId = 5, ActivityType = Domain.Enum.ActivityType.Protection, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("2/11/2025"), Status = Domain.Enum.FarmActivityStatus.ACTIVE , ScheduleId = 1},
+                new FarmActivity { FarmActivitiesId = 2, ActivityType = Domain.Enum.ActivityType.Irrigation, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("2/11/2025"), Status = Domain.Enum.FarmActivityStatus.ACTIVE, ScheduleId = 1 },
+                new FarmActivity { FarmActivitiesId = 5, ActivityType = Domain.Enum.ActivityType.Protection, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("2/11/2025"), Status = Domain.Enum.FarmActivityStatus.ACTIVE, ScheduleId = 1 },
                 new FarmActivity { FarmActivitiesId = 3, ActivityType = Domain.Enum.ActivityType.Harvesting, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/11/2025"), Status = Domain.Enum.FarmActivityStatus.ACTIVE, ScheduleId = 2 },
                 new FarmActivity { FarmActivitiesId = 4, ActivityType = Domain.Enum.ActivityType.Fertilization, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/3/2025"), Status = Domain.Enum.FarmActivityStatus.ACTIVE, ScheduleId = 3 }
                 );
@@ -147,9 +149,9 @@ namespace Infrastructure
                 new OrderDetail { OrderDetailId = 5, OrderId = 3, Quantity = 10, UnitPrice = 10, ProductId = 2 }
                 );
             builder.Entity<Payment>().HasData(
-                new Payment { PaymentId = 1, OrderId = 1, TransactionId = "VNPay01", Amount = 10, PaymentMethod = "VNPay", VnPayResponseCode = "VNPayPayment01", Success = true, PaymentTime = DateTime.Parse("3/1/2025"), CreateDate = DateTime.Parse("3/1/2025"), UpdateDate = null },
-                new Payment { PaymentId = 2, OrderId = 2, TransactionId = "VNPay02", Amount = 15, PaymentMethod = "VNPay", VnPayResponseCode = "VNPayPayment02", Success = false, PaymentTime = DateTime.Parse("3/1/2025"), CreateDate = DateTime.Parse("3/1/2025"), UpdateDate = null },
-                new Payment { PaymentId = 3, OrderId = 3, TransactionId = "VNPay03", Amount = 21, PaymentMethod = "VNPay", VnPayResponseCode = "VNPayPayment03", Success = false, PaymentTime = DateTime.Parse("3/1/2025"), CreateDate = DateTime.Parse("3/1/2025"), UpdateDate = null }
+                new Payment { PaymentId = 1, OrderId = 1, TransactionId = "VNPay01", Amount = 10, PaymentMethod = "VNPay", VnPayResponseCode = "VNPayPayment01", Success = true, PaymentTime = DateTime.Parse("3/1/2025").ToUniversalTime(), CreateDate = DateTime.Parse("3/1/2025").ToUniversalTime(), UpdateDate = null },
+                new Payment { PaymentId = 2, OrderId = 2, TransactionId = "VNPay02", Amount = 15, PaymentMethod = "VNPay", VnPayResponseCode = "VNPayPayment02", Success = false, PaymentTime = DateTime.Parse("3/1/2025").ToUniversalTime(), CreateDate = DateTime.Parse("3/1/2025").ToUniversalTime(), UpdateDate = null },
+                new Payment { PaymentId = 3, OrderId = 3, TransactionId = "VNPay03", Amount = 21, PaymentMethod = "VNPay", VnPayResponseCode = "VNPayPayment03", Success = false, PaymentTime = DateTime.Parse("3/1/2025").ToUniversalTime(), CreateDate = DateTime.Parse("3/1/2025").ToUniversalTime(), UpdateDate = null }
                 );
 
             builder.Entity<CropRequirement>().HasData(
@@ -158,7 +160,7 @@ namespace Infrastructure
                 new CropRequirement { RequirementId = 3, EstimatedDate = 30, Moisture = 1, Temperature = 26, Fertilizer = "NPK", DeviceId = 2 }
                 );
             builder.Entity<Feedback>().HasData(
-                new Feedback { FeedbackId = 1, OrderDetailId = 1, CustomerId = 4, CreatedAt = DateOnly.Parse("4/3/2025"),Status = Domain.Enum.Status.ACTIVE, Rating = 4, Comment = "App very good, but load data slow" },
+                new Feedback { FeedbackId = 1, OrderDetailId = 1, CustomerId = 4, CreatedAt = DateOnly.Parse("4/3/2025"), Status = Domain.Enum.Status.ACTIVE, Rating = 4, Comment = "App very good, but load data slow" },
                 new Feedback { FeedbackId = 2, OrderDetailId = 2, CustomerId = 7, CreatedAt = DateOnly.Parse("4/10/2025"), Status = Domain.Enum.Status.ACTIVE, Rating = 5, Comment = "My avt so cute <3" },
                 new Feedback { FeedbackId = 3, OrderDetailId = 3, CustomerId = 8, CreatedAt = DateOnly.Parse("3/3/2025"), Status = Domain.Enum.Status.ACTIVE, Rating = 5, Comment = "Test FeedBack <3" }
     );
@@ -173,8 +175,10 @@ namespace Infrastructure
                    .SetBasePath(Directory.GetCurrentDirectory())
                    .AddJsonFile("appsettings.json")
                    .Build();
-                var connectionString = configuration.GetConnectionString("Default");
-                optionsBuilder.UseSqlServer(connectionString);
+                var connectionString = /*configuration.GetConnectionString("Default") */"Host=localhost;Port=5432;Database=IOTBaseFarm;Username=postgres;Password=123456789";
+                optionsBuilder.UseNpgsql(connectionString);
+
+
             }
         }
 

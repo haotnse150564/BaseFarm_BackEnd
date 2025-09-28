@@ -73,9 +73,13 @@ public static class DependencyInjection
 
         services.AddSingleton<ICurrentTime, CurrentTime>();
         // Use local DB
-        services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(config.GetConnectionString("Default")));
-        services.AddAutoMapper(typeof(MapperConfigs).Assembly);
+        //services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(config.GetConnectionString("Default")));
+        services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql("Host=localhost;Port=5432;Database=your_db;Username=your_user;Password=your_password"));
 
+        services.AddAutoMapper(typeof(MapperConfigs).Assembly);
+        //AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        //AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
         return services;
 
     }
