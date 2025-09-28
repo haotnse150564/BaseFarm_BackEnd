@@ -115,5 +115,11 @@ namespace WebAPI.Controllers
                 return Ok(result);
             return BadRequest("Failed to update roles.");
         }
+
+        [HttpPut("/")]
+        public  IActionResult test()
+        {            
+            return Ok("succes");
+        }
     }
 }
