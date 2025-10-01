@@ -18,5 +18,5 @@ public partial class FarmActivity //update lên bảng cần sau này
 
     public long? ScheduleId { get; set; }
 
-    public virtual Schedule Schedule { get; set; } = null!;
+    public virtual ICollection <Schedule> Schedule { get; set; } = null!;
 }

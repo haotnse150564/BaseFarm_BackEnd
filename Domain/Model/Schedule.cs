@@ -15,7 +15,9 @@ public partial class Schedule
     public int? Quantity { get; set; }
 
     public Status? Status { get; set; }
+
     public bool PesticideUsed { get; set; }
+
     public DiseaseStatus? DiseaseStatus { get; set; }
 
     public DateOnly? PlantingDate { get; set; }
@@ -36,7 +38,7 @@ public partial class Schedule
 
     public virtual Crop Crop { get; set; } = null!;
 
-    public virtual ICollection<FarmActivity> FarmActivities { get; set; } = new List<FarmActivity>();
+//    public virtual ICollection<FarmActivity> FarmActivities { get; set; } = new List<FarmActivity>();
 
     public virtual Farm FarmDetails { get; set; } = null!;
 
