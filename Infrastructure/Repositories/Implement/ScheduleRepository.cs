@@ -15,7 +15,7 @@ namespace Infrastructure.Repositories.Implement
         {
             var result = await _dbSet.Where(x => x.ScheduleId == id)
                                      .Include(a => a.AssignedToNavigation)
-                                     .Include(a => a.FarmActivities)
+                                     //.Include(a => a.FarmActivities)
                                      .Include(a => a.Crop)
                                      .ThenInclude(c => c.Product)
                                      .Include(a => a.FarmDetails)
@@ -28,7 +28,7 @@ namespace Infrastructure.Repositories.Implement
             var result = await _context.Schedule // Thêm _context.Schedules vào đây
             .Include(a => a.AssignedToNavigation)
             .Include(a => a.Crop)
-            .Include(a => a.FarmActivities)
+           // .Include(a => a.FarmActivities)
             .Include(a => a.FarmDetails)
            // .Include(a => a.DailyLogs)
             .ToListAsync();
@@ -42,7 +42,7 @@ namespace Infrastructure.Repositories.Implement
             .Include(a => a.Crop)
             .Include(a => a.AssignedToNavigation)
             .ThenInclude(a => a.AccountProfile)
-            .Include(a => a.FarmActivities)
+           // .Include(a => a.FarmActivities)
             .Include(a => a.FarmDetails)
             .Where(x => x.AssignedTo == staffId)
             .ToListAsync();
@@ -56,7 +56,7 @@ namespace Infrastructure.Repositories.Implement
         public async Task<Schedule?> GetByIdWithFarmActivitiesAsync(long scheduleId)
         {
             return await _context.Schedule
-                .Include(s => s.FarmActivities)
+            //    .Include(s => s.FarmActivities)
                 .Include (s => s.Crop)
                 .ThenInclude(c => c.Product)
                 .FirstOrDefaultAsync(s => s.ScheduleId == scheduleId);
