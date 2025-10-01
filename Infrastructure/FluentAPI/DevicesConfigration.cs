@@ -37,17 +37,12 @@ namespace Infrastructure.FluentAPI
             builder.Property(e => e.FarmDetailsId)
                 .HasColumnName("farmDetailsId");
 
-            //// Quan hệ n-1 với Farm
-            //builder.HasOne(e => e.FarmDetails)
-            //    .WithMany(f => f.D) // giả định Farm có ICollection<Devicess> Devices
-            //    .HasForeignKey(e => e.FarmDetailsId)
-            //    .OnDelete(DeleteBehavior.Cascade);
 
             //// Quan hệ 1-n với FarmEquipment
-            //builder.HasMany(e => e.FarmEquipments)
-            //    .WithOne(fe => fe.Device)
-            //    .HasForeignKey(fe => fe.DevicessId)
-            //    .OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany(e => e.FarmEquipments)
+                .WithOne(fe => fe.Device)
+                .HasForeignKey(fe => fe.DeviceId)
+                .OnDelete(DeleteBehavior.Cascade);
 
 
         }

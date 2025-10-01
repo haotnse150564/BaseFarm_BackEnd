@@ -51,11 +51,11 @@ namespace Infrastructure.FluentAPI
                 .HasForeignKey(s => s.FarmId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            //// Quan hệ 1-n với FarmEquipment
-            //builder.HasMany(e => e.FarmEquipments)
-            //    .WithOne(fe => fe.Farm)
-            //    .HasForeignKey(fe => fe.FarmId)
-            //    .OnDelete(DeleteBehavior.Cascade);
+            // Quan hệ 1-n với FarmEquipment
+            builder.HasMany(e => e.FarmEquipments)
+                .WithOne(fe => fe.Farm)
+                .HasForeignKey(fe => fe.FarmId)
+                .OnDelete(DeleteBehavior.Cascade);
 
         }
     }
