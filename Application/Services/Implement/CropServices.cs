@@ -93,8 +93,7 @@ namespace Application.Services.Implement
                     Moisture = 1,
                     Temperature = 30,
                     Fertilizer = "Nito",
-                    DeviceId = 4,
-                    Requirement = crop // Thiết lập quan hệ với Crop
+                   // Requirement = crop // Thiết lập quan hệ với Crop
                 };
 
                 // Gọi AddAsync nhưng không gán vào biến vì nó không có giá trị trả về

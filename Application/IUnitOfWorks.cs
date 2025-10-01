@@ -17,7 +17,7 @@ namespace Application
         IOrderDetailRepository orderDetailRepository { get; }
         IPaymentRepository paymentRepository { get; }
         IScheduleRepository scheduleRepository { get; }
-        IIoTdeviceRepository ioTdeviceRepository { get; }
+        IDevicesRepository deviceRepository { get; }
         ICropRepository cropRepository { get; }
         ICropRequirementRepository cropRequirementRepository { get; }
         IFarmActivityRepository farmActivityRepository { get; }

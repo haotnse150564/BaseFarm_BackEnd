@@ -13,35 +13,38 @@ namespace Infrastructure.FluentAPI
     {
         public void Configure(EntityTypeBuilder<CropRequirement> builder)
         {
-            builder.HasKey(e => e.RequirementId);
-
             builder.ToTable("CropRequirement");
 
-            builder.HasIndex(e => e.DeviceId, "IX_CropRequirement_deviceID");
+            builder.HasKey(e => e.RequirementId);
 
-            builder.Property(e => e.RequirementId).ValueGeneratedNever();
-            builder.Property(e => e.DeviceId).HasColumnName("deviceID");
-            builder.Property(e => e.EstimatedDate).HasColumnName("estimatedDate");
-            builder.Property(e => e.Fertilizer)
-                .HasMaxLength(255)
-                .IsUnicode(false)
-                .HasColumnName("fertilizer");
+            builder.Property(e => e.RequirementId)
+                .HasColumnName("requirementId");
+
+            builder.Property(e => e.PlantStage)
+                .HasColumnName("plantStage");
+
+            builder.Property(e => e.EstimatedDate)
+                .HasColumnName("estimatedDate");
+
             builder.Property(e => e.Moisture)
-                .HasColumnType("decimal(5, 2)")
+                .HasColumnType("decimal(5,2)") // Tùy chỉnh độ chính xác nếu cần
                 .HasColumnName("moisture");
+
             builder.Property(e => e.Temperature)
-                .HasColumnType("decimal(5, 2)")
+                .HasColumnType("decimal(5,2)")
                 .HasColumnName("temperature");
 
-            builder.HasOne(d => d.Device).WithMany(p => p.CropRequirements)
-                .HasForeignKey(d => d.DeviceId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKCropRequir740127");
+            builder.Property(e => e.Fertilizer)
+                .HasMaxLength(255)
+                .IsUnicode(true) // Cho phép lưu tên phân bón bằng tiếng Việt
+                .HasColumnName("fertilizer");
 
-            builder.HasOne(d => d.Requirement).WithOne(p => p.CropRequirement)
-                .HasForeignKey<CropRequirement>(d => d.RequirementId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKCropRequir719183");
+            // Quan hệ 1-1 với Crop
+            builder.HasOne(e => e.Crop)
+                .WithOne(c => c.CropRequirement)
+                .HasForeignKey<CropRequirement>(e => e.RequirementId)
+                .OnDelete(DeleteBehavior.Cascade);
+
         }
     }
 }

@@ -9,14 +9,14 @@ namespace WebAPI.Controllers
 
     [Route("api/v1/iotDevices")]
     [ApiController]
-    public class IoTdeviceController : ControllerBase
+    public class DevicesController : ControllerBase
     {
-        private readonly IIoTdeviceServices _ioTdevice;
+        private readonly IDevicesServices _device;
         private readonly ILogger<OrderController> _logger;
 
-        public IoTdeviceController(IIoTdeviceServices iotDevices, ILogger<OrderController> logger)
+        public DevicesController(IDevicesServices Devices, ILogger<OrderController> logger)
         {
-            _ioTdevice = iotDevices;
+            _device = Devices;
 
             _logger = logger;
         }
@@ -24,7 +24,7 @@ namespace WebAPI.Controllers
         //[Authorize(Roles = "Manager")]
         public async Task<IActionResult> CreateiotDevices([FromBody] IOTRequest request)
         {
-            var result = await _ioTdevice.CreateDeviceAsync(request);
+            var result = await _device.CreateDeviceAsync(request);
 
             if (result.Status != Const.SUCCESS_READ_CODE)
             {
@@ -38,7 +38,7 @@ namespace WebAPI.Controllers
         //[Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetListiotDevices([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
-            var result = await _ioTdevice.GetAllDevices(pageIndex, pageSize);
+            var result = await _device.GetAllDevices(pageIndex, pageSize);
 
             if (result.Status != Const.SUCCESS_READ_CODE)
             {
@@ -51,7 +51,7 @@ namespace WebAPI.Controllers
         //[Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetiotDevicesByID(long id)
         {
-            var result = await _ioTdevice.GetDeviceById(id);
+            var result = await _device.GetDeviceById(id);
 
             if (result.Status != Const.SUCCESS_READ_CODE)
             {
@@ -64,7 +64,7 @@ namespace WebAPI.Controllers
         //[Authorize(Roles = "Manager")]
         public async Task<IActionResult> UpdateiotDevicesStatus(long iotDevicesId, [FromBody] string status)
         {
-            var result = await _ioTdevice.UpdateStatusDeviceAsync(iotDevicesId, status.ToUpper());
+            var result = await _device.UpdateStatusDeviceAsync(iotDevicesId, status.ToUpper());
 
             if (result.Status != Const.SUCCESS_READ_CODE)
             {
@@ -77,7 +77,7 @@ namespace WebAPI.Controllers
         //[Authorize(Roles = "Manager")]
         public async Task<IActionResult> UpdateiotDevices(long iotDevicesId, [FromBody] IOTRequest request)
         {
-            var result = await _ioTdevice.UpdateDeviceAsync(iotDevicesId, request);
+            var result = await _device.UpdateDeviceAsync(iotDevicesId, request);
 
             if (result.Status != Const.SUCCESS_READ_CODE)
             {

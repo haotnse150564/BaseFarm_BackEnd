@@ -8,7 +8,7 @@ using static Infrastructure.ViewModel.Response.IOTResponse;
 
 namespace Application.Services
 {
-    public interface IIoTdeviceServices
+    public interface IDevicesServices
     {
         Task<ResponseDTO> GetAllDevices(int pageIndex, int pageSize);
         Task<ResponseDTO> GetDeviceById(long deviceId);

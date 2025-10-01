@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Domain.Model;
 
-public partial class FarmActivity
+public partial class FarmActivity //update lên bảng cần sau này
 {
     public long FarmActivitiesId { get; set; }
 
@@ -18,5 +18,5 @@ public partial class FarmActivity
 
     public long? ScheduleId { get; set; }
 
-    public virtual Schedule Schedule { get; set; } = null!;
+    public virtual ICollection <Schedule> Schedule { get; set; } = null!;
 }

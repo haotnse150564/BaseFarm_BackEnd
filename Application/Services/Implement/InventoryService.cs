@@ -35,11 +35,11 @@ namespace Application.Services.Implement
             {
                 Location = location,
                 StockQuantity = stockQuantity,
-                CreatedAt = DateOnly.FromDateTime(DateTime.Now),
+                CreateAt = DateOnly.FromDateTime(DateTime.Now),
                 Status = Status.ACTIVE,
                 ProductId = productID, 
                 ScheduleId = scheduleID,
-                ExpiryDate = null, 
+                ExpireDate = DateOnly.Parse("28/08/2025"), 
             };
 
             await _inventoryRepository.AddAsync(inventory);

@@ -15,24 +15,48 @@ namespace Infrastructure.FluentAPI
         {
             builder.ToTable("Farm");
 
-            builder.HasIndex(e => e.AccountId, "IX_Farm_accountID");
             builder.HasKey(e => e.FarmId);
-            builder.Property(e => e.AccountId).HasColumnName("accountID");
-            builder.Property(e => e.CreatedAt).HasColumnName("createdAt");
+
+            builder.Property(e => e.FarmId)
+                .HasColumnName("farmId");
+
             builder.Property(e => e.FarmName)
-                .HasMaxLength(255)
-                .IsUnicode(false)
+                .HasMaxLength(100)
+                .IsUnicode(true) // Cho phép tên nông trại có tiếng Việt
                 .HasColumnName("farmName");
+
             builder.Property(e => e.Location)
                 .HasMaxLength(255)
-                .IsUnicode(false)
+                .IsUnicode(true)
                 .HasColumnName("location");
-            builder.Property(e => e.UpdatedAt).HasColumnName("updatedAt");
 
-            builder.HasOne(d => d.Account).WithMany(p => p.Farms)
-                .HasForeignKey(d => d.AccountId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKFarm576533");
+            builder.Property(e => e.CreatedAt)
+                .HasColumnName("createdAt");
+
+            builder.Property(e => e.UpdatedAt)
+                .HasColumnName("updatedAt");
+
+            builder.Property(e => e.AccountId)
+                .HasColumnName("accountId");
+
+            // Quan hệ n-1 với Account
+            builder.HasOne(e => e.Account)
+                .WithMany(a => a.Farms)
+                .HasForeignKey(e => e.AccountId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Quan hệ 1-n với Schedule
+            builder.HasMany(e => e.Schedules)
+                .WithOne(s => s.FarmDetails)
+                .HasForeignKey(s => s.FarmId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            //// Quan hệ 1-n với FarmEquipment
+            //builder.HasMany(e => e.FarmEquipments)
+            //    .WithOne(fe => fe.Farm)
+            //    .HasForeignKey(fe => fe.FarmId)
+            //    .OnDelete(DeleteBehavior.Cascade);
+
         }
     }
 }

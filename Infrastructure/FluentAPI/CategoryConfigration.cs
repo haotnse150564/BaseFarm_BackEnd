@@ -9,11 +9,29 @@ namespace Infrastructure.FluentAPI
         public void Configure(EntityTypeBuilder<Category> builder)
         {
             builder.ToTable("Category");
+
             builder.HasKey(e => e.CategoryId);
+
+            builder.Property(e => e.CategoryId)
+                .HasColumnName("categoryId");
+
             builder.Property(e => e.CategoryName)
-                .HasMaxLength(255)
-                .IsUnicode(false)
+                .HasMaxLength(100)
+                .IsUnicode(true) // Cho phép lưu tiếng Việt
                 .HasColumnName("categoryName");
+
+            // Quan hệ 1-n với Product
+            builder.HasMany(e => e.Products)
+                .WithOne(p => p.Category)
+                .HasForeignKey(p => p.CategoryId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Quan hệ 1-n với Crop
+            builder.HasMany(e => e.Crop)
+                .WithOne(c => c.Category)
+                .HasForeignKey(c => c.CategoryId)
+                .OnDelete(DeleteBehavior.Cascade);
+
         }
     }
 }

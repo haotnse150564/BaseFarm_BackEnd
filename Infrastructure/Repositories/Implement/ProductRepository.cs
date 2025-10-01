@@ -137,7 +137,7 @@ namespace Infrastructure.Repositories.Implement
             // Lấy các Inventory ACTIVE, theo FIFO (CreatedAt tăng dần)
             var inventories = await _context.Inventorie
                 .Where(i => i.ProductId == productId && i.Status == Status.ACTIVE && i.StockQuantity > 0)
-                .OrderBy(i => i.CreatedAt)
+                .OrderBy(i => i.CreateAt)
                 .ToListAsync();
 
             int remaining = quantityToReduce;
