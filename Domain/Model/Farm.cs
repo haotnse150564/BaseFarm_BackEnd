@@ -22,5 +22,5 @@ public partial class Farm
 
     public virtual ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
 
-    public virtual ICollection<FarmEquipment> FarmEquipments { get; set; } = new List<FarmEquipment>();
+    public virtual ICollection<FarmEquipment>? FarmEquipments { get; set; } = new List<FarmEquipment>();
 }
