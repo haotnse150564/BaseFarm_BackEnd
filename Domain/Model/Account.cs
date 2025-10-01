@@ -29,4 +29,6 @@ public partial class Account
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
     public virtual ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
+    public virtual ICollection<Cart>? Cart { get; set; } = new List<Cart>();
+
 }
