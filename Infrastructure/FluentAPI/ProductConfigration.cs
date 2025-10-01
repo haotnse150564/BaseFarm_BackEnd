@@ -90,11 +90,11 @@ namespace Infrastructure.FluentAPI
                 .HasForeignKey(e => e.CategoryId)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            //// Quan hệ 1-1 với Crop
-            //builder.HasOne(e => e.ProductNavigation)
-            //    .WithOne(c => c.Product)
-            //    .HasForeignKey<Crop>(c => c.ProductId)
-            //    .OnDelete(DeleteBehavior.Cascade);
+            // Quan hệ 1-1 với Crop
+            builder.HasOne(e => e.ProductNavigation)
+                .WithOne(c => c.Product)
+                .HasForeignKey<Crop>(c => c.CropId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Quan hệ 1-n với Inventory
             builder.HasMany(e => e.Inventories)

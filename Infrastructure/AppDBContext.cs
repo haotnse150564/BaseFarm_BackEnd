@@ -92,11 +92,11 @@ namespace Infrastructure
                  );
 
             builder.Entity<Product>().HasData(
-                new Product { ProductId = 1, ProductName = "Morning Glory - Rau Muong", Images = rau1, Price = 10000, StockQuantity = 10000, Description = "Rau Muong", Status = Domain.Enum.ProductStatus.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, },
-                new Product { ProductId = 2, ProductName = "Amarant - Rau Den", Images = rau2, Price = 15000, StockQuantity = 10000, Description = "Rau Den", Status = Domain.Enum.ProductStatus.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, },
-                new Product { ProductId = 3, ProductName = "Turnip - Cai", Images = rau3, Price = 20000, StockQuantity = 10000, Description = "Cai", Status = Domain.Enum.ProductStatus.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, }
-                //new Product { ProductId = 4, ProductName = "Fruit 1", Images = null, Price = 35000, StockQuantity = 10000, Description = "Ca chua", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, },
-                //new Product { ProductId = 5, ProductName = "Fruit 2", Images = null, Price = 55000, StockQuantity = 10000, Description = "Dua Hau", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, }
+                new Product { ProductId = 1, ProductName = "Rau Muống Loại 1", Images = rau1, Price = 10000, StockQuantity = 10000, Description = "Rau Muong", Status = Domain.Enum.ProductStatus.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, },
+                new Product { ProductId = 2, ProductName = "Rau Muống Loại 2", Images = rau2, Price = 15000, StockQuantity = 10000, Description = "Rau Den", Status = Domain.Enum.ProductStatus.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, },
+                new Product { ProductId = 3, ProductName = "Rau Cải thìa", Images = rau3, Price = 20000, StockQuantity = 10000, Description = "Cai", Status = Domain.Enum.ProductStatus.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, },
+                new Product { ProductId = 4, ProductName = "Rau Dền lá xanh", Images = null, Price = 35000, StockQuantity = 10000, Description = "Ca chua", Status = Domain.Enum.ProductStatus.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, },
+                new Product { ProductId = 5, ProductName = "Rau Dền lá đỏ", Images = null, Price = 55000, StockQuantity = 10000, Description = "Dua Hau", Status = Domain.Enum.ProductStatus.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, }
                 );
             builder.Entity<Schedule>().HasData(
                new Schedule { ScheduleId = 1, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("4/3/2025"), PlantingDate = DateOnly.Parse("3/1/2025"), HarvestDate = DateOnly.Parse("3/2/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 3, FarmId = 1, CropId = 1, Quantity = 100 },
@@ -116,11 +116,11 @@ namespace Infrastructure
                 new Farm { FarmId = 3, FarmName = "Cai", Location = "TP. Ho Chi Minh", CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("3/5/2025"), AccountId = 7 }
         );
             builder.Entity<Crop>().HasData(
-                new Crop { CropId = 1, CropName = "Cop 01", Description = "3x3 m2", Status = Domain.Enum.CropStatus.ACTIVE, CategoryId = 1 },
-                new Crop { CropId = 2, CropName = "Cop 02", Description = "2x3 m2", Status = Domain.Enum.CropStatus.ACTIVE, CategoryId = 1 },
-                new Crop { CropId = 3, CropName = "Cop 03", Description = "3x2 m2", Status = Domain.Enum.CropStatus.ACTIVE, CategoryId = 1 },
-                new Crop { CropId = 4, CropName = "Cop 04", Description = "3x5 m2", Status = Domain.Enum.CropStatus.ACTIVE, CategoryId = 3 },
-                new Crop { CropId = 5, CropName = "Cop 05", Description = "4x3 m2", Status = Domain.Enum.CropStatus.ACTIVE, CategoryId = 3 }
+                new Crop { CropId = 1, CropName = "Cop 01", Description = "3x3 m2", Status = Domain.Enum.CropStatus.ACTIVE, CategoryId = 1, CreateAt = DateOnly.Parse("3/1/2025"), UpdateAt = DateOnly.Parse("3/1/2025") },
+                new Crop { CropId = 2, CropName = "Cop 02", Description = "2x3 m2", Status = Domain.Enum.CropStatus.ACTIVE, CategoryId = 1, CreateAt = DateOnly.Parse("3/1/2025"), UpdateAt = DateOnly.Parse("3/1/2025") },
+                new Crop { CropId = 3, CropName = "Cop 03", Description = "3x2 m2", Status = Domain.Enum.CropStatus.ACTIVE, CategoryId = 1, CreateAt = DateOnly.Parse("3/1/2025"), UpdateAt = DateOnly.Parse("3/1/2025") },
+                new Crop { CropId = 4, CropName = "Cop 04", Description = "3x5 m2", Status = Domain.Enum.CropStatus.ACTIVE, CategoryId = 3, CreateAt = DateOnly.Parse("3/1/2025"), UpdateAt = DateOnly.Parse("3/1/2025") },
+                new Crop { CropId = 5, CropName = "Cop 05", Description = "4x3 m2", Status = Domain.Enum.CropStatus.ACTIVE, CategoryId = 3, CreateAt = DateOnly.Parse("3/1/2025"), UpdateAt = DateOnly.Parse("3/1/2025") }
                 );
 
             builder.Entity<Device>().HasData(

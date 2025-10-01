@@ -55,11 +55,11 @@ namespace Infrastructure.FluentAPI
             //    .HasForeignKey<CropRequirement>(r => r.CropId)
             //    .OnDelete(DeleteBehavior.Cascade);
 
-            //// Quan hệ 1-1 với Product
-            //builder.HasOne(e => e.Product)
-            //    .WithOne(p => p.Crop)
-            //    .HasForeignKey<Product>(p => p.CropId)
-            //    .OnDelete(DeleteBehavior.Cascade);
+            // Quan hệ 1-1 với Product
+            builder.HasOne(e => e.Product)
+                .WithOne(p => p.ProductNavigation)
+                .HasForeignKey<Product>(p => p.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Quan hệ 1-n với Schedule
             builder.HasMany(e => e.Schedules)

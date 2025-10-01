@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.FluentAPI
 {
-    public class IoTDevicesConfigration : IEntityTypeConfiguration<Device>
+    public class DevicesConfigration : IEntityTypeConfiguration<Device>
     {
         public void Configure(EntityTypeBuilder<Device> builder)
         {
-            builder.ToTable("Devicess");
+            builder.ToTable("Devices");
 
             builder.HasKey(e => e.DevicessId);
 
