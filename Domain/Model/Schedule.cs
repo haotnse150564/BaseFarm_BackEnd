@@ -33,6 +33,7 @@ public partial class Schedule
     public long FarmId { get; set; }
 
     public long CropId { get; set; }
+    public long FarmActivitiesId { get; set; }
 
     public virtual Account AssignedToNavigation { get; set; } = null!;
 

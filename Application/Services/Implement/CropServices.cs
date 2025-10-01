@@ -88,7 +88,7 @@ namespace Application.Services.Implement
                 crop.Status = Domain.Enum.CropStatus.ACTIVE;
                 var cropRequirement = new CropRequirement
                 {
-                    RequirementId = crop.CropId,
+                    CropRequirementId = crop.CropId,
                     EstimatedDate = 30,
                     Moisture = 1,
                     Temperature = 30,

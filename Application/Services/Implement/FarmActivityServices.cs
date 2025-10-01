@@ -94,7 +94,7 @@ namespace WebAPI.Services
                 var result = list.Where(x => x.Status == Domain.Enum.FarmActivityStatus.ACTIVE).ToList();
                 if(scheduleId != 0)
                 {
-                    result = result.Where(x => x.ScheduleId == scheduleId).ToList();
+            //        result = result.Where(x => x.ScheduleId == scheduleId).ToList();
                 }
                 if (list.IsNullOrEmpty())
                 {
@@ -213,10 +213,10 @@ namespace WebAPI.Services
             if (farmActivity == null)
             {
                 return new ResponseDTO(Const.FAIL_READ_CODE, "Not Found Farm Activity");
-            }else if (farmActivity.ScheduleId == null)
-            {
-                return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity Don't Have Any Schedule");
-            }    
+            }//else if (farmActivity.ScheduleId == null)
+           // {
+               // return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity Don't Have Any Schedule");
+           // }    
             else if (farmActivity.Status != FarmActivityStatus.IN_PROGRESS)
             {
                 return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity Already Completed or do not used by any Schedule");
@@ -227,12 +227,12 @@ namespace WebAPI.Services
             await _unitOfWork.farmActivityRepository.UpdateAsync(farmActivity);
             if (farmActivity.ActivityType == ActivityType.Harvesting)
             {
-                var schedule = await _unitOfWork.scheduleRepository.GetByIdAsync(farmActivity.ScheduleId.Value);
-                //xu ly inventory neu farmactivitytype là harvest và status là completed
-                if (farmActivity != null && schedule!=null &&farmActivity.ActivityType == Domain.Enum.ActivityType.Harvesting && farmActivity.Status == FarmActivityStatus.COMPLETED)
-                {
-                    await _inventory.CalculateAndCreateInventoryAsync(schedule.Quantity, location, schedule.CropId, schedule.ScheduleId);
-                }
+                //var schedule = await _unitOfWork.scheduleRepository.GetByIdAsync(farmActivity.ScheduleId.Value);
+                ////xu ly inventory neu farmactivitytype là harvest và status là completed
+                //if (farmActivity != null && schedule!=null &&farmActivity.ActivityType == Domain.Enum.ActivityType.Harvesting && farmActivity.Status == FarmActivityStatus.COMPLETED)
+                //{
+                //    await _inventory.CalculateAndCreateInventoryAsync(schedule.Quantity, location, schedule.CropId, schedule.ScheduleId);
+                //}
                 if (await _unitOfWork.SaveChangesAsync() < 0)
                 {
                     return new ResponseDTO(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);
