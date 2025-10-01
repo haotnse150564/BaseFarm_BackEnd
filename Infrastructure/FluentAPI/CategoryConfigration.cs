@@ -12,8 +12,9 @@ namespace Infrastructure.FluentAPI
             builder.HasKey(e => e.CategoryId);
             builder.Property(e => e.CategoryName)
                 .HasMaxLength(255)
-                .IsUnicode(false)
-                .HasColumnName("categoryName");
+                
+                .HasColumnName("categoryName")
+                .IsUnicode(true);
         }
     }
 }

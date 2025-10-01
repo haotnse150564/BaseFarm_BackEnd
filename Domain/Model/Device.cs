@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace Domain.Model;
 
-public partial class IoTdevice
+public partial class Device
 {
-    public long IoTdevicesId { get; set; }
+    public long DevicessId { get; set; }
 
     public string? DeviceName { get; set; }
 
@@ -20,7 +20,8 @@ public partial class IoTdevice
 
     public long FarmDetailsId { get; set; }
 
-    public virtual ICollection<CropRequirement> CropRequirements { get; set; } = new List<CropRequirement>();
+    // public virtual ICollection<CropRequirement> CropRequirements { get; set; } = new List<CropRequirement>();
+    public virtual ICollection<FarmEquipment> FarmEquipments { get; set; } = new List<FarmEquipment>();
 
     public virtual Farm FarmDetails { get; set; } = null!;
 }

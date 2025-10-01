@@ -37,9 +37,9 @@ namespace Infrastructure
 
         public DbSet<Inventory> Inventorie { get; set; }
 
-        public DbSet<IoTdevice> IoTdevice { get; set; }
+        public DbSet<Device> Devices { get; set; }
 
-        //public DbSet<IoTdeviceLog> IoTdeviceLog { get; set; }
+        //public DbSet<DevicesLog> DevicesLog { get; set; }
 
         public DbSet<Order> Order { get; set; }
 
@@ -86,9 +86,9 @@ namespace Infrastructure
                 new Category { CategoryId = 4, CategoryName = "Herbs and Spices - Rau Gia Vi" }
                 );
             builder.Entity<Inventory>().HasData(
-                new Inventory { InventoryId = 1, Location = "TP. Ho Chi Minh", StockQuantity = 1000, Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), ExpiryDate = DateOnly.Parse("6/1/2025"), ProductId = 1, ScheduleId = 1 },
-                new Inventory { InventoryId = 2, Location = "TP. Ho Chi Minh", StockQuantity = 500, Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/11/2025"), ExpiryDate = DateOnly.Parse("6/1/2025"), ProductId = 2, ScheduleId = 2 },
-                new Inventory { InventoryId = 3, Location = "TP. Ho Chi Minh", StockQuantity = 666, Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/8/2025"), ExpiryDate = DateOnly.Parse("6/1/2025"), ProductId = 3, ScheduleId = 3 }
+                new Inventory { InventoryId = 1, Location = "TP. Ho Chi Minh", StockQuantity = 1000, Status = Domain.Enum.Status.ACTIVE, CreateAt = DateOnly.Parse("3/1/2025"), ExpireDate = DateOnly.Parse("6/1/2025"), ProductId = 1, ScheduleId = 1 },
+                new Inventory { InventoryId = 2, Location = "TP. Ho Chi Minh", StockQuantity = 500, Status = Domain.Enum.Status.ACTIVE, CreateAt = DateOnly.Parse("3/11/2025"), ExpireDate = DateOnly.Parse("6/1/2025"), ProductId = 2, ScheduleId = 2 },
+                new Inventory { InventoryId = 3, Location = "TP. Ho Chi Minh", StockQuantity = 666, Status = Domain.Enum.Status.ACTIVE, CreateAt = DateOnly.Parse("3/8/2025"), ExpireDate = DateOnly.Parse("6/1/2025"), ProductId = 3, ScheduleId = 3 }
                  );
 
             builder.Entity<Product>().HasData(
@@ -99,9 +99,9 @@ namespace Infrastructure
                 //new Product { ProductId = 5, ProductName = "Fruit 2", Images = null, Price = 55000, StockQuantity = 10000, Description = "Dua Hau", Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, }
                 );
             builder.Entity<Schedule>().HasData(
-               new Schedule { ScheduleId = 1, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("4/3/2025"), PlantingDate = DateOnly.Parse("3/1/2025"), HarvestDate = DateOnly.Parse("3/2/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 3, FarmDetailsId = 1, CropId = 1, Quantity = 100 },
-                new Schedule { ScheduleId = 2, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/11/2025"), PlantingDate = DateOnly.Parse("3/1/2025"), HarvestDate = DateOnly.Parse("3/2/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 9, FarmDetailsId = 2, CropId = 2, Quantity = 100 },
-                new Schedule { ScheduleId = 3, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/3/2025"), PlantingDate = DateOnly.Parse("3/1/2025"), HarvestDate = DateOnly.Parse("3/2/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 6, FarmDetailsId = 3, CropId = 3, Quantity = 100, }
+               new Schedule { ScheduleId = 1, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("4/3/2025"), PlantingDate = DateOnly.Parse("3/1/2025"), HarvestDate = DateOnly.Parse("3/2/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 3, FarmId = 1, CropId = 1, Quantity = 100 },
+                new Schedule { ScheduleId = 2, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/11/2025"), PlantingDate = DateOnly.Parse("3/1/2025"), HarvestDate = DateOnly.Parse("3/2/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 9, FarmId = 2, CropId = 2, Quantity = 100 },
+                new Schedule { ScheduleId = 3, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/3/2025"), PlantingDate = DateOnly.Parse("3/1/2025"), HarvestDate = DateOnly.Parse("3/2/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 6, FarmId = 3, CropId = 3, Quantity = 100, }
            );
             builder.Entity<FarmActivity>().HasData(
                 new FarmActivity { FarmActivitiesId = 1, ActivityType = Domain.Enum.ActivityType.Sowing, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("4/1/2025"), Status = Domain.Enum.FarmActivityStatus.ACTIVE, ScheduleId = 1 },
@@ -123,16 +123,16 @@ namespace Infrastructure
                 new Crop { CropId = 5, CropName = "Cop 05", Description = "4x3 m2", Status = Domain.Enum.CropStatus.ACTIVE, CategoryId = 3 }
                 );
 
-            builder.Entity<IoTdevice>().HasData(
-                new IoTdevice { IoTdevicesId = 1, DeviceName = "Thermocouple - 1", DeviceType = "Temperature IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 2 },
-                new IoTdevice { IoTdevicesId = 2, DeviceName = "LM393 - 1", DeviceType = "Humidity measurement IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 1 },
-                new IoTdevice { IoTdevicesId = 3, DeviceName = "LM393 - 2", DeviceType = "Humidity measurement IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 2 },
-                new IoTdevice { IoTdevicesId = 4, DeviceName = "Thermocouple  - 2", DeviceType = "Temperature IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 3 },
-                new IoTdevice { IoTdevicesId = 5, DeviceName = "Thermocouple  - 3", DeviceType = "Temperature IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 1 },
-                new IoTdevice { IoTdevicesId = 6, DeviceName = "LM393 - 3", DeviceType = "Humidity measurement IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 3 },
-                new IoTdevice { IoTdevicesId = 7, DeviceName = "Soil Moisture Sensor 1", DeviceType = "Soil Moisture Sensor IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 1 },
-                new IoTdevice { IoTdevicesId = 8, DeviceName = "Soil Moisture Sensor 2", DeviceType = "Soil Moisture Sensor IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 2 },
-                new IoTdevice { IoTdevicesId = 9, DeviceName = "Soil Moisture Sensor 3", DeviceType = "Soil Moisture Sensor IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 3 }
+            builder.Entity<Device>().HasData(
+                new Device { DevicessId = 1, DeviceName = "Thermocouple - 1", DeviceType = "Temperature IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 2 },
+                new Device { DevicessId = 2, DeviceName = "LM393 - 1", DeviceType = "Humidity measurement IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 1 },
+                new Device { DevicessId = 3, DeviceName = "LM393 - 2", DeviceType = "Humidity measurement IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 2 },
+                new Device { DevicessId = 4, DeviceName = "Thermocouple  - 2", DeviceType = "Temperature IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 3 },
+                new Device { DevicessId = 5, DeviceName = "Thermocouple  - 3", DeviceType = "Temperature IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 1 },
+                new Device { DevicessId = 6, DeviceName = "LM393 - 3", DeviceType = "Humidity measurement IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 3 },
+                new Device { DevicessId = 7, DeviceName = "Soil Moisture Sensor 1", DeviceType = "Soil Moisture Sensor IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 1 },
+                new Device { DevicessId = 8, DeviceName = "Soil Moisture Sensor 2", DeviceType = "Soil Moisture Sensor IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 2 },
+                new Device { DevicessId = 9, DeviceName = "Soil Moisture Sensor 3", DeviceType = "Soil Moisture Sensor IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 3 }
                 );
             builder.Entity<Order>().HasData(
                 new Order { OrderId = 1, CustomerId = 8, TotalPrice = 200000, ShippingAddress = "TP. Ho Chi Minh", Status = Domain.Enum.PaymentStatus.PAID, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") },
@@ -155,9 +155,9 @@ namespace Infrastructure
                 );
 
             builder.Entity<CropRequirement>().HasData(
-                new CropRequirement { RequirementId = 1, EstimatedDate = 25, Moisture = 1, Temperature = 29, Fertilizer = "NPK", DeviceId = 1 },
-                new CropRequirement { RequirementId = 2, EstimatedDate = 20, Moisture = 1, Temperature = 22, Fertilizer = "NPK", DeviceId = 3 },
-                new CropRequirement { RequirementId = 3, EstimatedDate = 30, Moisture = 1, Temperature = 26, Fertilizer = "NPK", DeviceId = 2 }
+                new CropRequirement { RequirementId = 1, EstimatedDate = 25, Moisture = 1, Temperature = 29, Fertilizer = "NPK" },
+                new CropRequirement { RequirementId = 2, EstimatedDate = 20, Moisture = 1, Temperature = 22, Fertilizer = "NPK" },
+                new CropRequirement { RequirementId = 3, EstimatedDate = 30, Moisture = 1, Temperature = 26, Fertilizer = "NPK" }
                 );
             builder.Entity<Feedback>().HasData(
                 new Feedback { FeedbackId = 1, OrderDetailId = 1, CustomerId = 4, CreatedAt = DateOnly.Parse("4/3/2025"), Status = Domain.Enum.Status.ACTIVE, Rating = 4, Comment = "App very good, but load data slow" },

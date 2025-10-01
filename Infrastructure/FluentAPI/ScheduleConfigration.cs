@@ -19,13 +19,12 @@ namespace Infrastructure.FluentAPI
 
             builder.HasIndex(e => e.CropId, "IX_Schedule_cropID");
 
-            builder.HasIndex(e => e.FarmDetailsId, "IX_Schedule_farmDetailsID");
+            builder.HasIndex(e => e.FarmId, "IX_Schedule_farmDetailsID");
             builder.HasKey(e => e.ScheduleId);
             builder.Property(e => e.AssignedTo).HasColumnName("assignedTo");
             builder.Property(e => e.CreatedAt).HasColumnName("createdAt");
             builder.Property(e => e.CropId).HasColumnName("cropID");
             builder.Property(e => e.EndDate).HasColumnName("endDate");
-            builder.Property(e => e.FarmDetailsId).HasColumnName("farmDetailsID");
             builder.Property(e => e.HarvestDate).HasColumnName("harvestDate");
             builder.Property(e => e.PlantingDate).HasColumnName("plantingDate");
             builder.Property(e => e.Quantity).HasColumnName("quantity");
@@ -44,7 +43,7 @@ namespace Infrastructure.FluentAPI
                 .HasConstraintName("FKSchedule700520");
 
             builder.HasOne(d => d.FarmDetails).WithMany(p => p.Schedules)
-                .HasForeignKey(d => d.FarmDetailsId)
+                .HasForeignKey(d => d.FarmId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKSchedule407130");
         }

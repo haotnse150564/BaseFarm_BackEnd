@@ -15,23 +15,18 @@ namespace Infrastructure.FluentAPI
             builder.Property(e => e.CategoryId);
             builder.Property(e => e.CropName)
                 .HasMaxLength(255)
-                .IsUnicode(false)
-                .HasColumnName("cropName");
+                .HasColumnName("cropName")
+                .IsUnicode(true);
             builder.Property(e => e.Description)
                 .HasMaxLength(255)
-                .IsUnicode(false)
-                .HasColumnName("description");
-            builder.Property(e => e.ImageUrl)
-                .HasMaxLength(255)
-                .IsUnicode(false)
-                .HasColumnName("imageUrl");
+                .HasColumnName("description")
+                .IsUnicode(true);
             builder.Property(e => e.Origin)
                 .HasMaxLength(255)
-                .IsUnicode(false)
                 .HasColumnName("origin");
             builder.Property(e => e.Status).HasColumnName("status");
 
-            builder.HasOne(d => d.Category).WithMany(p => p.Crops)
+            builder.HasOne(d => d.Category).WithMany(p => p.Crop)
                 .HasForeignKey(d => d.CategoryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FKCrop824568");

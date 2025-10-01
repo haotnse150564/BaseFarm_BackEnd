@@ -13,21 +13,19 @@ namespace Infrastructure.FluentAPI
             builder.Property(e => e.AccountProfileId).ValueGeneratedNever();
             builder.Property(e => e.Address)
                 .HasMaxLength(255)
-                .IsUnicode(false)
-                .HasColumnName("address");
+                .HasColumnName("address")
+                .IsUnicode(true);
             builder.Property(e => e.CreatedAt).HasColumnName("createdAt");
             builder.Property(e => e.Fullname)
                 .HasMaxLength(75)
-                .IsUnicode(false)
-                .HasColumnName("fullname");
+                .HasColumnName("fullname")
+                .IsUnicode(true);
             builder.Property(e => e.Gender).HasColumnName("gender");
             builder.Property(e => e.Images)
                 .HasMaxLength(255)
-                .IsUnicode(false)
                 .HasColumnName("images");
             builder.Property(e => e.Phone)
                 .HasMaxLength(255)
-                .IsUnicode(false)
                 .HasColumnName("phone");
             builder.Property(e => e.UpdatedAt).HasColumnName("updatedAt");
 

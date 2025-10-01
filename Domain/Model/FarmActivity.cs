@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Domain.Model;
 
-public partial class FarmActivity
+public partial class FarmActivity //update lên bảng cần sau này
 {
     public long FarmActivitiesId { get; set; }
 

@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories.Implement
 {
-    public class IoTdeviceRepository : GenericRepository<IoTdevice>, IIoTdeviceRepository
+    public class DevicesRepository : GenericRepository<Device>, IDevicesRepository
     {
-        public IoTdeviceRepository(AppDbContext context)
+        public DevicesRepository(AppDbContext context)
         {
             _context = context;
-            _dbSet = _context.Set<IoTdevice>();
+            _dbSet = _context.Set<Device>();
         }
     }
 }

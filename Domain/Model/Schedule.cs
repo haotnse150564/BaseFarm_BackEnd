@@ -15,6 +15,8 @@ public partial class Schedule
     public int? Quantity { get; set; }
 
     public Status? Status { get; set; }
+    public bool PesticideUsed { get; set; }
+    public DiseaseStatus? DiseaseStatus { get; set; }
 
     public DateOnly? PlantingDate { get; set; }
 
@@ -26,7 +28,7 @@ public partial class Schedule
 
     public long AssignedTo { get; set; }
 
-    public long FarmDetailsId { get; set; }
+    public long FarmId { get; set; }
 
     public long CropId { get; set; }
 

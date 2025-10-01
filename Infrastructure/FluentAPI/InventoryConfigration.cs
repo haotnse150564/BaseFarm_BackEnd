@@ -17,11 +17,11 @@ namespace Infrastructure.FluentAPI
 
             builder.HasIndex(e => e.ProductId, "IX_Inventory_productId");
             builder.HasKey(e => e.InventoryId);
-            builder.Property(e => e.CreatedAt).HasColumnName("createdAt");
-            builder.Property(e => e.ExpiryDate).HasColumnName("expiryDate");
+            builder.Property(e => e.CreateAt).HasColumnName("createdAt");
+            builder.Property(e => e.ExpireDate).HasColumnName("expiryDate");
             builder.Property(e => e.Location)
                 .HasMaxLength(255)
-                .IsUnicode(false)
+                
                 .HasColumnName("location");
             builder.Property(e => e.ProductId).HasColumnName("productId");
             builder.Property(e => e.ScheduleId).HasColumnName("scheduleId");

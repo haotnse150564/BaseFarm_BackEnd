@@ -64,7 +64,7 @@ namespace Application.Services.Implement
                     //FarmActivityId = request.FarmActivityId,
                     PlantingDate = request.PlantingDate,
                     HarvestDate = request.PlantingDate.Value.AddDays((int)reqCrop.EstimatedDate),
-                    FarmDetailsId = request.FarmDetailsId,
+                    FarmId = request.FarmDetailsId,
                     CropId = request.CropId,
                     UpdatedAt = _currentTime.GetCurrentTime(),
                     CreatedAt = _currentTime.GetCurrentTime(),

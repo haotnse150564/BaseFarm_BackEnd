@@ -14,11 +14,11 @@ namespace Infrastructure.FluentAPI
             builder.Property(e => e.CreatedAt).HasColumnName("createdAt");
             builder.Property(e => e.Email)
                 .HasMaxLength(255)
-                .IsUnicode(false)
+                
                 .HasColumnName("email");
             builder.Property(e => e.PasswordHash)
                 .HasMaxLength(255)
-                .IsUnicode(false)
+                
                 .HasColumnName("passwordHash");
             builder.Property(e => e.Role).HasColumnName("role");
             builder.Property(e => e.Status).HasColumnName("status");

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Enum;
+using System;
 using System.Collections.Generic;
 
 namespace Domain.Model;
@@ -6,6 +7,7 @@ namespace Domain.Model;
 public partial class CropRequirement
 {
     public long RequirementId { get; set; }
+    public PlantStage? PlantStage { get; set; }
 
     public int? EstimatedDate { get; set; }
 
@@ -14,10 +16,6 @@ public partial class CropRequirement
     public decimal? Temperature { get; set; }
 
     public string? Fertilizer { get; set; }
-
-    public long DeviceId { get; set; }
-
-    public virtual IoTdevice Device { get; set; } = null!;
 
     public virtual Crop Requirement { get; set; } = null!;
 }
