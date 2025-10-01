@@ -14,10 +14,11 @@ namespace Domain.Model
         public DateOnly AssignDate { get; set; }
         public long RemoveDate { get; set; }
         public Status Status { get; set; }
-        public string Note { get; set; }
+        public string? Note { get; set; }
         public long FarmId { get; set; }
         public long DeviceId { get; set; }
 
-
+        public virtual Farm? Farm { get; set; }
+        public virtual Device? Device { get; set; }
     }
 }

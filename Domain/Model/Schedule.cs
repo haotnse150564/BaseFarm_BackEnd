@@ -38,7 +38,7 @@ public partial class Schedule
 
     public virtual Crop Crop { get; set; } = null!;
 
-//    public virtual ICollection<FarmActivity> FarmActivities { get; set; } = new List<FarmActivity>();
+    public virtual FarmActivity? FarmActivities { get; set; }
 
     public virtual Farm FarmDetails { get; set; } = null!;
 
