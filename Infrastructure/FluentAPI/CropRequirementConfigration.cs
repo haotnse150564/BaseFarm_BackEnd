@@ -15,9 +15,9 @@ namespace Infrastructure.FluentAPI
         {
             builder.ToTable("CropRequirement");
 
-            builder.HasKey(e => e.RequirementId);
+            builder.HasKey(e => e.CropRequirementId);
 
-            builder.Property(e => e.RequirementId)
+            builder.Property(e => e.CropRequirementId)
                 .HasColumnName("requirementId");
 
             builder.Property(e => e.PlantStage)
@@ -42,7 +42,7 @@ namespace Infrastructure.FluentAPI
             // Quan hệ 1-1 với Crop
             builder.HasOne(e => e.Crop)
                 .WithOne(c => c.CropRequirement)
-                .HasForeignKey<CropRequirement>(e => e.RequirementId)
+                .HasForeignKey<CropRequirement>(e => e.CropRequirementId)
                 .OnDelete(DeleteBehavior.Cascade);
 
         }

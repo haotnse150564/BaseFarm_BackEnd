@@ -6,7 +6,7 @@ namespace Domain.Model;
 
 public partial class CropRequirement
 {
-    public long RequirementId { get; set; }
+    public long CropRequirementId { get; set; }
     public PlantStage? PlantStage { get; set; }
 
     public int? EstimatedDate { get; set; }

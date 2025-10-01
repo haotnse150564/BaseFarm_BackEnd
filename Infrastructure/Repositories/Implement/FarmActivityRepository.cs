@@ -39,14 +39,14 @@ namespace Infrastructure.Repositories.Implement
         public async Task<FarmActivity> GetHarvestFarmActivityId(long scheduleId)
         {
             return await _context.FarmActivity
-                .Where(fa => fa.ScheduleId == scheduleId && fa.ActivityType == Domain.Enum.ActivityType.Harvesting && fa.Status == Domain.Enum.FarmActivityStatus.COMPLETED)
+                //.Where(fa => fa.ScheduleId == scheduleId && fa.ActivityType == Domain.Enum.ActivityType.Harvesting && fa.Status == Domain.Enum.FarmActivityStatus.COMPLETED)
                 .FirstOrDefaultAsync();
         }
 
         public async Task<List<FarmActivity>> GetListFarmActivityByScheduleId(long scheduleId)
         {
             return await _context.FarmActivity
-                 .Where(fa => fa.ScheduleId == scheduleId)
+                 //.Where(fa => fa.ScheduleId == scheduleId)
                  .ToListAsync();
         }
 
