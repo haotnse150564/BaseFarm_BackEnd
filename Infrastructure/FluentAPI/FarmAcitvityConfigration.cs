@@ -36,11 +36,11 @@ namespace Infrastructure.FluentAPI
             //builder.Property(e => e.ScheduleId)
             //    .HasColumnName("scheduleId");
 
-            // Quan hệ n-1 với Schedule
-            //builder.HasOne(e => e.FarmActivitiesId)
-            //    .WithOne(s => s.Fa)
-            //    .HasForeignKey(e => e.ScheduleId)
-            //    .OnDelete(DeleteBehavior.SetNull);
+            //Quan hệ n-1 với Schedule
+            builder.HasMany(e => e.Schedule)
+                .WithOne(s => s.FarmActivities)
+                .HasForeignKey(e => e.FarmActivitiesId)
+                .OnDelete(DeleteBehavior.SetNull);
 
         }
     }

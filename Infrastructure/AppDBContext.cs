@@ -99,9 +99,9 @@ namespace Infrastructure
                 new Product { ProductId = 5, ProductName = "Rau Dền lá đỏ", Images = null, Price = 55000, StockQuantity = 10000, Description = "Dua Hau", Status = Domain.Enum.ProductStatus.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, }
                 );
             builder.Entity<Schedule>().HasData(
-               new Schedule { ScheduleId = 1, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("4/3/2025"), PlantingDate = DateOnly.Parse("3/1/2025"), HarvestDate = DateOnly.Parse("3/2/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 3, FarmId = 1, CropId = 1, Quantity = 100 },
-                new Schedule { ScheduleId = 2, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/11/2025"), PlantingDate = DateOnly.Parse("3/1/2025"), HarvestDate = DateOnly.Parse("3/2/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 9, FarmId = 2, CropId = 2, Quantity = 100 },
-                new Schedule { ScheduleId = 3, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/3/2025"), PlantingDate = DateOnly.Parse("3/1/2025"), HarvestDate = DateOnly.Parse("3/2/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 6, FarmId = 3, CropId = 3, Quantity = 100, }
+               new Schedule { ScheduleId = 1, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("4/3/2025"), PlantingDate = DateOnly.Parse("3/1/2025"), HarvestDate = DateOnly.Parse("3/2/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 3, FarmId = 1, CropId = 1, Quantity = 100, FarmActivitiesId = 1 },
+                new Schedule { ScheduleId = 2, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/11/2025"), PlantingDate = DateOnly.Parse("3/1/2025"), HarvestDate = DateOnly.Parse("3/2/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 9, FarmId = 2, CropId = 2, Quantity = 100, FarmActivitiesId = 2 },
+                new Schedule { ScheduleId = 3, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/3/2025"), PlantingDate = DateOnly.Parse("3/1/2025"), HarvestDate = DateOnly.Parse("3/2/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 6, FarmId = 3, CropId = 3, Quantity = 100, FarmActivitiesId = 3 }
            );
             builder.Entity<FarmActivity>().HasData(
                 new FarmActivity { FarmActivitiesId = 1, ActivityType = Domain.Enum.ActivityType.Sowing, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("4/1/2025"), Status = Domain.Enum.FarmActivityStatus.ACTIVE },
@@ -155,9 +155,9 @@ namespace Infrastructure
                 );
 
             builder.Entity<CropRequirement>().HasData(
-                new CropRequirement { RequirementId = 1, EstimatedDate = 25, Moisture = 1, Temperature = 29, Fertilizer = "NPK" },
-                new CropRequirement { RequirementId = 2, EstimatedDate = 20, Moisture = 1, Temperature = 22, Fertilizer = "NPK" },
-                new CropRequirement { RequirementId = 3, EstimatedDate = 30, Moisture = 1, Temperature = 26, Fertilizer = "NPK" }
+                new CropRequirement { CropRequirementId = 1, EstimatedDate = 25, Moisture = 1, Temperature = 29, Fertilizer = "NPK" },
+                new CropRequirement { CropRequirementId = 2, EstimatedDate = 20, Moisture = 1, Temperature = 22, Fertilizer = "NPK" },
+                new CropRequirement { CropRequirementId = 3, EstimatedDate = 30, Moisture = 1, Temperature = 26, Fertilizer = "NPK" }
                 );
             builder.Entity<Feedback>().HasData(
                 new Feedback { FeedbackId = 1, OrderDetailId = 1, CustomerId = 4, CreatedAt = DateOnly.Parse("4/3/2025"), Status = Domain.Enum.Status.ACTIVE, Rating = 4, Comment = "App very good, but load data slow" },
