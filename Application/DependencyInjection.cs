@@ -44,7 +44,7 @@ public static class DependencyInjection
         services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
         services.AddScoped<IPaymentRepository, PaymentRepository>();
         services.AddScoped<IScheduleRepository, ScheduleRepository>();
-        services.AddScoped<IIoTdeviceRepository, IoTdeviceRepository>();
+        services.AddScoped<IDevicesRepository, DevicesRepository>();
         services.AddScoped<ICropRepository, CropRepository>();
         services.AddScoped<IFarmActivityRepository, FarmActivityRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -59,7 +59,7 @@ public static class DependencyInjection
         services.AddScoped<IOrderServices, OrderServices>();
         services.AddScoped<IVnPayService, VnPayService>();
         services.AddScoped<IScheduleServices, ScheduleServices>();
-        services.AddScoped<IIoTdeviceServices, IoTdeviceServices>();
+        services.AddScoped<IDevicesServices, DevicesServices>();
         services.AddScoped<ICropServices, CropServices>();
         services.AddScoped<IFarmActivityServices, FarmActivityServices>();
         services.AddScoped<ICategoryServices, CategoryServices>();

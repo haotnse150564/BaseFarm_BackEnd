@@ -14,13 +14,13 @@ using ResponseDTO = Infrastructure.ViewModel.Response.IOTResponse.ResponseDTO;
 
 namespace Application.Services.Implement
 {
-    public class IoTdeviceServices : IIoTdeviceServices
+    public class DevicesServices : IDevicesServices
     {
         private readonly IUnitOfWorks _unitOfWork;
         private readonly ICurrentTime _currentTime;
         private readonly IConfiguration configuration;
         private readonly IMapper _mapper;
-        public IoTdeviceServices(IUnitOfWorks unitOfWork, ICurrentTime currentTime, IConfiguration configuration, IMapper mapper)
+        public DevicesServices(IUnitOfWorks unitOfWork, ICurrentTime currentTime, IConfiguration configuration, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _currentTime = currentTime;
@@ -31,11 +31,11 @@ namespace Application.Services.Implement
         {
             try
             {
-                var result = _mapper.Map<IoTdevice>(request);
+                var result = _mapper.Map<Device>(request);
                 result.Status = Status.ACTIVE; // Gán trạng thái mặc định là Active
                 result.LastUpdate = _currentTime.GetCurrentTime(); // Cập nhật thời gian hiện tại
                 // Map dữ liệu sang DTO
-                await _unitOfWork.ioTdeviceRepository.AddAsync(result);
+                await _unitOfWork.deviceRepository.AddAsync(result);
                 await _unitOfWork.SaveChangesAsync();
 
                 var resultView = _mapper.Map<IOTView>(result);
@@ -52,7 +52,7 @@ namespace Application.Services.Implement
 
             try
             {
-                var devices = await _unitOfWork.ioTdeviceRepository.GetAllAsync();
+                var devices = await _unitOfWork.deviceRepository.GetAllAsync();
 
                 if (devices == null)
                 {
@@ -83,7 +83,7 @@ namespace Application.Services.Implement
         {
             try
             {
-                var devices = await _unitOfWork.ioTdeviceRepository.GetByIdAsync(deviceId);
+                var devices = await _unitOfWork.deviceRepository.GetByIdAsync(deviceId);
                 if (devices == null)
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, "No IOT found.");
@@ -108,7 +108,7 @@ namespace Application.Services.Implement
         {
             try
             {
-                var ioTdevice = await _unitOfWork.ioTdeviceRepository.GetByIdAsync(deviceId);
+                var ioTdevice = await _unitOfWork.deviceRepository.GetByIdAsync(deviceId);
 
                 if (ioTdevice == null)
                 {
@@ -117,7 +117,7 @@ namespace Application.Services.Implement
                 var update = _mapper.Map(device, ioTdevice);
                 update.LastUpdate = _currentTime.GetCurrentTime(); // Cập nhật thời gian hiện tại
                 // Map dữ liệu sang DTO
-                _unitOfWork.ioTdeviceRepository.Update(update);
+                _unitOfWork.deviceRepository.Update(update);
                 await _unitOfWork.SaveChangesAsync();
                 var result = _mapper.Map<IOTView>(update);
                 return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
@@ -133,7 +133,7 @@ namespace Application.Services.Implement
         {
             try
             {
-                var ioTdevice = await _unitOfWork.ioTdeviceRepository.GetByIdAsync(deviceId);
+                var ioTdevice = await _unitOfWork.deviceRepository.GetByIdAsync(deviceId);
 
                 if (ioTdevice == null)
                 {
@@ -142,7 +142,7 @@ namespace Application.Services.Implement
 
                 // Map dữ liệu sang DTO
                 ioTdevice.Status = (Status)Enum.Parse(typeof(Status), status); // Chuyển chuỗi sang Enum
-                await _unitOfWork.ioTdeviceRepository.UpdateAsync(ioTdevice);
+                await _unitOfWork.deviceRepository.UpdateAsync(ioTdevice);
                 await _unitOfWork.SaveChangesAsync();
 
                 var result = _mapper.Map<IOTView>(ioTdevice);

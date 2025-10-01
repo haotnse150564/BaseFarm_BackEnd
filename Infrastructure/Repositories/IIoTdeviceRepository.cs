@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public interface IIoTdeviceRepository : IGenericRepository<IoTdevice>
+    public interface IDevicesRepository : IGenericRepository<Device>
     {
     }
 }

@@ -15,38 +15,74 @@ namespace Infrastructure.FluentAPI
         {
             builder.ToTable("Schedule");
 
-            builder.HasIndex(e => e.AssignedTo, "IX_Schedule_assignedTo");
-
-            builder.HasIndex(e => e.CropId, "IX_Schedule_cropID");
-
-            builder.HasIndex(e => e.FarmDetailsId, "IX_Schedule_farmDetailsID");
             builder.HasKey(e => e.ScheduleId);
-            builder.Property(e => e.AssignedTo).HasColumnName("assignedTo");
-            builder.Property(e => e.CreatedAt).HasColumnName("createdAt");
-            builder.Property(e => e.CropId).HasColumnName("cropID");
-            builder.Property(e => e.EndDate).HasColumnName("endDate");
-            builder.Property(e => e.FarmDetailsId).HasColumnName("farmDetailsID");
-            builder.Property(e => e.HarvestDate).HasColumnName("harvestDate");
-            builder.Property(e => e.PlantingDate).HasColumnName("plantingDate");
-            builder.Property(e => e.Quantity).HasColumnName("quantity");
-            builder.Property(e => e.StartDate).HasColumnName("startDate");
-            builder.Property(e => e.Status).HasColumnName("status");
-            builder.Property(e => e.UpdatedAt).HasColumnName("updatedAt");
 
-            builder.HasOne(d => d.AssignedToNavigation).WithMany(p => p.Schedules)
-                .HasForeignKey(d => d.AssignedTo)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKSchedule19350");
+            builder.Property(e => e.ScheduleId)
+                .HasColumnName("scheduleId");
 
-            builder.HasOne(d => d.Crop).WithMany(p => p.Schedules)
-                .HasForeignKey(d => d.CropId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKSchedule700520");
+            builder.Property(e => e.StartDate)
+                .HasColumnName("startDate");
 
-            builder.HasOne(d => d.FarmDetails).WithMany(p => p.Schedules)
-                .HasForeignKey(d => d.FarmDetailsId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKSchedule407130");
+            builder.Property(e => e.EndDate)
+                .HasColumnName("endDate");
+
+            builder.Property(e => e.Quantity)
+                .HasColumnName("quantity");
+
+            builder.Property(e => e.Status)
+                .HasColumnName("status");
+
+            builder.Property(e => e.PesticideUsed)
+                .HasColumnName("pesticideUsed");
+
+            builder.Property(e => e.DiseaseStatus)
+                .HasColumnName("diseaseStatus");
+
+            builder.Property(e => e.PlantingDate)
+                .HasColumnName("plantingDate");
+
+            builder.Property(e => e.HarvestDate)
+                .HasColumnName("harvestDate");
+
+            builder.Property(e => e.CreatedAt)
+                .HasColumnName("createdAt");
+
+            builder.Property(e => e.UpdatedAt)
+                .HasColumnName("updatedAt");
+
+            builder.Property(e => e.AssignedTo)
+                .HasColumnName("assignedTo");
+
+            builder.Property(e => e.FarmId)
+                .HasColumnName("farmId");
+
+            builder.Property(e => e.CropId)
+                .HasColumnName("cropId");
+
+            // Quan hệ n-1 với Account (AssignedTo)
+            builder.HasOne(e => e.AssignedToNavigation)
+                .WithMany(a => a.Schedules)
+                .HasForeignKey(e => e.AssignedTo)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Quan hệ n-1 với Crop
+            builder.HasOne(e => e.Crop)
+                .WithMany(c => c.Schedules)
+                .HasForeignKey(e => e.CropId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Quan hệ n-1 với Farm
+            builder.HasOne(e => e.FarmDetails)
+                .WithMany(f => f.Schedules)
+                .HasForeignKey(e => e.FarmId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Quan hệ 1-n với Inventory
+            builder.HasMany(e => e.Inventories)
+                .WithOne(i => i.Schedule)
+                .HasForeignKey(i => i.ScheduleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
         }
     }
 }

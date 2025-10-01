@@ -14,20 +14,34 @@ namespace Infrastructure.FluentAPI
         public void Configure(EntityTypeBuilder<FarmActivity> builder)
         {
 
+            builder.ToTable("FarmActivities");
+
             builder.HasKey(e => e.FarmActivitiesId);
 
-            builder.ToTable("FarmActivity");
+            builder.Property(e => e.FarmActivitiesId)
+                .HasColumnName("farmActivitiesId");
 
-            builder.Property(e => e.ActivityType).HasColumnName("activityType");
-            builder.Property(e => e.EndDate).HasColumnName("endDate");
-            builder.Property(e => e.ScheduleId).HasColumnName("scheduleId");
-            builder.Property(e => e.StartDate).HasColumnName("startDate");
-            builder.Property(e => e.Status).HasColumnName("status");
+            builder.Property(e => e.ActivityType)
+                .HasColumnName("activityType");
 
-            builder.HasOne(d => d.Schedule).WithMany(p => p.FarmActivities)
-                .HasForeignKey(d => d.ScheduleId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKFarmActivi709275");
+            builder.Property(e => e.StartDate)
+                .HasColumnName("startDate");
+
+            builder.Property(e => e.EndDate)
+                .HasColumnName("endDate");
+
+            builder.Property(e => e.Status)
+                .HasColumnName("status");
+
+            builder.Property(e => e.ScheduleId)
+                .HasColumnName("scheduleId");
+
+            // Quan hệ n-1 với Schedule
+            //builder.HasMany(e => e.Schedule)
+            //    .WithMany(s => s.Fa)
+            //    .HasForeignKey(e => e.ScheduleId)
+            //    .OnDelete(DeleteBehavior.SetNull);
+
         }
     }
 }

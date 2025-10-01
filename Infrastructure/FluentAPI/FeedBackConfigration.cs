@@ -10,27 +10,43 @@ namespace Infrastructure.FluentAPI
         {
             builder.ToTable("Feedback");
 
-            builder.HasIndex(e => e.CustomerId, "IX_Feedback_customerID");
             builder.HasKey(e => e.FeedbackId);
-            builder.Property(e => e.FeedbackId);
+
+            builder.Property(e => e.FeedbackId)
+                .HasColumnName("feedbackId");
+
             builder.Property(e => e.Comment)
-                .HasMaxLength(255)
-                .IsUnicode(false)
+                .HasMaxLength(500)
+                .IsUnicode(true) // Cho phép bình luận bằng tiếng Việt
                 .HasColumnName("comment");
-            builder.Property(e => e.CreatedAt).HasColumnName("createdAt");
-            builder.Property(e => e.CustomerId).HasColumnName("customerID");
-            builder.Property(e => e.Rating).HasColumnName("rating");
-            builder.Property(e => e.Status).HasColumnName("status");
 
-            builder.HasOne(d => d.Customer).WithMany(p => p.Feedbacks)
-                .HasForeignKey(d => d.CustomerId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKFeedback770592");
+            builder.Property(e => e.Rating)
+                .HasColumnName("rating");
 
-            builder.HasOne(d => d.OrderDetail).WithMany(p => p.Feedbacks)
-                .HasForeignKey(d => d.OrderDetailId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKFeedback388276");
+            builder.Property(e => e.Status)
+                .HasColumnName("status");
+
+            builder.Property(e => e.CreatedAt)
+                .HasColumnName("createdAt");
+
+            builder.Property(e => e.CustomerId)
+                .HasColumnName("customerId");
+
+            builder.Property(e => e.OrderDetailId)
+                .HasColumnName("orderDetailId");
+
+            // Quan hệ n-1 với Account (Customer)
+            builder.HasOne(e => e.Customer)
+                .WithMany(a => a.Feedbacks)
+                .HasForeignKey(e => e.CustomerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Quan hệ n-1 với OrderDetail
+            builder.HasOne(e => e.OrderDetail)
+                .WithMany(od => od.Feedbacks)
+                .HasForeignKey(e => e.OrderDetailId)
+                .OnDelete(DeleteBehavior.Cascade);
+
         }
     }
 }

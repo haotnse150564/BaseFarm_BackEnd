@@ -19,7 +19,8 @@ public partial class Farm
 
     public virtual Account Account { get; set; } = null!;
 
-    public virtual ICollection<IoTdevice> IoTdevices { get; set; } = new List<IoTdevice>();
 
     public virtual ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
+
+    public virtual ICollection<FarmEquipment> FarmEquipments { get; set; } = new List<FarmEquipment>();
 }

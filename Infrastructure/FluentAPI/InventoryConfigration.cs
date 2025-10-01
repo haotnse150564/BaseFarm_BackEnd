@@ -15,28 +15,51 @@ namespace Infrastructure.FluentAPI
         {
             builder.ToTable("Inventory");
 
-            builder.HasIndex(e => e.ProductId, "IX_Inventory_productId");
             builder.HasKey(e => e.InventoryId);
-            builder.Property(e => e.CreatedAt).HasColumnName("createdAt");
-            builder.Property(e => e.ExpiryDate).HasColumnName("expiryDate");
+
+            builder.Property(e => e.InventoryId)
+                .HasColumnName("inventoryId");
+
+            builder.Property(e => e.ItemType)
+                .HasMaxLength(100)
+                .IsUnicode(true) // Cho phép lưu loại vật phẩm bằng tiếng Việt
+                .HasColumnName("itemType");
+
             builder.Property(e => e.Location)
                 .HasMaxLength(255)
-                .IsUnicode(false)
+                .IsUnicode(true)
                 .HasColumnName("location");
-            builder.Property(e => e.ProductId).HasColumnName("productId");
-            builder.Property(e => e.ScheduleId).HasColumnName("scheduleId");
-            builder.Property(e => e.Status).HasColumnName("status");
-            builder.Property(e => e.StockQuantity).HasColumnName("stockQuantity");
 
-            builder.HasOne(d => d.Product).WithMany(p => p.Inventories)
-                .HasForeignKey(d => d.ProductId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKInventory855573");
+            builder.Property(e => e.StockQuantity)
+                .HasColumnName("stockQuantity");
 
-            builder.HasOne(d => d.Schedule).WithMany(p => p.Inventories)
-                .HasForeignKey(d => d.ScheduleId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FKInventory560231");
+            builder.Property(e => e.Status)
+                .HasColumnName("status");
+
+            builder.Property(e => e.ExpireDate)
+                .HasColumnName("expireDate");
+
+            builder.Property(e => e.CreateAt)
+                .HasColumnName("createAt");
+
+            builder.Property(e => e.ProductId)
+                .HasColumnName("productId");
+
+            builder.Property(e => e.ScheduleId)
+                .HasColumnName("scheduleId");
+
+            // Quan hệ n-1 với Product
+            builder.HasOne(e => e.Product)
+                .WithMany(p => p.Inventories)
+                .HasForeignKey(e => e.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Quan hệ n-1 với Schedule
+            builder.HasOne(e => e.Schedule)
+                .WithMany(s => s.Inventories)
+                .HasForeignKey(e => e.ScheduleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
         }
     }
 }

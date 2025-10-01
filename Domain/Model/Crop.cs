@@ -12,11 +12,13 @@ public partial class Crop
 
     public string? Description { get; set; }
 
-    public string? ImageUrl { get; set; }
-
     public string? Origin { get; set; }
 
     public CropStatus? Status { get; set; }
+
+    public DateOnly CreateAt { get; set; }
+
+    public DateOnly UpdateAt { get; set; }
 
     public long? CategoryId { get; set; }
 
@@ -25,6 +27,5 @@ public partial class Crop
     public virtual CropRequirement? CropRequirement { get; set; }
 
     public virtual Product? Product { get; set; }
-
     public virtual ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
 }
