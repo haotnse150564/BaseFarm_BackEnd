@@ -12,7 +12,7 @@ namespace Domain.Model
         public long CartId { get; set; }
         public long ProductId { get; set; }
         public int Quantity { get; set; }
-        public decimal PriceQuantity { get; set; }
+        public decimal? PriceQuantity { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
 

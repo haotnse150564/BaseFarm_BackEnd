@@ -50,6 +50,9 @@ namespace Infrastructure
         public DbSet<Product> Product { get; set; }
 
         public DbSet<Schedule> Schedule { get; set; }
+        public DbSet<Cart> Cart { get; set; }
+        public DbSet<CartItem> CartItem { get; set; }
+
         public string rau3 = "https://www.hasfarmgreens.com/wp-content/uploads/2023/03/DSC_0255-Edit.jpg";
         public string rau2 = "https://www.vinmec.com/static/uploads/small_20201226_005345_144787_rau_den_max_1800x1800_jpg_aaca13f0a2.jpg";
         public string rau1 = "https://i1-vnexpress.vnecdn.net/2022/12/02/61lN5mpZAGL-SL1200-1-3093-1669931323.jpg?w=680&h=0&q=100&dpr=1&fit=crop&s=Cj5kP5ZFslHpx0ogALNRdA";

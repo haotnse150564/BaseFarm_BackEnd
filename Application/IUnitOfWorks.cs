@@ -24,6 +24,7 @@ namespace Application
         IFarmRepository farmRepository { get; }
         ICategoryRepository categoryRepository { get; }
         IInventoryRepository inventoryRepository { get; }
-
+        ICartRepository cartRepository { get; }
+        ICartItemRepository cartItemRepository { get; }
     }
 }
