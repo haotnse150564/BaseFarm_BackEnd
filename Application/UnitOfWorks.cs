@@ -29,13 +29,15 @@ namespace Infrastructure
         private ICategoryRepository _categoryRepository;
         private IInventoryRepository _inventoryRepository;
         private ICropRequirementRepository _cropRequirementRepository;    
+        private ICartRepository _cartRepository;
+        private ICartItemRepository _cartItemRepository;
 
         public UnitOfWorks(AppDbContext context, ICurrentTime currentTime, IClaimsServices claimsServices, IProductRepository productRepository
             , IFeedbackRepository feedbackRepository, IAccountProfileRepository accountProfileRepository, IOrderRepository orderRepository
             , IOrderDetailRepository orderDetailRepository, IPaymentRepository paymentRepository, IScheduleRepository scheduleRepository
             , IDevicesRepository deviceRepository, ICropRepository cropRepository, IFarmActivityRepository farmActivityRepository, IFarmRepository farmRepository
             , ICategoryRepository categoryRepository, IAccountRepository accountRepository, IInventoryRepository inventoryRepository
-            , ICropRequirementRepository cropRequirementRepository
+            , ICropRequirementRepository cropRequirementRepository, ICartRepository cartRepository, ICartItemRepository cartItemRepository
             )
         {
             _context = context;
@@ -56,6 +58,22 @@ namespace Infrastructure
             _accountRepository = accountRepository;
             _inventoryRepository = inventoryRepository;
             _cropRequirementRepository = cropRequirementRepository;
+            _cartRepository = cartRepository;
+            _cartItemRepository = cartItemRepository;
+        }
+        public ICartItemRepository CartItemRepository
+        {
+            get
+            {
+                return _cartItemRepository ??= new CartItemRepository(_context);
+            }
+        }
+        public ICartRepository cartRepository
+        {
+            get
+            {
+                return _cartRepository ??= new CartRepository(_context);
+            }
         }
         public ICropRequirementRepository cropRequirementRepository
         {

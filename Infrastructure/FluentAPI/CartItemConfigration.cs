@@ -41,7 +41,7 @@ namespace Infrastructure.FluentAPI
 
             // Quan hệ n-1 với Cart
             builder.HasOne(e => e.Cart)
-                .WithMany(c => c.CartItems) // giả định Cart có ICollection<CartItem> CartItems
+                .WithMany(c => c.CartItems) 
                 .HasForeignKey(e => e.CartId)
                 .OnDelete(DeleteBehavior.Cascade);
 
