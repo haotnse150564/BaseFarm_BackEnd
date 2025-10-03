@@ -40,6 +40,10 @@ namespace Infrastructure.FluentAPI
                 .WithMany(a => a.Cart) // giả định Account có ICollection<Cart> Carts
                 .HasForeignKey(e => e.CustomerId)
                 .OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany(e => e.CartItems)
+                .WithOne(ci => ci.Cart)
+                .HasForeignKey(ci => ci.CartId)
+                .OnDelete(DeleteBehavior.Cascade);
 
         }
     }

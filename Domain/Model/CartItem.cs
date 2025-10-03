@@ -17,5 +17,6 @@ namespace Domain.Model
         public DateTime UpdatedAt { get; set; }
 
         public virtual Cart Cart { get; set; } = null!;
+        public virtual Product? Product { get; set; }
     }
 }

@@ -57,6 +57,7 @@ namespace Domain.Enum
     }
     public enum PaymentStatus
     {
+        UNPAID,
         PAID,
         UNDISCHARGED,
         PENDING,

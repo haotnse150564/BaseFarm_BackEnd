@@ -33,4 +33,5 @@ public partial class Product
     public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 
     public virtual Crop ProductNavigation { get; set; } = null!;
+    public virtual ICollection<CartItem>? CartItems { get; set; } = null;
 }

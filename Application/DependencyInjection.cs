@@ -52,6 +52,7 @@ public static class DependencyInjection
         services.AddScoped<IInventoryRepository, InventoryRepository>();
         services.AddScoped<ICropRequirementRepository, CropRequirementtRepository>();
         services.AddScoped<ICartRepository, CartRepository>();
+        services.AddScoped<ICartItemRepository, CartItemRepository>();
         //service
         services.AddScoped<IProductServices, ProductServices>();
         services.AddScoped<IFeedbackSevices, FeedbackServices>();
@@ -77,7 +78,7 @@ public static class DependencyInjection
         // Use local DB
         //services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(config.GetConnectionString("Default")));
         services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql("Host=localhost;Port=5432;Database=your_db;Username=your_user;Password=your_password"));
+    options.UseNpgsql("Host=localhost;Port=5432;Database=IOTBaseFarm;Username=postgres;Password=123456789"));
 
         services.AddAutoMapper(typeof(MapperConfigs).Assembly);
         //AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);

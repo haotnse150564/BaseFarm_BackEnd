@@ -10,10 +10,10 @@ namespace Application.Services
 {
     public interface ICartServices
     {
-        Task<bool> AddToCart(Product products, int quantity);
-        Task<CartResponse> RemoveFromCart();
-        Task<CartResponse> UpdateCartItem(Product products, int quantity);
-        Task<IEnumerable<CartResponse>> GetCartItems();
+        Task<bool> AddToCart(long productId , int quantity);
+        Task<CartResponse> RemoveCartItem(long productId);
+        Task<CartResponse> UpdateCartItem(long productId, int quantity);
+        Task<CartResponse> GetCartItems();
         Task<CartResponse> ClearCart();
     }
 }
