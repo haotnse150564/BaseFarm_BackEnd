@@ -28,57 +28,129 @@ namespace Application.Services.Implement
             _mapper = mapper;
             _jwtUtils = jWTUtils;
         }
-        public async Task<bool> AddToCart(Product products, int quantity)
+        public async Task<bool> AddToCart(long productId, int quantity)
         {
-            var result = false;
-            var userId = _jwtUtils.GetCurrentUserAsync().Result.AccountId;
-            if (userId == 0)
+            var userId = await _jwtUtils.GetCurrentUserAsync();
+            if (userId.AccountId == 0)
             {
                 return false;
             }
             else
             {
-                var cart = await _unitOfWork.cartRepository.GetCartByUserIdAsync(userId);
-                var product = await _unitOfWork.productRepository.GetByIdAsync(products.ProductId);
-                if (cart.CartItems.IsNullOrEmpty() || (cart.CartItems.FirstOrDefault(x => x.ProductId == products.ProductId)).Equals(null))
+                if (await _unitOfWork.cartRepository.GetCartByUserIdAsync(userId.AccountId) == null)
+                {
+                    Cart newCart = new Cart
+                    {
+                        PaymentStatus = 0,
+                        CustomerId = userId.AccountId,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow
+                    };
+                    await _unitOfWork.cartRepository.AddAsync(newCart);
+                    await _unitOfWork.SaveChangesAsync();
+                }
+                var cart = await _unitOfWork.cartRepository.GetCartByUserIdAsync(userId.AccountId);
+                var product = await _unitOfWork.productRepository.GetByIdAsync(productId);
+                var isExist = cart.CartItems.Any(x => x.ProductId == productId);
+                if (/*cart.CartItems.IsNullOrEmpty() || */!isExist)
                 {
                     CartItem cartItem = new CartItem
                     {
-                        ProductId = products.ProductId,
+                        ProductId = productId,
                         Quantity = quantity,
-                        PriceQuantity = products.Price,
-                        CartId = cart.CartId
+                        PriceQuantity = (product.Price * quantity),
+                        CartId = cart.CartId,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow
+
                     };
                     await _unitOfWork.cartItemRepository.AddAsync(cartItem);
-                    result = true;
+                    if (await _unitOfWork.SaveChangesAsync() < 0) return false;
+                    return true;
                 }
                 else
-                { 
-                    cart.CartItems.FirstOrDefault(x => x.ProductId == products.ProductId)!.Quantity += quantity;
+                {
+                    var item = cart.CartItems.FirstOrDefault(x => x.ProductId == productId);
+                    item.Quantity += quantity;
+                    await _unitOfWork.cartItemRepository.UpdateAsync(item);
+                    if (await _unitOfWork.SaveChangesAsync() < 0) return false;
                     return true;
                 }
             }
-            return false;
         }
 
-        public Task<CartResponse> RemoveFromCart()
+        public async Task<CartResponse> RemoveCartItem(long productId)
         {
-            throw new NotImplementedException();
+            var userId = await _jwtUtils.GetCurrentUserAsync();
+            if (userId.AccountId == 0)
+            {
+                return null;
+            }
+            else
+            {
+                var cart = await _unitOfWork.cartRepository.GetCartByUserIdAsync(userId.AccountId);
+                var item = cart.CartItems.FirstOrDefault(x => x.ProductId == productId);
+                if (item == null) return null;
+                await _unitOfWork.cartItemRepository.DeleteAsync(item);
+                await _unitOfWork.SaveChangesAsync();
+                var cartResponse = _mapper.Map<CartResponse>(cart);
+                return cartResponse;
+            }
+
         }
 
-        public Task<CartResponse> UpdateCartItem(Product products, int quantity)
+        public async Task<CartResponse> UpdateCartItem(long productId, int quantity)
         {
-            throw new NotImplementedException();
+            var userId = await _jwtUtils.GetCurrentUserAsync();
+
+            if (userId.AccountId == 0)
+            {
+                return null;
+            }
+            else
+            {
+                var cart = await _unitOfWork.cartRepository.GetCartByUserIdAsync(userId.AccountId);
+                var product = await _unitOfWork.productRepository.GetByIdAsync(productId);
+                var item = cart.CartItems.FirstOrDefault(x => x.ProductId == productId);
+                if (item == null) return null;
+                item.Quantity = quantity;
+                item.PriceQuantity = (product.Price * quantity);
+
+                await _unitOfWork.cartItemRepository.UpdateAsync(item);
+                await _unitOfWork.SaveChangesAsync();
+                var cartResponse = _mapper.Map<CartResponse>(cart);
+                return cartResponse;
+            }
         }
 
-        public Task<IEnumerable<CartResponse>> GetCartItems()
+        public async Task<CartResponse> GetCartItems()
+        
         {
-            throw new NotImplementedException();
+            var userId = await _jwtUtils.GetCurrentUserAsync();
+            var item = await _unitOfWork.cartRepository.GetCartByUserIdAsync(userId.AccountId);
+            if (item == null) return null;
+            var result = _mapper.Map<CartResponse>(item);
+            return result;
         }
 
-        public Task<CartResponse> ClearCart()
+        public async Task<CartResponse> ClearCart()
         {
-            throw new NotImplementedException();
+            var userId = await _jwtUtils.GetCurrentUserAsync();
+            if (userId.AccountId == 0)
+            {
+                return null;
+            }
+            else
+            {
+                var cart = await _unitOfWork.cartRepository.GetCartByUserIdAsync(userId.AccountId);
+                foreach (var item in cart.CartItems)
+                {
+                    await _unitOfWork.cartItemRepository.DeleteAsync(item);
+                }
+                await _unitOfWork.SaveChangesAsync();
+                var cartResponse = _mapper.Map<CartResponse>(cart);
+                return cartResponse;
+            }
         }
     }
 }

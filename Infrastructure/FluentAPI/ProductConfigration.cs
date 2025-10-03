@@ -107,7 +107,10 @@ namespace Infrastructure.FluentAPI
                 .WithOne(od => od.Product)
                 .HasForeignKey(od => od.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
-
+            builder.HasMany(e => e.CartItems)
+                .WithOne(ci => ci.Product)
+                .HasForeignKey(ci => ci.ProductId)
+                .OnDelete(DeleteBehavior.SetNull);
             #endregion
         }
     }

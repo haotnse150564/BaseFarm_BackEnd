@@ -13,6 +13,6 @@ namespace Infrastructure.ViewModel.Response
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public DateTime ExpereAt { get; set; }
-        public List<CartItemResponse> CartItems { get; set; } = new List<CartItemResponse>();
+        public List<CartItemResponse>? CartItems { get; set; }
     }
 }

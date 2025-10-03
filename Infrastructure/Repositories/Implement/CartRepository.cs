@@ -17,11 +17,13 @@ namespace Infrastructure.Repositories.Implement
             _dbSet = _context.Set<Cart>();
         }
 
-        public Task<Cart?> GetCartByUserIdAsync(long userId)
+        public async Task<Cart?> GetCartByUserIdAsync(long userId)
         {
-            return _context.Cart
+            var ressult =  await _context.Cart
                 .Include(x => x.CartItems)
+                .Include(x => x.Customer)
                 .FirstOrDefaultAsync(c => c.CustomerId == userId);
+            return ressult;
         }
     }
 }

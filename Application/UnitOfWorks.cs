@@ -61,7 +61,7 @@ namespace Infrastructure
             _cartRepository = cartRepository;
             _cartItemRepository = cartItemRepository;
         }
-        public ICartItemRepository CartItemRepository
+        public ICartItemRepository cartItemRepository
         {
             get
             {

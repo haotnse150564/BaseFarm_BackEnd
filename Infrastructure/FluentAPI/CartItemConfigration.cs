@@ -18,7 +18,8 @@ namespace Infrastructure.FluentAPI
             builder.HasKey(e => e.CartItemId);
 
             builder.Property(e => e.CartItemId)
-                .HasColumnName("cartItemId");
+                .HasColumnName("cartItemId")
+                .ValueGeneratedOnAdd();
 
             builder.Property(e => e.CartId)
                 .HasColumnName("cartId");
@@ -44,7 +45,10 @@ namespace Infrastructure.FluentAPI
                 .WithMany(c => c.CartItems) 
                 .HasForeignKey(e => e.CartId)
                 .OnDelete(DeleteBehavior.Cascade);
-
+            builder.HasOne(p => p.Product)
+                .WithMany(c => c.CartItems) // Giả định Product không có ICollection<CartItem>
+                .HasForeignKey(p => p.ProductId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }
