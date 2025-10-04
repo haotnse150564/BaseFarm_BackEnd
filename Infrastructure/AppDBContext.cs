@@ -178,7 +178,7 @@ namespace Infrastructure
                    .SetBasePath(Directory.GetCurrentDirectory())
                    .AddJsonFile("appsettings.json")
                    .Build();
-                var connectionString = /*configuration.GetConnectionString("Default") */"Host=localhost;Port=5432;Database=IOTBaseFarm;Username=postgres;Password=123456789";
+                var connectionString = configuration.GetConnectionString("Default"); //"Host=localhost;Port=5432;Database=IOTBaseFarm;Username=postgres;Password=123456789";
                 optionsBuilder.UseNpgsql(connectionString);
 
 
