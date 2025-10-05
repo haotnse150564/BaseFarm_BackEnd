@@ -20,6 +20,29 @@ public static class DependencyInjection
         {
             client.BaseAddress = new Uri("http://api.openweathermap.org/"); // Thay đổi URL cơ sở
         });
+
+        builder.Services.AddAuthentication(options =>
+        {
+            // Đặt schema xác thực mặc định là Cookie hoặc JwtBearer
+            options.DefaultAuthenticateScheme = "External";
+            options.DefaultChallengeScheme = "External";
+        })
+        .AddCookie("External") // Sử dụng Cookie tạm thời để lưu trạng thái xác thực ngoài
+        .AddGoogle(googleOptions =>
+        {
+            // 2. Lấy Client ID và Client Secret từ cấu hình
+            googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+            googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+
+            // Yêu cầu email và profile
+            googleOptions.Scope.Add("email");
+            googleOptions.Scope.Add("profile");
+
+            // Đặt tên scheme để sử dụng trong Controller
+            googleOptions.SignInScheme = "External";
+            googleOptions.AccessDeniedPath = "/api/auth/access-denied";
+        });
+
         #endregion
         services.AddControllers().AddJsonOptions(opt =>
         {
@@ -119,5 +142,5 @@ public static class DependencyInjection
         });
 
 
-}
+    }
 }
