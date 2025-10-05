@@ -57,3 +57,4 @@ namespace WebAPI.Controllers
             return Ok(new { Token = jwtToken, Email = email, Name = name });
         }
     }
+}
