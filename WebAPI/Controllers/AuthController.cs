@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using Application;
+using Application.Utils;
+using Infrastructure;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -8,6 +11,13 @@ namespace WebAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
+        private readonly JWTUtils _jwtUtils;
+        private readonly IUnitOfWorks _UnitOfWorks;
+        public AuthController(JWTUtils jwtUtils, UnitOfWorks unitOfWorks)
+        {
+            _jwtUtils = jwtUtils;
+            _UnitOfWorks = unitOfWorks;
+        }
         // BƯỚC 1: Bắt đầu quy trình OAuth (Chuyển hướng đến Google)
         [HttpGet("google-login")]
         public IActionResult GoogleLogin()
@@ -40,15 +50,13 @@ namespace WebAPI.Controllers
             var name = authenticateResult.Principal.FindFirstValue(ClaimTypes.Name);
             var issuer = authenticateResult.Principal.FindFirstValue("iss");
 
-            // **LƯU Ý QUAN TRỌNG:**
-            // 1. KIỂM TRA: Tìm người dùng trong cơ sở dữ liệu bằng 'email' (hoặc 'issuer' + 'id')
-            // 2. TẠO: Nếu chưa tồn tại, tạo tài khoản người dùng mới.
+            if(email == null)
+            {
+                return BadRequest(new { Error = "Email chưa được đăng ký." });
+            }
 
-            // --- TẠO TOKEN JWT (Thường dùng cho API) ---
-            // Thay vì chỉ trả về email, bạn cần tạo và trả về một JWT (JSON Web Token)
-            // để client (ứng dụng di động/web) sử dụng cho các yêu cầu API tiếp theo.
-
-            var jwtToken = "YOUR_GENERATED_JWT_TOKEN"; // Tự implement logic tạo JWT
+            var account = await _UnitOfWorks.accountRepository.GetByEmailAsync(email);
+            var jwtToken = _jwtUtils.GenerateToken(account); // Tự implement logic tạo JWT
 
             // Xóa cookie tạm thời
             await HttpContext.SignOutAsync("External");
