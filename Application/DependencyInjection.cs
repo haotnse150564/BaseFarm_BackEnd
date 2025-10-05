@@ -69,6 +69,7 @@ public static class DependencyInjection
         services.AddScoped<IBlynkService, BlynkService>();
         services.AddScoped<IInventoryService, InventoryService>();
         services.AddScoped<ICartServices, CartServices>();
+        services.AddScoped<IWeatherServices, WeatherService>();
 
         //services.AddScoped<IOrderDetailServices, OrderDetailServices>();
         //services.AddScoped<IAccountProfileServices, AccountProfileServices>();

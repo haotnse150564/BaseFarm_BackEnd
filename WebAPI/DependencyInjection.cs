@@ -7,12 +7,20 @@ using Application.Services;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
+using Application.Services.Implement;
 
 namespace WebAPI;
 public static class DependencyInjection
 {
     public static void AddWebAPIService(this IServiceCollection services, WebApplicationBuilder builder)
     {
+        #region thêm sau này
+        builder.Services.AddHttpClient();
+        services.AddHttpClient<IWeatherServices, WeatherService>(client =>
+        {
+            client.BaseAddress = new Uri("http://api.openweathermap.org/"); // Thay đổi URL cơ sở
+        });
+        #endregion
         services.AddControllers().AddJsonOptions(opt =>
         {
             opt.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
