@@ -8,18 +8,13 @@ namespace Infrastructure.ViewModel.Response
 {
     public class WeatherResponse
     {
-        //public string City { get; set; }
-        //public double Temperature { get; set; }
-        //public string Description { get; set; }
-        //public int Humidity { get; set; }
-
 
         public string CityName { get; set; }
         public DateTime TimeStamp { get; set; }
 
         // Nhiệt độ
         public double TemperatureC { get; set; }
-        public double FeelsLikeC { get; set; }
+        public double FeelsLikeC { get; set; } //Nhiệt độ cảm nhận được
         public double TempMinC { get; set; }
         public double TempMaxC { get; set; }
 
@@ -29,9 +24,9 @@ namespace Infrastructure.ViewModel.Response
         public string IconUrl { get; set; } // URL để hiển thị icon
 
         // Các thông số khác
-        public int Humidity { get; set; } // %
-        public double WindSpeedMps { get; set; } // m/s
-        public int PressureHpa { get; set; } // hPa
+        public int Humidity { get; set; } // % Độ ẩm tương đối
+        public double WindSpeedMps { get; set; } // m/s 
+        public int PressureHpa { get; set; } // hPa Áp suất khí quyển 
         public double? RainVolumeMm { get; set; } // mm (trong 1 giờ)
     }
 }
