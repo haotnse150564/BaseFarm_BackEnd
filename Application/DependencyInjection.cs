@@ -78,7 +78,7 @@ public static class DependencyInjection
         // Use local DB
         //services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(config.GetConnectionString("Default")));
         services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql("Default"));
+    options.UseNpgsql(config.GetConnectionString("Default")));
 
         services.AddAutoMapper(typeof(MapperConfigs).Assembly);
         //AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
