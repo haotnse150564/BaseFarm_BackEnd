@@ -1,10 +1,12 @@
 ﻿using Domain.Model;
 using Infrastructure.ViewModel.Response;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Application.ViewModel.Response.OrderResponse;
 
 namespace Application.Services
 {
@@ -15,5 +17,6 @@ namespace Application.Services
         Task<CartResponse> UpdateCartItem(long productId, int quantity);
         Task<CartResponse> GetCartItems();
         Task<CartResponse> ClearCart();
+        Task<ResponseDTO> PrepareOrderAsync(HttpContext context);
     }
 }

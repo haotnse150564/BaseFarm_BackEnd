@@ -1,8 +1,10 @@
 ﻿using Application.Interfaces;
 using Application.Utils;
 using AutoMapper;
+using Domain.Enum;
 using Domain.Model;
 using Infrastructure.ViewModel.Response;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -10,6 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Application.ViewModel.Request.OrderRequest;
+using static Application.ViewModel.Response.OrderResponse;
 
 namespace Application.Services.Implement
 {
@@ -20,13 +24,15 @@ namespace Application.Services.Implement
         private readonly IConfiguration configuration;
         private readonly IMapper _mapper;
         private readonly JWTUtils _jwtUtils;
-        public CartServices(IUnitOfWorks unitOfWork, ICurrentTime currentTime, IConfiguration configuration, IMapper mapper, JWTUtils jWTUtils)
+        private readonly IOrderServices _orderServices;
+        public CartServices(IUnitOfWorks unitOfWork, ICurrentTime currentTime, IConfiguration configuration, IMapper mapper, JWTUtils jWTUtils, IOrderServices orderServices)
         {
             _unitOfWork = unitOfWork;
             _currentTime = currentTime;
             this.configuration = configuration;
             _mapper = mapper;
             _jwtUtils = jWTUtils;
+            _orderServices = orderServices;
         }
         public async Task<bool> AddToCart(long productId, int quantity)
         {
@@ -123,6 +129,35 @@ namespace Application.Services.Implement
             }
         }
 
+        public async Task<ResponseDTO> PrepareOrderAsync(HttpContext context)
+        {
+            // Lấy user hiện tại
+            var user = await _jwtUtils.GetCurrentUserAsync();
+            if (user == null || user.AccountId == 0)
+            {
+                return new ResponseDTO ( 401, "Unauthorized user." );
+            }
+
+            // Lấy giỏ hàng hiện tại
+            var cart = await _unitOfWork.cartRepository.GetCartByUserIdAsync(user.AccountId);
+            if (cart == null || cart.CartItems == null || !cart.CartItems.Any())
+            {
+                return new ResponseDTO (400, "Cart is empty.");
+            }
+
+            // Tạo CreateOrderDTO từ cart
+            var createOrderDTO = new CreateOrderDTO
+            {
+                OrderItems = cart.CartItems.Select(item => new SelectProductDTO
+                {
+                    ProductId = item.ProductId,
+                    StockQuantity = item.Quantity
+                }).ToList(),
+                ShippingAddress = user.AccountProfile.Address 
+            };          
+
+            return new ResponseDTO(200, "Order Success.", createOrderDTO); 
+        }
         public async Task<CartResponse> GetCartItems()
         
         {

@@ -1,5 +1,7 @@
 ﻿using Application.Services;
+using Application.Services.Implement;
 using Microsoft.AspNetCore.Mvc;
+using static Application.ViewModel.Response.OrderResponse;
 
 namespace WebAPI.Controllers
 {
@@ -49,6 +51,18 @@ namespace WebAPI.Controllers
             if (result == null)
                 return NotFound("Cart not found");
             return Ok(result);
+        }
+
+        [HttpPost("prepare-order")]
+        public async Task<IActionResult> PrepareOrderAsync()
+        {
+            var createOrderDTO = await cartServices.PrepareOrderAsync(HttpContext);
+            if (createOrderDTO == null)
+            {
+                return BadRequest(new ResponseDTO(400, "Cart is empty or unauthorized user."));
+            }            
+
+            return Ok(createOrderDTO.Data);
         }
     }
 }
