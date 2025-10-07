@@ -10,7 +10,7 @@ namespace Application.Services
 {
     public interface IAddressServices
     {
-        Task<AddressReponse> GetAddressReponseAsync();
+        Task<List<AddressReponse>> GetAddressAsync();
         Task<AddressReponse> GetAddressReponseByIdAsync(long id);
         Task<AddressReponse> CreateAddressAsync(AddressRequest addressRequest);
         Task<AddressReponse> UpdateAddressAsync(long id, AddressRequest addressRequest);

@@ -10,6 +10,6 @@ namespace Infrastructure.Repositories
 {
     public interface IAddressRepository : IGenericRepository<Address>
     {
-        public Address()
+        Task <List<Address>> GetListAddressByUserID(long userId);
     }
 }

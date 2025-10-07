@@ -16,7 +16,7 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAddressReponseAsync()
         {
-            var address = await _addressServices.GetAddressReponseAsync();
+            var address = await _addressServices.GetAddressAsync();
             return Ok(address);
         }
         [HttpGet("{id}")]

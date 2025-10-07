@@ -17,47 +17,53 @@ namespace Infrastructure.FluentAPI
             builder.HasKey(e => e.AddressID);
 
             builder.Property(e => e.AddressID)
+            .HasColumnName("addressID")
                 .ValueGeneratedOnAdd();
 
             builder.Property(e => e.CustomerID)
+            .HasColumnName("customerID")
             .IsRequired();
 
             builder.Property(e => e.Province)
+            .HasColumnName("province")
             .HasMaxLength(100)
             .IsUnicode(true);
 
             builder.Property(e => e.District)
+            .HasColumnName("district")
             .HasMaxLength(100)
             .IsUnicode(true);
 
             builder.Property(e => e.Ward)
+            .HasColumnName("ward")
             .HasMaxLength(100)
             .IsUnicode(true);
 
             builder.Property(e => e.Street)
+            .HasColumnName("street")
             .HasMaxLength(200)
             .IsUnicode(true);
 
             builder.Property(e => e.IsDefault)
+            .HasColumnName("isDefault")
             .HasDefaultValue(false);
 
             builder.Property(e => e.Latitude)
-            .HasColumnType("decimal(9,6)");
+            .HasColumnName("latitude")
+             .HasColumnType("decimal(9,6)");
 
             builder.Property(e => e.Longitude)
             .HasColumnType("decimal(9,6)");
 
-            builder.Property(e => e.CreatedAt)
-            .HasColumnType("datetime");
+            builder.Property(e => e.CreatedAt).HasColumnName("createdAt");
 
-            builder.Property(e => e.UpdatedAt)
-            .HasColumnType("datetime");
+            builder.Property(e => e.UpdatedAt).HasColumnName("updatedAt");
 
             // Optional: Navigation property
             builder.HasOne(e => e.Account)
             .WithMany()
             .HasForeignKey(e => e.CustomerID)
             .OnDelete(DeleteBehavior.Cascade);
-        });
+        }
     }
 }

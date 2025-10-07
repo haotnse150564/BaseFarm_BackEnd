@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,8 +10,8 @@ namespace Infrastructure.ViewModel.Response
     public class AddressReponse
     {
 
-        public string RecipientName { get; set; }
-        public string PhoneNumber { get; set; }
+        public string? RecipientName { get; set; }
+        public string? PhoneNumber { get; set; }
         public string? Province { get; set; }
         public string? District { get; set; }
         public string? Ward { get; set; }
@@ -19,5 +20,6 @@ namespace Infrastructure.ViewModel.Response
         public decimal? Latitude { get; set; }
         public decimal? Longitude { get; set; }
 
+        public Account? Account { get; set; }
     }
 }
