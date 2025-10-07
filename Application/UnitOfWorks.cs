@@ -31,6 +31,7 @@ namespace Infrastructure
         private ICropRequirementRepository _cropRequirementRepository;    
         private ICartRepository _cartRepository;
         private ICartItemRepository _cartItemRepository;
+        private IAddressRepository _addressRepository;
 
         public UnitOfWorks(AppDbContext context, ICurrentTime currentTime, IClaimsServices claimsServices, IProductRepository productRepository
             , IFeedbackRepository feedbackRepository, IAccountProfileRepository accountProfileRepository, IOrderRepository orderRepository
@@ -38,6 +39,8 @@ namespace Infrastructure
             , IDevicesRepository deviceRepository, ICropRepository cropRepository, IFarmActivityRepository farmActivityRepository, IFarmRepository farmRepository
             , ICategoryRepository categoryRepository, IAccountRepository accountRepository, IInventoryRepository inventoryRepository
             , ICropRequirementRepository cropRequirementRepository, ICartRepository cartRepository, ICartItemRepository cartItemRepository
+            , IAddressRepository addressRepository
+
             )
         {
             _context = context;
@@ -60,6 +63,15 @@ namespace Infrastructure
             _cropRequirementRepository = cropRequirementRepository;
             _cartRepository = cartRepository;
             _cartItemRepository = cartItemRepository;
+            _addressRepository = addressRepository;
+            _addressRepository = addressRepository;
+        }
+        public IAddressRepository addressRepository
+        {
+            get
+            {
+                return _addressRepository ??= new AddressRepository(_context);
+            }
         }
         public ICartItemRepository cartItemRepository
         {

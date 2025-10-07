@@ -26,5 +26,6 @@ namespace Application
         IInventoryRepository inventoryRepository { get; }
         ICartRepository cartRepository { get; }
         ICartItemRepository cartItemRepository { get; }
+        IAddressRepository addressRepository { get; }
     }
 }
