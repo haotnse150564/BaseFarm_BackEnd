@@ -27,5 +27,7 @@ namespace Application.Repositories
         Task<Pagination<TModel>> ToPaginationAsync(int pageIndex = 1, int pageSize = 10);
         Task<bool> DeleteAsync(TModel model);
         Task<TModel?> FirstOrDefaultAsync(Expression<Func<TModel, bool>> predicate);
+        IQueryable<TModel> GetQueryable();
+        
     }
 }

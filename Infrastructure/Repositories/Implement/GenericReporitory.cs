@@ -150,5 +150,9 @@ namespace Infrastructure.Repositories.Implement
            return true;
         }
 
+        public IQueryable<TModel> GetQueryable()
+        {
+            return _dbSet.AsQueryable();
+        }
     }
 }

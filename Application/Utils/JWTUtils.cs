@@ -2,6 +2,8 @@
 using Domain.Model;
 using Infrastructure;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -86,7 +88,11 @@ namespace Application.Utils
 
             int userId = int.Parse(userIdClaim.Value);
 
-            var user = await _unitOfWork.accountRepository.GetByIdAsync(userId);
+            var user = await _unitOfWork.accountRepository
+            .GetQueryable() 
+            .Include(a => a.AccountProfile)
+            .FirstOrDefaultAsync(a => a.AccountId == userId);
+
             if (user == null)
             {
                 throw new Exception("User not found!"); 
