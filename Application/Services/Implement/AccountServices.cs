@@ -224,7 +224,7 @@ namespace WebAPI.Services
                     var checkEmail = emailExists.Where(a => a.Equals(request.Email));
                     if (!checkEmail.IsNullOrEmpty())
                     {
-                        throw new Exception("Email has been used");
+                        throw new Exception("Email has been used"); //check new input email is exist in db
                     }
                 }
                 //update account profile

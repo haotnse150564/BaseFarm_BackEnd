@@ -445,5 +445,133 @@ namespace BaseFarm_BackEnd.Test.Services
                 () => _service.CreateAccountAsync(request));
         }
 
+        //update account test
+        [Fact]
+        public async Task UpdateAccountAsync_AccountNotFound_ThrowsException()
+        {
+            // Arrange
+            long id = 1;
+            _mockAccountRepo.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((Account?)null);
+
+            var form = new AccountForm { Email = "test@mail.com" };
+
+            // Act + Assert
+            var ex = await Assert.ThrowsAsync<Exception>(() => _service.UpdateAccountAsync(id, form));
+
+            Assert.Equal("Acoount not found", ex.Message);
+        }
+
+        [Fact]
+        public async Task UpdateAccountAsync_EmailAlreadyUsed_ThrowsException()
+        {
+            // Arrange
+            long id = 1;
+            var account = new Account
+            {
+                AccountId = id,
+                Email = "old@mail.com",
+                AccountProfile = new AccountProfile { AccountProfileId = 1 }
+            };
+
+            _mockAccountRepo.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(account);
+            _mockAccountRepo.Setup(r => r.GetAllAsync())
+                            .ReturnsAsync(new List<Account> {
+                        new Account { Email = "used@mail.com" }
+                            });
+
+            var form = new AccountForm
+            {
+                Email = "used@mail.com", // email bị trùng
+                Phone = "0123456789",
+                Fullname = "Test",
+                Gender = Gender.Male,
+                Address = "Hanoi"
+            };
+
+            // Act + Assert
+            var ex = await Assert.ThrowsAsync<Exception>(() => _service.UpdateAccountAsync(id, form));
+
+            Assert.Equal("Email has been used", ex.Message);
+        }
+
+        [Fact]
+        public async Task UpdateAccountAsync_SaveFails_ThrowsException()
+        {
+            // Arrange
+            long id = 1;
+            var account = new Account
+            {
+                AccountId = id,
+                Email = "used@mail.com",
+                AccountProfile = new AccountProfile { AccountProfileId = 1 }
+            };
+
+            _mockAccountRepo.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(account);
+            _mockAccountRepo.Setup(r => r.GetAllAsync()).ReturnsAsync(new List<Account>());
+            _mockAccountProfileRepo.Setup(r => r.GetByIdAsync(1))
+                                   .ReturnsAsync(new AccountProfile());
+
+            _mockUow.Setup(u => u.SaveChangesAsync()).ReturnsAsync(-1);
+
+            var form = new AccountForm
+            {
+                Email = "new@mail.com",
+                Phone = "0123456789",
+                Fullname = "Test",
+                Gender = Gender.Male,
+                Address = "Hanoi"
+            };
+
+            // Act + Assert
+            var ex = await Assert.ThrowsAsync<Exception>(() => _service.UpdateAccountAsync(id, form));
+
+            Assert.Equal("Update Fail!", ex.Message);
+        }
+
+        [Fact]
+        public async Task UpdateAccountAsync_ValidRequest_ReturnsUpdatedAccount()
+        {
+            // Arrange
+            long id = 1;
+            var account = new Account
+            {
+                AccountId = id,
+                Email = "old@mail.com",
+                Role = Roles.Customer,
+                Status = AccountStatus.ACTIVE,
+                AccountProfile = new AccountProfile { AccountProfileId = 1 }
+            };
+
+            _mockAccountRepo.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(account);
+            _mockAccountRepo.Setup(r => r.GetAllAsync()).ReturnsAsync(new List<Account>());
+            _mockAccountProfileRepo.Setup(r => r.GetByIdAsync(1))
+                                   .ReturnsAsync(new AccountProfile { AccountProfileId = 1 });
+
+            _mockUow.Setup(u => u.SaveChangesAsync()).ReturnsAsync(1);
+
+            _mockMapper.Setup(m => m.Map<ViewAccount>(It.IsAny<Account>()))
+                       .Returns((Account acc) => new ViewAccount
+                       {
+                           AccountId = acc.AccountId,
+                           Email = acc.Email
+                       });
+
+            var form = new AccountForm
+            {
+                Email = "new@mail.com",
+                Phone = "0123456789",
+                Fullname = "Updated User",
+                Gender = Gender.Male,
+                Address = "Hanoi"
+            };
+
+            // Act
+            var result = await _service.UpdateAccountAsync(id, form);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal("new@mail.com", result.Email);
+        }
+
     }
 }
