@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
 {
-    [ApiController]
     [Route("api/v1/Address")]
+    [ApiController]
     public class AddressController : ControllerBase
     {
         private readonly IAddressServices _addressServices;
