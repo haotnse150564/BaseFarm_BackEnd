@@ -37,6 +37,9 @@ namespace WebAPI.Services
                 throw new Exception("Email already exists!");
             }
 
+            if (string.IsNullOrWhiteSpace(request.Email))
+                throw new ArgumentNullException(nameof(request.Email), "Email cannot be empty.");
+
             //Hash mật khẩu
             string hashedPassword = PasswordHelper.HashPassword("123123");
 

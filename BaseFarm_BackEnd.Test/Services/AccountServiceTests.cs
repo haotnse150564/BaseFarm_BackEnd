@@ -14,6 +14,7 @@ using WebAPI.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using static Infrastructure.ViewModel.Request.AccountRequest;
+using static Infrastructure.ViewModel.Response.AccountResponse;
 
 namespace BaseFarm_BackEnd.Test.Services
 {
@@ -348,5 +349,101 @@ namespace BaseFarm_BackEnd.Test.Services
             _mockAccountRepo.Verify(r => r.UpdateAsync(It.IsAny<Account>()), Times.Once);
             _mockUow.Verify(u => u.SaveChangesAsync(), Times.Once);
         }
+
+
+        //create account test
+        [Fact]
+        public async Task CreateAccountAsync_EmailExists_ThrowsException()
+        {
+            // Arrange
+            var request = new AccountForm
+            {
+                Email = "test@mail.com",
+                Gender = Gender.Male,
+                Role = 1,
+                Phone = "0123456789",
+                Fullname = "Test User",
+                Address = "Hanoi"
+            };
+            _mockAccountRepo.Setup(r => r.GetByEmailAsync(request.Email))
+                            .ReturnsAsync(new Account());
+
+            // Act + Assert
+            var ex = await Assert.ThrowsAsync<Exception>(() => _service.CreateAccountAsync(request));
+            Assert.Equal("Email already exists!", ex.Message);
+        }
+
+        [Fact]
+        public async Task CreateAccountAsync_SaveChangesFails_ThrowsException()
+        {
+            // Arrange
+            var request = new AccountForm
+            {
+                Email = "new@mail.com",
+                Gender = Gender.Female,
+                Role = 1,
+                Phone = "0987654321",
+                Fullname = "New User",
+                Address = "Danang"
+            };
+
+            _mockAccountRepo.Setup(r => r.GetByEmailAsync(request.Email))
+                            .ReturnsAsync((Account?)null);
+            _mockUow.Setup(u => u.SaveChangesAsync()).ReturnsAsync(-1);
+
+            // Act + Assert
+            var ex = await Assert.ThrowsAsync<Exception>(() => _service.CreateAccountAsync(request));
+            Assert.Equal("Create Fail!", ex.Message);
+        }
+
+        [Fact]
+        public async Task CreateAccountAsync_ValidRequest_ReturnsMappedViewAccount()
+        {
+            // Arrange
+            var request = new AccountForm
+            {
+                Email = "valid@mail.com",
+                Gender = Gender.Male,
+                Role = 1,
+                Phone = "0999888777",
+                Fullname = "Valid User",
+                Address = "Hue"
+            };
+
+            _mockAccountRepo.Setup(r => r.GetByEmailAsync(request.Email))
+                            .ReturnsAsync((Account?)null);
+            _mockUow.Setup(u => u.SaveChangesAsync()).ReturnsAsync(1);
+
+            var createdAccount = new Account { Email = request.Email };
+            _mockMapper.Setup(m => m.Map<ViewAccount>(It.IsAny<Account>()))
+                       .Returns(new ViewAccount { Email = request.Email });
+
+            // Act
+            var result = await _service.CreateAccountAsync(request);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(request.Email, result.Email);
+        }
+
+        [Fact]
+        public async Task CreateAccountAsync_MissingEmail_ThrowsException()
+        {
+            // Arrange
+            var request = new AccountForm
+            {
+                Email = null!, // missing required field
+                Gender = Gender.Male,
+                Role = 1,
+                Phone = "0112233445",
+                Fullname = "No Email User",
+                Address = "Hanoi"
+            };
+
+            // Act + Assert
+            await Assert.ThrowsAsync<ArgumentNullException>(
+                () => _service.CreateAccountAsync(request));
+        }
+
     }
 }
