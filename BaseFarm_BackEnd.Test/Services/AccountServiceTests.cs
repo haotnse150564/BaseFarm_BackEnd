@@ -13,6 +13,7 @@ using AutoMapper;
 using WebAPI.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using static Infrastructure.ViewModel.Request.AccountRequest;
 
 namespace BaseFarm_BackEnd.Test.Services
 {
@@ -32,22 +33,23 @@ namespace BaseFarm_BackEnd.Test.Services
             _mockAccountProfileRepo = new Mock<IAccountProfileRepository>();
             _mockMapper = new Mock<IMapper>();
 
-            // setup unit of work trả về accountRepository
-            _mockUow.SetupGet(u => u.accountRepository).Returns(_mockAccountRepo.Object);
+            // Setup UnitOfWork trả về các repository mock
+            _mockUow.SetupGet(u => u.accountRepository)
+                    .Returns(_mockAccountRepo.Object);
 
-            // 🧩 Mock config cho JWTUtils
+            _mockUow.SetupGet(u => u.accountProfileRepository)
+                    .Returns(_mockAccountProfileRepo.Object);
+
+            // Mock config JWTUtils
             var mockConfig = new Mock<IConfiguration>();
             mockConfig.Setup(c => c["Jwt:Key"]).Returns("12345678901234567890123456789012");
             mockConfig.Setup(c => c["Jwt:Issuer"]).Returns("test_issuer");
             mockConfig.Setup(c => c["Jwt:Audience"]).Returns("test_audience");
 
-            // 🧩 Mock HttpContextAccessor (có thể để rỗng)
             var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
 
-            // 🧩 Tạo JWTUtils thật với mock dependencies
             var realJwt = new JWTUtils(_mockUow.Object, mockConfig.Object, mockHttpContextAccessor.Object);
 
-            // ✅ Khởi tạo AccountServices
             _service = new AccountServices(
                 _mockUow.Object,
                 _mockMapper.Object,
@@ -56,6 +58,7 @@ namespace BaseFarm_BackEnd.Test.Services
             );
         }
 
+        //login test
         [Fact]
         public async Task LoginAsync_EmailNotFound_ThrowsUnauthorizedAccess()
         {
@@ -132,5 +135,88 @@ namespace BaseFarm_BackEnd.Test.Services
             Assert.False(string.IsNullOrEmpty(result.Token)); // kiểm tra token thật có sinh ra
         }
 
+        //register test
+        [Fact]
+        public async Task RegisterAsync_EmailAlreadyExists_Returns400()
+        {
+            // Arrange
+            var request = new RegisterRequestDTO
+            {
+                Email = "existing@mail.com",
+                Password = "123456"
+            };
+
+            var existingAccount = new Account { Email = request.Email };
+            _mockAccountRepo.Setup(r => r.GetByEmailAsync(request.Email))
+                            .ReturnsAsync(existingAccount);
+
+            // Act
+            var result = await _service.RegisterAsync(request);
+
+            // Assert
+            Assert.Equal(400, result.Status);
+            Assert.Equal("Email already exists.", result.Message);
+        }
+
+        [Fact]
+        public async Task RegisterAsync_ValidRequest_Returns201()
+        {
+            // Arrange
+            var request = new RegisterRequestDTO
+            {
+                Email = "newuser@mail.com",
+                Password = "123456"
+            };
+
+            _mockAccountRepo.Setup(r => r.GetByEmailAsync(request.Email))
+                            .ReturnsAsync((Account?)null);
+
+            // Act
+            var result = await _service.RegisterAsync(request);
+
+            // Assert
+            Assert.Equal(201, result.Status);
+            Assert.Equal("Registration successful.", result.Message);
+            _mockAccountRepo.Verify(r => r.AddAsync(It.IsAny<Account>()), Times.Once);
+            _mockAccountProfileRepo.Verify(r => r.AddAsync(It.IsAny<AccountProfile>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task RegisterAsync_PasswordTooShort_ReturnsValidationError()
+        {
+            // Arrange
+            var request = new RegisterRequestDTO
+            {
+                Email = "short@mail.com",
+                Password = "123", // too short (< 6)
+                ConfirmPassword = "123"
+            };
+
+            // Act
+            var result = await _service.RegisterAsync(request);
+
+            // Assert
+            Assert.Equal(400, result.Status);
+            Assert.Equal("Password must be at least 6 characters.", result.Message);
+        }
+
+        [Fact]
+        public async Task RegisterAsync_ConfirmPasswordMismatch_ReturnsValidationError()
+        {
+            // Arrange
+            var request = new RegisterRequestDTO
+            {
+                Email = "mismatch@mail.com",
+                Password = "123456",
+                ConfirmPassword = "654321" // mismatch
+            };
+
+            // Act
+            var result = await _service.RegisterAsync(request);
+
+            // Assert
+            Assert.Equal(400, result.Status);
+            Assert.Equal("Passwords do not match.", result.Message);
+        }
     }
 }

@@ -157,6 +157,18 @@ namespace WebAPI.Services
 
         public async Task<ResponseDTO> RegisterAsync(RegisterRequestDTO request)
         {
+            //  Validate password length
+            if (string.IsNullOrEmpty(request.Password) || request.Password.Length < 6)
+            {
+                return new ResponseDTO(400, "Password must be at least 6 characters.");
+            }
+
+            //  Validate confirm password match
+            if (request.Password != request.ConfirmPassword)
+            {
+                return new ResponseDTO(400, "Passwords do not match.");
+            }
+
             //Kiểm tra email đã tồn tại chưa
             var existingAccount = await _unitOfWork.accountRepository.GetByEmailAsync(request.Email);
             if (existingAccount != null)
