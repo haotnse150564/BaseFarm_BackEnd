@@ -218,5 +218,135 @@ namespace BaseFarm_BackEnd.Test.Services
             Assert.Equal(400, result.Status);
             Assert.Equal("Passwords do not match.", result.Message);
         }
+
+        //change password test
+        [Fact]
+        public async Task ChangePassword_AccountNotFound_Returns404()
+        {
+            // Arrange
+            long id = 1;
+            _mockAccountRepo.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((Account?)null);
+
+            var request = new ChangePasswordDTO
+            {
+                OldPassword = "123123",
+                NewPassword = "654321",
+                ConfirmPassword = "654321"
+            };
+
+            // Act
+            var result = await _service.ChangePassword(id, request);
+
+            // Assert
+            Assert.Equal(404, result.Status);
+            Assert.Equal("Account not found", result.Message);
+        }
+
+        [Fact]
+        public async Task ChangePassword_WrongOldPassword_Returns400()
+        {
+            // Arrange
+            var account = new Account
+            {
+                AccountId = 1,
+                PasswordHash = PasswordHelper.HashPassword("123123")
+            };
+            _mockAccountRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(account);
+
+            var request = new ChangePasswordDTO
+            {
+                OldPassword = "321321",
+                NewPassword = "654321",
+                ConfirmPassword = "654321"
+            };
+
+            // Act
+            var result = await _service.ChangePassword(1, request);
+
+            // Assert
+            Assert.Equal(400, result.Status);
+            Assert.Equal("Old password is incorrect", result.Message);
+        }
+
+        [Fact]
+        public async Task ChangePassword_PasswordMismatch_Returns400()
+        {
+            // Arrange
+            var account = new Account
+            {
+                AccountId = 1,
+                PasswordHash = PasswordHelper.HashPassword("123123")
+            };
+            _mockAccountRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(account);
+
+            var request = new ChangePasswordDTO
+            {
+                OldPassword = "123123",
+                NewPassword = "654321",
+                ConfirmPassword = "321321"
+            };
+
+            // Act
+            var result = await _service.ChangePassword(1, request);
+
+            // Assert
+            Assert.Equal(400, result.Status);
+            Assert.Equal("New password and confirm password do not match", result.Message);
+        }
+
+        [Fact]
+        public async Task ChangePassword_BlankPassword_Returns400()
+        {
+            // Arrange
+            var account = new Account
+            {
+                AccountId = 1,
+                PasswordHash = PasswordHelper.HashPassword("123123")
+            };
+            _mockAccountRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(account);
+
+            var request = new ChangePasswordDTO
+            {
+                OldPassword = "123123",
+                NewPassword = "   ",
+                ConfirmPassword = "   "
+            };
+
+            // Act
+            var result = await _service.ChangePassword(1, request);
+
+            // Assert
+            Assert.Equal(400, result.Status);
+            Assert.Equal("Password do not have space or blank", result.Message);
+        }
+
+        [Fact]
+        public async Task ChangePassword_ValidRequest_Returns200()
+        {
+            // Arrange
+            var account = new Account
+            {
+                AccountId = 1,
+                PasswordHash = PasswordHelper.HashPassword("123123")
+            };
+            _mockAccountRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(account);
+
+            var request = new ChangePasswordDTO
+            {
+                OldPassword = "123123",
+                NewPassword = "654321",
+                ConfirmPassword = "654321"
+            };
+
+            // Act
+            var result = await _service.ChangePassword(1, request);
+
+            // Assert
+            Assert.Equal(200, result.Status);
+            Assert.Equal("Change password success", result.Message);
+
+            _mockAccountRepo.Verify(r => r.UpdateAsync(It.IsAny<Account>()), Times.Once);
+            _mockUow.Verify(u => u.SaveChangesAsync(), Times.Once);
+        }
     }
 }
