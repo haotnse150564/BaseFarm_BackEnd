@@ -30,5 +30,6 @@ public partial class Account
 
     public virtual ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
     public virtual ICollection<Cart>? Cart { get; set; } = new List<Cart>();
+    public virtual ICollection<Address>? Addresses { get; set; } = new List<Address>();
 
 }
