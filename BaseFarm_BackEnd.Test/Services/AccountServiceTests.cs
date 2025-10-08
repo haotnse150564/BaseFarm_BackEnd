@@ -144,7 +144,8 @@ namespace BaseFarm_BackEnd.Test.Services
             var request = new RegisterRequestDTO
             {
                 Email = "existing@mail.com",
-                Password = "123456"
+                Password = "123456",
+                ConfirmPassword = "123456"
             };
 
             var existingAccount = new Account { Email = request.Email };
@@ -166,7 +167,8 @@ namespace BaseFarm_BackEnd.Test.Services
             var request = new RegisterRequestDTO
             {
                 Email = "newuser@mail.com",
-                Password = "123456"
+                Password = "123456",
+                ConfirmPassword = "123456"
             };
 
             _mockAccountRepo.Setup(r => r.GetByEmailAsync(request.Email))
@@ -643,6 +645,118 @@ namespace BaseFarm_BackEnd.Test.Services
             Assert.Equal("ACTIVE", result.Status);
             _mockUow.Verify(u => u.accountRepository.UpdateAsync(It.Is<Account>(a => a.Status == AccountStatus.ACTIVE)), Times.Once);
             _mockUow.Verify(u => u.SaveChangesAsync(), Times.Once);
+        }
+
+        //get all account filter test
+        [Fact]
+        public async Task GetAllAccountAsync_WhenRepositoryReturnsEmptyList_ReturnsNull()
+        {
+            // Arrange
+            _mockAccountRepo.Setup(r => r.GetAllAccountWithProfiles(null, null))
+                            .ReturnsAsync(new List<Account>());
+
+            // Act
+            var result = await _service.GetAllAccountAsync(10, 1, null, null);
+
+            // Assert
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task GetAllAccountAsync_WhenContainsAdmin_AdminShouldBeExcluded()
+        {
+            // Arrange
+            var accounts = new List<Account>
+    {
+        new Account { AccountId = 1, Role = Roles.Admin },
+        new Account { AccountId = 2, Role = Roles.Customer }
+    };
+
+            _mockAccountRepo.Setup(r => r.GetAllAccountWithProfiles(null, null))
+                            .ReturnsAsync(accounts);
+
+            _mockAccountProfileRepo.Setup(r => r.GetAllAsync())
+                            .ReturnsAsync(new List<AccountProfile>());
+
+            // ✅ Sửa: mock mapper với It.IsAny<object>()
+            _mockMapper.Setup(m => m.Map<List<ViewAccount>>(It.IsAny<object>()))
+                       .Returns((object src) =>
+                       {
+                           var accs = (src as IEnumerable<Account>)?.ToList() ?? new List<Account>();
+                           return accs.Select(a => new ViewAccount
+                           {
+                               AccountId = a.AccountId,
+                               Role = a.Role.ToString()
+                           }).ToList();
+                       });
+
+            // Act
+            var result = await _service.GetAllAccountAsync(10, 1, null, null);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Single(result.Items); // chỉ còn Customer
+            Assert.DoesNotContain(result.Items, a => a.Role == Roles.Admin.ToString());
+        }
+
+
+        [Fact]
+        public async Task GetAllAccountAsync_ShouldPassStatusAndRoleToRepository()
+        {
+            // Arrange
+            var status = AccountStatus.ACTIVE;
+            var role = Roles.Staff;
+
+            _mockAccountRepo
+                .Setup(r => r.GetAllAccountWithProfiles(It.IsAny<AccountStatus?>(), It.IsAny<Roles?>()))
+                .ReturnsAsync(new List<Account>
+                {
+            new Account { AccountId = 1, Role = Roles.Staff, Status = AccountStatus.ACTIVE, Email = "staff@test.com" }
+                });
+
+            _mockAccountProfileRepo
+                .Setup(r => r.GetAllAsync())
+                .ReturnsAsync(new List<AccountProfile>());
+
+            // ✅ Mock mapper đúng kiểu IEnumerable<Account>
+            _mockMapper
+                .Setup(m => m.Map<List<ViewAccount>>(It.IsAny<object>()))
+                .Returns((object src) =>
+                {
+                    var accounts = (src as IEnumerable<Account>)?.ToList() ?? new List<Account>();
+                    return accounts.Select(a => new ViewAccount
+                    {
+                        AccountId = a.AccountId,
+                        Email = a.Email,
+                        Role = a.Role.ToString(),
+                        Status = a.Status.ToString()
+                    }).ToList();
+                });
+
+            // Act
+            var result = await _service.GetAllAccountAsync(10, 1, status, role);
+
+            // Assert
+            _mockAccountRepo.Verify(r => r.GetAllAccountWithProfiles(status, role), Times.Once);
+            Assert.NotNull(result);
+            Assert.Single(result.Items);
+            Assert.Equal("Staff", result.Items.First().Role);
+            Assert.Equal("ACTIVE", result.Items.First().Status);
+        }
+
+
+        [Fact]
+        public async Task GetAllAccountAsync_WhenExceptionThrown_ReturnsNull()
+        {
+            // Arrange
+            _mockAccountRepo.Setup(r => r.GetAllAccountWithProfiles(null, null))
+                            .ThrowsAsync(new Exception("DB Error"));
+
+            // Act
+            var result = await _service.GetAllAccountAsync(10, 1, null, null);
+
+            // Assert
+            Assert.Null(result);
         }
 
     }
