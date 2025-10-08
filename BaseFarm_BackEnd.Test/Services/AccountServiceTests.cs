@@ -573,5 +573,77 @@ namespace BaseFarm_BackEnd.Test.Services
             Assert.Equal("new@mail.com", result.Email);
         }
 
+        //ban account test
+        [Fact]
+        public async Task UpdateAccountStatusAsync_ActiveAccount_BecomesBanned()
+        {
+            // Arrange
+            long accountId = 1;
+            var account = new Account
+            {
+                AccountId = accountId,
+                Status = AccountStatus.ACTIVE
+            };
+
+            _mockUow.Setup(u => u.accountRepository.GetByIdAsync(accountId))
+                    .ReturnsAsync(account);
+
+            _mockMapper.Setup(m => m.Map<ViewAccount>(It.IsAny<Account>()))
+                       .Returns(new ViewAccount { AccountId = accountId, Status = "BANNED" });
+
+            // Act
+            var result = await _service.UpdateAccountStatusAsync(accountId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal("BANNED", result.Status);
+            _mockUow.Verify(u => u.accountRepository.UpdateAsync(It.Is<Account>(a => a.Status == AccountStatus.BANNED)), Times.Once);
+            _mockUow.Verify(u => u.SaveChangesAsync(), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateAccountStatusAsync_AccountNotFound_ReturnsNull()
+        {
+            // Arrange
+            long accountId = 99;
+            _mockUow.Setup(u => u.accountRepository.GetByIdAsync(accountId))
+                    .ReturnsAsync((Account?)null);
+
+            // Act
+            var result = await _service.UpdateAccountStatusAsync(accountId);
+
+            // Assert
+            Assert.Null(result);
+            _mockUow.Verify(u => u.accountRepository.UpdateAsync(It.IsAny<Account>()), Times.Never);
+            _mockUow.Verify(u => u.SaveChangesAsync(), Times.Never);
+        }
+
+        [Fact]
+        public async Task UpdateAccountStatusAsync_BannedAccount_BecomesActive()
+        {
+            // Arrange
+            long accountId = 2;
+            var account = new Account
+            {
+                AccountId = accountId,
+                Status = AccountStatus.BANNED
+            };
+
+            _mockUow.Setup(u => u.accountRepository.GetByIdAsync(accountId))
+                    .ReturnsAsync(account);
+
+            _mockMapper.Setup(m => m.Map<ViewAccount>(It.IsAny<Account>()))
+                       .Returns(new ViewAccount { AccountId = accountId, Status = "ACTIVE" });
+
+            // Act
+            var result = await _service.UpdateAccountStatusAsync(accountId);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal("ACTIVE", result.Status);
+            _mockUow.Verify(u => u.accountRepository.UpdateAsync(It.Is<Account>(a => a.Status == AccountStatus.ACTIVE)), Times.Once);
+            _mockUow.Verify(u => u.SaveChangesAsync(), Times.Once);
+        }
+
     }
 }
