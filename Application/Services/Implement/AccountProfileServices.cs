@@ -9,9 +9,9 @@ namespace WebAPI.Services
 {
     public class AccountProfileServices : IAccountProfileServices
     {
-        private readonly IUnitOfWorks _unitOfWork;
-        private readonly IMapper _mapper;
-        private readonly JWTUtils _jwtUtils;
+        protected readonly IUnitOfWorks _unitOfWork;
+        protected readonly IMapper _mapper;
+        protected readonly JWTUtils _jwtUtils;
         public AccountProfileServices(IUnitOfWorks unitOfWork, IMapper mapper, JWTUtils jwtUtils)
         {
             _unitOfWork = unitOfWork;
