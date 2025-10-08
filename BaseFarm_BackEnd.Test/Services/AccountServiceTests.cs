@@ -759,6 +759,86 @@ namespace BaseFarm_BackEnd.Test.Services
             Assert.Null(result);
         }
 
+        //search account by email
+        [Fact]
+        public async Task GetAccountByEmail_ShouldReturnViewAccount_WhenAccountExists()
+        {
+            // Arrange
+            string email = "found@mail.com";
+            var account = new Account
+            {
+                AccountId = 1,
+                Email = email,
+                Role = Roles.Customer,
+            };
+
+            var mappedView = new ViewAccount
+            {
+                AccountId = 1,
+                Email = email,
+                Role = "Customer",
+            };
+
+            _mockAccountRepo.Setup(r => r.GetByEmail(email))
+                            .ReturnsAsync(account);
+
+            _mockMapper.Setup(m => m.Map<ViewAccount>(account))
+                       .Returns(mappedView);
+
+            // Act
+            var result = await _service.GetAccountByEmail(email);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(email, result.Email);
+            Assert.Equal("Customer", result.Role);
+            _mockAccountRepo.Verify(r => r.GetByEmail(email), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetAccountByEmail_ShouldReturnNull_WhenAccountNotFound()
+        {
+            // Arrange
+            string email = "missing@mail.com";
+            _mockAccountRepo.Setup(r => r.GetByEmail(email))
+                            .ReturnsAsync((Account?)null);
+
+            // Act
+            var result = await _service.GetAccountByEmail(email);
+
+            // Assert
+            Assert.Null(result);
+            _mockAccountRepo.Verify(r => r.GetByEmail(email), Times.Once);
+        }
+
+        [Fact]
+        public async Task GetAccountByEmail_ShouldReturnNull_WhenExceptionThrown()
+        {
+            // Arrange
+            string email = "error@mail.com";
+            _mockAccountRepo.Setup(r => r.GetByEmail(email))
+                            .ThrowsAsync(new Exception("DB error"));
+
+            // Act
+            var result = await _service.GetAccountByEmail(email);
+
+            // Assert
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task GetAccountByEmail_ShouldReturnNull_WhenEmailIsEmpty()
+        {
+            // Arrange
+            string email = "";
+
+            // Act
+            var result = await _service.GetAccountByEmail(email);
+
+            // Assert
+            Assert.Null(result);
+            _mockAccountRepo.Verify(r => r.GetByEmail(It.IsAny<string>()), Times.Never);
+        }
 
     }
 }

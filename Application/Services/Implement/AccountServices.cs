@@ -114,12 +114,16 @@ namespace WebAPI.Services
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(email))
+                    return null;
+
                 var account = await _unitOfWork.accountRepository.GetByEmail(email);
                 //await _unitOfWork.accountProfileRepository.GetAllAsync();
                 if (account == null)
                 {
                     return null;
                 }
+
                 //var oriPass = BCrypt.Net.BCrypt.HashPassword.(account.PasswordHash);
                 var result = _mapper.Map<ViewAccount>(account);
                 return result;
