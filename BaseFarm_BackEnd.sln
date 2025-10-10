@@ -6,7 +6,6 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 	ProjectSection(SolutionItems) = preProject
 		Dockerfile = Dockerfile
-		dockerignore = dockerignore
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "Application\Application.csproj", "{9BE10768-C2B6-4683-A8C5-FA4A7ACCDA1D}"
@@ -26,7 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTest", "UnitTest", "{5D05397F-6E1D-40C9-915D-B2ABE4B46CEF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaseFarm_BackEnd.Test", "BaseFarm_BackEnd.Test\BaseFarm_BackEnd.Test.csproj", "{1C31DD31-8B1B-46DD-87C9-EF81F1B8D08E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseFarm_BackEnd.Test", "BaseFarm_BackEnd.Test\BaseFarm_BackEnd.Test.csproj", "{1C31DD31-8B1B-46DD-87C9-EF81F1B8D08E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
