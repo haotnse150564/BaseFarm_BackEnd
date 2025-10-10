@@ -78,7 +78,7 @@ namespace Infrastructure.FluentAPI
             // Optional: Navigation property
             builder.HasOne(e => e.Account)
             .WithMany(x => x.Address)
-            .HasForeignKey(e => e.AddressID)
+            .HasForeignKey(e => e.CustomerID)
             .OnDelete(DeleteBehavior.Cascade);
         }
     }
