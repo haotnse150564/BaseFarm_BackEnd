@@ -24,6 +24,10 @@ namespace Infrastructure.FluentAPI
                 .HasMaxLength(100)
                 .IsUnicode(true) // Cho phép lưu loại vật phẩm bằng tiếng Việt
                 .HasColumnName("itemType");
+            builder.Property(e => e.Unit)
+               .HasMaxLength(100)
+               .IsUnicode(true) // Cho phép lưu loại vật phẩm bằng tiếng Việt
+               .HasColumnName("unit");
 
             builder.Property(e => e.Location)
                 .HasMaxLength(255)

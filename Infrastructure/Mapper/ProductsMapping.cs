@@ -19,6 +19,7 @@ namespace Infrastructure.Mapper
                 .ForMember(dest => dest.CropName, opt => opt.MapFrom(src => src.ProductNavigation.CropName))
                 .ForMember(dest => dest.CropId, opt => opt.MapFrom(src => src.ProductNavigation.CropId))
                 .ForMember(dest => dest.Categoryname, opt => opt.MapFrom(src => src.Category.CategoryName))
+
                 .ReverseMap();
             CreateMap<Product, ProductDetailDTO>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName))
