@@ -8,6 +8,7 @@ COPY Application/*.csproj Application/
 COPY Domain/*.csproj Domain/
 COPY Infrastructure/*.csproj Infrastructure/
 COPY WebAPI/*.csproj WebAPI/
+COPY UnitTest/BaseFarm_BackEnd.Test/*.csproj UnitTest/BaseFarm_BackEnd.Test/
 
 # Restore dependencies
 RUN dotnet restore
