@@ -1,33 +1,30 @@
 #See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-# Stage 1: Build application
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /API
+#Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
+#For more information, please see https://aka.ms/containercompat
 
-# Copy solution and project files
-COPY BaseFarm_BackEnd.sln ./
-COPY Application/*.csproj Application/
-COPY Domain/*.csproj Domain/
-COPY Infrastructure/*.csproj Infrastructure/
-COPY WebAPI/*.csproj WebAPI/
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-nanoserver-1809 AS base
+WORKDIR /app
+EXPOSE 8080
+EXPOSE 8081
 
-# Restore dependencies
-RUN dotnet restore
-
-# Copy the rest of the source code
+FROM mcr.microsoft.com/dotnet/sdk:8.0-nanoserver-1809 AS build
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /src
+COPY ["WebAPI/WebAPI.csproj", "WebAPI/"]
+COPY ["Application/Application.csproj", "Application/"]
+COPY ["Infrastructure/Infrastructure.csproj", "Infrastructure/"]
+COPY ["Domain/Domain.csproj", "Domain/"]
+RUN dotnet restore "./WebAPI/WebAPI.csproj"
 COPY . .
+WORKDIR "/src/WebAPI"
+RUN dotnet build "./WebAPI.csproj" -c %BUILD_CONFIGURATION% -o /app/build
 
-# Build in Debug mode for development
-RUN dotnet build BaseFarm_BackEnd.sln -c Debug -o /app/build
-
-# Stage 2: Publish
 FROM build AS publish
-RUN dotnet publish WebAPI/WebAPI.csproj -c Debug -o /app/publish --no-restore
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish "./WebAPI.csproj" -c %BUILD_CONFIGURATION% -o /app/publish /p:UseAppHost=false
 
-# Stage 3: Runtime
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-
-EXPOSE 5255
 ENTRYPOINT ["dotnet", "WebAPI.dll"]
