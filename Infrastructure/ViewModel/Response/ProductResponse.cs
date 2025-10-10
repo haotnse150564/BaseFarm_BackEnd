@@ -27,7 +27,7 @@ namespace Application.ViewModel.Response
             public long ProductId { get; set; }
             public string? ProductName { get; set; }
             public decimal? Price { get; set; }
-            public string? Unit { get; set; }
+            public string? Unit { get; set; } = "Bó";
             public int? StockQuantity { get; set; }
             public string? Images { get; set; }
             public string? Description { get; set; }
@@ -44,6 +44,7 @@ namespace Application.ViewModel.Response
             public long ProductId { get; set; }
             public string? Images { get; set; }
             public string? ProductName { get; set; }
+            public string? Unit { get; set; } = "Bó";
             public decimal? Price { get; set; }
             public int? StockQuantity { get; set; }
             public string? Description { get; set; }
