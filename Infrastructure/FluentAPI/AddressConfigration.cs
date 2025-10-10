@@ -24,25 +24,41 @@ namespace Infrastructure.FluentAPI
             .HasColumnName("customerID")
             .IsRequired();
 
+            builder.Property(e => e.CustomerName)
+            .HasColumnName("fullName")
+            .HasMaxLength(100)
+            .IsUnicode(true)
+            .IsRequired();
+
+            builder.Property(e => e.PhoneNumber)
+            .HasColumnName("phone")
+            .HasMaxLength(100)
+            .IsUnicode(true).IsRequired();
+
+
             builder.Property(e => e.Province)
             .HasColumnName("province")
             .HasMaxLength(100)
-            .IsUnicode(true);
+            .IsUnicode(true).IsRequired();
+
 
             builder.Property(e => e.District)
             .HasColumnName("district")
             .HasMaxLength(100)
-            .IsUnicode(true);
+            .IsUnicode(true).IsRequired();
+
 
             builder.Property(e => e.Ward)
             .HasColumnName("ward")
             .HasMaxLength(100)
-            .IsUnicode(true);
+            .IsUnicode(true).IsRequired();
+
 
             builder.Property(e => e.Street)
             .HasColumnName("street")
             .HasMaxLength(200)
-            .IsUnicode(true);
+            .IsUnicode(true).IsRequired();
+
 
             builder.Property(e => e.IsDefault)
             .HasColumnName("isDefault")
@@ -61,8 +77,8 @@ namespace Infrastructure.FluentAPI
 
             // Optional: Navigation property
             builder.HasOne(e => e.Account)
-            .WithMany()
-            .HasForeignKey(e => e.CustomerID)
+            .WithMany(x => x.Address)
+            .HasForeignKey(e => e.AddressID)
             .OnDelete(DeleteBehavior.Cascade);
         }
     }
