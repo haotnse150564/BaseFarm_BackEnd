@@ -65,11 +65,11 @@ namespace WebAPI.Controllers
                 // ✅ Save payment to the database
                 await _vnPayService.SavePaymentAsync(response);
 
-                // 🔥 Redirect to frontend with payment status
-                string frontendUrl = response.Success ? "https://iotbasedfarm.netlify.app/vnpay-callback" : "https://iotbasedfarm.netlify.app/order-failed";
-                string redirectUrl = $"{frontendUrl}?vnp_ResponseCode={response.VnPayResponseCode}&vnp_TransactionNo={response.TransactionId}&vnp_TxnRef={response.OrderId}&vnp_Amount={response.Amount}";
+                //// 🔥 Redirect to frontend with payment status
+                //string frontendUrl = response.Success ? "https://iotbasedfarm.netlify.app/vnpay-callback" : "https://iotbasedfarm.netlify.app/order-failed";
+                //string redirectUrl = $"{frontendUrl}?vnp_ResponseCode={response.VnPayResponseCode}&vnp_TransactionNo={response.TransactionId}&vnp_TxnRef={response.OrderId}&vnp_Amount={response.Amount}";
 
-                return Redirect(redirectUrl);
+                return Ok(response);
 
             }
             catch (Exception ex)
