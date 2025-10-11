@@ -17,8 +17,6 @@ namespace Infrastructure.Mapper
         {
             CreateMap<Address, AddressRequest>().ReverseMap();
             CreateMap<Address, AddressReponse>()
-                .ForMember(dest => dest.RecipientName, opt => opt.MapFrom(src => src.Account.AccountProfile.Fullname))
-                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Account.AccountProfile.Phone.ToString()))
                 .ReverseMap();
 
 

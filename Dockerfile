@@ -10,13 +10,13 @@ COPY Infrastructure/*.csproj Infrastructure/
 COPY WebAPI/*.csproj WebAPI/
 
 # Restore dependencies
-RUN dotnet restore
+RUN dotnet restore WebAPI/WebAPI.csproj
 
 # Copy the rest of the source code
 COPY . .
 
 # Build in Debug mode for development
-RUN dotnet build BaseFarm_BackEnd.sln -c Debug -o /app/build
+RUN dotnet build WebAPI/WebAPI.csproj -c Debug -o /app/build
 
 # Stage 2: Publish
 FROM build AS publish

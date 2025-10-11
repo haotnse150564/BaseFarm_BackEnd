@@ -1,0 +1,4 @@
+# Ignore UnitTest project
+../UnitTest/
+**/UnitTest/
+**/BaseFarm_BackEnd.Test/

@@ -9,6 +9,8 @@ public partial class Inventory
     public long InventoryId { get; set; }
     public string? ItemType { get; set; }
     public string? Location { get; set; }
+    public string? Unit { get; set; } = "Bó";
+
     public int? StockQuantity { get; set; }
     public Status Status { get; set; }
     public DateOnly ExpireDate { get; set; }
