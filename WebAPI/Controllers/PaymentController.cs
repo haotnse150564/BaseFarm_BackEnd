@@ -115,6 +115,53 @@ namespace WebAPI.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("CallBackForApp")]
+        public async Task<IActionResult> PaymentCallbackForApp([FromQuery] string? source = null)
+        {
+            try
+            {
+                var response = await Task.Run(() => _vnPayService.PaymentExecute(Request.Query));
+                if (response == null)
+                {
+                    return BadRequest(new { message = "Invalid payment response." });
+                }
+
+                await _vnPayService.SavePaymentAsync(response);
+
+                //  callback đến từ mobile app → redirect deeplink
+                if (!string.IsNullOrEmpty(source) && source.Equals("mobile", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Ví dụ deeplink của bạn
+                    string appScheme = "myapp://payment-result";
+
+                    // Truyền các thông tin cần thiết cho mobile
+                    string redirectUrl =
+                        $"{appScheme}?success={(response.Success ? "true" : "false")}" +
+                        $"&orderId={response.OrderId}" +
+                        $"&amount={response.Amount}" +
+                        $"&code={response.VnPayResponseCode}" +
+                        $"&message={(response.Success ? "PaymentSuccess" : "PaymentFailed")}";
+
+                    return Redirect(redirectUrl);
+                }
+
+                // callback từ web → trả JSON (hoặc redirect về web FE)
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while processing payment callback.");
+
+                // Nếu lỗi mà callback từ mobile → redirect báo lỗi
+                string failMobileUrl = "myapp://payment-result?success=false&message=PaymentError";
+                if (Request.Query["source"] == "mobile")
+                    return Redirect(failMobileUrl);
+
+                return StatusCode(500, new { message = "An error occurred while processing the payment response." });
+            }
+        }
+
     }
 
 }
