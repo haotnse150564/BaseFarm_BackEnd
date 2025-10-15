@@ -13,7 +13,8 @@ namespace Application.Services.Implement
     {
         private readonly HttpClient _httpClient;
         private const string BlynkToken = "xRd0sDuPYqFjPI1ZSHRr7Bd1cJq3fH2Y"; 
-        private const string BlynkBaseUrl = "https://sgp1.blynk.cloud"; 
+        private const string BlynkBaseUrl = "https://sgp1.blynk.cloud/external/api";
+        private const string BlynkWriteBaseUrl = "https://sgp1.blynk.cloud/external/api";
 
         public BlynkService(HttpClient httpClient)
         {
@@ -66,6 +67,45 @@ namespace Application.Services.Implement
                 JsonValueKind.False => "false",
                 _ => null, 
             };
+        }
+
+        /// <summary>
+        /// Gửi giá trị đến Blynk datastream (Virtual Pin)
+        /// </summary>
+        private async Task<bool> SendCommandAsync(string pin, string value)
+        {
+            var url = $"{BlynkWriteBaseUrl}/update?token={BlynkToken}&{pin}={value}";
+            var response = await _httpClient.GetAsync(url);
+            return response.IsSuccessStatusCode;
+        }
+
+        /// <summary>
+        /// Bật/tắt máy bơm (V5)
+        /// </summary>
+        public async Task<bool> ControlPumpAsync(bool isOn)
+        {
+            string value = isOn ? "1" : "0";
+            return await SendCommandAsync("V5", value);
+        }
+
+        /// <summary>
+        /// Điều chỉnh góc servo (V6)
+        /// </summary>
+        public async Task<bool> ControlServoAsync(int angle)
+        {
+            if (angle < 0) angle = 0;
+            if (angle > 180) angle = 180;
+            return await SendCommandAsync("V6", angle.ToString());
+        }
+
+        /// <summary>
+        /// Tự Động hoặc điều khiển bằng tay (V7)
+        /// </summary>
+        public async Task<bool> SetManualModeAsync(bool isManual)
+        {
+            // V7 là pin điều khiển chế độ Manual / Auto
+            string value = isManual ? "1" : "0";
+            return await SendCommandAsync("V7", value);
         }
     }
 }
