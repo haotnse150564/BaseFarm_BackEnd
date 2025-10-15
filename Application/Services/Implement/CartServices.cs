@@ -19,12 +19,12 @@ namespace Application.Services.Implement
 {
     public class CartServices : ICartServices
     {
-        private readonly IUnitOfWorks _unitOfWork;
-        private readonly ICurrentTime _currentTime;
-        private readonly IConfiguration configuration;
-        private readonly IMapper _mapper;
-        private readonly JWTUtils _jwtUtils;
-        private readonly IOrderServices _orderServices;
+        protected readonly IUnitOfWorks _unitOfWork;
+        protected readonly ICurrentTime _currentTime;
+        protected readonly IConfiguration configuration;
+        protected readonly IMapper _mapper;
+        protected readonly JWTUtils _jwtUtils;
+        protected readonly IOrderServices _orderServices;
         public CartServices(IUnitOfWorks unitOfWork, ICurrentTime currentTime, IConfiguration configuration, IMapper mapper, JWTUtils jWTUtils, IOrderServices orderServices)
         {
             _unitOfWork = unitOfWork;
