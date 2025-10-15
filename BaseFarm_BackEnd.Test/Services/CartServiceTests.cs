@@ -9,14 +9,17 @@ using Domain.Model;
 using Infrastructure.Repositories;
 using AutoMapper;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
 using Application.Services.Implement;
 using Application;
 using Application.Interfaces;
 using Infrastructure;
+using System.Collections.Generic;
+using Infrastructure.ViewModel.Response;
 
 namespace BaseFarm_BackEnd.Test.Services
 {
-    // ✅ Fake CartService để bỏ qua việc gọi JWTUtils thật
+    // ✅ Fake CartService để bỏ qua việc gọi JWTUtils thật (cho AddToCart & RemoveCartItem)
     public class CartServicesFake : CartServices
     {
         private readonly Account _fakeUser;
@@ -34,7 +37,7 @@ namespace BaseFarm_BackEnd.Test.Services
             _fakeUser = fakeUser;
         }
 
-        // ✅ Bỏ qua JWTUtils, dùng _fakeUser để test
+        // ✅ Fake AddToCart (bỏ qua JWT)
         public new async Task<bool> AddToCart(long productId, int quantity)
         {
             var user = _fakeUser;
@@ -67,6 +70,28 @@ namespace BaseFarm_BackEnd.Test.Services
             var result = await _unitOfWork.SaveChangesAsync();
             return result > 0;
         }
+
+        // ✅ Fake RemoveCartItem (bỏ qua JWT)
+        public new async Task<CartResponse?> RemoveCartItem(long productId)
+        {
+            var user = _fakeUser;
+            if (user == null || user.AccountId == 0)
+                return null;
+
+            var cart = await _unitOfWork.cartRepository.GetCartByUserIdAsync(user.AccountId);
+            if (cart == null)
+                return null;
+
+            var item = cart.CartItems.FirstOrDefault(x => x.ProductId == productId);
+            if (item == null)
+                return null;
+
+            await _unitOfWork.cartItemRepository.DeleteAsync(item);
+            await _unitOfWork.SaveChangesAsync();
+
+            var cartResponse = _mapper.Map<CartResponse>(cart);
+            return cartResponse;
+        }
     }
 
     public class CartServiceTests
@@ -79,9 +104,9 @@ namespace BaseFarm_BackEnd.Test.Services
         private readonly Mock<IConfiguration> _mockConfig;
         private readonly Mock<IMapper> _mockMapper;
         private readonly Mock<IOrderServices> _mockOrderService;
+        private readonly Mock<JWTUtils> _mockJwt;
 
         private CartServices _service = null!;
-        private JWTUtils _jwtUtils = null!;
 
         public CartServiceTests()
         {
@@ -93,33 +118,33 @@ namespace BaseFarm_BackEnd.Test.Services
             _mockConfig = new Mock<IConfiguration>();
             _mockMapper = new Mock<IMapper>();
             _mockOrderService = new Mock<IOrderServices>();
+            _mockJwt = new Mock<JWTUtils>(null!, null!, null!);
 
             _mockUow.SetupGet(u => u.cartRepository).Returns(_mockCartRepo.Object);
             _mockUow.SetupGet(u => u.cartItemRepository).Returns(_mockCartItemRepo.Object);
             _mockUow.SetupGet(u => u.productRepository).Returns(_mockProductRepo.Object);
         }
 
-        // ✅ tiện ích: tạo CartServicesFake thay vì thật
-        private void InitServiceWithUser(Account user)
+        private void InitService(Account user)
         {
-            _jwtUtils = new Mock<JWTUtils>(null!, null!, null!).Object;
             _service = new CartServicesFake(
                 _mockUow.Object,
                 _mockCurrentTime.Object,
                 _mockConfig.Object,
                 _mockMapper.Object,
-                _jwtUtils,
+                _mockJwt.Object,
                 _mockOrderService.Object,
                 user
             );
         }
 
-        // Case 1: userId = 0
+        // ========================== ADD TO CART TESTS ==========================
+
         [Fact]
         public async Task AddToCart_ShouldReturnFalse_WhenUserNotFound()
         {
             var user = new Account { AccountId = 0 };
-            InitServiceWithUser(user);
+            InitService(user);
 
             var result = await ((CartServicesFake)_service).AddToCart(1, 2);
 
@@ -127,12 +152,11 @@ namespace BaseFarm_BackEnd.Test.Services
             _mockCartRepo.Verify(r => r.GetCartByUserIdAsync(It.IsAny<long>()), Times.Never);
         }
 
-        // Case 2: chưa có cart -> tạo mới
         [Fact]
         public async Task AddToCart_ShouldCreateNewCart_WhenUserHasNoCart()
         {
             var user = new Account { AccountId = 10 };
-            InitServiceWithUser(user);
+            InitService(user);
 
             var product = new Product { ProductId = 1, Price = 100 };
             _mockCartRepo.Setup(r => r.GetCartByUserIdAsync(user.AccountId))
@@ -150,12 +174,11 @@ namespace BaseFarm_BackEnd.Test.Services
             _mockCartItemRepo.Verify(r => r.AddAsync(It.IsAny<CartItem>()), Times.Once);
         }
 
-        // Case 3: giỏ hàng có, sản phẩm chưa có
         [Fact]
         public async Task AddToCart_ShouldAddNewItem_WhenProductNotInCart()
         {
             var user = new Account { AccountId = 2 };
-            InitServiceWithUser(user);
+            InitService(user);
 
             var cart = new Cart
             {
@@ -177,12 +200,11 @@ namespace BaseFarm_BackEnd.Test.Services
             _mockCartItemRepo.Verify(r => r.AddAsync(It.Is<CartItem>(x => x.ProductId == product.ProductId)), Times.Once);
         }
 
-        // Case 4: giỏ hàng có, sản phẩm đã có => tăng số lượng
         [Fact]
         public async Task AddToCart_ShouldUpdateQuantity_WhenProductAlreadyInCart()
         {
             var user = new Account { AccountId = 5 };
-            InitServiceWithUser(user);
+            InitService(user);
 
             var product = new Product { ProductId = 10, Price = 100 };
             var existingItem = new CartItem { ProductId = 10, Quantity = 1 };
@@ -206,12 +228,11 @@ namespace BaseFarm_BackEnd.Test.Services
             _mockCartItemRepo.Verify(r => r.UpdateAsync(existingItem), Times.Once);
         }
 
-        // Case 5: SaveChangesAsync trả < 0
         [Fact]
         public async Task AddToCart_ShouldReturnFalse_WhenSaveFails()
         {
             var user = new Account { AccountId = 1 };
-            InitServiceWithUser(user);
+            InitService(user);
 
             var product = new Product { ProductId = 1, Price = 100 };
             var cart = new Cart
@@ -230,6 +251,81 @@ namespace BaseFarm_BackEnd.Test.Services
             var result = await ((CartServicesFake)_service).AddToCart(product.ProductId, 1);
 
             Assert.False(result);
+        }
+
+        // ========================== REMOVE CART ITEM TESTS ==========================
+
+        [Fact]
+        public async Task RemoveCartItem_ShouldReturnNull_WhenUserIdIsZero()
+        {
+            var fakeUser = new Account { AccountId = 0 };
+            InitService(fakeUser);
+
+            var result = await ((CartServicesFake)_service).RemoveCartItem(1);
+            Assert.Null(result);
+            _mockCartRepo.Verify(r => r.GetCartByUserIdAsync(It.IsAny<long>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task RemoveCartItem_ShouldReturnNull_WhenCartNotFound()
+        {
+            var fakeUser = new Account { AccountId = 5 };
+            InitService(fakeUser);
+
+            _mockCartRepo.Setup(r => r.GetCartByUserIdAsync(fakeUser.AccountId))
+                         .ReturnsAsync((Cart?)null);
+
+            var result = await ((CartServicesFake)_service).RemoveCartItem(1);
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task RemoveCartItem_ShouldReturnNull_WhenItemNotFound()
+        {
+            var fakeUser = new Account { AccountId = 5 };
+            InitService(fakeUser);
+
+            var cart = new Cart
+            {
+                CustomerId = fakeUser.AccountId,
+                CartItems = new List<CartItem> { new CartItem { ProductId = 99, Quantity = 2 } }
+            };
+
+            _mockCartRepo.Setup(r => r.GetCartByUserIdAsync(fakeUser.AccountId))
+                         .ReturnsAsync(cart);
+
+            var result = await ((CartServicesFake)_service).RemoveCartItem(1);
+
+            Assert.Null(result);
+            _mockCartItemRepo.Verify(r => r.DeleteAsync(It.IsAny<CartItem>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task RemoveCartItem_ShouldDeleteItem_WhenFound()
+        {
+            var fakeUser = new Account { AccountId = 10 };
+            InitService(fakeUser);
+
+            var item = new CartItem { ProductId = 5, Quantity = 2 };
+            var cart = new Cart
+            {
+                CustomerId = fakeUser.AccountId,
+                CartItems = new List<CartItem> { item }
+            };
+            var mappedResponse = new CartResponse();
+
+            _mockCartRepo.Setup(r => r.GetCartByUserIdAsync(fakeUser.AccountId))
+                         .ReturnsAsync(cart);
+            _mockMapper.Setup(m => m.Map<CartResponse>(cart)).Returns(mappedResponse);
+            _mockCartItemRepo.Setup(r => r.DeleteAsync(item)).ReturnsAsync(true);
+            _mockUow.Setup(u => u.SaveChangesAsync()).ReturnsAsync(1);
+
+            var result = await ((CartServicesFake)_service).RemoveCartItem(5);
+
+            Assert.NotNull(result);
+            Assert.Equal(mappedResponse, result);
+            _mockCartItemRepo.Verify(r => r.DeleteAsync(item), Times.Once);
+            _mockUow.Verify(u => u.SaveChangesAsync(), Times.Once);
         }
     }
 }
