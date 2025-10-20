@@ -50,34 +50,34 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpGet("callback")]
-        public async Task<IActionResult> PaymentCallback()
-        {
-            try
-            {
-                var response = await Task.Run(() => _vnPayService.PaymentExecute(Request.Query));
-                Console.WriteLine($"Response: {response}");
-                if (response == null)
-                {
-                    return BadRequest(new { message = "Invalid payment response." });
-                }
+        //[HttpGet("callback")]
+        //public async Task<IActionResult> PaymentCallback()
+        //{
+        //    try
+        //    {
+        //        var response = await Task.Run(() => _vnPayService.PaymentExecute(Request.Query));
+        //        Console.WriteLine($"Response: {response}");
+        //        if (response == null)
+        //        {
+        //            return BadRequest(new { message = "Invalid payment response." });
+        //        }
 
-                // ✅ Save payment to the database
-                await _vnPayService.SavePaymentAsync(response);
+        //        // ✅ Save payment to the database
+        //        await _vnPayService.SavePaymentAsync(response);
 
-                //// 🔥 Redirect to frontend with payment status
-                //string frontendUrl = response.Success ? "https://iotbasedfarm.netlify.app/vnpay-callback" : "https://iotbasedfarm.netlify.app/order-failed";
-                //string redirectUrl = $"{frontendUrl}?vnp_ResponseCode={response.VnPayResponseCode}&vnp_TransactionNo={response.TransactionId}&vnp_TxnRef={response.OrderId}&vnp_Amount={response.Amount}";
+        //        //// 🔥 Redirect to frontend with payment status
+        //        //string frontendUrl = response.Success ? "https://iotbasedfarm.netlify.app/vnpay-callback" : "https://iotbasedfarm.netlify.app/order-failed";
+        //        //string redirectUrl = $"{frontendUrl}?vnp_ResponseCode={response.VnPayResponseCode}&vnp_TransactionNo={response.TransactionId}&vnp_TxnRef={response.OrderId}&vnp_Amount={response.Amount}";
 
-                return Ok(response);
+        //        return Ok(response);
 
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error while processing payment callback.");
-                return StatusCode(500, new { message = "An error occurred while processing the payment response." });
-            }
-        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error while processing payment callback.");
+        //        return StatusCode(500, new { message = "An error occurred while processing the payment response." });
+        //    }
+        //}
 
         [HttpGet("ipn")]
         public async Task<IActionResult> PaymentIpn()
@@ -116,7 +116,7 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
 
-        [HttpGet("CallBackForApp")]
+        [HttpGet("callback")]
         public async Task<IActionResult> PaymentCallbackForApp()
         {
             try
