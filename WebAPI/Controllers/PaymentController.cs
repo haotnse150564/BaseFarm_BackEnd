@@ -127,38 +127,29 @@ namespace WebAPI.Controllers
                     return BadRequest(new { message = "Invalid payment response." });
                 }
 
+                //  Lưu thông tin thanh toán
                 await _vnPayService.SavePaymentAsync(response);
 
-                //  callback đến từ mobile app → redirect deeplink
-                if (!string.IsNullOrEmpty(source) && source.Equals("mobile", StringComparison.OrdinalIgnoreCase))
-                {
-                    // Ví dụ deeplink của bạn
-                    string appScheme = "myapp://payment-result";
+                // Luôn redirect về deeplink app mobile
+                string appScheme = "ifms://payment-result"; //  thay bằng deeplink app thật
 
-                    // Truyền các thông tin cần thiết cho mobile
-                    string redirectUrl =
-                        $"{appScheme}?success={(response.Success ? "true" : "false")}" +
-                        $"&orderId={response.OrderId}" +
-                        $"&amount={response.Amount}" +
-                        $"&code={response.VnPayResponseCode}" +
-                        $"&message={(response.Success ? "PaymentSuccess" : "PaymentFailed")}";
+                string redirectUrl =
+                    $"{appScheme}?success={(response.Success ? "true" : "false")}" +
+                    $"&orderId={response.OrderId}" +
+                    $"&amount={response.Amount}" +
+                    $"&code={response.VnPayResponseCode}" +
+                    $"&message={(response.Success ? "PaymentSuccess" : "PaymentFailed")}";
 
-                    return Redirect(redirectUrl);
-                }
-
-                // callback từ web → trả JSON (hoặc redirect về web FE)
-                return Ok(response);
+                // 👉 Redirect HTTP 302 — app sẽ nhận deeplink này
+                return Redirect(redirectUrl);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error while processing payment callback.");
 
-                // Nếu lỗi mà callback từ mobile → redirect báo lỗi
-                string failMobileUrl = "myapp://payment-result?success=false&message=PaymentError";
-                if (Request.Query["source"] == "mobile")
-                    return Redirect(failMobileUrl);
-
-                return StatusCode(500, new { message = "An error occurred while processing the payment response." });
+                // Nếu lỗi, vẫn redirect về deeplink báo lỗi cho app
+                string failUrl = "myapp://payment-result?success=false&message=PaymentError";
+                return Redirect(failUrl);
             }
         }
 
