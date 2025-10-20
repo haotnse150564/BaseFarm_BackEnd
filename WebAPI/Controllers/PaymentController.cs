@@ -117,7 +117,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("CallBackForApp")]
-        public async Task<IActionResult> PaymentCallbackForApp([FromQuery] string? source = null)
+        public async Task<IActionResult> PaymentCallbackForApp()
         {
             try
             {
