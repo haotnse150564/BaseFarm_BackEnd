@@ -13,7 +13,7 @@ namespace Application.Services.Implement
     {
         private readonly HttpClient _httpClient;
         private const string BlynkToken = "xRd0sDuPYqFjPI1ZSHRr7Bd1cJq3fH2Y"; 
-        private const string BlynkBaseUrl = "https://sgp1.blynk.cloud/external/api";
+        private const string BlynkBaseUrl = "https://sgp1.blynk.cloud";
         private const string BlynkWriteBaseUrl = "https://sgp1.blynk.cloud/external/api";
 
         public BlynkService(HttpClient httpClient)
