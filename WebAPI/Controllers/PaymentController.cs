@@ -152,7 +152,6 @@ namespace WebAPI.Controllers
         //        return Redirect(failUrl);
         //    }
         //}
-
         [HttpGet("callback")]
         public async Task<IActionResult> PaymentCallbackForApp()
         {
@@ -167,9 +166,8 @@ namespace WebAPI.Controllers
                 // ✅ Lưu thông tin thanh toán
                 await _vnPayService.SavePaymentAsync(response);
 
-                // ✅ Deeplink app mobile (FE cung cấp)
-                string appScheme = "ifms://payment-result";
-
+                // ✅ Tạo deeplink app
+                string appScheme = "ifms://payment-result"; // 👉 Thay bằng deeplink thật của app bạn
                 string redirectUrl =
                     $"{appScheme}?success={(response.Success ? "true" : "false")}" +
                     $"&orderId={response.OrderId}" +
@@ -177,24 +175,31 @@ namespace WebAPI.Controllers
                     $"&code={response.VnPayResponseCode}" +
                     $"&message={(response.Success ? "PaymentSuccess" : "PaymentFailed")}";
 
-                _logger.LogInformation($"Redirecting to deeplink: {redirectUrl}");
-
-                // ✅ Trả về trang HTML tự redirect để tránh lỗi 502 và đảm bảo mở được app
+                // ✅ Trả HTML có JS tự mở app mobile
                 string html = $@"
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset='utf-8'>
+    <meta charset='utf-8' />
     <title>Redirecting...</title>
-    <script>
-        // Thử mở deeplink app
-        window.location.href = '{redirectUrl}';
-        // Nếu mở thất bại thì sau 2s hiển thị thông báo fallback
-        setTimeout(function() {{
-            document.body.innerHTML = '<h3>Thanh toán thành công! Bạn có thể quay lại ứng dụng.</h3>';
-        }}, 2000);
+    <script type='text/javascript'>
+        function openApp() {{
+            var deepLink = '{redirectUrl}';
+            // Tạo thẻ <a> ẩn để tương thích với WebView
+            var a = document.createElement('a');
+            a.href = deepLink;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+
+            // Sau 2s nếu không mở được app thì hiện thông báo
+            setTimeout(function() {{
+                document.body.innerHTML = '<h3>Thanh toán {(response.Success ? "thành công" : "thất bại")}. Vui lòng quay lại ứng dụng.</h3>';
+            }}, 2000);
+        }}
+
+        window.onload = openApp;
     </script>
-    <meta http-equiv='refresh' content='0;url={redirectUrl}' />
 </head>
 <body>
     <p>Đang chuyển hướng về ứng dụng...</p>
@@ -207,29 +212,33 @@ namespace WebAPI.Controllers
             {
                 _logger.LogError(ex, "Error while processing payment callback.");
 
-                // ✅ Khi có lỗi, vẫn trả về trang tự redirect deeplink báo lỗi
+                // ✅ Nếu lỗi, vẫn redirect về app với trạng thái lỗi
                 string failUrl = "ifms://payment-result?success=false&message=PaymentError";
-
-                string html = $@"
+                string failHtml = $@"
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset='utf-8'>
+    <meta charset='utf-8' />
     <title>Payment Error</title>
-    <script>
-        window.location.href = '{failUrl}';
-        setTimeout(function() {{
-            document.body.innerHTML = '<h3>Thanh toán thất bại. Vui lòng quay lại ứng dụng.</h3>';
-        }}, 2000);
+    <script type='text/javascript'>
+        window.onload = function() {{
+            var a = document.createElement('a');
+            a.href = '{failUrl}';
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(function() {{
+                document.body.innerHTML = '<h3>Có lỗi xảy ra khi xử lý thanh toán. Vui lòng quay lại ứng dụng.</h3>';
+            }}, 2000);
+        }};
     </script>
-    <meta http-equiv='refresh' content='0;url={failUrl}' />
 </head>
 <body>
-    <p>Đang chuyển hướng về ứng dụng...</p>
+    <p>Đang xử lý lỗi...</p>
 </body>
 </html>";
 
-                return Content(html, "text/html");
+                return Content(failHtml, "text/html");
             }
         }
 
