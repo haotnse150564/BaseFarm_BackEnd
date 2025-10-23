@@ -116,6 +116,43 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
 
+        //[HttpGet("callback")]
+        //public async Task<IActionResult> PaymentCallbackForApp()
+        //{
+        //    try
+        //    {
+        //        var response = await Task.Run(() => _vnPayService.PaymentExecute(Request.Query));
+        //        if (response == null)
+        //        {
+        //            return BadRequest(new { message = "Invalid payment response." });
+        //        }
+
+        //        //  Lưu thông tin thanh toán
+        //        await _vnPayService.SavePaymentAsync(response);
+
+        //        // Luôn redirect về deeplink app mobile
+        //        string appScheme = "ifms://payment-result"; //  thay bằng deeplink app thật
+
+        //        string redirectUrl =
+        //            $"{appScheme}?success={(response.Success ? "true" : "false")}" +
+        //            $"&orderId={response.OrderId}" +
+        //            $"&amount={response.Amount}" +
+        //            $"&code={response.VnPayResponseCode}" +
+        //            $"&message={(response.Success ? "PaymentSuccess" : "PaymentFailed")}";
+
+        //        // 👉 Redirect HTTP 302 — app sẽ nhận deeplink này
+        //        return Redirect(redirectUrl);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error while processing payment callback.");
+
+        //        // Nếu lỗi, vẫn redirect về deeplink báo lỗi cho app
+        //        string failUrl = "myapp://payment-result?success=false&message=PaymentError";
+        //        return Redirect(failUrl);
+        //    }
+        //}
+
         [HttpGet("callback")]
         public async Task<IActionResult> PaymentCallbackForApp()
         {
@@ -127,11 +164,11 @@ namespace WebAPI.Controllers
                     return BadRequest(new { message = "Invalid payment response." });
                 }
 
-                //  Lưu thông tin thanh toán
+                // ✅ Lưu thông tin thanh toán
                 await _vnPayService.SavePaymentAsync(response);
 
-                // Luôn redirect về deeplink app mobile
-                string appScheme = "ifms://payment-result"; //  thay bằng deeplink app thật
+                // ✅ Deeplink app mobile (FE cung cấp)
+                string appScheme = "ifms://payment-result";
 
                 string redirectUrl =
                     $"{appScheme}?success={(response.Success ? "true" : "false")}" +
@@ -140,18 +177,62 @@ namespace WebAPI.Controllers
                     $"&code={response.VnPayResponseCode}" +
                     $"&message={(response.Success ? "PaymentSuccess" : "PaymentFailed")}";
 
-                // 👉 Redirect HTTP 302 — app sẽ nhận deeplink này
-                return Redirect(redirectUrl);
+                _logger.LogInformation($"Redirecting to deeplink: {redirectUrl}");
+
+                // ✅ Trả về trang HTML tự redirect để tránh lỗi 502 và đảm bảo mở được app
+                string html = $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Redirecting...</title>
+    <script>
+        // Thử mở deeplink app
+        window.location.href = '{redirectUrl}';
+        // Nếu mở thất bại thì sau 2s hiển thị thông báo fallback
+        setTimeout(function() {{
+            document.body.innerHTML = '<h3>Thanh toán thành công! Bạn có thể quay lại ứng dụng.</h3>';
+        }}, 2000);
+    </script>
+    <meta http-equiv='refresh' content='0;url={redirectUrl}' />
+</head>
+<body>
+    <p>Đang chuyển hướng về ứng dụng...</p>
+</body>
+</html>";
+
+                return Content(html, "text/html");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error while processing payment callback.");
 
-                // Nếu lỗi, vẫn redirect về deeplink báo lỗi cho app
-                string failUrl = "myapp://payment-result?success=false&message=PaymentError";
-                return Redirect(failUrl);
+                // ✅ Khi có lỗi, vẫn trả về trang tự redirect deeplink báo lỗi
+                string failUrl = "ifms://payment-result?success=false&message=PaymentError";
+
+                string html = $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <title>Payment Error</title>
+    <script>
+        window.location.href = '{failUrl}';
+        setTimeout(function() {{
+            document.body.innerHTML = '<h3>Thanh toán thất bại. Vui lòng quay lại ứng dụng.</h3>';
+        }}, 2000);
+    </script>
+    <meta http-equiv='refresh' content='0;url={failUrl}' />
+</head>
+<body>
+    <p>Đang chuyển hướng về ứng dụng...</p>
+</body>
+</html>";
+
+                return Content(html, "text/html");
             }
         }
+
 
     }
 
