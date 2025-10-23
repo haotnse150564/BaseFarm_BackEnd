@@ -152,7 +152,7 @@ namespace WebAPI.Controllers
         //        return Redirect(failUrl);
         //    }
         //}
-        [HttpGet("CallBackForApp")]
+        [HttpGet("callback")]
         public async Task<IActionResult> PaymentCallbackForApp([FromQuery] string source = "mobile")
         {
             try
