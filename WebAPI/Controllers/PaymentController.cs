@@ -152,7 +152,7 @@ namespace WebAPI.Controllers
         //        return Redirect(failUrl);
         //    }
         //}
-        [HttpGet("callback")]
+        [HttpGet("CallBackForApp")]
         public async Task<IActionResult> PaymentCallbackForApp([FromQuery] string source = "mobile")
         {
             try
@@ -163,132 +163,30 @@ namespace WebAPI.Controllers
                     return BadRequest(new { message = "Invalid payment response." });
                 }
 
-                // ✅ Lưu thông tin thanh toán
                 await _vnPayService.SavePaymentAsync(response);
 
-                // ✅ Deeplink app mobile (thay bằng deeplink thật của app bạn)
-                string appScheme = "ifms://payment-result";
+                // ✅ SỬA: Deep link format đúng
                 string redirectUrl =
-                    $"{appScheme}?success={(response.Success ? "true" : "false")}" +
+                    $"ifms://payment-result?success={(response.Success ? "true" : "false")}" +
                     $"&orderId={response.OrderId}" +
                     $"&amount={response.Amount}" +
                     $"&code={response.VnPayResponseCode}" +
                     $"&message={(response.Success ? "PaymentSuccess" : "PaymentFailed")}";
 
-                _logger.LogInformation($"[VNPay Callback] Redirecting to deeplink: {redirectUrl}");
+                _logger.LogInformation($"CallBackForApp - Redirecting to deeplink: {redirectUrl}");
 
-                // ✅ Trang HTML có auto redirect + fallback button
-                string html = $@"
-<!DOCTYPE html>
-<html lang='vi'>
-<head>
-    <meta charset='utf-8'>
-    <title>Đang chuyển hướng...</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <style>
-        body {{
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding-top: 60px;
-            color: #333;
-        }}
-        h3 {{ color: #2e7d32; }}
-        button {{
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 20px;
-        }}
-        button:hover {{
-            background-color: #45a049;
-        }}
-    </style>
-    <script type='text/javascript'>
-        function openApp() {{
-            var deepLink = '{redirectUrl}';
-            window.location.href = deepLink;
-
-            // Nếu webview chặn deeplink, sau 2s hiện nút thủ công
-            setTimeout(function() {{
-                document.getElementById('fallback').style.display = 'block';
-            }}, 2000);
-        }}
-        window.onload = openApp;
-    </script>
-</head>
-<body>
-    <h3>Đang chuyển hướng về ứng dụng...</h3>
-    <p>Vui lòng đợi trong giây lát.</p>
-    <div id='fallback' style='display:none'>
-        <p>Nếu không tự động chuyển, hãy bấm nút bên dưới:</p>
-        <button onclick=""window.location.href='{redirectUrl}'"">Mở ứng dụng</button>
-    </div>
-</body>
-</html>";
-
-                return Content(html, "text/html");
+                // ✅ SỬA: Sử dụng HTTP 302 Redirect thay vì HTML
+                return Redirect(redirectUrl);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while processing VNPay callback for app.");
+                _logger.LogError(ex, "Error while processing payment callback for app.");
 
-                // ✅ Khi có lỗi, vẫn trả về trang tự redirect deeplink báo lỗi
+                // ✅ Error case cũng dùng Redirect
                 string failUrl = "ifms://payment-result?success=false&message=PaymentError";
-
-                string failHtml = $@"
-<!DOCTYPE html>
-<html lang='vi'>
-<head>
-    <meta charset='utf-8'>
-    <title>Payment Error</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <style>
-        body {{
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding-top: 60px;
-            color: #b71c1c;
-        }}
-        button {{
-            background-color: #e53935;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 20px;
-        }}
-    </style>
-    <script type='text/javascript'>
-        function openFail() {{
-            window.location.href = '{failUrl}';
-            setTimeout(function() {{
-                document.getElementById('fallback').style.display = 'block';
-            }}, 2000);
-        }}
-        window.onload = openFail;
-    </script>
-</head>
-<body>
-    <h3>Thanh toán thất bại</h3>
-    <p>Vui lòng quay lại ứng dụng để thử lại.</p>
-    <div id='fallback' style='display:none'>
-        <button onclick=""window.location.href='{failUrl}'"">Quay lại ứng dụng</button>
-    </div>
-</body>
-</html>";
-
-                return Content(failHtml, "text/html");
+                return Redirect(failUrl);
             }
         }
-
-
-
     }
 
 }
