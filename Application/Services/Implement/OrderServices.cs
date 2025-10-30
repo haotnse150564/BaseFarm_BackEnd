@@ -112,7 +112,7 @@ namespace Application.Services.Implement
                 };
 
                 //var paymentUrl = _vnPayService.CreatePaymentUrl(paymentModel, context);
-                var paymentUrl = $"{_configuration["AppDomain"]}/api/payment/redirect?orderId={order.OrderId}";
+                var paymentUrl = $"{_configuration["https://iotfarm.onrender.com/"]}/api/vnpay/redirect?orderId={order.OrderId}";
 
 
                 // 🔥 Mapping lại OrderDetail sang OrderDetailDTO có ProductName
