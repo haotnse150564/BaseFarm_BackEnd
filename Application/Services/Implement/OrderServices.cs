@@ -5,6 +5,7 @@ using AutoMapper;
 using Domain.Enum;
 using Domain.Model;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using static Application.ViewModel.Request.OrderRequest;
 using static Application.ViewModel.Response.OrderResponse;
 using static Application.ViewModel.Response.ProductResponse;
@@ -19,13 +20,15 @@ namespace Application.Services.Implement
         private readonly JWTUtils _jwtUtils;
         private readonly IVnPayService _vnPayService;
         private readonly CheckDate _checkDate;
-        public OrderServices(IUnitOfWorks unitOfWork, IMapper mapper, JWTUtils jwtUtils, IVnPayService vnPayService, CheckDate checkDate)
+        private readonly IConfiguration _configuration;
+        public OrderServices(IUnitOfWorks unitOfWork, IMapper mapper, JWTUtils jwtUtils, IVnPayService vnPayService, CheckDate checkDate, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _jwtUtils = jwtUtils;
             _vnPayService = vnPayService;
             _checkDate = checkDate;
+            _configuration = configuration;
         }
 
         public async Task<ResponseDTO> CreateOrderAsync(CreateOrderDTO request, HttpContext context)
@@ -108,7 +111,8 @@ namespace Application.Services.Implement
                     Name = "IOT Base Farm"
                 };
 
-                var paymentUrl = _vnPayService.CreatePaymentUrl(paymentModel, context);
+                //var paymentUrl = _vnPayService.CreatePaymentUrl(paymentModel, context);
+                var paymentUrl = $"{_configuration["AppDomain"]}/api/payment/redirect?orderId={order.OrderId}";
 
 
                 // 🔥 Mapping lại OrderDetail sang OrderDetailDTO có ProductName

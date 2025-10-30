@@ -2,8 +2,11 @@
 using Application.Services;
 using Application.Services.Implement;
 using Application.ViewModel.Request;
+using Domain.Enum;
 using Domain.Model;
+using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using static Application.ViewModel.Request.OrderRequest;
 
 namespace WebAPI.Controllers
@@ -15,12 +18,14 @@ namespace WebAPI.Controllers
         private readonly IVnPayService _vnPayService;
         private readonly ILogger<PaymentController> _logger;
         private readonly IOrderServices _orderServices;
+        private readonly IUnitOfWorks _unitOfWork;
 
-        public PaymentController(IVnPayService vnPayService, ILogger<PaymentController> logger, IOrderServices orderServices)
+        public PaymentController(IVnPayService vnPayService, ILogger<PaymentController> logger, IOrderServices orderServices, IUnitOfWorks unitOfWork)
         {
             _vnPayService = vnPayService;
             _logger = logger;
             _orderServices = orderServices;
+            _unitOfWork = unitOfWork;
         }
 
         /// Tạo URL thanh toán VNPay
@@ -157,7 +162,8 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var response = await Task.Run(() => _vnPayService.PaymentExecute(Request.Query));
+                // Không cần Task.Run
+                var response = _vnPayService.PaymentExecute(Request.Query);
                 if (response == null)
                 {
                     return BadRequest(new { message = "Invalid payment response." });
@@ -165,28 +171,77 @@ namespace WebAPI.Controllers
 
                 await _vnPayService.SavePaymentAsync(response);
 
-                // ✅ SỬA: Deep link format đúng
-                string redirectUrl =
-                    $"ifms://payment-result?success={(response.Success ? "true" : "false")}" +
-                    $"&orderId={response.OrderId}" +
-                    $"&amount={response.Amount}" +
-                    $"&code={response.VnPayResponseCode}" +
-                    $"&message={(response.Success ? "PaymentSuccess" : "PaymentFailed")}";
+                // Encode các giá trị để tránh lỗi khi có dấu cách hoặc ký tự đặc biệt
+                string redirectUrl = $"ifms://payment-result" +
+                                     $"?success={(response.Success ? "true" : "false")}" +
+                                     $"&orderId={response.OrderId}" +
+                                     $"&amount={response.Amount}" +
+                                     $"&code={WebUtility.UrlEncode(response.VnPayResponseCode)}" +
+                                     $"&message={WebUtility.UrlEncode(response.Success ? "PaymentSuccess" : "PaymentFailed")}";
 
                 _logger.LogInformation($"CallBackForApp - Redirecting to deeplink: {redirectUrl}");
 
-                // ✅ SỬA: Sử dụng HTTP 302 Redirect thay vì HTML
-                return Redirect(redirectUrl);
+                // Một số WebView chặn 302 -> dùng HTML fallback
+                string html = $@"
+            <html>
+                <head>
+                    <meta http-equiv='refresh' content='0;url={redirectUrl}' />
+                </head>
+                <body>
+                    <p>Redirecting back to app...</p>
+                    <a href='{redirectUrl}'>Click here if not redirected.</a>
+                </body>
+            </html>";
+
+                return Content(html, "text/html");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error while processing payment callback for app.");
 
-                // ✅ Error case cũng dùng Redirect
                 string failUrl = "ifms://payment-result?success=false&message=PaymentError";
-                return Redirect(failUrl);
+                string html = $@"
+            <html>
+                <head>
+                    <meta http-equiv='refresh' content='0;url={failUrl}' />
+                </head>
+                <body>
+                    <p>Payment failed. Redirecting...</p>
+                    <a href='{failUrl}'>Click here if not redirected.</a>
+                </body>
+            </html>";
+
+                return Content(html, "text/html");
             }
         }
+
+
+        [HttpGet("redirect")]
+        public async Task<IActionResult> RedirectToVnpay(long orderId)
+        {
+            var order = await _unitOfWork.orderRepository.GetByIdAsync(orderId);
+            if (order == null)
+                return NotFound("Order not found");
+
+            var paymentModel = new PaymentInformationModel
+            {
+                OrderId = order.OrderId,
+                Amount = (double)order.TotalPrice,
+                OrderDescription = $"Thanh toán đơn hàng #{order.OrderId}",
+                OrderType = "billpayment",
+                Name = "IOT Base Farm"
+            };
+
+            var vnpUrl = _vnPayService.CreatePaymentUrl(paymentModel, HttpContext);
+
+            // Log trạng thái chờ thanh toán
+            order.Status = PaymentStatus.PENDING;
+            await _unitOfWork.orderRepository.UpdateAsync(order);
+            await _unitOfWork.SaveChangesAsync();
+
+            return Redirect(vnpUrl);
+        }
+
     }
 
 }
