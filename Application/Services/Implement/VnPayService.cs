@@ -78,52 +78,6 @@ public class VnPayService : IVnPayService
         return response;
     }
 
-    //public async Task<ResponseDTO> SavePaymentAsync(PaymentResponseModel response)
-    //{
-    //    //using var transaction = await _unitOfWork.BeginTransactionAsync();
-    //    try
-    //    {
-    //        var order = await _orderRepository.GetByIdAsync(response.OrderId);
-    //        if (order == null)
-    //            throw new Exception($"Order ID {response.OrderId} not found.");
-
-    //        var payment = new Payment
-    //        {
-    //            OrderId = response.OrderId,
-    //            TransactionId = response.TransactionId,
-    //            PaymentMethod = response.PaymentMethod,
-    //            Success = response.Success ? true : false,
-    //            Amount = response.Amount,
-    //            PaymentTime = DateTime.UtcNow,
-    //            VnPayResponseCode = response.VnPayResponseCode,
-    //            CreateDate = DateTime.UtcNow
-    //        };
-    //        _logger.LogInformation("payment"+payment);
-
-    //        await _unitOfWork.paymentRepository.AddAsync(payment);
-
-    //        if (response.Success)
-    //        {
-    //            order.Status = Status.PAID;
-    //            await _orderRepository.UpdateAsync(order);
-    //        }
-    //        else
-    //        {
-    //            order.Status = Status.UNDISCHARGED; // Đặt trạng thái khác khi response không thành công
-    //            await _orderRepository.UpdateAsync(order);
-    //        }
-
-    //        await _unitOfWork.SaveChangesAsync();
-    //        //await transaction.CommitAsync();
-    //        return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Payment Created.");
-    //    }
-    //    catch(Exception ex)
-    //    {
-    //        //await transaction.RollbackAsync();
-    //        return new ResponseDTO(Const.ERROR_EXCEPTION, "An error occurred while creating the payment.", ex.Message);
-    //    }
-    //}
-
     public async Task<ResponseDTO> SavePaymentAsync(PaymentResponseModel response)
     {
         try

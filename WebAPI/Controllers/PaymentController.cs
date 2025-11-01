@@ -7,6 +7,7 @@ using Domain.Model;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Web;
 using static Application.ViewModel.Request.OrderRequest;
 
 namespace WebAPI.Controllers
@@ -162,7 +163,6 @@ namespace WebAPI.Controllers
         {
             try
             {
-                // Không cần Task.Run
                 var response = _vnPayService.PaymentExecute(Request.Query);
                 if (response == null)
                 {
@@ -171,7 +171,6 @@ namespace WebAPI.Controllers
 
                 await _vnPayService.SavePaymentAsync(response);
 
-                // Encode các giá trị để tránh lỗi khi có dấu cách hoặc ký tự đặc biệt
                 string redirectUrl = $"ifms://payment-result" +
                                      $"?success={(response.Success ? "true" : "false")}" +
                                      $"&orderId={response.OrderId}" +
@@ -181,17 +180,25 @@ namespace WebAPI.Controllers
 
                 _logger.LogInformation($"CallBackForApp - Redirecting to deeplink: {redirectUrl}");
 
-                // Một số WebView chặn 302 -> dùng HTML fallback
+                Response.Headers["Cache-Control"] = "no-store"; // 🔥 tránh cache lại callback
+
                 string html = $@"
-            <html>
-                <head>
-                    <meta http-equiv='refresh' content='0;url={redirectUrl}' />
-                </head>
-                <body>
-                    <p>Redirecting back to app...</p>
-                    <a href='{redirectUrl}'>Click here if not redirected.</a>
-                </body>
-            </html>";
+        <html>
+            <head>
+                <meta name='viewport' content='width=device-width, initial-scale=1'>
+                <title>Returning to app...</title>
+                <meta http-equiv='refresh' content='0;url={redirectUrl}' />
+            </head>
+            <body style='font-family: sans-serif; text-align: center; padding-top: 40px;'>
+                <p>Đang chuyển hướng về ứng dụng...</p>
+                <a href='{redirectUrl}' style='color: #007bff;'>Nhấn vào đây nếu không tự chuyển.</a>
+                <script>
+                    setTimeout(function() {{
+                        window.location.href = '{redirectUrl}';
+                    }}, 300);
+                </script>
+            </body>
+        </html>";
 
                 return Content(html, "text/html");
             }
@@ -200,20 +207,27 @@ namespace WebAPI.Controllers
                 _logger.LogError(ex, "Error while processing payment callback for app.");
 
                 string failUrl = "ifms://payment-result?success=false&message=PaymentError";
+
                 string html = $@"
-            <html>
-                <head>
-                    <meta http-equiv='refresh' content='0;url={failUrl}' />
-                </head>
-                <body>
-                    <p>Payment failed. Redirecting...</p>
-                    <a href='{failUrl}'>Click here if not redirected.</a>
-                </body>
-            </html>";
+        <html>
+            <head>
+                <meta http-equiv='refresh' content='0;url={failUrl}' />
+            </head>
+            <body>
+                <p>Payment failed. Redirecting...</p>
+                <a href='{failUrl}'>Click here if not redirected.</a>
+                <script>
+                    setTimeout(function() {{
+                        window.location.href = '{failUrl}';
+                    }}, 300);
+                </script>
+            </body>
+        </html>";
 
                 return Content(html, "text/html");
             }
         }
+
 
 
         [HttpGet("redirect")]
@@ -223,6 +237,7 @@ namespace WebAPI.Controllers
             if (order == null)
                 return NotFound("Order not found");
 
+            // ✅ Chuẩn bị model thanh toán
             var paymentModel = new PaymentInformationModel
             {
                 OrderId = order.OrderId,
@@ -232,15 +247,47 @@ namespace WebAPI.Controllers
                 Name = "IOT Base Farm"
             };
 
+            // ✅ Tạo URL thật sang VNPAY gateway
             var vnpUrl = _vnPayService.CreatePaymentUrl(paymentModel, HttpContext);
 
-            // Log trạng thái chờ thanh toán
+            // ✅ Cập nhật trạng thái đơn hàng
             order.Status = PaymentStatus.PENDING;
             await _unitOfWork.orderRepository.UpdateAsync(order);
             await _unitOfWork.SaveChangesAsync();
 
-            return Redirect(vnpUrl);
+            // ✅ Trang HTML trung gian (Proxy)
+            var html = $@"
+        <html>
+        <head>
+            <meta name='viewport' content='width=device-width, initial-scale=1'>
+            <title>Redirecting to VNPAY...</title>
+            <style>
+                body {{
+                    font-family: Arial, sans-serif;
+                    text-align: center;
+                    padding-top: 40px;
+                }}
+                a {{
+                    color: #007bff;
+                    text-decoration: none;
+                }}
+            </style>
+        </head>
+        <body>
+            <p>Redirecting to VNPAY...</p>
+            <a href='{vnpUrl}'>Click here if not redirected automatically</a>
+            <script>
+                setTimeout(function() {{
+                    window.location.href = '{vnpUrl}';
+                }}, 1000);
+            </script>
+        </body>
+        </html>
+    ";
+
+            return Content(html, "text/html");
         }
+
 
     }
 
