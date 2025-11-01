@@ -171,6 +171,7 @@ namespace WebAPI.Controllers
 
                 await _vnPayService.SavePaymentAsync(response);
 
+                // ✅ Xử lý dữ liệu redirect
                 string redirectUrl = $"ifms://payment-result" +
                                      $"?success={(response.Success ? "true" : "false")}" +
                                      $"&orderId={response.OrderId}" +
@@ -180,53 +181,82 @@ namespace WebAPI.Controllers
 
                 _logger.LogInformation($"CallBackForApp - Redirecting to deeplink: {redirectUrl}");
 
-                Response.Headers["Cache-Control"] = "no-store"; // 🔥 tránh cache lại callback
+                // ✅ Không cache callback
+                Response.Headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0";
+                Response.Headers["Pragma"] = "no-cache";
 
+                // ✅ Nếu test trên trình duyệt (không có app) thì fallback sang trang kết quả web
+                string userAgent = Request.Headers["User-Agent"].ToString().ToLower();
+                bool isMobile = userAgent.Contains("mobile") || userAgent.Contains("android") || userAgent.Contains("iphone");
+
+                string fallbackUrl = $"https://iotfarm.onrender.com/payment-result?success={(response.Success ? "true" : "false")}&orderId={response.OrderId}";
+
+                string finalRedirect = isMobile ? redirectUrl : fallbackUrl;
+
+                // ✅ Trang HTML chuẩn UTF-8, có script và meta refresh
                 string html = $@"
-        <html>
-            <head>
-                <meta name='viewport' content='width=device-width, initial-scale=1'>
-                <title>Returning to app...</title>
-                <meta http-equiv='refresh' content='0;url={redirectUrl}' />
-            </head>
-            <body style='font-family: sans-serif; text-align: center; padding-top: 40px;'>
-                <p>Đang chuyển hướng về ứng dụng...</p>
-                <a href='{redirectUrl}' style='color: #007bff;'>Nhấn vào đây nếu không tự chuyển.</a>
-                <script>
-                    setTimeout(function() {{
-                        window.location.href = '{redirectUrl}';
-                    }}, 300);
-                </script>
-            </body>
-        </html>";
+<!DOCTYPE html>
+<html lang='vi'>
+    <head>
+        <meta charset='utf-8' />
+        <meta name='viewport' content='width=device-width, initial-scale=1'>
+        <title>Đang chuyển hướng...</title>
+        <meta http-equiv='refresh' content='1;url={finalRedirect}' />
+        <style>
+            body {{
+                font-family: Arial, sans-serif;
+                text-align: center;
+                margin-top: 80px;
+                color: #333;
+            }}
+            a {{
+                color: #007bff;
+                text-decoration: none;
+            }}
+        </style>
+    </head>
+    <body>
+        <h3>Đang chuyển hướng về ứng dụng...</h3>
+        <p>Nếu không tự chuyển, hãy <a href='{finalRedirect}'>bấm vào đây</a>.</p>
+        <script>
+            setTimeout(function() {{
+                window.location.href = '{finalRedirect}';
+            }}, 800);
+        </script>
+    </body>
+</html>";
 
-                return Content(html, "text/html");
+                return Content(html, "text/html; charset=utf-8");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error while processing payment callback for app.");
 
                 string failUrl = "ifms://payment-result?success=false&message=PaymentError";
-
                 string html = $@"
-        <html>
-            <head>
-                <meta http-equiv='refresh' content='0;url={failUrl}' />
-            </head>
-            <body>
-                <p>Payment failed. Redirecting...</p>
-                <a href='{failUrl}'>Click here if not redirected.</a>
-                <script>
-                    setTimeout(function() {{
-                        window.location.href = '{failUrl}';
-                    }}, 300);
-                </script>
-            </body>
-        </html>";
+<!DOCTYPE html>
+<html lang='vi'>
+    <head>
+        <meta charset='utf-8' />
+        <meta name='viewport' content='width=device-width, initial-scale=1'>
+        <title>Thanh toán thất bại</title>
+        <meta http-equiv='refresh' content='2;url={failUrl}' />
+    </head>
+    <body style='font-family: Arial, sans-serif; text-align: center; margin-top: 80px;'>
+        <h3>Thanh toán thất bại. Đang chuyển hướng...</h3>
+        <a href='{failUrl}'>Nhấn vào đây nếu không tự chuyển.</a>
+        <script>
+            setTimeout(function() {{
+                window.location.href = '{failUrl}';
+            }}, 800);
+        </script>
+    </body>
+</html>";
 
-                return Content(html, "text/html");
+                return Content(html, "text/html; charset=utf-8");
             }
         }
+
 
 
 
@@ -259,6 +289,7 @@ namespace WebAPI.Controllers
             var html = $@"
         <html>
         <head>
+<meta charset=""utf-8"" />
             <meta name='viewport' content='width=device-width, initial-scale=1'>
             <title>Redirecting to VNPAY...</title>
             <style>
