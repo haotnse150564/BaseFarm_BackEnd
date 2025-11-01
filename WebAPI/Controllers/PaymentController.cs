@@ -159,7 +159,7 @@ namespace WebAPI.Controllers
         //    }
         //}
         [HttpGet("CallBackForApp")]
-        public async Task<IActionResult> PaymentCallbackForApp([FromQuery] string source = "mobile")
+        public async Task<IActionResult> PaymentCallbackForApp()
         {
             try
             {
@@ -171,113 +171,31 @@ namespace WebAPI.Controllers
 
                 await _vnPayService.SavePaymentAsync(response);
 
-                // ✅ Tạo deeplink (app scheme)
-                string appDeepLink = $"ifms://payment-result" +
-                                     $"?success={(response.Success ? "true" : "false")}" +
-                                     $"&orderId={response.OrderId}" +
-                                     $"&amount={response.Amount}" +
-                                     $"&code={WebUtility.UrlEncode(response.VnPayResponseCode)}" +
-                                     $"&message={WebUtility.UrlEncode(response.Success ? "PaymentSuccess" : "PaymentFailed")}";
+                // ✅ Luôn redirect về trang web kết quả
+                string resultUrl = $"https://web-sep490.vercel.app/payment-result" +
+                                   $"?success={(response.Success ? "true" : "false")}" +
+                                   $"&orderId={response.OrderId}" +
+                                   $"&amount={response.Amount}" +
+                                   $"&code={WebUtility.UrlEncode(response.VnPayResponseCode)}" +
+                                   $"&message={WebUtility.UrlEncode(response.Success ? "PaymentSuccess" : "PaymentFailed")}";
 
-                // ✅ URL fallback (cho trình duyệt/web)
-                string fallbackUrl = $"https://iotfarm.onrender.com/payment-result" +
-                                     $"?success={(response.Success ? "true" : "false")}" +
-                                     $"&orderId={response.OrderId}";
+                _logger.LogInformation($"Redirecting to result page: {resultUrl}");
 
-                // ✅ Kiểm tra User-Agent
-                string userAgent = Request.Headers["User-Agent"].ToString().ToLower();
-                bool isMobile = userAgent.Contains("mobile") || userAgent.Contains("android") || userAgent.Contains("iphone");
-
-                // ✅ Mobile → deeplink, Web → fallback
-                string finalRedirect = isMobile ? appDeepLink : fallbackUrl;
-
-                // ✅ Không cache response
+                // ✅ Không cache callback
                 Response.Headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0";
                 Response.Headers["Pragma"] = "no-cache";
                 Response.Headers["Expires"] = "0";
 
-                // ✅ HTML: có cả meta refresh + JS + link thủ công
-                string html = $@"
-<!DOCTYPE html>
-<html lang='vi'>
-  <head>
-    <meta charset='utf-8' />
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <title>Đang chuyển hướng...</title>
-    <meta http-equiv='refresh' content='1;url={finalRedirect}' />
-    <style>
-      body {{
-        font-family: Arial, sans-serif;
-        text-align: center;
-        margin-top: 80px;
-        color: #333;
-      }}
-      a {{
-        color: #007bff;
-        text-decoration: none;
-      }}
-    </style>
-  </head>
-  <body>
-    <h3>Đang chuyển hướng về ứng dụng...</h3>
-    <p>Nếu không tự chuyển, hãy <a href='{finalRedirect}'>bấm vào đây</a>.</p>
-
-    <script>
-      (function() {{
-        const deepLink = '{appDeepLink}';
-        const fallback = '{fallbackUrl}';
-
-        // ✅ Cho phép redirect ngay nếu là WebView / Android / iOS
-        setTimeout(() => {{
-          try {{
-            window.location.href = deepLink;
-          }} catch (e) {{
-            window.open(deepLink);
-          }}
-        }}, 500);
-
-        // ✅ Nếu deeplink bị chặn → fallback sau 3s
-        setTimeout(() => {{
-          window.location.href = fallback;
-        }}, 3000);
-      }})();
-    </script>
-  </body>
-</html>";
-
-                return Content(html, "text/html; charset=utf-8");
+                // ✅ Redirect thẳng sang web
+                return Redirect(resultUrl);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while processing payment callback for app.");
+                _logger.LogError(ex, "Error while processing payment callback.");
 
-                string failUrl = "ifms://payment-result?success=false&message=PaymentError";
-
-                string html = $@"
-<!DOCTYPE html>
-<html lang='vi'>
-  <head>
-    <meta charset='utf-8' />
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <title>Thanh toán thất bại</title>
-    <meta http-equiv='refresh' content='2;url={failUrl}' />
-  </head>
-  <body style='font-family: Arial, sans-serif; text-align: center; margin-top: 80px;'>
-    <h3>Thanh toán thất bại. Đang chuyển hướng...</h3>
-    <a href='{failUrl}'>Nhấn vào đây nếu không tự chuyển.</a>
-    <script>
-      setTimeout(function() {{
-        try {{
-          window.location.href = '{failUrl}';
-        }} catch (e) {{
-          window.open('{failUrl}');
-        }}
-      }}, 500);
-    </script>
-  </body>
-</html>";
-
-                return Content(html, "text/html; charset=utf-8");
+                // Nếu lỗi → chuyển đến trang lỗi web
+                string failUrl = "https://iotfarm.onrender.com/payment-result?success=false&message=PaymentError";
+                return Redirect(failUrl);
             }
         }
 
