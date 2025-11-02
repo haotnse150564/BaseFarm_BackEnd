@@ -29,15 +29,14 @@ public class VnPayLibrary
         var orderId = Convert.ToInt64(vnPay.GetResponseData("vnp_TxnRef"));
         var vnPayTranId = Convert.ToInt64(vnPay.GetResponseData("vnp_TransactionNo"));
         var vnpResponseCode = vnPay.GetResponseData("vnp_ResponseCode");
-        var vnpSecureHash =
-            collection.FirstOrDefault(k => k.Key == "vnp_SecureHash").Value; //hash của dữ liệu trả về
+        var vnpSecureHash = collection.FirstOrDefault(k => k.Key == "vnp_SecureHash").Value;
         var orderInfo = vnPay.GetResponseData("vnp_OrderInfo");
         var amountString = vnPay.GetResponseData("vnp_Amount");
-        var amount = !string.IsNullOrEmpty(amountString) ? Convert.ToDecimal(amountString) : 0; // Không chia 100
+        var amount = !string.IsNullOrEmpty(amountString)
+            ? Convert.ToDecimal(amountString) / 100
+            : 0;
 
-
-        var checkSignature =
-            vnPay.ValidateSignature(vnpSecureHash, hashSecret); //check Signature
+        var checkSignature = vnPay.ValidateSignature(vnpSecureHash, hashSecret);
 
         if (!checkSignature)
             return new PaymentResponseModel()
@@ -58,6 +57,7 @@ public class VnPayLibrary
             Amount = amount
         };
     }
+
     public string GetIpAddress(HttpContext context)
     {
         var ipAddress = string.Empty;
