@@ -16,8 +16,8 @@ namespace Infrastructure.ViewModel.Request
         public string PhoneNumber { get; set; } 
         [Required]
         public string Province { get; set; } 
-        [Required]
-        public string District { get; set; }    
+        //[Required]
+        //public string District { get; set; }    
         [Required]
         public string Ward { get; set; }
         [Required]
