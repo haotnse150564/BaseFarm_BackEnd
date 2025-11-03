@@ -91,6 +91,7 @@ namespace Infrastructure.Repositories.Implement
                     {
                         ProductId = od.ProductId,
                         ProductName = od.Product.ProductName,
+                        Images = od.Product.Images,
                         Price = od.UnitPrice,
                         StockQuantity = od.Quantity
                     }).ToList()

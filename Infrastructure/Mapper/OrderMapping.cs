@@ -31,6 +31,7 @@ namespace Infrastructure.Mapper
 
             CreateMap<OrderDetail, ViewProductDTO>()
             .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.ProductName))
+            .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Product.Images))
             .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.UnitPrice))
             .ForMember(dest => dest.StockQuantity, opt => opt.MapFrom(src => src.Quantity));
 
@@ -46,6 +47,7 @@ namespace Infrastructure.Mapper
 
             CreateMap<Product, ViewProductDTO>()
                 .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.ProductName))
+                .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
                 .ReverseMap(); // 🔥 Mapping trực tiếp từ Product sang ViewProductDTO
 
             CreateMap<UpdateOrderStatusDTO, Order>()
@@ -61,6 +63,7 @@ namespace Infrastructure.Mapper
             // 🔥 Mapping từ OrderDetailDTO sang ViewProductDTO
             CreateMap<OrderDetailDTO, ViewProductDTO>()
                 .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.ProductName))
+                .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.UnitPrice))
                 .ForMember(dest => dest.StockQuantity, opt => opt.MapFrom(src => src.Quantity));
         }
