@@ -55,7 +55,8 @@ namespace Infrastructure.Mapper
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt.HasValue ? src.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null));
 
             CreateMap<OrderDetail, OrderDetailDTO>()
-                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.ProductName)); // 🔥 Tránh lỗi nếu ProductName chưa có
+                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.ProductName)) // 🔥 Tránh lỗi nếu ProductName chưa có
+                .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Product.Images));
 
             // 🔥 Mapping từ OrderDetailDTO sang ViewProductDTO
             CreateMap<OrderDetailDTO, ViewProductDTO>()

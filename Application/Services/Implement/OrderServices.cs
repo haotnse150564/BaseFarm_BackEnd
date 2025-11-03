@@ -121,6 +121,7 @@ namespace Application.Services.Implement
                 var orderDetailDTOs = orderItems.Select(od => new OrderDetailDTO
                 {
                     ProductId = od.ProductId,
+                    Images = productList[od.ProductId].Images,
                     ProductName = productList[od.ProductId].ProductName, // ✅ Lấy ProductName từ danh sách đã lưu
                     UnitPrice = od.UnitPrice,
                     Quantity = od.Quantity
