@@ -42,10 +42,10 @@ namespace Infrastructure.FluentAPI
             .IsUnicode(true).IsRequired();
 
 
-            builder.Property(e => e.District)
-            .HasColumnName("district")
-            .HasMaxLength(100)
-            .IsUnicode(true).IsRequired();
+            //builder.Property(e => e.District)
+            //.HasColumnName("district")
+            //.HasMaxLength(100)
+            //.IsUnicode(true).IsRequired();
 
 
             builder.Property(e => e.Ward)
