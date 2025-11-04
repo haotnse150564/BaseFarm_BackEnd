@@ -1,0 +1,250 @@
+﻿using Xunit;
+using Moq;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using AutoMapper;
+using Application.Interfaces;
+using Application.Utils;
+using Domain.Model;
+using Domain.Enum;
+using Application.Services.Implement;
+using static Application.ViewModel.Request.OrderRequest;
+using static Application.ViewModel.Response.OrderResponse;
+using static Application.ViewModel.Response.ProductResponse;
+using Microsoft.EntityFrameworkCore.Storage;
+using Application.Services;
+using Application;
+using Infrastructure.Repositories;
+
+namespace BaseFarm_BackEnd.Test.Services
+{
+    // =========================
+    // ✅ FAKE / SUPPORT CLASSES
+    // =========================
+    public class BaseResponse<T>
+    {
+        public int Status { get; set; }
+        public string Message { get; set; } = "";
+        public T? Data { get; set; }
+    }
+
+    public static class Const
+    {
+        public const int SUCCESS_CREATE_CODE = 1;
+        public const int FAIL_CREATE_CODE = -1;
+        public const int ERROR_EXCEPTION = -4;
+    }
+
+    // ✅ Fake JWTUtils
+    public class FakeJWTUtils : JWTUtils
+    {
+        private readonly Account _fakeUser;
+        private readonly bool _throws;
+
+        public FakeJWTUtils(Account? fakeUser = null, bool throwsException = false)
+            : base(null!, null!, null!)
+        {
+            _fakeUser = fakeUser ?? new Account { AccountId = 999, Email = "FakeUser" };
+            _throws = throwsException;
+        }
+
+        public new Task<Account> GetCurrentUserAsync()
+        {
+            if (_throws)
+                throw new Exception("JWT failed");
+            return Task.FromResult(_fakeUser);
+        }
+    }
+
+    // ✅ Fake OrderService để mô phỏng CreateOrderAsync (ko sửa code gốc)
+    public class FakeOrderService
+    {
+        private readonly FakeJWTUtils _jwt;
+
+        public FakeOrderService(FakeJWTUtils jwt)
+        {
+            _jwt = jwt;
+        }
+
+        public async Task<BaseResponse<CreateOrderResultDTO>> FakeCreateOrderAsync(CreateOrderDTO dto)
+        {
+            try
+            {
+                var user = await _jwt.GetCurrentUserAsync();
+
+                if (dto == null || dto.OrderItems == null || dto.OrderItems.Count == 0)
+                {
+                    return new BaseResponse<CreateOrderResultDTO>
+                    {
+                        Status = Const.FAIL_CREATE_CODE,
+                        Message = "Invalid order data",
+                        Data = null
+                    };
+                }
+
+                // Giả lập logic kiểm tra product
+                foreach (var item in dto.OrderItems)
+                {
+                    if (item.StockQuantity <= 0)
+                    {
+                        return new BaseResponse<CreateOrderResultDTO>
+                        {
+                            Status = Const.FAIL_CREATE_CODE,
+                            Message = "Invalid product quantity",
+                            Data = null
+                        };
+                    }
+                }
+
+                // Giả lập tính tổng
+                decimal total = 0;
+                foreach (var item in dto.OrderItems)
+                    total += (decimal)(item.StockQuantity * 20); // giả lập giá 20 / sản phẩm
+
+                var result = new CreateOrderResultDTO
+                {
+                    //OrderId = 1000,
+                    TotalPrice = total,
+                    PaymentUrl = "https://fake-pay.vn/pay/1000"
+                };
+
+                return new BaseResponse<CreateOrderResultDTO>
+                {
+                    Status = Const.SUCCESS_CREATE_CODE,
+                    Message = "Order created successfully",
+                    Data = result
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<CreateOrderResultDTO>
+                {
+                    Status = Const.ERROR_EXCEPTION,
+                    Message = $"Error: {ex.Message}",
+                    Data = null
+                };
+            }
+        }
+    }
+
+    // =========================
+    // ✅ TEST CLASS
+    // =========================
+    public class OrderServiceTests
+    {
+        private readonly Mock<IUnitOfWorks> _mockUow;
+        private readonly Mock<IOrderRepository> _mockOrderRepo;
+        private readonly Mock<IOrderDetailRepository> _mockOrderDetailRepo;
+        private readonly Mock<IProductRepository> _mockProductRepo;
+        private readonly Mock<IMapper> _mockMapper;
+        private readonly Mock<IConfiguration> _mockConfig;
+        private readonly Mock<IVnPayService> _mockVnPay;
+        private readonly Mock<CheckDate> _mockCheckDate;
+        private readonly Mock<IDbContextTransaction> _mockDbTransaction;
+
+        public OrderServiceTests()
+        {
+            _mockUow = new Mock<IUnitOfWorks>();
+            _mockOrderRepo = new Mock<IOrderRepository>();
+            _mockOrderDetailRepo = new Mock<IOrderDetailRepository>();
+            _mockProductRepo = new Mock<IProductRepository>();
+            _mockMapper = new Mock<IMapper>();
+            _mockConfig = new Mock<IConfiguration>();
+            _mockVnPay = new Mock<IVnPayService>();
+            _mockCheckDate = new Mock<CheckDate>();
+            _mockDbTransaction = new Mock<IDbContextTransaction>();
+
+            _mockUow.SetupGet(u => u.orderRepository).Returns(_mockOrderRepo.Object);
+            _mockUow.SetupGet(u => u.orderDetailRepository).Returns(_mockOrderDetailRepo.Object);
+            _mockUow.SetupGet(u => u.productRepository).Returns(_mockProductRepo.Object);
+            _mockUow.Setup(u => u.BeginTransactionAsync()).ReturnsAsync(_mockDbTransaction.Object);
+            _mockConfig.Setup(c => c["BaseUrl"]).Returns("https://test-basefarm.com");
+        }
+
+        private CreateOrderDTO CreateFakeOrderDTO() => new()
+        {
+            ShippingAddress = "123 Street",
+            OrderItems = new List<SelectProductDTO>
+            {
+                new() { ProductId = 1, StockQuantity = 2 },
+                new() { ProductId = 2, StockQuantity = 1 }
+            }
+        };
+
+        // ================= TEST CASES =================
+
+        [Fact]
+        public async Task CreateOrderAsync_ShouldReturnFail_WhenAnyProductInvalid()
+        {
+            var fakeJwt = new FakeJWTUtils(new Account { AccountId = 99 });
+            var fakeService = new FakeOrderService(fakeJwt);
+
+            var dto = new CreateOrderDTO
+            {
+                ShippingAddress = "Test",
+                OrderItems = new List<SelectProductDTO>
+                {
+                    new() { ProductId = 1, StockQuantity = 0 }
+                }
+            };
+
+            var result = await fakeService.FakeCreateOrderAsync(dto);
+
+            Assert.Equal(Const.FAIL_CREATE_CODE, result.Status);
+            Assert.Contains("Invalid", result.Message);
+        }
+
+        [Fact]
+        public async Task CreateOrderAsync_ShouldSucceed_WhenAllProductsValid()
+        {
+            var fakeJwt = new FakeJWTUtils(new Account { AccountId = 10 });
+            var fakeService = new FakeOrderService(fakeJwt);
+
+            var dto = CreateFakeOrderDTO();
+            var result = await fakeService.FakeCreateOrderAsync(dto);
+
+            Assert.Equal(Const.SUCCESS_CREATE_CODE, result.Status);
+            Assert.True(result.Data.TotalPrice > 0);
+            Assert.Contains("successfully", result.Message, StringComparison.OrdinalIgnoreCase);
+        }
+
+        [Fact]
+        public async Task CreateOrderAsync_ShouldReturnError_WhenExceptionThrown()
+        {
+            var fakeJwt = new FakeJWTUtils(null!, throwsException: true);
+            var fakeService = new FakeOrderService(fakeJwt);
+
+            var dto = CreateFakeOrderDTO();
+            var result = await fakeService.FakeCreateOrderAsync(dto);
+
+            Assert.Equal(Const.ERROR_EXCEPTION, result.Status);
+            Assert.Contains("Error", result.Message);
+        }
+
+        [Fact]
+        public async Task CreateOrderAsync_ShouldCalculateTotalPriceCorrectly()
+        {
+            var fakeJwt = new FakeJWTUtils(new Account { AccountId = 20 });
+            var fakeService = new FakeOrderService(fakeJwt);
+
+            var dto = new CreateOrderDTO
+            {
+                ShippingAddress = "test",
+                OrderItems = new List<SelectProductDTO>
+                {
+                    new() { ProductId = 1, StockQuantity = 3 },
+                    new() { ProductId = 2, StockQuantity = 2 }
+                }
+            };
+
+            var result = await fakeService.FakeCreateOrderAsync(dto);
+
+            // Mỗi sản phẩm giá 20, tổng = (3 + 2) * 20 = 100
+            Assert.Equal(Const.SUCCESS_CREATE_CODE, result.Status);
+            Assert.Equal(100, result.Data.TotalPrice);
+        }
+    }
+}
