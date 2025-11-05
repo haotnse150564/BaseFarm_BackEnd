@@ -108,9 +108,9 @@ namespace WebAPI.Controllers
         }
         [HttpPut("update-password")]
         [Authorize]
-        public async Task<IActionResult> ChangPassword(long id, [FromBody] ChangePasswordDTO request)
+        public async Task<IActionResult> ChangPassword([FromBody] ChangePasswordDTO request)
         {
-            var result = await _accountServices.ChangePassword(id, request);
+            var result = await _accountServices.ChangePassword(request);
             if (result != null)
                 return Ok(result);
             return BadRequest("Failed to update roles.");
