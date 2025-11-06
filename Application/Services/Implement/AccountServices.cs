@@ -319,10 +319,11 @@ namespace WebAPI.Services
             }
         }
 
-        public async Task<ResponseDTO> ChangePassword(long id, ChangePasswordDTO request)
+        public async Task<ResponseDTO> ChangePassword(ChangePasswordDTO request)
         {
+            var userCurrent = await _jwtUtils.GetCurrentUserAsync();
             //Kiểm tra tài khoản có tồn tại hay không
-            var account = await _unitOfWork.accountRepository.GetByIdAsync(id);
+            var account = await _unitOfWork.accountRepository.GetByIdAsync(userCurrent.AccountId);
             if (account == null)
             {
                 return new ResponseDTO(404, "Account not found");

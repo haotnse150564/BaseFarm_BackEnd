@@ -28,7 +28,7 @@ namespace Infrastructure.Repositories.Implement
                 .Include(o => o.Customer)
                 .Include(o => o.OrderDetails)
                     .ThenInclude(od => od.Product)
-                .OrderByDescending(o => o.CreatedAt)
+                .OrderByDescending(o => o.OrderId)
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
                 .Select(o => new OrderResultDTO
@@ -76,7 +76,7 @@ namespace Infrastructure.Repositories.Implement
                 .Include(o => o.Customer)
                 .Include(o => o.OrderDetails)
                     .ThenInclude(od => od.Product)
-                .OrderByDescending(o => o.CreatedAt)
+                .OrderByDescending(o => o.OrderId)
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
                 .Select(o => new OrderResultDTO
@@ -136,7 +136,7 @@ namespace Infrastructure.Repositories.Implement
         {
             return await _context.Order
                 .Where(o => o.OrderId == orderId)
-                .OrderByDescending(o => o.CreatedAt) // Sắp xếp theo ngày mới nhất
+                .OrderByDescending(o => o.OrderId) // Sắp xếp theo ngày mới nhất
                 .Include(o => o.Customer)
                 .Include(o => o.OrderDetails)
                     .ThenInclude(od => od.Product)
@@ -150,7 +150,7 @@ namespace Infrastructure.Repositories.Implement
                 .Include(o => o.Customer)
                 .Include(o => o.OrderDetails)
                     .ThenInclude(od => od.Product)
-                .OrderByDescending(o => o.CreatedAt);
+                .OrderByDescending(o => o.OrderId);
 
             var totalItemCount = await query.CountAsync();
 
@@ -191,7 +191,7 @@ namespace Infrastructure.Repositories.Implement
                      .Include(o => o.Customer)
                      .Include(o => o.OrderDetails)
                          .ThenInclude(od => od.Product)
-                         .OrderByDescending(o => o.CreatedAt)
+                         .OrderByDescending(o => o.OrderId)
                      .ToListAsync();
                 return result;
             }
@@ -211,7 +211,7 @@ namespace Infrastructure.Repositories.Implement
                 .Include(o => o.Customer)
                 .Include(o => o.OrderDetails)
                     .ThenInclude(od => od.Product)
-                        .OrderByDescending(o => o.CreatedAt)
+                        .OrderByDescending(o => o.OrderId)
                 .ToListAsync();
             return result;
         }
