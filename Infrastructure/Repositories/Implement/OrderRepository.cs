@@ -44,7 +44,8 @@ namespace Infrastructure.Repositories.Implement
                         ProductId = od.ProductId,
                         ProductName = od.Product.ProductName,
                         Price = od.UnitPrice,
-                        StockQuantity = od.Quantity
+                        StockQuantity = od.Quantity,
+                        Images = od.Product.Images
                     }).ToList()
                 })
                 .ToListAsync();
