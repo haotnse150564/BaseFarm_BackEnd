@@ -22,7 +22,7 @@ namespace Application.Services
         Task<Pagination<ViewAccount>> GetAllAccountAsync(int pageSize, int pageIndex, AccountStatus? status, Roles? role);
         Task<ViewAccount> GetAccountByEmail(string email);
         Task<ViewAccount> UpdateRoleForUser(long id, int roleId);
-        Task<ResponseDTO> ChangePassword(long id, ChangePasswordDTO request);
+        Task<ResponseDTO> ChangePassword(ChangePasswordDTO request);
 
     }
 }
