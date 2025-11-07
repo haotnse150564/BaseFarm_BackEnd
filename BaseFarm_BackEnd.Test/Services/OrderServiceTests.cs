@@ -18,6 +18,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Application.Services;
 using Application;
 using Infrastructure.Repositories;
+using Application.ViewModel.Request;
 
 namespace BaseFarm_BackEnd.Test.Services
 {
@@ -164,6 +165,19 @@ namespace BaseFarm_BackEnd.Test.Services
             _mockConfig.Setup(c => c["BaseUrl"]).Returns("https://test-basefarm.com");
         }
 
+        // ✅ Hàm tạo OrderService thực tế với mock
+        private OrderServices CreateOrderService()
+        {
+            return new OrderServices(
+                _mockUow.Object,
+                _mockMapper.Object,
+                new FakeJWTUtils(),        // fake jwt
+                _mockVnPay.Object,
+                _mockCheckDate.Object,
+                _mockConfig.Object
+            );
+        }
+
         private CreateOrderDTO CreateFakeOrderDTO() => new()
         {
             ShippingAddress = "123 Street",
@@ -246,5 +260,359 @@ namespace BaseFarm_BackEnd.Test.Services
             Assert.Equal(Const.SUCCESS_CREATE_CODE, result.Status);
             Assert.Equal(100, result.Data.TotalPrice);
         }
+
+        // ============================================
+        // ✅ TEST 1: Order không tồn tại
+        // ============================================
+        [Fact]
+        public async Task UpdateOrderDeliveryStatusAsync_ShouldReturnFail_WhenOrderNotFound()
+        {
+            // Arrange
+            _mockOrderRepo.Setup(r => r.GetOrderById(It.IsAny<long>()))
+                          .ReturnsAsync((Order)null);
+
+            var service = CreateOrderService();
+
+            // Act
+            var result = await service.UpdateOrderDeliveryStatusAsync(1);
+
+            // Assert
+            Assert.Equal(Const.FAIL_CREATE_CODE, result.Status);
+            Assert.Equal("Order not found !", result.Data); // Đây mới là đúng giá trị
+        }
+
+
+        // ============================================
+        // ✅ TEST 2: Update thành công
+        // ============================================
+        [Fact]
+        public async Task UpdateOrderDeliveryStatusAsync_ShouldSucceed_WhenOrderExists()
+        {
+            // Arrange
+            var order = new Order { OrderId = 1, Status = PaymentStatus.DELIVERED };
+
+            _mockOrderRepo.Setup(r => r.GetOrderById(1))
+                          .ReturnsAsync(order);
+
+            var service = CreateOrderService();
+
+            // Act
+            var result = await service.UpdateOrderDeliveryStatusAsync(1);
+
+            // Assert
+            Assert.Equal(Const.SUCCESS_CREATE_CODE, result.Status);
+            Assert.Equal(PaymentStatus.DELIVERED, order.Status);
+        }
+
+        // ============================================
+        // ✅ TEST 3: Đảm bảo Repository.UpdateAsync được gọi đúng 1 lần
+        // ============================================
+        [Fact]
+        public async Task UpdateOrderDeliveryStatusAsync_ShouldCallUpdateRepository()
+        {
+            // Arrange
+            var order = new Order { OrderId = 1, Status = PaymentStatus.PENDING };
+
+            _mockOrderRepo.Setup(r => r.GetOrderById(1)).ReturnsAsync(order);
+
+            var service = CreateOrderService();
+
+            // Act
+            await service.UpdateOrderDeliveryStatusAsync(1);
+
+            // Assert
+            _mockOrderRepo.Verify(r => r.UpdateAsync(order), Times.Once);
+        }
+
+        // ============================================
+        // ✅ TEST 4: Ném exception → Trả Response lỗi
+        // ============================================
+        [Fact]
+        public async Task UpdateOrderDeliveryStatusAsync_ShouldReturnError_WhenExceptionThrown()
+        {
+            // Arrange
+            _mockOrderRepo.Setup(r => r.GetOrderById(It.IsAny<long>()))
+                          .ThrowsAsync(new Exception("Database error!"));
+
+            var service = CreateOrderService();
+
+            // Act
+            var result = await service.UpdateOrderDeliveryStatusAsync(1);
+
+            // Assert
+            Assert.Equal(Const.ERROR_EXCEPTION, result.Status);
+            Assert.Contains("error", result.Message, StringComparison.OrdinalIgnoreCase);
+        }
+
+        [Fact]
+        public async Task UpdateOrderCompletedStatusAsync_ShouldReturnFail_WhenOrderNotFound()
+        {
+            // Arrange
+            _mockOrderRepo.Setup(r => r.GetOrderById(It.IsAny<long>()))
+                          .ReturnsAsync((Order)null);
+
+            var service = CreateOrderService();
+
+            // Act
+            var result = await service.UpdateOrderCompletedStatusAsync(1);
+
+            // Assert
+            Assert.Equal(Const.FAIL_CREATE_CODE, result.Status);
+            Assert.Equal("Order not found !", result.Data);
+        }
+
+        [Fact]
+        public async Task UpdateOrderCompletedStatusAsync_ShouldSucceed_WhenOrderExists()
+        {
+            // Arrange
+            var order = new Order { OrderId = 1, Status = PaymentStatus.DELIVERED };
+
+            _mockOrderRepo.Setup(r => r.GetOrderById(1)).ReturnsAsync(order);
+
+            var service = CreateOrderService();
+
+            // Act
+            var result = await service.UpdateOrderCompletedStatusAsync(1);
+
+            // Assert
+            Assert.Equal(Const.SUCCESS_CREATE_CODE, result.Status);
+            Assert.Equal(PaymentStatus.COMPLETED, order.Status);
+        }
+
+        [Fact]
+        public async Task UpdateOrderCompletedStatusAsync_ShouldCallUpdateRepository()
+        {
+            // Arrange
+            var order = new Order { OrderId = 1, Status = PaymentStatus.COMPLETED };
+
+            _mockOrderRepo.Setup(r => r.GetOrderById(1)).ReturnsAsync(order);
+
+            var service = CreateOrderService();
+
+            // Act
+            await service.UpdateOrderCompletedStatusAsync(1);
+
+            // Assert
+            _mockOrderRepo.Verify(r => r.UpdateAsync(order), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateOrderCompletedStatusAsync_ShouldReturnError_WhenExceptionThrown()
+        {
+            // Arrange
+            _mockOrderRepo.Setup(r => r.GetOrderById(It.IsAny<long>()))
+                          .ThrowsAsync(new Exception("DB Crash"));
+
+            var service = CreateOrderService();
+
+            // Act
+            var result = await service.UpdateOrderCompletedStatusAsync(1);
+
+            // Assert
+            Assert.Equal(Const.ERROR_EXCEPTION, result.Status);
+            Assert.Contains("DB Crash", result.Message);
+        }
+
+        [Fact]
+        public async Task UpdateOrderCancelStatusAsync_ShouldReturnFail_WhenOrderNotFound()
+        {
+            // Arrange
+            _mockOrderRepo.Setup(r => r.GetOrderById(It.IsAny<long>()))
+                          .ReturnsAsync((Order)null);
+
+            var service = CreateOrderService();
+
+            // Act
+            var result = await service.UpdateOrderCancelStatusAsync(1);
+
+            // Assert
+            Assert.Equal(Const.FAIL_CREATE_CODE, result.Status);
+            Assert.Equal("Order not found!", result.Data);
+        }
+
+        [Fact]
+        public async Task UpdateOrderCancelStatusAsync_ShouldReturnFail_WhenOrderAlreadyCancelled()
+        {
+            // Arrange
+            var order = new Order { OrderId = 1, Status = PaymentStatus.CANCELLED };
+
+            _mockOrderRepo.Setup(r => r.GetOrderById(1)).ReturnsAsync(order);
+
+            var service = CreateOrderService();
+
+            // Act
+            var result = await service.UpdateOrderCancelStatusAsync(1);
+
+            // Assert
+            Assert.Equal(Const.FAIL_CREATE_CODE, result.Status);
+            Assert.Equal("Order is already cancelled.", result.Data);
+        }
+
+        [Fact]
+        public async Task UpdateOrderCancelStatusAsync_ShouldSucceed_WhenOrderCanBeCancelled()
+        {
+            // Arrange
+            var order = new Order { OrderId = 1, Status = PaymentStatus.PENDING };
+
+            _mockOrderRepo.Setup(r => r.GetOrderById(1)).ReturnsAsync(order);
+
+            var service = CreateOrderService();
+
+            // Act
+            var result = await service.UpdateOrderCancelStatusAsync(1);
+
+            // Assert
+            Assert.Equal(Const.SUCCESS_CREATE_CODE, result.Status);
+            Assert.Equal(PaymentStatus.CANCELLED, order.Status);
+            Assert.Equal("Order cancelled and stock quantity restored.", result.Data);
+        }
+
+        [Fact]
+        public async Task UpdateOrderCancelStatusAsync_ShouldCallUpdateAndSaveChanges()
+        {
+            // Arrange
+            var order = new Order { OrderId = 1, Status = PaymentStatus.DELIVERED };
+
+            _mockOrderRepo.Setup(r => r.GetOrderById(1)).ReturnsAsync(order);
+
+            var service = CreateOrderService();
+
+            // Act
+            await service.UpdateOrderCancelStatusAsync(1);
+
+            // Assert
+            // ✅ Sửa dòng này:
+            _mockOrderRepo.Verify(r => r.UpdateAsync(It.IsAny<Order>()), Times.Once);
+
+            // ✅ Kiểm tra SaveChangesAsync vẫn gọi:
+            _mockUow.Verify(u => u.SaveChangesAsync(), Times.Once);
+        }
+
+
+        [Fact]
+        public async Task UpdateOrderCancelStatusAsync_ShouldReturnError_WhenExceptionThrown()
+        {
+            // Arrange
+            _mockOrderRepo.Setup(r => r.GetOrderById(It.IsAny<long>()))
+                          .ThrowsAsync(new Exception("DB Crash"));
+
+            var service = CreateOrderService();
+
+            // Act
+            var result = await service.UpdateOrderCancelStatusAsync(1);
+
+            // Assert
+            Assert.Equal(Const.ERROR_EXCEPTION, result.Status);
+            Assert.Contains("DB Crash", result.Message);
+        }
+
+        [Fact]
+        public async Task CreateOrderPaymentAsync_ShouldReturnError_WhenOrderNotFound()
+        {
+            // Arrange
+            _mockOrderRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync((Order)null!);
+
+            var service = CreateOrderService();
+
+            // Act
+            var result = await service.CreateOrderPaymentAsync(1, new DefaultHttpContext());
+
+            // Assert
+            Assert.Equal(Const.ERROR_EXCEPTION, result.Status);
+            Assert.Contains("not found", result.Message);
+        }
+
+        [Fact]
+        public async Task CreateOrderPaymentAsync_ShouldReturnFail_WhenStatusInvalid()
+        {
+            // Arrange
+            var order = new Order { OrderId = 1, Status = PaymentStatus.CANCELLED };
+            _mockOrderRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(order);
+
+            var service = CreateOrderService();
+
+            // Act
+            var result = await service.CreateOrderPaymentAsync(1, new DefaultHttpContext());
+
+            // Assert
+            Assert.Equal(Const.FAIL_CREATE_CODE, result.Status);
+            Assert.Contains("not in a valid state", result.Message);
+        }
+
+        [Fact]
+        public async Task CreateOrderPaymentAsync_ShouldUpdateStock_WhenStatusIsUNDISCHARGED()
+        {
+            // Arrange
+            var order = new Order
+            {
+                OrderId = 1,
+                Status = PaymentStatus.UNDISCHARGED,
+                TotalPrice = 100,
+                OrderDetails = new List<OrderDetail>
+        {
+            new OrderDetail { ProductId = 10, Quantity = 2 }
+        }
+            };
+
+            _mockOrderRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(order);
+
+            var mockTransaction = new Mock<IDbContextTransaction>();
+            _mockUow.Setup(u => u.BeginTransactionAsync()).ReturnsAsync(mockTransaction.Object);
+
+            var service = CreateOrderService();
+
+            // Act
+            await service.CreateOrderPaymentAsync(1, new DefaultHttpContext());
+
+            // Assert
+            _mockProductRepo.Verify(p => p.UpdateStockByOrderAsync(10, 2), Times.Once);
+            _mockUow.Verify(u => u.SaveChangesAsync(), Times.Once);
+            mockTransaction.Verify(t => t.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+
+        [Fact]
+        public async Task CreateOrderPaymentAsync_ShouldNotUpdateStock_WhenStatusIsPENDING()
+        {
+            // Arrange
+            var order = new Order
+            {
+                OrderId = 1,
+                Status = PaymentStatus.PENDING,
+                TotalPrice = 100,
+                OrderDetails = new List<OrderDetail>()
+            };
+
+            _mockOrderRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(order);
+
+            var service = CreateOrderService();
+
+            // Act
+            await service.CreateOrderPaymentAsync(1, new DefaultHttpContext());
+
+            // Assert
+            _mockProductRepo.Verify(p => p.UpdateStockByOrderAsync(It.IsAny<long>(), It.IsAny<int>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task CreateOrderPaymentAsync_ShouldReturnPaymentUrl_WhenSuccess()
+        {
+            // Arrange
+            var order = new Order { OrderId = 1, Status = PaymentStatus.PENDING, TotalPrice = 200 };
+
+            _mockOrderRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(order);
+            _mockVnPay.Setup(v => v.CreatePaymentUrl(It.IsAny<PaymentInformationModel>(), It.IsAny<HttpContext>()))
+                      .Returns("http://test-payment-url");
+
+            var service = CreateOrderService();
+
+            // Act
+            var result = await service.CreateOrderPaymentAsync(1, new DefaultHttpContext());
+
+            // Assert
+            Assert.Equal(Const.SUCCESS_CREATE_CODE, result.Status);
+            Assert.Equal("http://test-payment-url", result.Data?.GetType().GetProperty("PaymentUrl")?.GetValue(result.Data)?.ToString());
+        }
+
     }
 }
