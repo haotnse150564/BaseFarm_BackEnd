@@ -24,7 +24,7 @@ namespace WebAPI.Controllers
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> CreateSchedule([FromBody] ScheduleRequest request)
         {
-            var result = await _schedule.CreateScheduleAsync(request);
+            var result = await _schedule.CreateSchedulesAsync(request);
 
             if (result.Status != Const.SUCCESS_READ_CODE)
             {
@@ -37,7 +37,7 @@ namespace WebAPI.Controllers
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> AssidnStaff(long scheduleId, [FromBody] long staffId)
         {
-            var result = await _schedule.AssignStaff(scheduleId, staffId);
+            var result = await _schedule.AssignTask(scheduleId, staffId);
 
             if (result.Status != Const.SUCCESS_READ_CODE)
             {
@@ -50,7 +50,7 @@ namespace WebAPI.Controllers
         [Authorize(Roles = "Manager,Staff")]
         public async Task<IActionResult> GetListSchedule([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
-            var result = await _schedule.GetAllScheduleAsync(pageIndex, pageSize);
+            var result = await _schedule.GetAllSchedulesAsync(pageIndex, pageSize);
 
             if (result.Status != Const.SUCCESS_READ_CODE)
             {
@@ -63,7 +63,7 @@ namespace WebAPI.Controllers
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetScheduleByID(long id)
         {
-            var result = await _schedule.GetScheduleByIdAsync(id);
+            var result = await _schedule.ScheduleByIdAsync(id);
 
             if (result.Status != Const.SUCCESS_READ_CODE)
             {
@@ -91,7 +91,7 @@ namespace WebAPI.Controllers
 
         public async Task<IActionResult> UpdateSchedule(long scheduleId, [FromBody] ScheduleRequest request)
         {
-            var result = await _schedule.UpdateScheduleById(scheduleId, request);
+            var result = await _schedule.UpdateSchedulesAsync(scheduleId, request);
 
             if (result.Status != Const.SUCCESS_READ_CODE)
             {
@@ -105,7 +105,7 @@ namespace WebAPI.Controllers
         [Authorize(Roles = "Staff")]
         public async Task<IActionResult> GetScheduleByStaffID(int month)
         {
-            var result = await _schedule.GetScheduleByCurrentStaffAsync(month);
+            var result = await _schedule.ScheduleStaffView(month);
 
             if (result.Status != Const.SUCCESS_READ_CODE)
             {

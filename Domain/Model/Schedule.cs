@@ -6,6 +6,7 @@ namespace Domain.Model;
 
 public partial class Schedule
 {
+    public long ManagerId { get; set; }
     public long ScheduleId { get; set; }
 
     public DateOnly? StartDate { get; set; }

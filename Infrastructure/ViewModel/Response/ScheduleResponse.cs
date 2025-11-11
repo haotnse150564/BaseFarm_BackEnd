@@ -1,4 +1,5 @@
-﻿using Domain.Model;
+﻿using Domain.Enum;
+using Domain.Model;
 using System.Text.Json.Serialization;
 using static Infrastructure.ViewModel.Response.AccountResponse;
 using static Infrastructure.ViewModel.Response.CropResponse;
@@ -10,34 +11,35 @@ namespace Infrastructure.ViewModel.Response
 {
     public class ScheduleResponse
     {
-        public class ViewSchedule
+        public class ScheduleResponseView
         {
-            public long ScheduleId { get; set; }
-            public string? FullNameStaff { get; set; }
+            public DateOnly? StartDate { get; set; }
 
-            public string? StartDate { get; set; }
+            public DateOnly? EndDate { get; set; }
 
-            public string? EndDate { get; set; }
-
-            public string? Status { get; set; }
-
-            public string? CreatedAt { get; set; }
-
-            public string? PlantingDate { get; set; }
-            public string? UpdatedAt { get; set; }
-            public string? ActivityType { get; set; }
-            public string? HarvestDate { get; set; }
             public int? Quantity { get; set; }
-            public ViewAccount? accountView { get; set; }
-            public IEnumerable <FarmActivityView>? farmActivityView { get; set; }
-            public FarmView? farmDetailView { get; set; } 
-            public CropView? cropView { get; set; }
-            public List<DailyLogView>? dailyLog { get; set; }
 
-            public long AssignedTo { get; set; }
-            public List<int> FarmActivityId { get; set; }
-            public long FarmId { get; set; }
-            public long CropId { get; set; }
+            public Status? Status { get; set; }
+
+            public bool PesticideUsed { get; set; }
+
+            public DiseaseStatus? DiseaseStatus { get; set; }
+
+            public DateOnly? PlantingDate { get; set; }
+
+            public DateOnly? HarvestDate { get; set; }
+
+            public DateOnly? CreatedAt { get; set; }
+
+            public DateOnly? UpdatedAt { get; set; }
+
+            public string? ManagerName { get; set; }
+            public string? StaffName { get; set; }
+            public ViewAccount? Staff { get; set; }
+            public FarmActivityView? farmActivityView { get; set; }
+            public FarmView? farmView { get; set; }
+            public CropView? cropView { get; set; }
+
         }
         public class ResponseDTO
         {
