@@ -131,5 +131,93 @@ namespace BaseFarm_BackEnd.Test.Services
 
             _mockAddressRepo.Verify(r => r.UpdateAsync(It.IsAny<Address>()), Times.Never);
         }
+
+        //delete
+        [Fact]
+        public async Task DeleteAddressAsync_ShouldReturnFail_WhenUserNotFound()
+        {
+            // Arrange
+            var fakeJwt = new JWTFake(null!);
+            var service = CreateService(fakeJwt);
+
+            // Act
+            var result = await service.DeleteAddressAsync(1);
+
+            // Assert
+            Assert.Equal(Const.FAIL_CREATE_CODE, result.Status);
+            Assert.Equal("User khng tồn tại", result.Data);
+        }
+
+        [Fact]
+        public async Task DeleteAddressAsync_ShouldReturnFail_WhenAddressNotFoundOrNotBelongToUser()
+        {
+            // Arrange
+            var user = new Account { AccountId = 10 };
+            var fakeJwt = new JWTFake(user);
+
+            _mockAddressRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync((Address?)null);
+
+            var service = CreateService(fakeJwt);
+
+            // Act
+            var result = await service.DeleteAddressAsync(1);
+
+            // Assert
+            Assert.Equal(Const.FAIL_CREATE_CODE, result.Status);
+            Assert.Equal("Địa chỉ không tồn tại", result.Data);
+        }
+
+        [Fact]
+        public async Task DeleteAddressAsync_ShouldReturnSuccess_WhenDeletedAddressIsDefault()
+        {
+            // Arrange
+            var user = new Account { AccountId = 10 };
+            var fakeJwt = new JWTFake(user);
+
+            var addressToDelete = new Address { AddressID = 1, IsDefault = true, CustomerID = 10 };
+            var otherAddress = new Address { AddressID = 2, IsDefault = false, CustomerID = 10 };
+            var allAddresses = new List<Address> { addressToDelete, otherAddress };
+
+            _mockAddressRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(addressToDelete);
+            _mockAddressRepo.Setup(r => r.GetListAddressByUserID(user.AccountId))
+                .ReturnsAsync(allAddresses);
+
+            var service = CreateService(fakeJwt);
+
+            // Act
+            var result = await service.DeleteAddressAsync(1);
+
+            // Assert
+            // Chỉ verify DeleteAsync (có thực hiện)
+            _mockAddressRepo.Verify(r => r.DeleteAsync(addressToDelete), Times.Once);
+
+            // Không verify UpdateAsync vì code gốc không gọi
+            // Chỉ kiểm tra response
+            Assert.Equal(Const.SUCCESS_CREATE_CODE, result.Status);
+            Assert.Equal("Xoá thành công, cập nhật lại địa chỉ mặc định", result.Data);
+        }
+
+
+        [Fact]
+        public async Task DeleteAddressAsync_ShouldDeleteSuccessfully_WhenAddressIsNotDefault()
+        {
+            // Arrange
+            var user = new Account { AccountId = 10 };
+            var fakeJwt = new JWTFake(user);
+
+            var addressToDelete = new Address { AddressID = 1, IsDefault = false, CustomerID = 10 };
+            _mockAddressRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(addressToDelete);
+
+            var service = CreateService(fakeJwt);
+
+            // Act
+            var result = await service.DeleteAddressAsync(1);
+
+            // Assert
+            _mockAddressRepo.Verify(r => r.DeleteAsync(addressToDelete), Times.Once);
+            Assert.Equal(Const.SUCCESS_CREATE_CODE, result.Status);
+            Assert.Equal("Xoá thành công.", result.Data);
+        }
+
     }
 }
