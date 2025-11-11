@@ -17,6 +17,9 @@ namespace Infrastructure.FluentAPI
 
             builder.HasKey(e => e.ScheduleId);
 
+            builder.Property(e => e.ManagerId)
+            .HasColumnName("managerId");
+
             builder.Property(e => e.ScheduleId)
                 .HasColumnName("scheduleId");
 

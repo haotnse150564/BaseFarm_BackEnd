@@ -2,11 +2,14 @@
 using Application.Interfaces;
 using Application.Utils;
 using AutoMapper;
+using Azure.Core;
 using Domain.Enum;
 using Domain.Model;
 using Infrastructure.Repositories;
 using Infrastructure.ViewModel.Request;
+using Infrastructure.ViewModel.Response;
 using Microsoft.Extensions.Configuration;
+using System.Drawing.Printing;
 using static Infrastructure.ViewModel.Response.ScheduleResponse;
 using ResponseDTO = Infrastructure.ViewModel.Response.ScheduleResponse.ResponseDTO;
 
@@ -41,312 +44,122 @@ namespace Application.Services.Implement
         }
 
 
-        public async Task<ResponseDTO> CreateScheduleAsync(ScheduleRequest request)
+        #region Schedule mới
+        public async Task<ResponseDTO> CreateSchedulesAsync(ScheduleRequest request)
         {
             try
             {
-                var crop = await _unitOfWork.cropRepository.GetByIdAsync(request.CropId);
-             //   var reqCrop = await _unitOfWork.cropRequirementRepository.GetByIdAsync(crop.CropRequirement.RequirementId);
-                if (crop == null) //code cũ là reqCrop
+                var getCurrentUser = await _jwtUtils.GetCurrentUserAsync();
+                if (getCurrentUser == null || getCurrentUser.Role != Roles.Manager)
                 {
-                    return new ResponseDTO(Const.FAIL_READ_CODE, "Crop Requirement not found.");
-                }
-                if (request.StartDate > request.PlantingDate)
-                {
-                    return new ResponseDTO(Const.FAIL_READ_CODE, "Start Date can not be after than Planting Date.");
-                }
-                var result = new Schedule
-                {
-                    StartDate = request.StartDate,
-                    EndDate = request.EndDate,
-                    //EndDate = DateOnly.Parse("09/09/2025"),
-                    AssignedTo = request.AssignedTo,
-                    //FarmActivityId = request.FarmActivityId,
-                    PlantingDate = request.PlantingDate,
-                //    HarvestDate = request.PlantingDate.Value.AddDays((int)reqCrop.EstimatedDate),
-                    FarmId = request.FarmDetailsId,
-                    CropId = request.CropId,
-                    UpdatedAt = _currentTime.GetCurrentTime(),
-                    CreatedAt = _currentTime.GetCurrentTime(),
-                    Status = Status.ACTIVE,
-                    Quantity = request.Quantity
-                };
-                #region checkValidate and add FarmActivity
-                if (result.StartDate < DateOnly.FromDateTime(DateTime.Today) || result.EndDate < DateOnly.FromDateTime(DateTime.Today))
-                {
-                    return new ResponseDTO(Const.ERROR_EXCEPTION, "Start Date and End Date at least is today");
-                }
-                else if (result.StartDate >= result.EndDate)
-                {
-                    return new ResponseDTO(Const.ERROR_EXCEPTION, "The start date cannot be set after the end date.");
-                }
-                else if (result.StartDate >= result.EndDate)
-                {
-                    return new ResponseDTO(Const.ERROR_EXCEPTION, "The start date cannot be set before the end date.");
-                }
-                else
-                {
-                    await _unitOfWork.scheduleRepository.AddAsync(result);
-                    //check farmActivity is ACTIVE and date range match with Schedule date range
-                    if (request.FarmActivityId == null || !request.FarmActivityId.Any())
-                    {
-                        return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity ID is required.");
-                    }
-                    foreach (var farmActId in request.FarmActivityId)
-                    {
-                        var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(farmActId);
-                        if (farmActivity == null) 
-                        {
-                            return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity is required.");
-                        }
-                        if (farmActivity.Status != Domain.Enum.FarmActivityStatus.ACTIVE)
-                            return new ResponseDTO(Const.FAIL_READ_CODE, "All Farm Activity must in ACTIVE status.");
-                    }
-                    foreach (var farmActivityId in request.FarmActivityId)
-                    {
-                        var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(farmActivityId);
-                        if (farmActivity == null)
-                        {
-                            return new ResponseDTO(Const.FAIL_READ_CODE, "No Farm Activity found with the given ID.");
-                        }
-                        if (farmActivity.Status != FarmActivityStatus.ACTIVE)
-                        {
-                            return new ResponseDTO(Const.FAIL_READ_CODE, "Some Farm Activity is in process or deactived.");
-                        }
-                        else if (farmActivity.StartDate < result.StartDate || farmActivity.EndDate > result.EndDate)
-                        {
-                            return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity date range does not match with Schedule date range.");
-                        }
-                        //else if (farmActivity.ScheduleId != null && farmActivity.ScheduleId != 0)
-                        //{
-                        //    return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity is already assigned to another Schedule.");
-                        //}
-                        //else
-                        //{
-                        //    farmActivity.ScheduleId = result.ScheduleId;
-                        //    farmActivity.Status = FarmActivityStatus.IN_PROGRESS; // Cập nhật trạng thái FarmActivity
-                        //    await _unitOfWork.farmActivityRepository.UpdateAsync(farmActivity);
-                        //}
-                    }
-                    #endregion
-                    await _unitOfWork.SaveChangesAsync();
-
-                    var resultView = _mapper.Map<ViewSchedule>(result);
-                    return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, resultView);
-                }
-            }
-            catch (Exception ex)
-            {
-                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
-            }
-        }
-        public async Task<ResponseDTO> ChangeScheduleStatusById(long ScheduleId, string status)
-        {
-            try
-            {
-                var schedule = await _unitOfWork.scheduleRepository.GetByIdAsync(ScheduleId);
-
-                if (schedule == null)
-                {
-                    return new ResponseDTO(Const.FAIL_READ_CODE, "No Schedule found.");
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Tài khoản không hợp lệ.");
                 }
 
-                // Map dữ liệu sang DTO
-                schedule.Status = (Status)Enum.Parse(typeof(Status), status); // Chuyển chuỗi sang Enum
-                await _unitOfWork.scheduleRepository.UpdateAsync(schedule);
+                var schedule = _mapper.Map<Schedule>(request);
+                schedule.ManagerId = getCurrentUser.AccountId;
+                schedule.CreatedAt = _currentTime.GetCurrentTime();
+                await _unitOfWork.scheduleRepository.AddAsync(schedule);
                 await _unitOfWork.SaveChangesAsync();
 
-                var result = _mapper.Map<ViewSchedule>(schedule);
-                result.FullNameStaff = (await _account.GetAccountProfileByAccountIdAsync(schedule.AssignedTo)).AccountProfile?.Fullname;
-                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+                //In ra kết quả
+                var staffInfo = await _account.GetByIdAsync(request.StaffId);
+                var result = _mapper.Map<ScheduleResponseView>(schedule);
+                result.ManagerName = getCurrentUser.AccountProfile.Fullname;
+                result.StaffName = staffInfo != null ? staffInfo.AccountProfile.Fullname : null;
+                return new ResponseDTO(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, result);
+
+
             }
             catch (Exception ex)
             {
-                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+                return new ResponseDTO(Const.FAIL_READ_CODE, ex.Message);
             }
         }
 
-        public async Task<ResponseDTO> GetAllScheduleAsync(int pageIndex, int pageSize)
+        public Task<ResponseDTO> UpdateSchedulesAsync(long ScheduleId, ScheduleRequest request)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<ResponseDTO> GetAllSchedulesAsync(int pageIndex, int pageSize)
         {
             try
             {
+                var getCurrentUser = await _jwtUtils.GetCurrentUserAsync();
+                if (getCurrentUser == null || getCurrentUser.Role != Roles.Manager)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Tài khoản không hợp lệ.");
+                }
+
                 var list = await _unitOfWork.scheduleRepository.GetAllAsync();
-                var slist = list.OrderByDescending(x => x.CreatedAt); // Sắp xếp theo StartDate
+                var schedules = _mapper.Map<List<ScheduleResponseView>>(list);
+                //In ra kết quả
 
-                if (slist == null)
+                var safePageIndex = Math.Max(pageIndex, 1); // Đảm bảo pageIndex >= 1
+
+                var result = new Pagination<ScheduleResponseView>
                 {
-                    return new ResponseDTO(Const.FAIL_READ_CODE, "No Schedule found.");
-                }
-
-                // Map dữ liệu sang DTO
-                var result = _mapper.Map<List<ViewSchedule>>(slist);
-                var totalItem = result.Count();
-                foreach (var item in result)
-                {
-
-                    item.FullNameStaff = (await _account.GetAccountProfileByAccountIdAsync(item.AssignedTo)).AccountProfile?.Fullname;
-
-                }
-                //await _unitOfWork.cropRepository.GetAllAsync();
-                //await _unitOfWork.farmActivityRepository.GetAllAsync();
-                //await _unitOfWork.farmRepository.GetAllAsync();
-                //await _unitOfWork.accountRepository.GetAllAsync();
-
-                // Tạo đối tượng phân trang
-                var pagination = new Pagination<ViewSchedule>
-                {
-                    TotalItemCount = totalItem,
+                    TotalItemCount = schedules.Count,
                     PageSize = pageSize,
                     PageIndex = pageIndex,
-                    Items = result.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList()
+                    Items = schedules.Skip((safePageIndex - 1) * pageSize).Take(pageSize).ToList()
                 };
 
-                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, pagination);
+
+
+                return new ResponseDTO(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, result);
+
+
             }
             catch (Exception ex)
             {
-                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+                return new ResponseDTO(Const.FAIL_READ_CODE, ex.Message);
             }
         }
-        public async Task<ResponseDTO> UpdateScheduleById(long ScheduleId, ScheduleRequest request)
+
+        public async Task<ResponseDTO> ScheduleByIdAsync(long ScheduleId)
         {
             try
             {
+                var getCurrentUser = await _jwtUtils.GetCurrentUserAsync();
+                if (getCurrentUser == null || getCurrentUser.Role != Roles.Manager)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Tài khoản không hợp lệ.");
+                }
+
                 var schedule = await _unitOfWork.scheduleRepository.GetByIdAsync(ScheduleId);
+                var result = _mapper.Map<ScheduleResponseView>(schedule);
+                //In ra kết quả
 
-                if (schedule == null)
-                {
-                    return new ResponseDTO(Const.FAIL_READ_CODE, "No Schedule found.");
-                }
+                return new ResponseDTO(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, result);
 
-                var update = _mapper.Map(request, schedule);
-                update.UpdatedAt = _currentTime.GetCurrentTime();
-                // Map dữ liệu sang DTO
-                _unitOfWork.scheduleRepository.Update(update);
 
-                var oldListFarmActivity = await _unitOfWork.farmActivityRepository.GetListFarmActivityByScheduleId(ScheduleId);
-                var newListFarmActivity = await _unitOfWork.farmActivityRepository.GetListFarmActivityUpdate(request.FarmActivityId);
-                
-                var notInListFarmActivity = oldListFarmActivity.Except(newListFarmActivity).ToList();
-                var list = oldListFarmActivity.Concat(newListFarmActivity).ToList();
-                list = list.Except(notInListFarmActivity).ToList();
-
-                // Xử lý các FarmActivity không còn trong danh sách
-                foreach (var item in notInListFarmActivity)
-                {
-                //    item.ScheduleId = null; // Xóa liên kết với Schedule
-                    item.Status = FarmActivityStatus.ACTIVE; // Đặt lại trạng thái FarmActivity
-                    await _unitOfWork.farmActivityRepository.UpdateAsync(item);
-                }
-                // Xử lý các FarmActivity mới được thêm vào
-                foreach (var item in list)
-                {
-                    if (item.Status == FarmActivityStatus.DEACTIVATED || item.Status == FarmActivityStatus.COMPLETED)
-                    {
-                        return new ResponseDTO(Const.FAIL_READ_CODE, "Some Farm Activity is in process or deactived.");
-                    }
-                    else if (item.StartDate < update.StartDate && item.EndDate > update.EndDate)
-                    {
-                        return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity date range does not match with Schedule date range.");
-                    }
-                    //else if (item.ScheduleId != null && item.ScheduleId != 0 && item.ScheduleId != schedule.ScheduleId)
-                    //{
-                    //    return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity is already assigned to another Schedule.");
-                    //}
-                    //else
-                    //{
-                    //    item.ScheduleId = ScheduleId; // Gán lại ScheduleId
-                    //    item.Status = FarmActivityStatus.IN_PROGRESS; // Cập nhật trạng thái FarmActivity
-                    //    await _unitOfWork.farmActivityRepository.UpdateAsync(item);
-                    //}
-                }
-
-                await _unitOfWork.SaveChangesAsync();
-
-                //xu ly inventory neu farmactivitytype là harvest và status là completed
-                var farmActivity = await _unitOfWork.farmActivityRepository.GetHarvestFarmActivityId(ScheduleId);
-                if (farmActivity != null && farmActivity.ActivityType == Domain.Enum.ActivityType.Harvesting && farmActivity.Status == FarmActivityStatus.COMPLETED)
-                {
-                    await _inventory.CalculateAndCreateInventoryAsync(schedule.Quantity, request.Location, schedule.CropId, ScheduleId);
-                }
-
-                var result = _mapper.Map<ViewSchedule>(update);
-                result.FullNameStaff = (await _account.GetAccountProfileByAccountIdAsync(result.AssignedTo)).AccountProfile?.Fullname;
-                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
             }
             catch (Exception ex)
             {
-                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
-            }
-        }
-        public async Task<ResponseDTO> GetScheduleByIdAsync(long ScheduleId)
-        {
-            try
-            {
-                var schedule = await _unitOfWork.scheduleRepository.GetByIdAsync(ScheduleId);
-
-                if (schedule == null)
-                {
-                    return new ResponseDTO(Const.FAIL_READ_CODE, "No Schedule found.");
-                }
-
-                // Map dữ liệu sang DTO
-                var result = _mapper.Map<ViewSchedule>(schedule);
-                result.FullNameStaff = (await _account.GetAccountProfileByAccountIdAsync(schedule.AssignedTo)).AccountProfile?.Fullname;
-                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
-            }
-            catch (Exception ex)
-            {
-                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+                return new ResponseDTO(Const.FAIL_READ_CODE, ex.Message);
             }
         }
 
-        public async Task<ResponseDTO> AssignStaff(long scheduleID, long staffId)
+        public Task<ResponseDTO> AssignTask(long scheduleID, long staffId)
         {
-            try
-            {
-                var schedule = await _unitOfWork.scheduleRepository.GetByIdAsync(scheduleID);
-
-                if (schedule == null)
-                {
-                    return new ResponseDTO(Const.FAIL_READ_CODE, "No Schedule found.");
-                }
-
-                // Map dữ liệu sang DTO
-                schedule.AssignedTo = staffId;
-                await _unitOfWork.scheduleRepository.UpdateAsync(schedule);
-                await _unitOfWork.SaveChangesAsync();
-
-                var result = _mapper.Map<ViewSchedule>(schedule);
-                result.FullNameStaff = (await _account.GetAccountProfileByAccountIdAsync(schedule.AssignedTo)).AccountProfile?.Fullname;
-                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
-            }
-            catch (Exception ex)
-            {
-                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
-            }
+            throw new NotImplementedException();
         }
 
-        public async Task<ResponseDTO> GetScheduleByCurrentStaffAsync(int month)
+        public Task<ResponseDTO> UpdateActivities(long ScheduleId, long activityId)
         {
-            try
-            {
-                var user = await _jwtUtils.GetCurrentUserAsync();
-                var schedule = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(user.AccountId, month);
+            throw new NotImplementedException();
+        }
 
-                if (schedule.Count == 0)
-                {
-                    return new ResponseDTO(Const.FAIL_READ_CODE, "No Schedule found.");
-                }
+        public Task<ResponseDTO> ChangeScheduleStatusById(long ScheduleId, string status)
+        {
+            throw new NotImplementedException();
+        }
 
-                // Map dữ liệu sang DTO
-                var result = _mapper.Map<List<ViewSchedule>>(schedule);
-                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
-            }
-            catch (Exception ex)
-            {
-                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
-            }
+        public Task<ResponseDTO> ScheduleStaffView(int month)
+        {
+            throw new NotImplementedException();
         }
     }
+         #endregion
 }
