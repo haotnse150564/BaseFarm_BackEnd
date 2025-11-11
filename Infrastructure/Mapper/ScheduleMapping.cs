@@ -17,25 +17,15 @@ namespace Infrastructure.Mapper
         {
             CreateMap<Schedule, ScheduleRequest>().ReverseMap()
                    .ForMember(dest => dest.CropId, opt => opt.MapFrom(src => src.CropId))
-                ;            
-            CreateMap<ViewSchedule, Schedule>().ReverseMap()
-                   .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
-                   .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate.ToString()))
-                   .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate.ToString()))
-                   .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt.ToString()))
-                   .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => src.UpdatedAt.ToString()))
-                   .ForMember(dest => dest.AssignedTo, opt => opt.MapFrom(src => src.AssignedTo))
-                  // .ForMember(dest => dest.FarmActivityId, opt => opt.MapFrom(src => src.FarmActivities))
-                   .ForMember(dest => dest.FarmId, opt => opt.MapFrom(src => src.FarmId))
-                   .ForMember(dest => dest.accountView, opt => opt.MapFrom(src => src.AssignedToNavigation))
-                  // .ForMember(dest => dest.farmActivityView, opt => opt.MapFrom(src => src.FarmActivities))
-                   .ForMember(dest => dest.cropView, opt => opt.MapFrom(src => src.Crop))
-                  // .ForMember(dest => dest.FarmActivityId, opt => opt.MapFrom(src => src.FarmActivities))
-                  // .ForMember(dest => dest.FarmActivityId, opt => opt.MapFrom(src => src.FarmActivities.Select(x => x.FarmActivitiesId).ToList()))
-                   .ForMember(dest => dest.HarvestDate, opt => opt.MapFrom(src => src.HarvestDate.ToString()))
-                   .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
-            //.ForMember(dest => dest.ActivityType, opt => opt.MapFrom(src => src.FarmActivities..Value.ToString()))
-            // .ForMember(dest => dest.dailyLog, opt => opt.MapFrom(src => src.DailyLogs));
+                   .ForMember(dest => dest.AssignedTo, opt => opt.MapFrom(src => src.StaffId))
+                ;
+            CreateMap<Schedule, ScheduleResponseView>().ReverseMap()
+                .ForMember(dest => dest.Crop, opt => opt.MapFrom(src => src.cropView))
+                .ForMember(dest => dest.FarmDetails, opt => opt.MapFrom(src => src.farmView))
+                .ForPath(dest => dest.AssignedToNavigation.AccountProfile, opt => opt.MapFrom(src => src.Staff))
+
+              .ForMember(dest => dest.FarmActivities,
+                        opt => opt.MapFrom(src => src.farmActivityView == null ? null : src.farmActivityView))
             ;
 
             CreateMap<FarmActivity, FarmActivityView>().ReverseMap();
