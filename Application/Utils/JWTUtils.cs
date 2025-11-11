@@ -65,7 +65,7 @@ namespace Application.Utils
             return tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken validatedToken);
         }
 
-        public async Task<Account> GetCurrentUserAsync()
+        public virtual async Task<Account> GetCurrentUserAsync()
         {
             // Lấy token từ header Authorization
             var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");

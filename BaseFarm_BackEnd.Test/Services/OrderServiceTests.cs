@@ -1,19 +1,14 @@
-﻿using Xunit;
+﻿
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using AutoMapper;
-using Application.Interfaces;
 using Application.Utils;
 using Domain.Model;
 using Domain.Enum;
 using Application.Services.Implement;
 using static Application.ViewModel.Request.OrderRequest;
 using static Application.ViewModel.Response.OrderResponse;
-using static Application.ViewModel.Response.ProductResponse;
 using Microsoft.EntityFrameworkCore.Storage;
 using Application.Services;
 using Application;

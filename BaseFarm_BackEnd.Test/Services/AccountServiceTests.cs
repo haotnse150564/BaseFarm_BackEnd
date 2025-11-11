@@ -238,7 +238,7 @@ namespace BaseFarm_BackEnd.Test.Services
             };
 
             // Act
-            var result = await _service.ChangePassword(id, request);
+            var result = await _service.ChangePassword( request);
 
             // Assert
             Assert.Equal(404, result.Status);
@@ -264,7 +264,7 @@ namespace BaseFarm_BackEnd.Test.Services
             };
 
             // Act
-            var result = await _service.ChangePassword(1, request);
+            var result = await _service.ChangePassword( request);
 
             // Assert
             Assert.Equal(400, result.Status);
@@ -290,7 +290,7 @@ namespace BaseFarm_BackEnd.Test.Services
             };
 
             // Act
-            var result = await _service.ChangePassword(1, request);
+            var result = await _service.ChangePassword( request);
 
             // Assert
             Assert.Equal(400, result.Status);
@@ -316,7 +316,7 @@ namespace BaseFarm_BackEnd.Test.Services
             };
 
             // Act
-            var result = await _service.ChangePassword(1, request);
+            var result = await _service.ChangePassword( request);
 
             // Assert
             Assert.Equal(400, result.Status);
@@ -342,7 +342,7 @@ namespace BaseFarm_BackEnd.Test.Services
             };
 
             // Act
-            var result = await _service.ChangePassword(1, request);
+            var result = await _service.ChangePassword( request);
 
             // Assert
             Assert.Equal(200, result.Status);
