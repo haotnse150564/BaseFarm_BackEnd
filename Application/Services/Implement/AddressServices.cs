@@ -209,15 +209,16 @@ namespace Application.Services.Implement
                     }
                     if (addressUpdate.IsDefault == false)
                     {
-                        var haveDefault = allAddress.Any(a => a.IsDefault == true);
+                        var haveDefault = allAddress.Any(a => a.IsDefault == true && a.AddressID != id);
                         if (!haveDefault)
                         {
                             addressUpdate.IsDefault = true;
                         }
                     }
-                    address.UpdatedAt = DateTime.UtcNow;
+                    addressUpdate.UpdatedAt = DateTime.UtcNow;
                     var result = _mapper.Map<AddressReponse>(addressUpdate);
                     await _unitOfWorks.addressRepository.UpdateAsync(addressUpdate);
+                    await _unitOfWorks.SaveChangesAsync();
 
                     return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, result);
                 }
