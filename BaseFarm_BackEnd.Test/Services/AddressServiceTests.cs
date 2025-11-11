@@ -12,25 +12,10 @@ using Infrastructure.ViewModel.Request;
 using Infrastructure.ViewModel.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using BaseFarm_BackEnd.Test.Utils; // import JWTFake
 
 namespace BaseFarm_BackEnd.Test.Services
 {
-    public class AddressFakeJWTUtils : JWTUtils
-    {
-        private readonly Account _user;
-
-        public AddressFakeJWTUtils(Account user = null!)
-            : base(Mock.Of<IUnitOfWorks>(), Mock.Of<IConfiguration>(), Mock.Of<IHttpContextAccessor>())
-        {
-            _user = user;
-        }
-
-        public override Task<Account> GetCurrentUserAsync()
-        {
-            return Task.FromResult(_user);
-        }
-    }
-
     public class AddressServiceTests
     {
         private readonly Mock<IUnitOfWorks> _mockUow;
@@ -56,7 +41,7 @@ namespace BaseFarm_BackEnd.Test.Services
             _mockUow.Setup(u => u.accountRepository).Returns(_mockAccountRepo.Object);
         }
 
-        private AddressServices CreateService(AddressFakeJWTUtils fakeJwt)
+        private AddressServices CreateService(JWTFake fakeJwt)
         {
             return new AddressServices(_mockUow.Object, _mapper, fakeJwt);
         }
@@ -64,12 +49,11 @@ namespace BaseFarm_BackEnd.Test.Services
         [Fact]
         public async Task CreateAddressAsync_ShouldReturnFail_WhenUserNotFound()
         {
-            var fakeJwt = new AddressFakeJWTUtils(null!);
+            var fakeJwt = new JWTFake(null!);
             var service = CreateService(fakeJwt);
 
             var result = await service.CreateAddressAsync(new AddressRequest());
 
-            // Chỉnh sửa: dùng Const.ERROR_EXCEPTION = -4
             Assert.Equal(Const.ERROR_EXCEPTION, result.Status);
         }
 
@@ -77,7 +61,7 @@ namespace BaseFarm_BackEnd.Test.Services
         public async Task CreateAddressAsync_ShouldSetDefault_WhenFirstAddress()
         {
             var user = new Account { AccountId = 10 };
-            var fakeJwt = new AddressFakeJWTUtils(user);
+            var fakeJwt = new JWTFake(user);
 
             _mockAddressRepo.Setup(r => r.GetListAddressByUserID(10))
                 .ReturnsAsync(new List<Address>());
@@ -85,7 +69,6 @@ namespace BaseFarm_BackEnd.Test.Services
             _mockAddressRepo.Setup(r => r.AddAsync(It.IsAny<Address>()))
                 .Callback<Address>(addr =>
                 {
-                    // giả lập repository gán ID và IsDefault
                     addr.AddressID = 1;
                     addr.IsDefault = true;
                 })
@@ -100,15 +83,14 @@ namespace BaseFarm_BackEnd.Test.Services
 
             var data = Assert.IsType<AddressReponse>(result.Data);
             Assert.True(data.IsDefault);
-            Assert.Equal(1, data.AddressId); // kiểm tra ID được set
+            Assert.Equal(1, data.AddressId);
         }
-
 
         [Fact]
         public async Task CreateAddressAsync_ShouldUnsetOldDefault_WhenNewDefaultIsChosen()
         {
             var user = new Account { AccountId = 10 };
-            var fakeJwt = new AddressFakeJWTUtils(user);
+            var fakeJwt = new JWTFake(user);
 
             var oldAddresses = new List<Address>
             {
@@ -132,7 +114,7 @@ namespace BaseFarm_BackEnd.Test.Services
         public async Task CreateAddressAsync_ShouldNotChangeDefault_WhenNewAddressIsNotDefault()
         {
             var user = new Account { AccountId = 10 };
-            var fakeJwt = new AddressFakeJWTUtils(user);
+            var fakeJwt = new JWTFake(user);
 
             var oldAddresses = new List<Address>
             {

@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using static Infrastructure.ViewModel.Request.AccountRequest;
 using static Infrastructure.ViewModel.Response.AccountResponse;
+using BaseFarm_BackEnd.Test.Utils;
 
 namespace BaseFarm_BackEnd.Test.Services
 {
@@ -23,9 +24,8 @@ namespace BaseFarm_BackEnd.Test.Services
         private readonly Mock<IUnitOfWorks> _mockUow;
         private readonly Mock<IAccountRepository> _mockAccountRepo;
         private readonly Mock<IAccountProfileRepository> _mockAccountProfileRepo;
-        private readonly Mock<JWTUtils> _mockJwt;
-        private readonly AccountServices _service;
         private readonly Mock<IMapper> _mockMapper;
+        private readonly AccountServices _service;
 
         public AccountServiceTests()
         {
@@ -35,11 +35,8 @@ namespace BaseFarm_BackEnd.Test.Services
             _mockMapper = new Mock<IMapper>();
 
             // Setup UnitOfWork trả về các repository mock
-            _mockUow.SetupGet(u => u.accountRepository)
-                    .Returns(_mockAccountRepo.Object);
-
-            _mockUow.SetupGet(u => u.accountProfileRepository)
-                    .Returns(_mockAccountProfileRepo.Object);
+            _mockUow.SetupGet(u => u.accountRepository).Returns(_mockAccountRepo.Object);
+            _mockUow.SetupGet(u => u.accountProfileRepository).Returns(_mockAccountProfileRepo.Object);
 
             // Mock config JWTUtils
             var mockConfig = new Mock<IConfiguration>();
@@ -49,12 +46,14 @@ namespace BaseFarm_BackEnd.Test.Services
 
             var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
 
-            var realJwt = new JWTUtils(_mockUow.Object, mockConfig.Object, mockHttpContextAccessor.Object);
+            // Fake JWTUtils để test ChangePassword
+            var fakeUser = new Account { AccountId = 1 };
+            var fakeJwt = new JWTFake(fakeUser);
 
             _service = new AccountServices(
                 _mockUow.Object,
                 _mockMapper.Object,
-                realJwt,
+                fakeJwt,
                 _mockAccountProfileRepo.Object
             );
         }
@@ -226,9 +225,7 @@ namespace BaseFarm_BackEnd.Test.Services
         [Fact]
         public async Task ChangePassword_AccountNotFound_Returns404()
         {
-            // Arrange
-            long id = 1;
-            _mockAccountRepo.Setup(r => r.GetByIdAsync(id)).ReturnsAsync((Account?)null);
+            _mockAccountRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync((Account?)null);
 
             var request = new ChangePasswordDTO
             {
@@ -237,10 +234,8 @@ namespace BaseFarm_BackEnd.Test.Services
                 ConfirmPassword = "654321"
             };
 
-            // Act
-            var result = await _service.ChangePassword( request);
+            var result = await _service.ChangePassword(request);
 
-            // Assert
             Assert.Equal(404, result.Status);
             Assert.Equal("Account not found", result.Message);
         }
@@ -248,7 +243,6 @@ namespace BaseFarm_BackEnd.Test.Services
         [Fact]
         public async Task ChangePassword_WrongOldPassword_Returns400()
         {
-            // Arrange
             var account = new Account
             {
                 AccountId = 1,
@@ -258,15 +252,13 @@ namespace BaseFarm_BackEnd.Test.Services
 
             var request = new ChangePasswordDTO
             {
-                OldPassword = "321321",
+                OldPassword = "wrongpassword",
                 NewPassword = "654321",
                 ConfirmPassword = "654321"
             };
 
-            // Act
-            var result = await _service.ChangePassword( request);
+            var result = await _service.ChangePassword(request);
 
-            // Assert
             Assert.Equal(400, result.Status);
             Assert.Equal("Old password is incorrect", result.Message);
         }
@@ -274,7 +266,6 @@ namespace BaseFarm_BackEnd.Test.Services
         [Fact]
         public async Task ChangePassword_PasswordMismatch_Returns400()
         {
-            // Arrange
             var account = new Account
             {
                 AccountId = 1,
@@ -289,10 +280,8 @@ namespace BaseFarm_BackEnd.Test.Services
                 ConfirmPassword = "321321"
             };
 
-            // Act
-            var result = await _service.ChangePassword( request);
+            var result = await _service.ChangePassword(request);
 
-            // Assert
             Assert.Equal(400, result.Status);
             Assert.Equal("New password and confirm password do not match", result.Message);
         }
@@ -300,7 +289,6 @@ namespace BaseFarm_BackEnd.Test.Services
         [Fact]
         public async Task ChangePassword_BlankPassword_Returns400()
         {
-            // Arrange
             var account = new Account
             {
                 AccountId = 1,
@@ -315,10 +303,8 @@ namespace BaseFarm_BackEnd.Test.Services
                 ConfirmPassword = "   "
             };
 
-            // Act
-            var result = await _service.ChangePassword( request);
+            var result = await _service.ChangePassword(request);
 
-            // Assert
             Assert.Equal(400, result.Status);
             Assert.Equal("Password do not have space or blank", result.Message);
         }
@@ -326,7 +312,6 @@ namespace BaseFarm_BackEnd.Test.Services
         [Fact]
         public async Task ChangePassword_ValidRequest_Returns200()
         {
-            // Arrange
             var account = new Account
             {
                 AccountId = 1,
@@ -341,10 +326,8 @@ namespace BaseFarm_BackEnd.Test.Services
                 ConfirmPassword = "654321"
             };
 
-            // Act
-            var result = await _service.ChangePassword( request);
+            var result = await _service.ChangePassword(request);
 
-            // Assert
             Assert.Equal(200, result.Status);
             Assert.Equal("Change password success", result.Message);
 
