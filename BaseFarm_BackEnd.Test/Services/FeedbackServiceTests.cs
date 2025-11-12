@@ -154,8 +154,8 @@ namespace BaseFarm_BackEnd.Test.Services
             var result = await service.UpdateFeedbackStatusById(1);
 
             // Assert
-            Assert.Equal(-1, result.Status);                // match code gốc
-            Assert.Equal("Get Data Fail", result.Message);  // ✅ sửa cho khớp service
+            Assert.Equal(-1, result.Status);                
+            Assert.Equal("Get Data Fail", result.Message);
             Assert.Equal("Feedback not found !", result.Data);
         }
 
@@ -176,7 +176,7 @@ namespace BaseFarm_BackEnd.Test.Services
 
             // Assert
             _mockUnitOfWork.Verify(u => u.feedbackRepository.UpdateAsync(It.IsAny<Feedback>()), Times.Once);
-            Assert.Equal(1, result.Status);                  // match code gốc
+            Assert.Equal(1, result.Status);
             Assert.Equal("Update Data Success", result.Message);
             Assert.Equal(Status.DEACTIVATED, feedback.Status);
         }
@@ -198,7 +198,7 @@ namespace BaseFarm_BackEnd.Test.Services
 
             // Assert
             _mockUnitOfWork.Verify(u => u.feedbackRepository.UpdateAsync(It.IsAny<Feedback>()), Times.Once);
-            Assert.Equal(1, result.Status);                  // match code gốc
+            Assert.Equal(1, result.Status);
             Assert.Equal("Update Data Success", result.Message);
             Assert.Equal(Status.ACTIVE, feedback.Status);
         }
