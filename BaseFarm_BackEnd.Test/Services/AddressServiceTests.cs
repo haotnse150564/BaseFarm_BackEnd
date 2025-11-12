@@ -54,7 +54,7 @@ namespace BaseFarm_BackEnd.Test.Services
 
             var result = await service.CreateAddressAsync(new AddressRequest());
 
-            Assert.Equal(Const.ERROR_EXCEPTION, result.Status);
+            Assert.Equal(Const.FAIL_CREATE_CODE, result.Status);
         }
 
         [Fact]
