@@ -3,7 +3,7 @@ using Application.Services;
 using Domain.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using static Application.ViewModel.Request.ProductRequest;
+using static Application.ViewModel.Request.ProductRequestDTO;
 using static Application.ViewModel.Response.ProductResponse;
 
 namespace WebAPI.Controllers
@@ -151,6 +151,12 @@ namespace WebAPI.Controllers
             }
 
             return Ok(response); // Trả về mã 200 nếu cập nhật thành công với thông tin trong ResponseDTO
+        }
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteProduct(long id)
+        {
+           var result = await _productService.DeleteProductByIdAsync(id);
+            return Ok(result);
         }
     }
 }

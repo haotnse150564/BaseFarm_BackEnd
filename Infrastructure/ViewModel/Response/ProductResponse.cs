@@ -41,17 +41,17 @@ namespace Application.ViewModel.Response
 
         public class ProductDetailDTO
         {
-            public long ProductId { get; set; }
+           // public long ProductId { get; set; }
             public string? Images { get; set; }
             public string? ProductName { get; set; }
             public string? Unit { get; set; } = "Bó";
             public decimal? Price { get; set; }
             public int? StockQuantity { get; set; }
             public string? Description { get; set; }
-            public long CategoryId { get; set; }
+          //  public long CategoryId { get; set; }
             public string? CategoryName { get; set; }
             public Status? Status { get; set; }
-            public string? CropId { get; set; }
+          //  public string? CropId { get; set; }
             public string? CropName { get; set; }
         }
 
