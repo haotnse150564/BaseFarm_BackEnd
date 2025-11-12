@@ -33,7 +33,7 @@ namespace Application.Services.Implement
             try
             {
                 var list = await _unitOfWork.productRepository.GetAllAsync();
-                var products = list.Where(x => x.Status == ProductStatus.ACTIVE).ToList();  
+                var products = list.Where(x => x.Status == ProductStatus.ACTIVE).ToList();
                 // Map dữ liệu sang DTO
                 var result = _mapper.Map<List<ViewProductDTO>>(products);
 
@@ -343,39 +343,44 @@ namespace Application.Services.Implement
             throw new NotImplementedException();
         }
 
-        public async Task<ResponseDTO> DeleteProductByIdAsync(long productId)
-        {
-            var user = await _jwt.GetCurrentUserAsync();
-            if (user == null || user.Role != Roles.Manager)
-            {
-                return new ResponseDTO(Const.FAIL_READ_CODE, "Tài khoản không hợp lệ.");
-            }
-            try
-            {
-                var product = await _unitOfWork.productRepository.GetProductById(productId);
-                if (product == null)
-                {
-                    return new ResponseDTO(Const.FAIL_READ_CODE, "Product not found.");
-                }
-                // Xóa sản phẩm
-                await _unitOfWork.productRepository.DeleteAsync(product);
-                await _unitOfWork.SaveChangesAsync();
-                var crop = await _unitOfWork.cropRepository.GetByIdAsync(productId);
+        //public async Task<ResponseDTO> DeleteProductByIdAsync(long productId)
+        //{
+        //    var user = await _jwt.GetCurrentUserAsync();
+        //    if (user == null || user.Role != Roles.Manager)
+        //    {
+        //        return new ResponseDTO(Const.FAIL_READ_CODE, "Tài khoản không hợp lệ.");
+        //    }
+        //    try
+        //    {
+        //        var product = await _unitOfWork.productRepository.GetProductById(productId);
+        //        if (product == null)
+        //        {
+        //            return new ResponseDTO(Const.FAIL_READ_CODE, "Product not found.");
+        //        }
+        //        var crop = await _unitOfWork.cropRepository.GetByIdAsync(productId);
 
-                if (crop == null)
-                {
-                    return new ResponseDTO(Const.SUCCESS_READ_CODE, "Product deleted successfully.");
-                }
-                else { 
-                await _unitOfWork.cropRepository.DeleteAsync(crop);
-                await _unitOfWork.SaveChangesAsync();
-                }
-                return new ResponseDTO(Const.SUCCESS_READ_CODE, "Product deleted successfully.");
-            }
-            catch (Exception ex)
-            {
-                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
-            }
-        }
+        //        if (crop == null)
+        //        {
+        //            await _unitOfWork.productRepository.DeleteAsync(product);
+        //            await _unitOfWork.SaveChangesAsync();
+        //        }
+        //        else
+        //        {
+        //            await _unitOfWork.cropRepository.DeleteAsync(crop);
+        //            await _unitOfWork.SaveChangesAsync();
+        //        }
+
+        //        // Xóa sản phẩm
+        //        await _unitOfWork.productRepository.DeleteAsync(product);
+        //        await _unitOfWork.SaveChangesAsync();
+
+               
+        //        return new ResponseDTO(Const.SUCCESS_READ_CODE, "Product deleted successfully.");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+        //    }
+        //}
     }
 }
