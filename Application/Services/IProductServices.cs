@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Application.ViewModel.Request.ProductRequest;
+using static Application.ViewModel.Request.ProductRequestDTO;
 using static Application.ViewModel.Response.ProductResponse;
 
 namespace Application.Services
@@ -20,5 +20,6 @@ namespace Application.Services
         Task<ResponseDTO> ChangeProductQuantityById(long productId, UpdateQuantityDTO request);
         Task<ResponseDTO> GetAllProductWithFilterAsync(int pageIndex, int pageSize, Status? status = null, long? categoryId = null,
                                                                     bool sortByStockAsc = true);
+        Task<ResponseDTO> DeleteProductByIdAsync(long productId);
     }
 }

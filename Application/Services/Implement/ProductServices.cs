@@ -1,11 +1,12 @@
 ﻿using Application.Commons;
 using Application.Interfaces;
+using Application.Utils;
 using AutoMapper;
 using Domain.Enum;
 using Domain.Model;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
-using static Application.ViewModel.Request.ProductRequest;
+using static Application.ViewModel.Request.ProductRequestDTO;
 using static Application.ViewModel.Response.ProductResponse;
 
 namespace Application.Services.Implement
@@ -16,13 +17,15 @@ namespace Application.Services.Implement
         private readonly ICurrentTime _currentTime;
         private readonly IConfiguration configuration;
         private readonly IMapper _mapper;
+        private readonly JWTUtils _jwt;
 
-        public ProductServices(IUnitOfWorks unitOfWork, ICurrentTime currentTime, IConfiguration configuration, IMapper mapper)
+        public ProductServices(IUnitOfWorks unitOfWork, ICurrentTime currentTime, IConfiguration configuration, IMapper mapper, JWTUtils jwt)
         {
             _unitOfWork = unitOfWork;
             _currentTime = currentTime;
             this.configuration = configuration;
             _mapper = mapper;
+            _jwt = jwt;
         }
 
         public async Task<ResponseDTO> GetAllProductAsync(int pageIndex, int pageSize)
@@ -140,52 +143,51 @@ namespace Application.Services.Implement
         }
 
 
-        public async Task<ResponseDTO> CreateProductAsync(CreateProductDTO request)
-        {
-            try
-            {
-                var category = await _unitOfWork.categoryRepository.GetAllAsync();
+        //public async Task<ResponseDTO> CreateProductAsync(CreateProductDTO request)
+        //{
+        //    try
+        //    {
+        //        var category = await _unitOfWork.categoryRepository.GetAllAsync();
 
-                if (await _unitOfWork.productRepository.ExistsByNameAsync(request.ProductName))
-                {
-                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "The Product Name already exists. Please choose a different Product Name.");
-                }
-                else if (!category.Exists(x => x.CategoryId == request.CategoryId))
-                {
-                    return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Category not exist!");
-                }
-                // Ánh xạ từ DTO sang Entity
-                var product = _mapper.Map<Product>(request);
-                product.ProductId = request.CropId;
-                product.Status = ProductStatus.ACTIVE;
-                product.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
-                product.StockQuantity = 0;
-                // Gọi AddAsync nhưng không gán vào biến vì nó không có giá trị trả về
-                await _unitOfWork.productRepository.AddAsync(product);
-                if (await _unitOfWork.SaveChangesAsync() < 0) ;
-                {
-                    var crop = await _unitOfWork.cropRepository.GetByIdAsync(request.CropId);
-                    if (crop == null)
-                    {
-                        return new ResponseDTO(Const.FAIL_CREATE_CODE, "Crop not exists.");
-                    }
-                    crop.Status = CropStatus.IN_STOCK;
-                    await _unitOfWork.cropRepository.UpdateAsync(crop);
-                }
-                var check = await _unitOfWork.SaveChangesAsync();
-                // Kiểm tra xem sản phẩm có được thêm không bằng cách kiểm tra product.Id (hoặc khóa chính)
-                if (check < 0) // Nếu Id chưa được gán, có thể việc thêm đã thất bại
-                {
-                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Failed to add product.");
-                }
+        //        if (await _unitOfWork.productRepository.ExistsByNameAsync(request.ProductName))
+        //        {
+        //            return new ResponseDTO(Const.FAIL_CREATE_CODE, "The Product Name already exists. Please choose a different Product Name.");
+        //        }
+        //        else if (!category.Exists(x => x.CategoryId == request.CategoryId))
+        //        {
+        //            return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Category not exist!");
+        //        }
+        //        // Ánh xạ từ DTO sang Entity
+        //        var product = _mapper.Map<Product>(request);
+        //        product.Status = ProductStatus.ACTIVE;
+        //        product.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
+        //        product.StockQuantity = 0;
+        //        // Gọi AddAsync nhưng không gán vào biến vì nó không có giá trị trả về
+        //        await _unitOfWork.productRepository.AddAsync(product);
+        //        if (await _unitOfWork.SaveChangesAsync() < 0) ;
+        //        {
+        //            var crop = await _unitOfWork.cropRepository.GetByIdAsync(request.CropId);
+        //            if (crop == null)
+        //            {
+        //                return new ResponseDTO(Const.FAIL_CREATE_CODE, "Crop not exists.");
+        //            }
+        //            crop.Status = CropStatus.IN_STOCK;
+        //            await _unitOfWork.cropRepository.UpdateAsync(crop);
+        //        }
+        //        var check = await _unitOfWork.SaveChangesAsync();
+        //        // Kiểm tra xem sản phẩm có được thêm không bằng cách kiểm tra product.Id (hoặc khóa chính)
+        //        if (check < 0) // Nếu Id chưa được gán, có thể việc thêm đã thất bại
+        //        {
+        //            return new ResponseDTO(Const.FAIL_CREATE_CODE, "Failed to add product.");
+        //        }
 
-                return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Product registered successfully");
-            }
-            catch (Exception ex)
-            {
-                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
-            }
-        }
+        //        return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Product registered successfully");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+        //    }
+        //}
 
         public async Task<ResponseDTO> UpdateProductById(long productId, UpdateProductDTO request)
         {
@@ -273,9 +275,9 @@ namespace Application.Services.Implement
                         return new ResponseDTO(Const.FAIL_CREATE_CODE, "Failed to update product.");
                     }
                     var result = _mapper.Map<ProductDetailDTO>(updatedProduct);
-                    result.CropId = product.ProductNavigation.CropId.ToString();
+                    //result.CropId = product.ProductNavigation.CropId.ToString();
                     result.CropName = product.ProductNavigation.CropName;
-                    result.CategoryName = category.Where(x => x.CategoryId == result.CategoryId).FirstOrDefault().CategoryName;
+                    //result.CategoryName = category.Where(x => x.CategoryId == result.).FirstOrDefault().CategoryName;
                     result.StockQuantity = product.StockQuantity;
 
                     return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_UPDATE_MSG, result);
@@ -329,6 +331,46 @@ namespace Application.Services.Implement
                 await _unitOfWork.productRepository.UpdateAsync(product);
 
                 return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, "Change Quantity Succeed");
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+            }
+        }
+
+        public Task<ResponseDTO> CreateProductAsync(CreateProductDTO request)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<ResponseDTO> DeleteProductByIdAsync(long productId)
+        {
+            var user = await _jwt.GetCurrentUserAsync();
+            if (user == null || user.Role != Roles.Manager)
+            {
+                return new ResponseDTO(Const.FAIL_READ_CODE, "Tài khoản không hợp lệ.");
+            }
+            try
+            {
+                var product = await _unitOfWork.productRepository.GetProductById(productId);
+                if (product == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Product not found.");
+                }
+                // Xóa sản phẩm
+                await _unitOfWork.productRepository.DeleteAsync(product);
+                await _unitOfWork.SaveChangesAsync();
+                var crop = await _unitOfWork.cropRepository.GetByIdAsync(productId);
+
+                if (crop == null)
+                {
+                    return new ResponseDTO(Const.SUCCESS_READ_CODE, "Product deleted successfully.");
+                }
+                else { 
+                await _unitOfWork.cropRepository.DeleteAsync(crop);
+                await _unitOfWork.SaveChangesAsync();
+                }
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, "Product deleted successfully.");
             }
             catch (Exception ex)
             {

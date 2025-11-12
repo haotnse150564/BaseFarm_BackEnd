@@ -1,4 +1,5 @@
 ﻿using Application.Services;
+using Application.ViewModel.Request;
 using Domain.Enum;
 using Infrastructure.ViewModel.Request;
 using Microsoft.AspNetCore.Authorization;
@@ -31,9 +32,11 @@ namespace WebAPI.Controllers
         }
         [HttpPost("create")]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> CreateCrop([FromBody] CropRequest request)
+        public async Task<IActionResult> CreateCrop([FromBody] Crop_Product data)
         {
-            var result = await _cropServices.CreateCropAsync(request);
+            var request1 = data.request1;
+            var request2 = data.request2;
+            var result = await _cropServices.CreateCropAsync(request1, request2);
             return Ok(result);
         }
         [HttpPut("chang-status")]
