@@ -11,6 +11,8 @@ using static Infrastructure.ViewModel.Request.FeedbackRequest;
 using Application;
 using Application.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Domain.Enum;
+using BaseFarm_BackEnd.Test.EnumTest;
 
 namespace BaseFarm_BackEnd.Test.Services
 {
@@ -136,5 +138,70 @@ namespace BaseFarm_BackEnd.Test.Services
             Assert.Equal(Const.ERROR_EXCEPTION, result.Status);
             Assert.Contains("DB crashed", result.Message);
         }
+
+        //change feedback status
+        // --- TEST 1: Feedback không tồn tại ---
+        [Fact]
+        public async Task UpdateFeedbackStatusById_ShouldReturnFail_WhenFeedbackNotFound()
+        {
+            // Arrange
+            _mockUnitOfWork.Setup(u => u.feedbackRepository.GetByIdAsync(1))
+                .ReturnsAsync((Feedback?)null);
+
+            var service = CreateService(new JWTFake(null!));
+
+            // Act
+            var result = await service.UpdateFeedbackStatusById(1);
+
+            // Assert
+            Assert.Equal(-1, result.Status);                // match code gốc
+            Assert.Equal("Get Data Fail", result.Message);  // ✅ sửa cho khớp service
+            Assert.Equal("Feedback not found !", result.Data);
+        }
+
+        // --- TEST 2: Feedback ACTIVE -> DEACTIVATED ---
+        [Fact]
+        public async Task UpdateFeedbackStatusById_ShouldDeactivate_WhenCurrentlyActive()
+        {
+            // Arrange
+            var feedback = new Feedback { FeedbackId = 1, Status = Status.ACTIVE };
+
+            _mockUnitOfWork.Setup(u => u.feedbackRepository.GetByIdAsync(1))
+                .ReturnsAsync(feedback);
+
+            var service = CreateService(new JWTFake(null!));
+
+            // Act
+            var result = await service.UpdateFeedbackStatusById(1);
+
+            // Assert
+            _mockUnitOfWork.Verify(u => u.feedbackRepository.UpdateAsync(It.IsAny<Feedback>()), Times.Once);
+            Assert.Equal(1, result.Status);                  // match code gốc
+            Assert.Equal("Update Data Success", result.Message);
+            Assert.Equal(Status.DEACTIVATED, feedback.Status);
+        }
+
+        // --- TEST 3: Feedback DEACTIVATED -> ACTIVE ---
+        [Fact]
+        public async Task UpdateFeedbackStatusById_ShouldActivate_WhenCurrentlyDeactivated()
+        {
+            // Arrange
+            var feedback = new Feedback { FeedbackId = 1, Status = Status.DEACTIVATED };
+
+            _mockUnitOfWork.Setup(u => u.feedbackRepository.GetByIdAsync(1))
+                .ReturnsAsync(feedback);
+
+            var service = CreateService(new JWTFake(null!));
+
+            // Act
+            var result = await service.UpdateFeedbackStatusById(1);
+
+            // Assert
+            _mockUnitOfWork.Verify(u => u.feedbackRepository.UpdateAsync(It.IsAny<Feedback>()), Times.Once);
+            Assert.Equal(1, result.Status);                  // match code gốc
+            Assert.Equal("Update Data Success", result.Message);
+            Assert.Equal(Status.ACTIVE, feedback.Status);
+        }
+
     }
 }
