@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.ViewModel.Request
 {
-    public class ProductRequest
+    public class ProductRequestDTO
     {
         public class CreateProductDTO
         {
@@ -27,13 +27,13 @@ namespace Application.ViewModel.Request
             [StringLength(1000, ErrorMessage = "Description cannot exceed 1000 characters.")]
             public string? Description { get; set; }
 
-            [Required(ErrorMessage = "Category ID is required.")]
-            [Range(1, long.MaxValue, ErrorMessage = "Category ID must be a positive number.")]
-            public long CategoryId { get; set; }
+            //[Required(ErrorMessage = "Category ID is required.")]
+            //[Range(1, long.MaxValue, ErrorMessage = "Category ID must be a positive number.")]
+            //public long CategoryId { get; set; }
 
-            [Required(ErrorMessage = "Category ID is required.")]
-            [Range(1, long.MaxValue, ErrorMessage = "Crop ID must be a positive number.")]
-            public long CropId { get; set; }
+            //[Required(ErrorMessage = "Category ID is required.")]
+            //[Range(1, long.MaxValue, ErrorMessage = "Crop ID must be a positive number.")]
+            //public long CropId { get; set; }
 
         }
         public class UpdateProductDTO

@@ -1,5 +1,7 @@
 ﻿using Application.Commons;
 using Application.Interfaces;
+using Application.Utils;
+using Application.ViewModel.Request;
 using AutoMapper;
 using Domain.Enum;
 using Domain.Model;
@@ -8,6 +10,7 @@ using Infrastructure.ViewModel.Request;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Drawing.Printing;
+using static Application.ViewModel.Response.ProductResponse;
 using static Infrastructure.ViewModel.Response.CropResponse;
 using static Infrastructure.ViewModel.Response.ScheduleResponse;
 using ResponseDTO = Infrastructure.ViewModel.Response.CropResponse.ResponseDTO;
@@ -21,13 +24,15 @@ namespace Application.Services.Implement
         private readonly IConfiguration configuration;
         private readonly IMapper _mapper;
         private readonly ICropRepository _cropRepository;
-        public CropServices(IUnitOfWorks unitOfWork, ICurrentTime currentTime, IConfiguration configuration, IMapper mapper, ICropRepository cropRepository)
+        private readonly JWTUtils _jwtUtils;
+        public CropServices(IUnitOfWorks unitOfWork, ICurrentTime currentTime, IConfiguration configuration, IMapper mapper, ICropRepository cropRepository, JWTUtils jWTUtils)
         {
             _unitOfWork = unitOfWork;
             _currentTime = currentTime;
             this.configuration = configuration;
             _mapper = mapper;
             _cropRepository = cropRepository;
+            _jwtUtils = jWTUtils;
         }
         public async Task<Pagination<CropView>> GetAllCropsAsync(int pageIndex, int pageSize)
         {
@@ -74,40 +79,41 @@ namespace Application.Services.Implement
             }
         }
 
-        public async Task<ResponseDTO> CreateCropAsync(CropRequest request)
+        public async Task<ResponseDTO> CreateCropAsync(CropRequest request, ProductRequestDTO.CreateProductDTO product)
         {
             try
             {
-                //if (await _unitOfWork.cropRepository.CheckDuplicateCropName(request.CropName))
-                //{
-                //    return new ResponseDTO(Const.FAIL_CREATE_CODE, "The Crop Name already exists. Please choose a different Crop Name.");
-                //}
-
-                // Ánh xạ từ DTO sang Entity
-                var crop = _mapper.Map<Crop>(request);
-                crop.Status = Domain.Enum.CropStatus.ACTIVE;
-                var cropRequirement = new CropRequirement
+               var currentUser = await _jwtUtils.GetCurrentUserAsync();
+                if (currentUser == null || currentUser.Role != Roles.Manager)
                 {
-                    CropRequirementId = crop.CropId,
-                    EstimatedDate = 30,
-                    Moisture = 1,
-                    Temperature = 30,
-                    Fertilizer = "Nito",
-                   // Requirement = crop // Thiết lập quan hệ với Crop
-                };
-
-                // Gọi AddAsync nhưng không gán vào biến vì nó không có giá trị trả về
-                await _unitOfWork.cropRepository.AddAsync(crop);
-                await _unitOfWork.cropRequirementRepository.AddAsync(cropRequirement);
-
-                var check = await _unitOfWork.SaveChangesAsync();
-                // Kiểm tra xem sản phẩm có được thêm không bằng cách kiểm tra crop.Id (hoặc khóa chính)
-                if (check < 0) // Nếu Id chưa được gán, có thể việc thêm đã thất bại
-                {
-                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Failed to add crop.");
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Tài khoản không hợp lệ.");
                 }
 
-                return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Crop Create successfully");
+                var products = _mapper.Map<Product>(product);
+                products.CreatedAt = _currentTime.GetCurrentTime();
+                products.StockQuantity = 0;
+                products.Status = ProductStatus.ACTIVE;
+                products.CategoryId = request.CategoryId;
+                await _unitOfWork.productRepository.AddAsync(products);
+               await _unitOfWork.SaveChangesAsync();
+
+                var crop = _mapper.Map<Crop>(request);
+                crop.CropId = products.ProductId;
+                crop.CreateAt = _currentTime.GetCurrentTime();
+                crop.UpdateAt = _currentTime.GetCurrentTime();
+                await _unitOfWork.cropRepository.AddAsync(crop);
+
+                await _unitOfWork.SaveChangesAsync();
+
+                var category = await _unitOfWork.categoryRepository.GetByIdAsync((long)crop.CategoryId);
+
+                var result1 = _mapper.Map<CropView>(crop);
+                var result2 = _mapper.Map<ProductDetailDTO>(products);
+
+                result2.CategoryName = category.CategoryName;
+                result2.CropName = crop.CropName;
+
+                return new ResponseDTO(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, new { Crop = result1, Product = result2 });
             }
             catch (Exception ex)
             {
@@ -150,7 +156,7 @@ namespace Application.Services.Implement
                 }
                 else if (cropName != null)
                 {
-                    crop = crop.Where(x => x.CropName.ToLower().Contains(cropName.ToLower())).ToList();
+                    crop = crop.Where(x =>  x.CropName.ToLower().Contains(cropName.ToLower())).ToList();
                 }
                 else if (status != null)
                 {

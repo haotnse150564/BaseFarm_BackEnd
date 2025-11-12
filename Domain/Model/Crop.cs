@@ -18,7 +18,7 @@ public partial class Crop
 
     public DateOnly CreateAt { get; set; }
 
-    public DateOnly UpdateAt { get; set; }
+    public DateOnly? UpdateAt { get; set; }
 
     public long? CategoryId { get; set; }
 

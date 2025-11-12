@@ -70,7 +70,7 @@ namespace Infrastructure.Repositories.Implement
 
         public async Task<bool> ExistsByNameAsync(string name)
         {
-            return await _context.Product.AnyAsync(u => u.ProductName.ToLower() == name.ToLower());
+            return await _context.Product.AnyAsync(u => u.ProductName.ToLower().Equals(name.ToLower()));
         }
 
         public async Task<Pagination<Product>> GetFilteredProductsAsync(int pageIndex, int pageSize, Status? status = null, long? categoryId = null, bool sortByStockAsc = true)
