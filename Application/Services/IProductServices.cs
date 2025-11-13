@@ -20,6 +20,6 @@ namespace Application.Services
         Task<ResponseDTO> ChangeProductQuantityById(long productId, UpdateQuantityDTO request);
         Task<ResponseDTO> GetAllProductWithFilterAsync(int pageIndex, int pageSize, Status? status = null, long? categoryId = null,
                                                                     bool sortByStockAsc = true);
-        Task<ResponseDTO> DeleteProductByIdAsync(long productId);
+       // Task<ResponseDTO> DeleteProductByIdAsync(long productId);
     }
 }

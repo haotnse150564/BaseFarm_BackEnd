@@ -152,11 +152,11 @@ namespace WebAPI.Controllers
 
             return Ok(response); // Trả về mã 200 nếu cập nhật thành công với thông tin trong ResponseDTO
         }
-        [HttpDelete("delete/{id}")]
-        public async Task<IActionResult> DeleteProduct(long id)
-        {
-           var result = await _productService.DeleteProductByIdAsync(id);
-            return Ok(result);
-        }
+        //[HttpDelete("delete/{id}")]
+        //public async Task<IActionResult> DeleteProduct(long id)
+        //{
+        //   var result = await _productService.DeleteProductByIdAsync(id);
+        //    return Ok(result);
+        //}
     }
 }
