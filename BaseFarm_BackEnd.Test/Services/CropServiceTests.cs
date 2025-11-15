@@ -1,0 +1,201 @@
+﻿using Application;
+using Application.Interfaces;
+using Application.Services.Implement;
+using Application.ViewModel.Request;
+using AutoMapper;
+using BaseFarm_BackEnd.Test.EnumTest;
+using BaseFarm_BackEnd.Test.Utils;
+using Domain.Enum;
+using Domain.Model;
+using Infrastructure.ViewModel.Request;
+using Moq;
+using Xunit;
+using static Application.ViewModel.Response.ProductResponse;
+using static Infrastructure.ViewModel.Response.CropResponse;
+using Microsoft.Extensions.Configuration;
+using Infrastructure.Repositories;
+using System.ComponentModel.DataAnnotations;
+
+namespace BaseFarm_BackEnd.Test.Services
+{
+    public class CropServiceTests
+    {
+        private readonly Mock<IUnitOfWorks> _mockUow;
+        private readonly Mock<ICurrentTime> _mockTime;
+        private readonly Mock<IMapper> _mockMapper;
+        private readonly Mock<ICropRepository> _mockCropRepo;
+        private readonly Mock<IConfiguration> _mockConfig;
+
+        public CropServiceTests()
+        {
+            _mockUow = new Mock<IUnitOfWorks>();
+            _mockTime = new Mock<ICurrentTime>();
+            _mockMapper = new Mock<IMapper>();
+            _mockCropRepo = new Mock<ICropRepository>();
+            _mockConfig = new Mock<IConfiguration>();
+
+            // gán cropRepo vào unitOfWork
+            _mockUow.Setup(x => x.cropRepository).Returns(_mockCropRepo.Object);
+        }
+
+        // Tạo service theo đúng constructor của CropServices
+        private CropServices CreateService(JWTFake fakeJwt) =>
+            new CropServices(
+                _mockUow.Object,
+                _mockTime.Object,
+                _mockConfig.Object,
+                _mockMapper.Object,
+                _mockCropRepo.Object,
+                fakeJwt
+            );
+
+        // ================================================================
+        // UC1: User = null → FAIL
+        // ================================================================
+        [Fact]
+        public async Task CreateCropAsync_UserNull_ShouldFail()
+        {
+            var fakeJwt = new JWTFake(null);
+            var service = CreateService(fakeJwt);
+
+            var cropRequest = new CropRequest
+            {
+                CropName = "Tomato",
+                Origin = "Vietnam",
+                CategoryId = 1
+            };
+            var productDTO = new ProductRequestDTO.CreateProductDTO
+            {
+                ProductName = "Tomato Product",
+                Price = 15000
+            };
+
+            var result = await service.CreateCropAsync(cropRequest, productDTO);
+
+            Assert.Equal(-1, result.Status);
+            Assert.Equal("Tài khoản không hợp lệ.", result.Message);
+        }
+
+        // ================================================================
+        // UC2: User role != Manager → FAIL
+        // ================================================================
+        [Fact]
+        public async Task CreateCropAsync_UserIsNotManager_ShouldFail()
+        {
+            var fakeJwt = new JWTFake(new Account { AccountId = 1, Role = Roles.Customer });
+            var service = CreateService(fakeJwt);
+
+            var cropRequest = new CropRequest
+            {
+                CropName = "Tomato",
+                Origin = "Vietnam",
+                CategoryId = 1
+            };
+            var productDTO = new ProductRequestDTO.CreateProductDTO
+            {
+                ProductName = "Tomato Product",
+                Price = 15000
+            };
+
+            var result = await service.CreateCropAsync(cropRequest, productDTO);
+
+            Assert.Equal(-1, result.Status);
+            Assert.Equal("Tài khoản không hợp lệ.", result.Message);
+        }
+
+        // ================================================================
+        // UC3: CropRequest thiếu field bắt buộc → FAIL
+        // ================================================================
+        [Fact]
+        public void CreateCropAsync_CropRequestValidation_ShouldFail()
+        {
+            var cropRequest = new CropRequest
+            {
+                CropName = null, // thiếu bắt buộc
+                Origin = null,   // thiếu bắt buộc
+                CategoryId = null
+            };
+
+            var validationResults = new List<ValidationResult>();
+            var context = new ValidationContext(cropRequest, null, null);
+            var isValid = Validator.TryValidateObject(cropRequest, context, validationResults, true);
+
+            Assert.False(isValid);
+            Assert.Contains(validationResults, v => v.MemberNames.Contains("CropName"));
+            Assert.Contains(validationResults, v => v.MemberNames.Contains("Origin"));
+            Assert.Contains(validationResults, v => v.MemberNames.Contains("CategoryId"));
+        }
+
+        // ================================================================
+        // UC4: ProductDTO thiếu field bắt buộc → FAIL
+        // ================================================================
+        [Fact]
+        public void CreateCropAsync_ProductDTOValidation_ShouldFail()
+        {
+            var productDTO = new ProductRequestDTO.CreateProductDTO
+            {
+                ProductName = null, // thiếu bắt buộc
+                Price = null        // thiếu bắt buộc
+            };
+
+            var validationResults = new List<ValidationResult>();
+            var context = new ValidationContext(productDTO, null, null);
+            var isValid = Validator.TryValidateObject(productDTO, context, validationResults, true);
+
+            Assert.False(isValid);
+            Assert.Contains(validationResults, v => v.MemberNames.Contains("ProductName"));
+            Assert.Contains(validationResults, v => v.MemberNames.Contains("Price"));
+        }
+
+        // ================================================================
+        // UC5: Tạo mới thành công → SUCCESS
+        // ================================================================
+        [Fact]
+        public async Task CreateCropAsync_CreateSuccessfully_ShouldSucceed()
+        {
+            var user = new Account { AccountId = 1, Role = Roles.Manager };
+            var fakeJwt = new JWTFake(user);
+            var service = CreateService(fakeJwt);
+
+            var cropReq = new CropRequest
+            {
+                CategoryId = 2,
+                CropName = "Test Crop",
+                Origin = "Vietnam"
+            };
+
+            var productReq = new ProductRequestDTO.CreateProductDTO
+            {
+                ProductName = "Test Product",
+                Price = 20000
+            };
+
+            var product = new Product { ProductId = 10 };
+            var crop = new Crop { CropName = "Test Crop", CategoryId = 2 };
+            var category = new Category { CategoryId = 2, CategoryName = "Vegetable" };
+
+            _mockMapper.Setup(x => x.Map<Product>(productReq)).Returns(product);
+            _mockMapper.Setup(x => x.Map<Crop>(cropReq)).Returns(crop);
+            _mockMapper.Setup(x => x.Map<CropView>(crop)).Returns(new CropView());
+            _mockMapper.Setup(x => x.Map<ProductDetailDTO>(product)).Returns(new ProductDetailDTO());
+
+            _mockUow.Setup(x => x.productRepository.AddAsync(product));
+            _mockCropRepo.Setup(x => x.AddAsync(crop));
+            _mockUow.Setup(x => x.categoryRepository.GetByIdAsync(2)).ReturnsAsync(category);
+            _mockUow.Setup(x => x.SaveChangesAsync());
+
+            _mockTime.Setup(t => t.GetCurrentTime())
+                     .Returns(DateOnly.FromDateTime(DateTime.Now));
+
+            var result = await service.CreateCropAsync(cropReq, productReq);
+
+            Assert.Equal(1, result.Status);
+            Assert.Equal("Create Data Success", result.Message);
+            Assert.NotNull(result.Data);
+
+            _mockUow.Verify(x => x.productRepository.AddAsync(product), Times.Once);
+            _mockCropRepo.Verify(x => x.AddAsync(crop), Times.Once);
+            _mockUow.Verify(x => x.SaveChangesAsync(), Times.Exactly(2));
+        }
+    }
+}
