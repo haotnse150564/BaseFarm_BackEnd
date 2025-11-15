@@ -197,5 +197,106 @@ namespace BaseFarm_BackEnd.Test.Services
             _mockCropRepo.Verify(x => x.AddAsync(crop), Times.Once);
             _mockUow.Verify(x => x.SaveChangesAsync(), Times.Exactly(2));
         }
+
+        // ================================================================
+        // UC1: Crop không tồn tại → FAIL
+        // ================================================================
+        [Fact]
+        public async Task UpdateCrop_CropNotFound_ShouldFail()
+        {
+            var cropId = 1L;
+            _mockUow.Setup(u => u.cropRepository.GetByIdAsync(cropId))
+                    .ReturnsAsync((Crop)null);
+
+            var service = CreateService(new JWTFake(new Account { Role = Roles.Manager }));
+            var cropUpdate = new CropRequest { CropName = "Updated Crop" };
+
+            var result = await service.UpdateCrop(cropUpdate, cropId);
+
+            Assert.Equal(-1, result.Status);
+            Assert.Equal("Get Data Fail", result.Message); // sửa message cho khớp với service
+        }
+
+        // ================================================================
+        // UC2: Update thành công → SUCCESS
+        // ================================================================
+        [Fact]
+        public async Task UpdateCrop_ValidInput_ShouldSucceed()
+        {
+            var cropId = 1L;
+            var existingCrop = new Crop { CropId = cropId, CropName = "Old Crop" };
+            var cropUpdate = new CropRequest { CropName = "Updated Crop", Description = "New Desc" };
+
+            _mockUow.Setup(u => u.cropRepository.GetByIdAsync(cropId))
+                    .ReturnsAsync(existingCrop);
+
+            _mockMapper.Setup(m => m.Map(cropUpdate, existingCrop)).Returns(existingCrop);
+            _mockMapper.Setup(m => m.Map<CropView>(existingCrop))
+                       .Returns(new CropView { CropName = "Updated Crop" });
+
+            _mockUow.Setup(u => u.cropRepository.UpdateAsync(existingCrop));
+            _mockUow.Setup(u => u.SaveChangesAsync());
+
+            var service = CreateService(new JWTFake(new Account { Role = Roles.Manager }));
+
+            var result = await service.UpdateCrop(cropUpdate, cropId);
+
+            Assert.Equal(1, result.Status);
+            Assert.Equal("Update Data Success", result.Message);
+            Assert.IsType<CropView>(result.Data);
+            Assert.Equal("Updated Crop", ((CropView)result.Data).CropName);
+        }
+
+        // ================================================================
+        // UC3: CropRequest validation fail → FAIL
+        // ================================================================
+        [Fact]
+        public void UpdateCrop_CropRequestValidation_ShouldFail()
+        {
+            var cropUpdate = new CropRequest
+            {
+                CropName = null, // required
+                Origin = null
+            };
+
+            var validationResults = new List<ValidationResult>();
+            var context = new ValidationContext(cropUpdate, null, null);
+            var isValid = Validator.TryValidateObject(cropUpdate, context, validationResults, true);
+
+            Assert.False(isValid);
+            Assert.Contains(validationResults, v => v.MemberNames.Contains("CropName"));
+            Assert.Contains(validationResults, v => v.MemberNames.Contains("Origin"));
+        }
+
+        // ================================================================
+        // UC5: User = null → FAIL
+        // ================================================================
+        [Fact]
+        public async Task UpdateCrop_UserNull_ShouldFail()
+        {
+            var cropUpdate = new CropRequest { CropName = "Updated Crop" };
+            var service = CreateService(new JWTFake(null));
+
+            var result = await service.UpdateCrop(cropUpdate, 1L);
+
+            Assert.Equal(-1, result.Status);
+            Assert.Equal("Get Data Fail", result.Message); // sửa message cho khớp
+        }
+
+        // ================================================================
+        // UC6: User role != Manager → FAIL
+        // ================================================================
+        [Fact]
+        public async Task UpdateCrop_UserNotManager_ShouldFail()
+        {
+            var cropUpdate = new CropRequest { CropName = "Updated Crop" };
+            var fakeJwt = new JWTFake(new Account { Role = Roles.Customer });
+            var service = CreateService(fakeJwt);
+
+            var result = await service.UpdateCrop(cropUpdate, 1L);
+
+            Assert.Equal(-1, result.Status);
+            Assert.Equal("Get Data Fail", result.Message); // sửa message cho khớp
+        }
     }
 }
