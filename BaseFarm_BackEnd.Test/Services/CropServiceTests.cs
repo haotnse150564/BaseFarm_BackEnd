@@ -369,5 +369,62 @@ namespace BaseFarm_BackEnd.Test.Services
             Assert.Equal((CropStatus)currentStatus, existingCrop.Status); // trạng thái vẫn giữ nguyên
         }
 
+        // ================================================================
+        // UC1: Không có crop nào → Exception
+        // ================================================================
+        [Fact]
+        public async Task GetAllCropsAsync_NoCrops_ShouldThrowException()
+        {
+            // Setup repository trả về danh sách rỗng
+            _mockUow.Setup(u => u.cropRepository.GetAllAsync())
+                    .ReturnsAsync(new List<Crop>());
+
+            var service = CreateService(new JWTFake(new Account { Role = Roles.Manager }));
+
+            // Kiểm tra exception
+            await Assert.ThrowsAsync<Exception>(async () =>
+            {
+                await service.GetAllCropsAsync(1, 10);
+            });
+        }
+
+        // ================================================================
+        // UC2: Có crops → trả về Pagination đúng
+        // ================================================================
+        [Fact]
+        public async Task GetAllCropsAsync_WithCrops_ShouldReturnPagination()
+        {
+            // Tạo danh sách crop mẫu
+            var crops = new List<Crop>
+            {
+                new Crop { CropId = 1, CropName = "Crop1" },
+                new Crop { CropId = 2, CropName = "Crop2" },
+                new Crop { CropId = 3, CropName = "Crop3" }
+            };
+
+            _mockUow.Setup(u => u.cropRepository.GetAllAsync())
+                    .ReturnsAsync(crops);
+
+            // Mapper map Crop → CropView
+            _mockMapper.Setup(m => m.Map<List<CropView>>(crops))
+                       .Returns(crops.Select(c => new CropView { CropName = c.CropName }).ToList());
+
+            var service = CreateService(new JWTFake(new Account { Role = Roles.Manager }));
+
+            int pageIndex = 1;
+            int pageSize = 2;
+
+            var result = await service.GetAllCropsAsync(pageIndex, pageSize);
+
+            Assert.NotNull(result);
+            Assert.Equal(3, result.TotalItemCount);      // tổng số crop
+            Assert.Equal(pageSize, result.PageSize);     // pageSize = 2
+            Assert.Equal(pageIndex, result.PageIndex);   // pageIndex = 1
+            Assert.Equal(2, result.Items.Count);         // chỉ lấy 2 item cho page 1
+
+            // Fix: Use LINQ's ElementAt() to access items in ICollection
+            Assert.Equal("Crop1", result.Items.ElementAt(0).CropName);
+            Assert.Equal("Crop2", result.Items.ElementAt(1).CropName);
+        }
     }
 }
