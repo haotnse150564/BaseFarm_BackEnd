@@ -193,9 +193,39 @@ namespace Application.Services.Implement
             }
         }
 
-        public Task<ResponseDTO> UpdateSchedulesAsync(long ScheduleId, ScheduleRequest request)
+        public async Task<ResponseDTO> UpdateSchedulesAsync(long ScheduleId, ScheduleRequest request)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var getCurrentUser = await _jwtUtils.GetCurrentUserAsync();
+                if (getCurrentUser == null || getCurrentUser.Role != Roles.Manager)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Tài khoản không hợp lệ.");
+                }
+                var schedule = await _unitOfWork.scheduleRepository.GetByIdAsync(ScheduleId);
+                if (schedule == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Lịch trình không tồn tại.");
+                }
+                var updatedSchedule = _mapper.Map<ScheduleRequest, Schedule>(request, schedule);
+                updatedSchedule.UpdatedAt = _currentTime.GetCurrentTime();
+                _unitOfWork.scheduleRepository.Update(updatedSchedule);
+                await _unitOfWork.SaveChangesAsync();
+                //In ra kết quả
+                var staffInfo = await _account.GetByIdAsync(request.StaffId);
+                var result = _mapper.Map<ScheduleResponseView>(updatedSchedule);
+
+                var getCreateUser = await _account.GetByIdAsync(updatedSchedule.ManagerId);
+
+                result.ManagerName = getCreateUser != null ? getCreateUser.AccountProfile.Fullname : null;
+                result.StaffName = staffInfo != null ? staffInfo.AccountProfile.Fullname : null;
+                return new ResponseDTO(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, result);
+
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.FAIL_READ_CODE, ex.Message);
+            }
         }
 
         public async Task<ResponseDTO> GetAllSchedulesAsync(int pageIndex, int pageSize)
@@ -224,7 +254,7 @@ namespace Application.Services.Implement
 
 
 
-                return new ResponseDTO(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, result);
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_CREATE_MSG, result);
 
 
             }
@@ -258,14 +288,63 @@ namespace Application.Services.Implement
             }
         }
 
-        public Task<ResponseDTO> AssignTask(long scheduleID, long staffId)
+        public async Task<ResponseDTO> AssignTask(long scheduleID, long staffId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var getCurrentUser = await _jwtUtils.GetCurrentUserAsync();
+                if (getCurrentUser == null || getCurrentUser.Role != Roles.Manager)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Tài khoản không hợp lệ.");
+                }
+                var schedule = await _unitOfWork.scheduleRepository.GetByIdAsync(scheduleID);
+                if (schedule == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Lịch trình không tồn tại.");
+                }
+                schedule.AssignedTo = staffId;
+                schedule.UpdatedAt = _currentTime.GetCurrentTime();
+                _unitOfWork.scheduleRepository.Update(schedule);
+                await _unitOfWork.SaveChangesAsync();
+                //In ra kết quả
+                var result = _mapper.Map<ScheduleResponseView>(schedule);
+                return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, result);
+
+            }
+            catch
+            {
+                return new ResponseDTO(Const.FAIL_READ_CODE, "Lỗi khi phân công nhiệm vụ.");
+            }
         }
 
-        public Task<ResponseDTO> UpdateActivities(long ScheduleId, long activityId)
+        public async Task<ResponseDTO> UpdateActivities(long ScheduleId, long activityId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var getCurrentUser = await _jwtUtils.GetCurrentUserAsync();
+                if (getCurrentUser == null || getCurrentUser.Role != Roles.Manager)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Tài khoản không hợp lệ.");
+                }
+                var schedule = await _unitOfWork.scheduleRepository.GetByIdAsync(ScheduleId);
+                if (schedule == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Lịch trình không tồn tại.");
+                }
+                schedule.FarmActivitiesId = activityId;
+                schedule.UpdatedAt = _currentTime.GetCurrentTime();
+                _unitOfWork.scheduleRepository.Update(schedule);
+                await _unitOfWork.SaveChangesAsync();
+                //In ra kết quả
+                var result = _mapper.Map<ScheduleResponseView>(schedule);
+
+                return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, result);
+
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.FAIL_READ_CODE, ex.Message);
+            }
         }
 
         public Task<ResponseDTO> ChangeScheduleStatusById(long ScheduleId, string status)
@@ -273,9 +352,25 @@ namespace Application.Services.Implement
             throw new NotImplementedException();
         }
 
-        public Task<ResponseDTO> ScheduleStaffView(int month)
+        public async Task<ResponseDTO> ScheduleStaffView(int month)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var getCurrentUser = await _jwtUtils.GetCurrentUserAsync();
+                if (getCurrentUser == null || getCurrentUser.Role != Roles.Staff)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Tài khoản không hợp lệ.");
+                }
+                var list = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(getCurrentUser.AccountId, month);
+                var schedules = _mapper.Map<List<ScheduleResponseView>>(list);
+                //In ra kết quả
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, schedules);
+
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.FAIL_READ_CODE, ex.Message);
+            }
         }
     }
          #endregion

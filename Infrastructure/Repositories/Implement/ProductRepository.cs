@@ -209,5 +209,11 @@ namespace Infrastructure.Repositories.Implement
 
             return list;
         }
+
+        public async Task<bool> RemoveProduct(long productId)
+        {
+            _dbSet.Remove(_context.Product.FirstOrDefault(x => x.ProductId == productId));
+            return true;
+        }
     }
 }
