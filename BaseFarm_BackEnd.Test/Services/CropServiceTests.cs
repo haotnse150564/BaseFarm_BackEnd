@@ -298,5 +298,76 @@ namespace BaseFarm_BackEnd.Test.Services
             Assert.Equal(-1, result.Status);
             Assert.Equal("Get Data Fail", result.Message); // sửa message cho khớp
         }
+
+        // ================================================================
+        // UC1: Crop không tồn tại → FAIL
+        // ================================================================
+        [Fact]
+        public async Task UpdateCropStatusAsync_CropNotFound_ShouldFail()
+        {
+            var cropId = 1L;
+            var status = 1;
+
+            _mockUow.Setup(u => u.cropRepository.GetByIdAsync(cropId))
+                    .ReturnsAsync((Crop)null);
+
+            var service = CreateService(new JWTFake(new Account { Role = Roles.Manager }));
+
+            var result = await service.UpdateCropStatusAsync(cropId, status);
+
+            Assert.Equal(-1, result.Status);
+            Assert.Equal("Get Data Fail", result.Message); // sửa message
+        }
+
+        // ================================================================
+        // UC2: Cập nhật status thành công → SUCCESS
+        // ================================================================
+        [Fact]
+        public async Task UpdateCropStatusAsync_ValidInput_ShouldSucceed()
+        {
+            var cropId = 1L;
+            var status = 2; // ví dụ Active = 2
+            var existingCrop = new Crop { CropId = cropId, Status = CropStatus.INACTIVE };
+
+            _mockUow.Setup(u => u.cropRepository.GetByIdAsync(cropId))
+                    .ReturnsAsync(existingCrop);
+
+            _mockUow.Setup(u => u.cropRepository.UpdateAsync(existingCrop));
+            _mockUow.Setup(u => u.SaveChangesAsync());
+
+            var service = CreateService(new JWTFake(new Account { Role = Roles.Manager }));
+
+            var result = await service.UpdateCropStatusAsync(cropId, status);
+
+            Assert.Equal(1, result.Status);
+            Assert.Equal("Update Data Success", result.Message); // sửa message
+            Assert.Equal((CropStatus)status, existingCrop.Status); // đảm bảo crop.Status được cập nhật
+        }
+
+        // ================================================================
+        // UC3: Cập nhật status sang giá trị hiện tại → SUCCESS
+        // ================================================================
+        [Fact]
+        public async Task UpdateCropStatusAsync_StatusSameAsCurrent_ShouldSucceed()
+        {
+            var cropId = 1L;
+            var currentStatus = 2; // giả sử status hiện tại = 2
+            var existingCrop = new Crop { CropId = cropId, Status = (CropStatus)currentStatus };
+
+            _mockUow.Setup(u => u.cropRepository.GetByIdAsync(cropId))
+                    .ReturnsAsync(existingCrop);
+
+            _mockUow.Setup(u => u.cropRepository.UpdateAsync(existingCrop));
+            _mockUow.Setup(u => u.SaveChangesAsync());
+
+            var service = CreateService(new JWTFake(new Account { Role = Roles.Manager }));
+
+            var result = await service.UpdateCropStatusAsync(cropId, currentStatus);
+
+            Assert.Equal(1, result.Status);
+            Assert.Equal("Update Data Success", result.Message); // sửa message
+            Assert.Equal((CropStatus)currentStatus, existingCrop.Status); // trạng thái vẫn giữ nguyên
+        }
+
     }
 }
