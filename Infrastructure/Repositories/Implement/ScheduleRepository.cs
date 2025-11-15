@@ -28,6 +28,7 @@ namespace Infrastructure.Repositories.Implement
             .Include(f => f.FarmDetails)
             .Include(c => c.Crop)
             .Include(fa => fa.FarmActivities)
+            .OrderByDescending(x => x.ScheduleId)
             .ToListAsync();
             return result;
         }
@@ -42,6 +43,7 @@ namespace Infrastructure.Repositories.Implement
             // .Include(a => a.FarmActivities)
             .Include(a => a.FarmDetails)
             .Where(x => x.AssignedTo == staffId)
+            .OrderByDescending(x => x.ScheduleId)
             .ToListAsync();
             if (month > 0 && month < 12)
             {

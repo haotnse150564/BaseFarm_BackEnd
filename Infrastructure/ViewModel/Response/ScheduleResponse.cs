@@ -13,6 +13,7 @@ namespace Infrastructure.ViewModel.Response
     {
         public class ScheduleResponseView
         {
+            public long ScheduleId { get; set; }
             public DateOnly? StartDate { get; set; }
 
             public DateOnly? EndDate { get; set; }
