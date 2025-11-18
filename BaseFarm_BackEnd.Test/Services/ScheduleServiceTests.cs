@@ -113,7 +113,7 @@ namespace BaseFarm_BackEnd.Test.Services
 
             var result = await service.CreateSchedulesAsync(request);
 
-            Assert.Equal(StatusTest.FAIL_READ_CODE, result.Status);
+            Assert.Equal(-1, result.Status);
             Assert.Equal("Tài khoản không hợp lệ.", result.Message);
         }
 
@@ -422,5 +422,124 @@ namespace BaseFarm_BackEnd.Test.Services
             Assert.Equal(Const.SUCCESS_CREATE_CODE, result.Status);
             Assert.NotNull(result.Data);
         }
+
+        //change status
+        // UC1: User không phải Manager → FAIL
+        [Fact]
+        public async Task ChangeScheduleStatusById_UserNotManager_ShouldFail()
+        {
+            var user = new Account { Role = Roles.Customer, AccountProfile = new AccountProfile { Fullname = "Customer" } };
+            var service = CreateService(new JWTFake(user));
+
+            var result = await service.ChangeScheduleStatusById(1, "ACTIVE");
+
+            Assert.Equal(-1, result.Status); // FAIL_READ_CODE
+            Assert.Equal("Tài khoản không hợp lệ.", result.Message);
+        }
+
+        // UC2: Schedule không tồn tại → FAIL
+        [Fact]
+        public async Task ChangeScheduleStatusById_ScheduleNotExist_ShouldFail()
+        {
+            var manager = CreateManager();
+            _mockUow.Setup(u => u.scheduleRepository.GetByIdAsync(It.IsAny<long>()))
+                    .ReturnsAsync((Schedule)null);
+
+            var service = CreateService(new JWTFake(manager));
+
+            var result = await service.ChangeScheduleStatusById(999, "ACTIVE");
+
+            Assert.Equal(-1, result.Status); // FAIL_READ_CODE
+            Assert.Equal("Lịch trình không tồn tại.", result.Message);
+        }
+
+        // UC3: Trạng thái không thay đổi → FAIL
+        [Fact]
+        public async Task ChangeScheduleStatusById_StatusSame_ShouldFail()
+        {
+            var manager = CreateManager();
+            var schedule = new Schedule { Status = Status.ACTIVE };
+
+            _mockUow.Setup(u => u.scheduleRepository.GetByIdAsync(It.IsAny<long>()))
+                    .ReturnsAsync(schedule);
+
+            var service = CreateService(new JWTFake(manager));
+
+            var result = await service.ChangeScheduleStatusById(1, "ACTIVE");
+
+            Assert.Equal(-1, result.Status); // FAIL_READ_CODE
+            Assert.Equal("Trạng thái không thay đổi.", result.Message);
+        }
+
+        // UC4: ValidateScheduleDate fail → FAIL
+        [Fact]
+        public async Task ChangeScheduleStatusById_ValidateScheduleFail_ShouldFail()
+        {
+            var manager = CreateManager();
+            var schedule = new Schedule { Status = Status.DEACTIVATED };
+
+            _mockUow.Setup(u => u.scheduleRepository.GetByIdAsync(It.IsAny<long>()))
+                    .ReturnsAsync(schedule);
+
+            var serviceMock = new Mock<ScheduleServices>(
+                _mockUow.Object,
+                _mockCurrentTime.Object,
+                _mockConfig.Object,
+                _mockMapper.Object,
+                _mockAccountRepo.Object,
+                _mockCropRepo.Object,
+                _mockFarmActivityRepo.Object,
+                _mockFarmRepo.Object,
+                new JWTFake(manager),
+                _mockInventory.Object
+            )
+            { CallBase = true };
+
+            serviceMock.Setup(s => s.ValidateScheduleDate(It.IsAny<Schedule>()))
+                       .ReturnsAsync((false, "Validate fail message"));
+
+            var result = await serviceMock.Object.ChangeScheduleStatusById(1, "ACTIVE");
+
+            Assert.Equal(-1, result.Status); // FAIL_CREATE_CODE
+            Assert.NotNull(result.Message);
+        }
+
+        // UC5: Change thành công → SUCCESS
+        [Fact]
+        public async Task ChangeScheduleStatusById_ValidInput_ShouldSucceed()
+        {
+            var manager = CreateManager();
+            var schedule = new Schedule { Status = Status.DEACTIVATED };
+
+            _mockUow.Setup(u => u.scheduleRepository.GetByIdAsync(It.IsAny<long>()))
+                    .ReturnsAsync(schedule);
+            _mockUow.Setup(u => u.SaveChangesAsync()).ReturnsAsync(1);
+            _mockMapper.Setup(m => m.Map<ScheduleResponseView>(It.IsAny<Schedule>()))
+                       .Returns(new ScheduleResponseView());
+            _mockCurrentTime.Setup(c => c.GetCurrentTime()).Returns(DateOnly.FromDateTime(DateTime.Now));
+
+            var serviceMock = new Mock<ScheduleServices>(
+                _mockUow.Object,
+                _mockCurrentTime.Object,
+                _mockConfig.Object,
+                _mockMapper.Object,
+                _mockAccountRepo.Object,
+                _mockCropRepo.Object,
+                _mockFarmActivityRepo.Object,
+                _mockFarmRepo.Object,
+                new JWTFake(manager),
+                _mockInventory.Object
+            )
+            { CallBase = true };
+
+            serviceMock.Setup(s => s.ValidateScheduleDate(It.IsAny<Schedule>()))
+                       .ReturnsAsync((true, ""));
+
+            var result = await serviceMock.Object.ChangeScheduleStatusById(1, "ACTIVE");
+
+            Assert.Equal(1, result.Status); // SUCCESS_UPDATE_CODE
+            Assert.NotNull(result.Data);
+        }
+
     }
 }
