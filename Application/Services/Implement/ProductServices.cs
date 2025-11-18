@@ -11,7 +11,7 @@ using static Application.ViewModel.Response.ProductResponse;
 
 namespace Application.Services.Implement
 {
-    class ProductServices : IProductServices
+    public class ProductServices : IProductServices
     {
         private readonly IUnitOfWorks _unitOfWork;
         private readonly ICurrentTime _currentTime;
