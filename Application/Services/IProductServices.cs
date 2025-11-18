@@ -14,7 +14,7 @@ namespace Application.Services
         Task<ResponseDTO> GetAllProductAsync(int pageIndex, int pageSize);
         Task<ResponseDTO> GetProductByIdAsync(long productId);
         Task<ResponseDTO> GetProductByNameAsync(string productName, int pageIndex, int pageSize);
-        Task<ResponseDTO> CreateProductAsync(CreateProductDTO request);
+        //Task<ResponseDTO> CreateProductAsync(CreateProductDTO request);
         Task<ResponseDTO> UpdateProductById(long productId, UpdateProductDTO request);
         Task<ResponseDTO> ChangeProductStatusById(long productId);
         Task<ResponseDTO> ChangeProductQuantityById(long productId, UpdateQuantityDTO request);
