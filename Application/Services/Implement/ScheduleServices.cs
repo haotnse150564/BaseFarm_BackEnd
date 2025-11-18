@@ -45,7 +45,7 @@ namespace Application.Services.Implement
         }
 
         #region Validation date Schedule
-        public async Task<(bool, string)> ValidateScheduleDate(Schedule schedule)
+        public virtual async Task<(bool, string)> ValidateScheduleDate(Schedule schedule)
         {
             int result = 0;
             string message = "";
