@@ -346,9 +346,48 @@ namespace Application.Services.Implement
             }
         }
 
-        public Task<ResponseDTO> ChangeScheduleStatusById(long ScheduleId, string status)
+        public async Task<ResponseDTO> ChangeScheduleStatusById(long ScheduleId, string status)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var getCurrentUser = await _jwtUtils.GetCurrentUserAsync();
+                if (getCurrentUser == null || getCurrentUser.Role != Roles.Manager)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Tài khoản không hợp lệ.");
+                }
+                var schedule = await _unitOfWork.scheduleRepository.GetByIdAsync(ScheduleId);
+                if (schedule == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Lịch trình không tồn tại.");
+                }
+                if (schedule.Status.ToString() == status)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Trạng thái không thay đổi.");
+                }
+                else
+                {
+                    schedule.Status = Enum.Parse<Status>(status);
+                    schedule.UpdatedAt = _currentTime.GetCurrentTime();
+                }
+
+                //validate date của schedule sau khi update activities
+                var validate = ValidateScheduleDate(schedule);
+                if (validate.Result.Item1 == false)
+                {
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, Const.FAIL_CREATE_MSG, validate.Result.Item2);
+                }
+
+                _unitOfWork.scheduleRepository.Update(schedule);
+                await _unitOfWork.SaveChangesAsync();
+                //In ra kết quả
+                var result = _mapper.Map<ScheduleResponseView>(schedule);
+
+                return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, result);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.FAIL_READ_CODE, ex.Message);
+            }
         }
 
         public async Task<ResponseDTO> ScheduleStaffView(int month)

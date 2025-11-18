@@ -76,26 +76,26 @@ namespace WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpPost("create")]
-        [Authorize(Roles = "Staff")]
-        public async Task<IActionResult> CreateProduct([FromBody] CreateProductDTO createRequest)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //[HttpPost("create")]
+        //[Authorize(Roles = "Staff")]
+        //public async Task<IActionResult> CreateProduct([FromBody] CreateProductDTO createRequest)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            try
-            {
-                var result = await _productService.CreateProductAsync(createRequest);
+        //    try
+        //    {
+        //        var result = await _productService.CreateProductAsync(createRequest);
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
+        //        return Ok(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, $"Internal server error: {ex.Message}");
+        //    }
+        //}
 
         [HttpPut("update/{id}")]
         [Authorize(Roles = "Staff")]
