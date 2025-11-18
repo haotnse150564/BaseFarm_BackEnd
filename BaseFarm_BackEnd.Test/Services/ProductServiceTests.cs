@@ -141,6 +141,76 @@ namespace BaseFarm_BackEnd.Test.Services
             Assert.NotNull(result.Data);
         }
 
+        //status update
+        // ================================================================
+        // UC1: Product không tồn tại → FAIL
+        // ================================================================
+        [Fact]
+        public async Task ChangeProductStatusById_ProductNotFound_ShouldFail()
+        {
+            long productId = 1;
 
+            var mockProductRepo = new Mock<IProductRepository>();
+            mockProductRepo.Setup(r => r.GetProductById(productId)).ReturnsAsync((Product)null);
+
+            _mockUow.Setup(u => u.productRepository).Returns(mockProductRepo.Object);
+
+            var service = CreateService(new JWTFake(new Account { Role = Roles.Manager }));
+
+            var result = await service.ChangeProductStatusById(productId);
+
+            Assert.Equal(-1, result.Status); // FAIL_READ_CODE
+            Assert.Equal("Get Data Fail", result.Message);
+        }
+
+        // ================================================================
+        // UC2: Product ACTIVE → DEACTIVED → SUCCESS
+        // ================================================================
+        [Fact]
+        public async Task ChangeProductStatusById_ActiveToDeactived_ShouldSucceed()
+        {
+            long productId = 1;
+            var product = new Product { ProductId = productId, Status = ProductStatus.ACTIVE };
+
+            var mockProductRepo = new Mock<IProductRepository>();
+            mockProductRepo.Setup(r => r.GetProductById(productId)).ReturnsAsync(product);
+
+            _mockUow.Setup(u => u.productRepository).Returns(mockProductRepo.Object);
+            _mockUow.Setup(u => u.productRepository.UpdateAsync(product));
+            _mockUow.Setup(u => u.SaveChangesAsync()).ReturnsAsync(1);
+
+            var service = CreateService(new JWTFake(new Account { Role = Roles.Manager }));
+
+            var result = await service.ChangeProductStatusById(productId);
+
+            Assert.Equal(1, result.Status); // SUCCESS_READ_CODE
+            Assert.Equal("Get Data Success", result.Message);
+            Assert.Equal(ProductStatus.DEACTIVED, product.Status);
+        }
+
+        // ================================================================
+        // UC3: Product DEACTIVED → ACTIVE → SUCCESS
+        // ================================================================
+        [Fact]
+        public async Task ChangeProductStatusById_DeactivedToActive_ShouldSucceed()
+        {
+            long productId = 1;
+            var product = new Product { ProductId = productId, Status = ProductStatus.DEACTIVED };
+
+            var mockProductRepo = new Mock<IProductRepository>();
+            mockProductRepo.Setup(r => r.GetProductById(productId)).ReturnsAsync(product);
+
+            _mockUow.Setup(u => u.productRepository).Returns(mockProductRepo.Object);
+            _mockUow.Setup(u => u.productRepository.UpdateAsync(product));
+            _mockUow.Setup(u => u.SaveChangesAsync()).ReturnsAsync(1);
+
+            var service = CreateService(new JWTFake(new Account { Role = Roles.Manager }));
+
+            var result = await service.ChangeProductStatusById(productId);
+
+            Assert.Equal(1, result.Status); // SUCCESS_READ_CODE
+            Assert.Equal("Get Data Success", result.Message);
+            Assert.Equal(ProductStatus.ACTIVE, product.Status);
+        }
     }
 }
