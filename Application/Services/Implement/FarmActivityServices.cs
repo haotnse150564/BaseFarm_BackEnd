@@ -178,7 +178,7 @@ namespace WebAPI.Services
             }
         }
 
-        public async Task<ResponseDTO> UpdateFarmActivityAsync(long farmActivityId, FarmActivityRequest farmActivityrequest, ActivityType? activityType)
+        public async Task<ResponseDTO> UpdateFarmActivityAsync(long farmActivityId, FarmActivityRequest farmActivityrequest, ActivityType? activityType, FarmActivityStatus farmActivityStatus)
         {
             var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(farmActivityId);
 
@@ -191,6 +191,7 @@ namespace WebAPI.Services
                 farmActivity.StartDate = farmActivityrequest.StartDate;
                 farmActivity.EndDate = farmActivityrequest.EndDate;
                 farmActivity.ActivityType = activityType;
+                farmActivity.Status = farmActivityStatus;
                 if(!CheckDate(farmActivity.StartDate, farmActivity.EndDate))
                 {
                     return new ResponseDTO(Const.FAIL_UPDATE_CODE, "Start date or end date is wrong required!");
@@ -227,12 +228,17 @@ namespace WebAPI.Services
             await _unitOfWork.farmActivityRepository.UpdateAsync(farmActivity);
             if (farmActivity.ActivityType == ActivityType.Harvesting)
             {
-                //var schedule = await _unitOfWork.scheduleRepository.GetByIdAsync(farmActivity.ScheduleId.Value);
-                ////xu ly inventory neu farmactivitytype là harvest và status là completed
-                //if (farmActivity != null && schedule!=null &&farmActivity.ActivityType == Domain.Enum.ActivityType.Harvesting && farmActivity.Status == FarmActivityStatus.COMPLETED)
-                //{
-                //    await _inventory.CalculateAndCreateInventoryAsync(schedule.Quantity, location, schedule.CropId, schedule.ScheduleId);
-                //}
+                var product = await _unitOfWork.farmActivityRepository.GetProductWillHarves(farmActivity.FarmActivitiesId);
+                if (product == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);
+                }
+                foreach(var item in product)
+                {
+                    //CỘNG SL KHI THU HOẠCH
+                    var schedule = await _unitOfWork.scheduleRepository.GetByCropId(item.ProductId);
+                    item.StockQuantity = schedule.Quantity;
+                }
                 if (await _unitOfWork.SaveChangesAsync() < 0)
                 {
                     return new ResponseDTO(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);

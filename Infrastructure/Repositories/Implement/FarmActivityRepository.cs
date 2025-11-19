@@ -57,5 +57,19 @@ namespace Infrastructure.Repositories.Implement
                 .ToListAsync();
             return result;
         }
+
+        public async Task<List<Product>> GetProductWillHarves(long acitivityId)
+        {
+            var products = await _context.Crops
+                .Include(c => c.Product) // Include Product từ Crop
+                .Include(c => c.Schedules)
+                    .ThenInclude(s => s.FarmActivities)
+                .Where(c => c.Schedules.Any(s => s.FarmActivities.FarmActivitiesId == acitivityId))
+                .Select(c => c.Product) // Lấy Product từ mỗi Crop
+                .ToListAsync();
+
+            return products;
+
+        }
     }
 }

@@ -15,5 +15,6 @@ namespace Infrastructure.Repositories
         Task<List<FarmActivity>> GetListFarmActivityByScheduleId(long scheduleId);
         Task<List<FarmActivity>> GetListFarmActivityUpdate(IEnumerable<long>? farmActivityId);
         Task<List<FarmActivity>> GetAllFiler(Domain.Enum.ActivityType? type, Domain.Enum.FarmActivityStatus? status, int? month);
+        Task<List<Product>> GetProductWillHarves(long acitivityId);
     }
 }

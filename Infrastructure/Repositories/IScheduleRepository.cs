@@ -12,5 +12,6 @@ namespace Infrastructure.Repositories
     {
         Task<List<Schedule?>> GetByStaffIdAsync(long staffId, int month);
         Task<Schedule?> GetByIdWithFarmActivitiesAsync(long scheduleId);
+        Task<Schedule?> GetByCropId(long cropId);
     }
 }

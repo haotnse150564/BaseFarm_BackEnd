@@ -39,7 +39,7 @@ namespace WebAPI.Controllers
         }
         [HttpPut("update/{farmActivityId}")]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> UpdateFarmActivity(long farmActivityId, [FromBody] FarmActivityRequest farmActivityRequest, ActivityType activityType)
+        public async Task<IActionResult> UpdateFarmActivity(long farmActivityId, [FromBody] FarmActivityRequest farmActivityRequest, ActivityType activityType, FarmActivityStatus farmActivityStatus)
         {
             var result = await _farmActivityServices.UpdateFarmActivityAsync(farmActivityId, farmActivityRequest, activityType);
             return Ok(result);

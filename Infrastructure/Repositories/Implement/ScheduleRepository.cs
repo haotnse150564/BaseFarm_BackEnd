@@ -60,5 +60,11 @@ namespace Infrastructure.Repositories.Implement
                 .ThenInclude(c => c.Product)
                 .FirstOrDefaultAsync(s => s.ScheduleId == scheduleId);
         }
+
+        public async Task<Schedule?> GetByCropId(long cropId)
+        {
+            return await _context.Schedule
+                .FirstOrDefaultAsync(x => x.CropId == cropId);
+        }
     }
 }
