@@ -41,7 +41,7 @@ namespace WebAPI.Controllers
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> UpdateFarmActivity(long farmActivityId, [FromBody] FarmActivityRequest farmActivityRequest, ActivityType activityType, FarmActivityStatus farmActivityStatus)
         {
-            var result = await _farmActivityServices.UpdateFarmActivityAsync(farmActivityId, farmActivityRequest, activityType, FarmActivityStatus);
+            var result = await _farmActivityServices.UpdateFarmActivityAsync(farmActivityId, farmActivityRequest, activityType, farmActivityStatus);
             return Ok(result);
         }
         [HttpGet("get-by-id/{farmActivityId}")]
