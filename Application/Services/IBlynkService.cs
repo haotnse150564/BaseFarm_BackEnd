@@ -15,23 +15,23 @@ namespace Application.Services
         Task<bool> SetManualModeAsync(bool isManual);
 
         /// <summary>
-        /// Cập nhật ngưỡng LDR Thấp (V10) – khi trời tối
+        /// V8 - Độ Ẩm Đất Thấp → BẬT bơm khi soil ≤ value
+        /// </summary>
+        Task<bool> SetSoilLowThresholdAsync(int value);
+
+        /// <summary>
+        /// V9 - Độ Ẩm Đất Cao → TẮT bơm khi soil ≥ value
+        /// </summary>
+        Task<bool> SetSoilHighThresholdAsync(int value);
+
+        /// <summary>
+        /// V10 - Ánh Sáng Ngưỡng Thấp → servo 0° khi LDR ≤ value
         /// </summary>
         Task<bool> SetLdrLowThresholdAsync(int value);
 
         /// <summary>
-        /// Cập nhật ngưỡng LDR Cao (V11) – khi trời sáng
+        /// V11 - Ánh Sáng Ngưỡng Cao → servo 180° khi LDR ≥ value
         /// </summary>
         Task<bool> SetLdrHighThresholdAsync(int value);
-
-        /// <summary>
-        /// Cập nhật ngưỡng độ ẩm đất để BẬT bơm (V12)
-        /// </summary>
-        Task<bool> SetSoilOnThresholdAsync(int value);
-
-        /// <summary>
-        /// Cập nhật ngưỡng độ ẩm đất để TẮT bơm (V13)
-        /// </summary>
-        Task<bool> SetSoilOffThresholdAsync(int value);
     }
 }
