@@ -14,6 +14,7 @@ namespace Infrastructure.ViewModel.Response
         public class ScheduleResponseView
         {
             public long ScheduleId { get; set; }
+            public long CropId { get; set; }
             public DateOnly? StartDate { get; set; }
 
             public DateOnly? EndDate { get; set; }
@@ -40,7 +41,6 @@ namespace Infrastructure.ViewModel.Response
             public FarmActivityView? farmActivityView { get; set; }
             public FarmView? farmView { get; set; }
             public CropView? cropView { get; set; }
-
         }
         public class ResponseDTO
         {

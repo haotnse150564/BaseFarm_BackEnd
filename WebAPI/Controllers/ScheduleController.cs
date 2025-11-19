@@ -114,5 +114,16 @@ namespace WebAPI.Controllers
 
             return Ok(result); 
         }
+        [HttpPut("schedule-update-activities")]
+        [Authorize(Roles = "Manager,Staff")]
+        public async Task<IActionResult> UpdateActivity(long scheduleId, long activityId)
+        {
+            var result = await _schedule.UpdateActivities(scheduleId, activityId);
+            if (result.Status != Const.FAIL_UPDATE_CODE)
+            {
+                return BadRequest(result); // Trả về lỗi 400 nếu thất bại
+            }
+            return Ok(result); // Trả về danh sách sản phẩm với phân trang
+        }
     }
 }

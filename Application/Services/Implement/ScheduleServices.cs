@@ -261,7 +261,7 @@ namespace Application.Services.Implement
             {
                 var getCurrentUser = await _jwtUtils.GetCurrentUserAsync();
                 if (getCurrentUser == null || getCurrentUser.Role != Roles.Manager)
-                {
+                {   
                     return new ResponseDTO(Const.FAIL_READ_CODE, "Tài khoản không hợp lệ.");
                 }
 
