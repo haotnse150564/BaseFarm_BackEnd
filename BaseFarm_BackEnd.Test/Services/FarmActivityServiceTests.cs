@@ -319,6 +319,61 @@ namespace BaseFarm_BackEnd.Test.Services
             Assert.Equal("Start date or end date is wrong required!", result.Message);
         }
 
+        //change status
+        [Fact]
+        public async Task ChangeFarmActivityStatusAsync_FarmActivityNotFound_ShouldFail()
+        {
+            _mockUow.Setup(u => u.farmActivityRepository).Returns(_mockFarmActivityRepo.Object);
+            _mockFarmActivityRepo.Setup(r => r.GetByIdAsync(It.IsAny<long>())).ReturnsAsync((FarmActivity)null);
+
+            var service = CreateService();
+            var result = await service.ChangeFarmActivityStatusAsync(1);
+
+            Assert.Equal(-1, result.Status); // Const.FAIL_READ_CODE
+            Assert.Equal("Get Data Fail", result.Message); // Const.FAIL_READ_MSG
+        }
+
+        [Fact]
+        public async Task ChangeFarmActivityStatusAsync_ActiveToDeactivated_ShouldSucceed()
+        {
+            var farmActivity = new FarmActivity
+            {
+                Status = FarmActivityStatus.ACTIVE
+            };
+
+            _mockUow.Setup(u => u.farmActivityRepository).Returns(_mockFarmActivityRepo.Object);
+            _mockFarmActivityRepo.Setup(r => r.GetByIdAsync(It.IsAny<long>())).ReturnsAsync(farmActivity);
+            _mockFarmActivityRepo.Setup(r => r.UpdateAsync(It.IsAny<FarmActivity>())).ReturnsAsync(1);
+            _mockUow.Setup(u => u.SaveChangesAsync()).ReturnsAsync(1);
+
+            var service = CreateService();
+            var result = await service.ChangeFarmActivityStatusAsync(1);
+
+            Assert.Equal(1, result.Status); // Const.SUCCESS_UPDATE_CODE
+            Assert.Equal("Update Data Success", result.Message);
+            Assert.Equal(FarmActivityStatus.DEACTIVATED, farmActivity.Status);
+        }
+
+        [Fact]
+        public async Task ChangeFarmActivityStatusAsync_DeactivatedToActive_ShouldSucceed()
+        {
+            var farmActivity = new FarmActivity
+            {
+                Status = FarmActivityStatus.DEACTIVATED
+            };
+
+            _mockUow.Setup(u => u.farmActivityRepository).Returns(_mockFarmActivityRepo.Object);
+            _mockFarmActivityRepo.Setup(r => r.GetByIdAsync(It.IsAny<long>())).ReturnsAsync(farmActivity);
+            _mockFarmActivityRepo.Setup(r => r.UpdateAsync(It.IsAny<FarmActivity>())).ReturnsAsync(1);
+            _mockUow.Setup(u => u.SaveChangesAsync()).ReturnsAsync(1);
+
+            var service = CreateService();
+            var result = await service.ChangeFarmActivityStatusAsync(1);
+
+            Assert.Equal(1, result.Status); // Const.SUCCESS_UPDATE_CODE
+            Assert.Equal("Update Data Success", result.Message); // Const.SUCCESS_UPDATE_MSG
+            Assert.Equal(FarmActivityStatus.ACTIVE, farmActivity.Status);
+        }
 
     }
 }
