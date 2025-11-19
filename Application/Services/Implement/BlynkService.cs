@@ -107,5 +107,30 @@ namespace Application.Services.Implement
             string value = isManual ? "1" : "0";
             return await SendCommandAsync("V7", value);
         }
+
+        // Thay 4 method cũ bằng 4 method mới này
+        public async Task<bool> SetSoilLowThresholdAsync(int value)
+        {
+            if (value < 0 || value > 100) return false;
+            return await SendCommandAsync("V8", value.ToString());
+        }
+
+        public async Task<bool> SetSoilHighThresholdAsync(int value)
+        {
+            if (value < 0 || value > 100) return false;
+            return await SendCommandAsync("V9", value.ToString());
+        }
+
+        public async Task<bool> SetLdrLowThresholdAsync(int value)
+        {
+            if (value < 0 || value > 1023) return false;
+            return await SendCommandAsync("V10", value.ToString());
+        }
+
+        public async Task<bool> SetLdrHighThresholdAsync(int value)
+        {
+            if (value < 0 || value > 1023) return false;
+            return await SendCommandAsync("V11", value.ToString());
+        }
     }
 }

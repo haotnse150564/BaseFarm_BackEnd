@@ -107,5 +107,57 @@ namespace WebAPI.Controllers
                 });
             }
         }
+
+        [HttpPost("threshold/soil-low")]   // V8
+        //[Authorize(Roles = "Manager")]
+        public async Task<IActionResult> SetSoilLowThreshold([FromQuery] int value)
+        {
+            if (value < 0 || value > 100)
+                return BadRequest(new { success = false, message = "Ngưỡng phải từ 0-100%" });
+
+            var result = await _blynkService.SetSoilLowThresholdAsync(value);
+            return result
+                ? Ok(new { success = true, message = $"Ngưỡng BẬT bơm đã đặt ≤ {value}%" })
+                : StatusCode(500, new { success = false, message = "Lỗi gửi lệnh đến thiết bị" });
+        }
+
+        [HttpPost("threshold/soil-high")]  // V9
+        //[Authorize(Roles = "Manager")]
+        public async Task<IActionResult> SetSoilHighThreshold([FromQuery] int value)
+        {
+            if (value < 0 || value > 100)
+                return BadRequest(new { success = false, message = "Ngưỡng phải từ 0-100%" });
+
+            var result = await _blynkService.SetSoilHighThresholdAsync(value);
+            return result
+                ? Ok(new { success = true, message = $"Ngưỡng TẮT bơm đã đặt ≥ {value}%" })
+                : StatusCode(500, new { success = false, message = "Lỗi gửi lệnh đến thiết bị" });
+        }
+
+        [HttpPost("threshold/ldr-low")]    // V10
+        //[Authorize(Roles = "Manager")]
+        public async Task<IActionResult> SetLdrLowThreshold([FromQuery] int value)
+        {
+            if (value < 0 || value > 1023)
+                return BadRequest(new { success = false, message = "Ngưỡng LDR phải từ 0-1023" });
+
+            var result = await _blynkService.SetLdrLowThresholdAsync(value);
+            return result
+                ? Ok(new { success = true, message = $"Ngưỡng ánh sáng THẤP đã đặt: {value}" })
+                : StatusCode(500, new { success = false, message = "Lỗi gửi lệnh đến thiết bị" });
+        }
+
+        [HttpPost("threshold/ldr-high")]   // V11
+        //[Authorize(Roles = "Manager")]
+        public async Task<IActionResult> SetLdrHighThreshold([FromQuery] int value)
+        {
+            if (value < 0 || value > 1023)
+                return BadRequest(new { success = false, message = "Ngưỡng LDR phải từ 0-1023" });
+
+            var result = await _blynkService.SetLdrHighThresholdAsync(value);
+            return result
+                ? Ok(new { success = true, message = $"Ngưỡng ánh sáng CAO đã đặt: {value}" })
+                : StatusCode(500, new { success = false, message = "Lỗi gửi lệnh đến thiết bị" });
+        }
     }
 }
