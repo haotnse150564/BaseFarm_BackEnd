@@ -203,8 +203,13 @@ namespace Application.Services.Implement
                 _unitOfWork.scheduleRepository.Update(updatedSchedule);
                 await _unitOfWork.SaveChangesAsync();
                 //In ra kết quả
+
                 var staffInfo = await _account.GetByIdAsync(request.StaffId);
+                var manager = await _account.GetByIdAsync(updatedSchedule.ManagerId);
+
                 var result = _mapper.Map<ScheduleResponseView>(updatedSchedule);
+                result.Manager = manager != null ? _mapper.Map<Infrastructure.ViewModel.Response.AccountResponse.ViewAccount>(manager) : null;
+                result.ManagerName = manager != null ? manager.AccountProfile.Fullname : null;
 
                 var getCreateUser = await _account.GetByIdAsync(updatedSchedule.ManagerId);
 
@@ -231,6 +236,11 @@ namespace Application.Services.Implement
 
                 var list = await _unitOfWork.scheduleRepository.GetAllAsync();
                 var schedules = _mapper.Map<List<ScheduleResponseView>>(list);
+                foreach (var item in schedules)
+                {
+                    var manager = await _account.GetByIdAsync(item.ManagerId);
+                    item.ManagerName = manager != null ? manager.AccountProfile.Fullname : null;
+                }
                 //In ra kết quả
 
                 var safePageIndex = Math.Max(pageIndex, 1); // Đảm bảo pageIndex >= 1
@@ -267,6 +277,8 @@ namespace Application.Services.Implement
 
                 var schedule = await _unitOfWork.scheduleRepository.GetByIdAsync(ScheduleId);
                 var result = _mapper.Map<ScheduleResponseView>(schedule);
+                var manager = await _account.GetByIdAsync(schedule.ManagerId);
+                result.ManagerName = manager != null ? manager.AccountProfile.Fullname : null;
                 //In ra kết quả
 
                 return new ResponseDTO(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, result);
@@ -297,8 +309,12 @@ namespace Application.Services.Implement
                 schedule.UpdatedAt = _currentTime.GetCurrentTime();
                 _unitOfWork.scheduleRepository.Update(schedule);
                 await _unitOfWork.SaveChangesAsync();
+
                 //In ra kết quả
                 var result = _mapper.Map<ScheduleResponseView>(schedule);
+                var manager = await _account.GetByIdAsync(schedule.ManagerId);
+                result.ManagerName = manager != null ? manager.AccountProfile.Fullname : null;
+
                 return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, result);
 
             }
