@@ -375,5 +375,171 @@ namespace BaseFarm_BackEnd.Test.Services
             Assert.Equal(FarmActivityStatus.ACTIVE, farmActivity.Status);
         }
 
+        //complete
+        // UC1: farmActivity không tồn tại → FAIL
+        [Fact]
+        public async Task CompleteFarmActivity_FarmActivityNotFound_ShouldFail()
+        {
+            _mockUow.Setup(u => u.farmActivityRepository).Returns(_mockFarmActivityRepo.Object);
+            _mockFarmActivityRepo.Setup(r => r.GetByIdAsync(It.IsAny<long>())).ReturnsAsync((FarmActivity)null);
+
+            var service = CreateService();
+            var result = await service.CompleteFarmActivity(1, null);
+
+            Assert.Equal(-1, result.Status); // Const.FAIL_READ_CODE
+            Assert.Equal("Not Found Farm Activity", result.Message);
+        }
+
+        // UC2: farmActivity Status != IN_PROGRESS → FAIL
+        [Fact]
+        public async Task CompleteFarmActivity_StatusNotInProgress_ShouldFail()
+        {
+            var farmActivity = new FarmActivity { Status = FarmActivityStatus.ACTIVE };
+            _mockUow.Setup(u => u.farmActivityRepository).Returns(_mockFarmActivityRepo.Object);
+            _mockFarmActivityRepo.Setup(r => r.GetByIdAsync(It.IsAny<long>())).ReturnsAsync(farmActivity);
+
+            var service = CreateService();
+            var result = await service.CompleteFarmActivity(1, null);
+
+            Assert.Equal(-1, result.Status);
+            Assert.Equal("Farm Activity Already Completed or do not used by any Schedule", result.Message);
+        }
+
+        // UC3: IN_PROGRESS, ActivityType != Harvesting, SaveChanges thành công → SUCCESS
+        [Fact]
+        public async Task CompleteFarmActivity_NonHarvesting_ShouldSucceed()
+        {
+            var farmActivity = new FarmActivity
+            {
+                Status = FarmActivityStatus.IN_PROGRESS,
+                ActivityType = ActivityType.Fertilization
+            };
+
+            _mockUow.Setup(u => u.farmActivityRepository).Returns(_mockFarmActivityRepo.Object);
+            _mockFarmActivityRepo.Setup(r => r.GetByIdAsync(It.IsAny<long>())).ReturnsAsync(farmActivity);
+            _mockFarmActivityRepo.Setup(r => r.UpdateAsync(It.IsAny<FarmActivity>())).ReturnsAsync(1);
+            _mockUow.Setup(u => u.SaveChangesAsync()).ReturnsAsync(1);
+
+            var service = CreateService();
+            var result = await service.CompleteFarmActivity(1, null);
+
+            Assert.Equal(1, result.Status);
+            Assert.Equal("Update Data Success", result.Message);
+            Assert.Equal(FarmActivityStatus.COMPLETED, farmActivity.Status);
+        }
+
+        // UC4: IN_PROGRESS, ActivityType != Harvesting, SaveChanges fail → FAIL
+        [Fact]
+        public async Task CompleteFarmActivity_NonHarvesting_SaveFail_ShouldFail()
+        {
+            var farmActivity = new FarmActivity
+            {
+                Status = FarmActivityStatus.IN_PROGRESS,
+                ActivityType = ActivityType.Fertilization
+            };
+
+            _mockUow.Setup(u => u.farmActivityRepository).Returns(_mockFarmActivityRepo.Object);
+            _mockFarmActivityRepo.Setup(r => r.GetByIdAsync(It.IsAny<long>())).ReturnsAsync(farmActivity);
+            _mockFarmActivityRepo.Setup(r => r.UpdateAsync(It.IsAny<FarmActivity>())).ReturnsAsync(1);
+            _mockUow.Setup(u => u.SaveChangesAsync()).ReturnsAsync(-1);
+
+            var service = CreateService();
+            var result = await service.CompleteFarmActivity(1, null);
+
+            Assert.Equal(-1, result.Status);
+            Assert.Equal("Update Data Fail", result.Message);
+        }
+
+        // UC5: IN_PROGRESS, Harvesting, GetProductWillHarves = null → FAIL
+        [Fact]
+        public async Task CompleteFarmActivity_Harvesting_ProductNull_ShouldFail()
+        {
+            var farmActivity = new FarmActivity
+            {
+                Status = FarmActivityStatus.IN_PROGRESS,
+                ActivityType = ActivityType.Harvesting,
+                FarmActivitiesId = 1
+            };
+
+            _mockUow.Setup(u => u.farmActivityRepository).Returns(_mockFarmActivityRepo.Object);
+            _mockFarmActivityRepo.Setup(r => r.GetByIdAsync(It.IsAny<long>())).ReturnsAsync(farmActivity);
+            _mockFarmActivityRepo.Setup(r => r.UpdateAsync(It.IsAny<FarmActivity>())).ReturnsAsync(1);
+            _mockFarmActivityRepo.Setup(r => r.GetProductWillHarves(It.IsAny<long>())).ReturnsAsync((List<Product>)null);
+
+            var service = CreateService();
+            var result = await service.CompleteFarmActivity(1, null);
+
+            Assert.Equal(-1, result.Status);
+            Assert.Equal("Get Data Fail", result.Message);
+        }
+
+        // UC6: IN_PROGRESS, Harvesting, có product, SaveChanges thành công → SUCCESS
+        [Fact]
+        public async Task CompleteFarmActivity_Harvesting_ShouldSucceed()
+        {
+            var farmActivity = new FarmActivity
+            {
+                Status = FarmActivityStatus.IN_PROGRESS,
+                ActivityType = ActivityType.Harvesting,
+                FarmActivitiesId = 1
+            };
+            var products = new List<Product>
+    {
+        new Product { ProductId = 1, StockQuantity = 0 }
+    };
+            var schedule = new Schedule { Quantity = 10 };
+
+            _mockUow.Setup(u => u.farmActivityRepository).Returns(_mockFarmActivityRepo.Object);
+            _mockUow.Setup(u => u.scheduleRepository).Returns(Mock.Of<IScheduleRepository>());
+            var mockScheduleRepo = Mock.Get(_mockUow.Object.scheduleRepository);
+            mockScheduleRepo.Setup(s => s.GetByCropId(It.IsAny<long>())).ReturnsAsync(schedule);
+
+            _mockFarmActivityRepo.Setup(r => r.GetByIdAsync(It.IsAny<long>())).ReturnsAsync(farmActivity);
+            _mockFarmActivityRepo.Setup(r => r.UpdateAsync(It.IsAny<FarmActivity>())).ReturnsAsync(1);
+            _mockFarmActivityRepo.Setup(r => r.GetProductWillHarves(It.IsAny<long>())).ReturnsAsync(products);
+            _mockUow.Setup(u => u.SaveChangesAsync()).ReturnsAsync(1);
+
+            var service = CreateService();
+            var result = await service.CompleteFarmActivity(1, null);
+
+            Assert.Equal(1, result.Status);
+            Assert.Equal("Update Data Success", result.Message);
+            Assert.Equal(FarmActivityStatus.COMPLETED, farmActivity.Status);
+            Assert.Equal(10, products[0].StockQuantity);
+        }
+
+        // UC7: IN_PROGRESS, Harvesting, có product, SaveChanges fail → FAIL
+        [Fact]
+        public async Task CompleteFarmActivity_Harvesting_SaveFail_ShouldFail()
+        {
+            var farmActivity = new FarmActivity
+            {
+                Status = FarmActivityStatus.IN_PROGRESS,
+                ActivityType = ActivityType.Harvesting,
+                FarmActivitiesId = 1
+            };
+            var products = new List<Product>
+    {
+        new Product { ProductId = 1, StockQuantity = 0 }
+    };
+            var schedule = new Schedule { Quantity = 10 };
+
+            _mockUow.Setup(u => u.farmActivityRepository).Returns(_mockFarmActivityRepo.Object);
+            _mockUow.Setup(u => u.scheduleRepository).Returns(Mock.Of<IScheduleRepository>());
+            var mockScheduleRepo = Mock.Get(_mockUow.Object.scheduleRepository);
+            mockScheduleRepo.Setup(s => s.GetByCropId(It.IsAny<long>())).ReturnsAsync(schedule);
+
+            _mockFarmActivityRepo.Setup(r => r.GetByIdAsync(It.IsAny<long>())).ReturnsAsync(farmActivity);
+            _mockFarmActivityRepo.Setup(r => r.UpdateAsync(It.IsAny<FarmActivity>())).ReturnsAsync(1);
+            _mockFarmActivityRepo.Setup(r => r.GetProductWillHarves(It.IsAny<long>())).ReturnsAsync(products);
+            _mockUow.Setup(u => u.SaveChangesAsync()).ReturnsAsync(-1);
+
+            var service = CreateService();
+            var result = await service.CompleteFarmActivity(1, null);
+
+            Assert.Equal(-1, result.Status);
+            Assert.Equal("Update Data Fail", result.Message);
+        }
+
     }
 }
