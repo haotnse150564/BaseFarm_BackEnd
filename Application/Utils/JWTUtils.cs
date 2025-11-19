@@ -24,7 +24,7 @@ namespace Application.Utils
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public string GenerateToken(Account account)
+        public virtual string GenerateToken(Account account)
         {
             var tokenSecret = _config["Jwt:Key"];
             var tokenHandler = new JwtSecurityTokenHandler();

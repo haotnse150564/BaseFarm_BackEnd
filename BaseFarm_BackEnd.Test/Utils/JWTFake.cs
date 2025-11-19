@@ -4,6 +4,7 @@ using Domain.Model;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
 
 namespace BaseFarm_BackEnd.Test.Utils
 {
@@ -20,6 +21,12 @@ namespace BaseFarm_BackEnd.Test.Utils
         public override Task<Account> GetCurrentUserAsync()
         {
             return Task.FromResult(_user);
+        }
+
+        public override string GenerateToken(Account account)
+        {
+            // Trả token giả để test LoginAsync không bị null exception
+            return "fake-jwt-token";
         }
     }
 }
