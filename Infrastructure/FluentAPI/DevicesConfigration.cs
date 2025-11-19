@@ -10,10 +10,10 @@ namespace Infrastructure.FluentAPI
         {
             builder.ToTable("Devices");
 
-            builder.HasKey(e => e.DevicessId);
+            builder.HasKey(e => e.DevicesId);
 
-            builder.Property(e => e.DevicessId)
-                .HasColumnName("devicessId");
+            builder.Property(e => e.DevicesId)
+                .HasColumnName("devicesId");
 
             builder.Property(e => e.DeviceName)
                 .HasMaxLength(100)

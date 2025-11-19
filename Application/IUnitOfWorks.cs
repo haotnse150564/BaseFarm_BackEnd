@@ -27,5 +27,6 @@ namespace Application
         ICartRepository cartRepository { get; }
         ICartItemRepository cartItemRepository { get; }
         IAddressRepository addressRepository { get; }
+        IIOTLogRepository iotLogRepository { get; }
     }
 }
