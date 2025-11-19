@@ -260,7 +260,7 @@ namespace WebAPI.Services
                 }
             }
         }
-        public bool CheckDate(DateOnly? startDate, DateOnly? endDate)
+        public virtual bool CheckDate(DateOnly? startDate, DateOnly? endDate)
         {
             if (startDate < _currentTime.GetCurrentTime() || endDate < _currentTime.GetCurrentTime())
             {

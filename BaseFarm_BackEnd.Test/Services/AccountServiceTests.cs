@@ -48,14 +48,14 @@ namespace BaseFarm_BackEnd.Test.Services
 
             // Fake JWTUtils để test ChangePassword
             var fakeUser = new Account { AccountId = 1 };
-            var fakeJwt = new JWTFake(fakeUser);
+            var fakeJwt = new JWTFake(fakeUser); // dùng JWTFake mới
 
             _service = new AccountServices(
-                _mockUow.Object,
-                _mockMapper.Object,
-                fakeJwt,
-                _mockAccountProfileRepo.Object
-            );
+    _mockUow.Object,
+    _mockMapper.Object,
+    fakeJwt,
+    _mockAccountProfileRepo.Object
+);
         }
 
         //login test
@@ -124,6 +124,7 @@ namespace BaseFarm_BackEnd.Test.Services
                 PasswordHash = PasswordHelper.HashPassword("123123"),
                 Status = AccountStatus.ACTIVE
             };
+
             _mockAccountRepo.Setup(r => r.GetByEmailAsync(account.Email))
                             .ReturnsAsync(account);
 
@@ -132,8 +133,10 @@ namespace BaseFarm_BackEnd.Test.Services
 
             // Assert
             Assert.NotNull(result);
-            Assert.False(string.IsNullOrEmpty(result.Token)); // kiểm tra token thật có sinh ra
+            Assert.False(string.IsNullOrEmpty(result.Token)); // token giả sẽ sinh ra
+            Assert.Equal("fake-jwt-token", result.Token); // có thể kiểm tra cụ thể
         }
+
 
         //register test
         [Fact]
