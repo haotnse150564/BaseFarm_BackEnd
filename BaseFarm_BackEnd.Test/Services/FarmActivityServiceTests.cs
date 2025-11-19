@@ -165,5 +165,160 @@ namespace BaseFarm_BackEnd.Test.Services
             Assert.Equal("Start date or end date is wrong!", result.Message);
         }
 
+        // --- UPDATE FARM ACTIVITY TESTS ---
+        // UC1: farmActivityId không tồn tại → FAIL
+        [Fact]
+        public async Task UpdateFarmActivityAsync_FarmActivityNotFound_ShouldFail()
+        {
+            _mockUow.Setup(u => u.farmActivityRepository).Returns(_mockFarmActivityRepo.Object);
+            _mockFarmActivityRepo.Setup(r => r.GetByIdAsync(It.IsAny<long>()))
+                                 .ReturnsAsync((FarmActivity)null);
+
+            var service = CreateService();
+            var request = CreateValidRequest(DateOnly.FromDateTime(DateTime.Now), DateOnly.FromDateTime(DateTime.Now));
+
+            var result = await service.UpdateFarmActivityAsync(
+                1,
+                request,
+                ActivityType.Fertilization,
+                FarmActivityStatus.ACTIVE
+            );
+
+            Assert.Equal(-1, result.Status);
+            Assert.Equal("Get Data Fail", result.Message);
+
+        }
+
+
+        // UC2: StartDate > EndDate → FAIL
+        [Fact]
+        public async Task UpdateFarmActivityAsync_StartAfterEnd_ShouldFail()
+        {
+            var farmActivity = new FarmActivity
+            {
+                StartDate = DateOnly.FromDateTime(DateTime.Now),
+                EndDate = DateOnly.FromDateTime(DateTime.Now),
+                Status = FarmActivityStatus.ACTIVE
+            };
+
+            // Mock UnitOfWork và repository
+            _mockUow.Setup(u => u.farmActivityRepository).Returns(_mockFarmActivityRepo.Object);
+            _mockFarmActivityRepo.Setup(r => r.GetByIdAsync(It.IsAny<long>())).ReturnsAsync(farmActivity);
+
+            // Tạo request với Start > End (giá trị hợp lệ nhưng muốn fail date)
+            var request = new FarmActivityRequest
+            {
+                StartDate = DateOnly.FromDateTime(DateTime.Now.AddDays(2)),
+                EndDate = DateOnly.FromDateTime(DateTime.Now.AddDays(1))
+            };
+
+            // Tạo service mock, override CheckDate trả false
+            var serviceMock = new Mock<FarmActivityServices>(
+                _mockUow.Object,
+                _mockCurrentTime.Object,
+                _mockConfig.Object,
+                _mockMapper.Object,
+                _mockFarmActivityRepo.Object,
+                _mockInventory.Object
+            )
+            { CallBase = true };
+
+            serviceMock.Setup(s => s.CheckDate(It.IsAny<DateOnly?>(), It.IsAny<DateOnly?>())).Returns(false);
+
+            var result = await serviceMock.Object.UpdateFarmActivityAsync(
+                1,
+                request,
+                ActivityType.Fertilization,
+                FarmActivityStatus.ACTIVE
+            );
+
+            Assert.Equal(-1, result.Status);
+            Assert.Equal("Start date or end date is wrong required!", result.Message);
+        }
+
+
+        // UC3: StartDate ≤ EndDate → SUCCESS
+        [Fact]
+        public async Task UpdateFarmActivityAsync_ValidUpdate_ShouldSucceed()
+        {
+            var farmActivity = new FarmActivity
+            {
+                StartDate = DateOnly.FromDateTime(DateTime.Now),
+                EndDate = DateOnly.FromDateTime(DateTime.Now),
+                Status = FarmActivityStatus.ACTIVE
+            };
+
+            // Mock UnitOfWork trả repository
+            _mockUow.Setup(u => u.farmActivityRepository).Returns(_mockFarmActivityRepo.Object);
+            _mockFarmActivityRepo.Setup(r => r.GetByIdAsync(It.IsAny<long>())).ReturnsAsync(farmActivity);
+            // Update the return value to match the expected Task<int> type
+            _mockFarmActivityRepo.Setup(r => r.UpdateAsync(It.IsAny<FarmActivity>())).ReturnsAsync(1);
+            _mockMapper.Setup(m => m.Map<FarmActivityView>(It.IsAny<FarmActivity>())).Returns(new FarmActivityView());
+
+            var request = new FarmActivityRequest
+            {
+                StartDate = DateOnly.FromDateTime(DateTime.Now),
+                EndDate = DateOnly.FromDateTime(DateTime.Now.AddDays(2))
+            };
+
+            var service = CreateService();
+            var result = await service.UpdateFarmActivityAsync(
+                1,
+                request,
+                ActivityType.Harvesting,
+                FarmActivityStatus.IN_PROGRESS
+            );
+
+            Assert.Equal(1, result.Status);
+            Assert.NotNull(result.Data);
+        }
+
+
+        // UC4: Validate StartDate hoặc EndDate null → FAIL
+        [Theory]
+        [InlineData(true, false)]  // StartDate invalid simulated
+        [InlineData(false, true)]  // EndDate invalid simulated
+        public async Task UpdateFarmActivityAsync_InvalidDates_ShouldFail(bool invalidStart, bool invalidEnd)
+        {
+            var farmActivity = new FarmActivity
+            {
+                StartDate = DateOnly.FromDateTime(DateTime.Now),
+                EndDate = DateOnly.FromDateTime(DateTime.Now),
+                Status = FarmActivityStatus.ACTIVE
+            };
+
+            _mockUow.Setup(u => u.farmActivityRepository).Returns(_mockFarmActivityRepo.Object);
+            _mockFarmActivityRepo.Setup(r => r.GetByIdAsync(It.IsAny<long>())).ReturnsAsync(farmActivity);
+
+            // Tạo request với giá trị hợp lệ, để không null
+            var request = new FarmActivityRequest
+            {
+                StartDate = DateOnly.FromDateTime(DateTime.Now),
+                EndDate = DateOnly.FromDateTime(DateTime.Now)
+            };
+
+            var serviceMock = new Mock<FarmActivityServices>(
+                _mockUow.Object,
+                _mockCurrentTime.Object,
+                _mockConfig.Object,
+                _mockMapper.Object,
+                _mockFarmActivityRepo.Object,
+                _mockInventory.Object
+            )
+            { CallBase = true };
+
+            // Mock CheckDate để simulate validation fail theo từng trường hợp
+            serviceMock.Setup(s => s.CheckDate(
+                It.IsAny<DateOnly?>(),
+                It.IsAny<DateOnly?>()
+            )).Returns(false);
+
+            var result = await serviceMock.Object.UpdateFarmActivityAsync(1, request, ActivityType.Fertilization, FarmActivityStatus.ACTIVE);
+
+            Assert.Equal(-1, result.Status);
+            Assert.Equal("Start date or end date is wrong required!", result.Message);
+        }
+
+
     }
 }
