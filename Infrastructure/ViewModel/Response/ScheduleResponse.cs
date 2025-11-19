@@ -15,6 +15,7 @@ namespace Infrastructure.ViewModel.Response
         {
             public long ScheduleId { get; set; }
             public long CropId { get; set; }
+            public long ManagerId { get; set; }
             public DateOnly? StartDate { get; set; }
 
             public DateOnly? EndDate { get; set; }
@@ -37,6 +38,7 @@ namespace Infrastructure.ViewModel.Response
 
             public string? ManagerName { get; set; }
             public string? StaffName { get; set; }
+            public ViewAccount? Manager { get; set; }
             public ViewAccount? Staff { get; set; }
             public FarmActivityView? farmActivityView { get; set; }
             public FarmView? farmView { get; set; }

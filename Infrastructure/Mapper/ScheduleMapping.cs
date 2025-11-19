@@ -28,16 +28,18 @@ namespace Infrastructure.Mapper
             CreateMap<Schedule, ScheduleResponseView>()
                 .ForMember(dest => dest.cropView, opt => opt.MapFrom(src => src.Crop))
                 .ForMember(dest => dest.farmView, opt => opt.MapFrom(src => src.FarmDetails))
+                .ForMember(dest => dest.Staff, opt => opt.MapFrom(src => src.AssignedToNavigation.AccountProfile))
                 .ForMember(dest => dest.farmActivityView, opt => opt.MapFrom(src => src.FarmActivities))
                 .ForPath(destinationMember => destinationMember.StaffName, opt => opt.MapFrom(src => src.AssignedToNavigation.AccountProfile.Fullname))
-                .ForMember(dest => dest.Staff, opt => opt.MapFrom(src => src.AssignedToNavigation.AccountProfile));
-                
+                .ForPath(dest => dest.ManagerName, opt => opt.MapFrom(src => src.AssignedToNavigation.AccountProfile.Fullname));
+
 
             CreateMap<ScheduleResponseView, Schedule>()
                 .ForMember(dest => dest.Crop, opt => opt.MapFrom(src => src.cropView))
                 .ForMember(dest => dest.FarmDetails, opt => opt.MapFrom(src => src.farmView))
                 .ForMember(dest => dest.FarmActivities, opt => opt.MapFrom(src => src.farmActivityView))
-                .ForPath(dest => dest.AssignedToNavigation.AccountProfile, opt => opt.MapFrom(src => src.Staff));
+                 .ForPath(dest => dest.AssignedToNavigation.AccountProfile, opt => opt.MapFrom(src => src.Staff))
+                .ForPath(dest => dest.AssignedToNavigation.AccountProfile.Fullname, opt => opt.MapFrom(src => src.ManagerName));
 
             //  CreateMap<DailyLog, DailyLogView>().ReverseMap();
 
