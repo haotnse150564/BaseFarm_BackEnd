@@ -33,6 +33,11 @@ public static class DependencyInjection
         services.AddAutoMapper(typeof(CropMapping));
         services.AddAutoMapper(typeof(FarmActitvityMapping));
         services.AddAutoMapper(typeof(FarmMapping));
+        services.AddAutoMapper(typeof(CategoryMapping));
+        services.AddAutoMapper(typeof(CartMapping));
+        services.AddAutoMapper(typeof(AddressMapping));
+
+
 
         #region Config Repository and Service
         //repository
@@ -54,6 +59,7 @@ public static class DependencyInjection
         services.AddScoped<ICartRepository, CartRepository>();
         services.AddScoped<ICartItemRepository, CartItemRepository>();
         services.AddScoped<IAddressRepository, AddressRepository>();
+        services.AddScoped<IIOTLogRepository, IOTLogRepository>();
         //service
         services.AddScoped<IProductServices, ProductServices>();
         services.AddScoped<IFeedbackSevices, FeedbackServices>();
@@ -72,6 +78,7 @@ public static class DependencyInjection
         services.AddScoped<ICartServices, CartServices>();
         services.AddScoped<IWeatherServices, WeatherService>();
         services.AddScoped<IAddressServices, AddressServices>();
+        services.AddScoped<IIOTLogServices, IOTLogServices>();
 
         //services.AddScoped<IOrderDetailServices, OrderDetailServices>();
         //services.AddScoped<IAccountProfileServices, AccountProfileServices>();

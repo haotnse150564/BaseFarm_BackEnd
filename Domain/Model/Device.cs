@@ -6,7 +6,7 @@ namespace Domain.Model;
 
 public partial class Device
 {
-    public long DevicessId { get; set; }
+    public long DevicesId { get; set; }
 
     public string? DeviceName { get; set; }
 
@@ -22,6 +22,7 @@ public partial class Device
 
     // public virtual ICollection<CropRequirement> CropRequirements { get; set; } = new List<CropRequirement>();
     public virtual ICollection<FarmEquipment> FarmEquipments { get; set; } = new List<FarmEquipment>();
+    public virtual ICollection<IOTLog> Log { get; set; } = new List<IOTLog>();
 
     public virtual Farm FarmDetails { get; set; } = null!;
 }
