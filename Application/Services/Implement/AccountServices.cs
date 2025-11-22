@@ -351,5 +351,29 @@ namespace WebAPI.Services
                 return new ResponseDTO(200, "Change password success");
             }
         }
+
+        public async Task<ResponseDTO> ChangePasswordByUserID(long accountID, string password )
+        {
+            //Kiểm tra tài khoản có tồn tại hay không
+            var account = await _unitOfWork.accountRepository.GetByIdAsync(accountID);
+            if (account == null)
+            {
+                return new ResponseDTO(404, "Account not found");
+            }            
+            else if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(password)
+                || string.IsNullOrWhiteSpace(password))
+            {
+                return new ResponseDTO(400, "Password do not have space or blank");
+            }
+            else
+            {
+                //Hash mật khẩu
+                string hashedPassword = PasswordHelper.HashPassword(password);
+                account.PasswordHash = hashedPassword;
+                await _unitOfWork.accountRepository.UpdateAsync(account);
+                await _unitOfWork.SaveChangesAsync();
+                return new ResponseDTO(200, "Change password success");
+            }
+        }
     }
 }

@@ -113,13 +113,17 @@ namespace WebAPI.Controllers
             var result = await _accountServices.ChangePassword(request);
             if (result != null)
                 return Ok(result);
-            return BadRequest("Failed to update roles.");
+            return BadRequest("Failed to update password.");
         }
 
-        [HttpPut("/")]
-        public  IActionResult test()
-        {            
-            return Ok("succes");
+        [HttpPut("update-password-by/{id}")]
+        [Authorize]
+        public async Task<IActionResult> ChangPasswordByID(long id, string requestPassword)
+        {
+            var result = await _accountServices.ChangePasswordByUserID(id,requestPassword);
+            if (result != null)
+                return Ok(result);
+            return BadRequest("Failed to update password.");
         }
     }
 }
