@@ -117,7 +117,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("update-password-by/{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ChangPasswordByID(long id, string requestPassword)
         {
             var result = await _accountServices.ChangePasswordByUserID(id,requestPassword);
