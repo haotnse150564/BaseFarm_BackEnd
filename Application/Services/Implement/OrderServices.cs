@@ -5,6 +5,7 @@ using AutoMapper;
 using Domain.Enum;
 using Domain.Model;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using static Application.ViewModel.Request.OrderRequest;
 using static Application.ViewModel.Response.OrderResponse;
@@ -21,7 +22,8 @@ namespace Application.Services.Implement
         private readonly IVnPayService _vnPayService;
         private readonly CheckDate _checkDate;
         private readonly IConfiguration _configuration;
-        public OrderServices(IUnitOfWorks unitOfWork, IMapper mapper, JWTUtils jwtUtils, IVnPayService vnPayService, CheckDate checkDate, IConfiguration configuration)
+        private readonly IHubContext<OrderNotificationHub> _hubContext;
+        public OrderServices(IUnitOfWorks unitOfWork, IMapper mapper, JWTUtils jwtUtils, IVnPayService vnPayService, CheckDate checkDate, IConfiguration configuration, IHubContext<OrderNotificationHub> hubContext)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -29,6 +31,7 @@ namespace Application.Services.Implement
             _vnPayService = vnPayService;
             _checkDate = checkDate;
             _configuration = configuration;
+            _hubContext = hubContext;
         }
 
         public async Task<ResponseDTO> CreateOrderAsync(CreateOrderDTO request, HttpContext context)
@@ -253,11 +256,27 @@ namespace Application.Services.Implement
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Order not found !");
                 }
-
+                
                 order.Status = PaymentStatus.DELIVERED;
 
                 // Lưu các thay đổi vào cơ sở dữ liệu
                 await _unitOfWork.orderRepository.UpdateAsync(order);
+                bool shouldNotify = order.Status == PaymentStatus.DELIVERED;
+                // Gửi thông báo real-time nếu cần
+                if (shouldNotify)
+                {
+                    var notification = new OrderStatusNotification
+                    {
+                        OrderId = order.OrderId,
+                        Message = $"Your order #{order.OrderId} is on the way",
+                        Status = "DELIVERED"
+                    };
+
+                    // Gửi riêng cho khách hàng sở hữu đơn hàng này
+                    await _hubContext.Clients
+                        .Group($"User_{order.CustomerId}")  
+                        .SendAsync("ReceiveOrderStatusUpdate", notification);
+                }
 
                 return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, "Change Status Succeed");
             }

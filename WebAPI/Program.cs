@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpClient<BlynkService>();
 builder.Services.AddWebAPIService(builder);
 builder.Services.AddInfractstructure(builder.Configuration);
-
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -38,5 +38,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+// Map Hub
+app.MapHub<OrderNotificationHub>("/hubs/order-notification");
 
 app.Run();

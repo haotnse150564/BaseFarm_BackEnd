@@ -52,6 +52,12 @@ namespace Application.ViewModel.Response
             public decimal? UnitPrice { get; set; }
             public int? Quantity { get; set; }
         }
-
+        public class OrderStatusNotification
+        {
+            public long OrderId { get; set; }
+            public string Message { get; set; } = string.Empty;
+            public string Status { get; set; } = string.Empty;
+            public DateTime Timestamp { get; set; } = DateTime.Now;
+        }
     }
 }

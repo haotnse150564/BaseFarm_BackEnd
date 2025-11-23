@@ -90,6 +90,24 @@ public static class DependencyInjection
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding
                     .UTF8.GetBytes(builder.Configuration["JWT:Key"]))
             };
+
+            //SignalR
+            options.Events = new JwtBearerEvents
+            {
+                OnMessageReceived = context =>
+                {
+                    var accessToken = context.Request.Query["access_token"];
+
+                    // Chỉ áp dụng cho SignalR hubs
+                    var path = context.Request.Path;
+                    if (!string.IsNullOrEmpty(accessToken) &&
+                        path.StartsWithSegments("/hubs"))
+                    {
+                        context.Token = accessToken;
+                    }
+                    return Task.CompletedTask;
+                }
+            };
         });
         services.AddAuthorization();
         //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
