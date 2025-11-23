@@ -10,9 +10,9 @@ public partial class FarmActivity //update lên bảng cần sau này
 
     public ActivityType? ActivityType { get; set; }
 
-    public DateOnly? StartDate { get; set; }
+    //public DateOnly? StartDate { get; set; }
 
-    public DateOnly? EndDate { get; set; }
+    //public DateOnly? EndDate { get; set; }
 
     public FarmActivityStatus? Status { get; set; }
 

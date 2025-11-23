@@ -24,11 +24,11 @@ namespace Infrastructure.FluentAPI
             builder.Property(e => e.ActivityType)
                 .HasColumnName("activityType");
 
-            builder.Property(e => e.StartDate)
-                .HasColumnName("startDate");
+            //builder.Property(e => e.StartDate)
+            //    .HasColumnName("startDate");
 
-            builder.Property(e => e.EndDate)
-                .HasColumnName("endDate");
+            //builder.Property(e => e.EndDate)
+            //    .HasColumnName("endDate");
 
             builder.Property(e => e.Status)
                 .HasColumnName("status");

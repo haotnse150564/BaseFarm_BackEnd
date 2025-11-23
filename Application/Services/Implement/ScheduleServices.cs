@@ -104,38 +104,38 @@ namespace Application.Services.Implement
 
             #endregion
             //Schedule có activity
-            #region Activity check Date
-            long farmAcitivityId = schedule.FarmActivitiesId;
-            if (farmAcitivityId != 0)
-            {
-                var activity = await _farmActivityRepository.GetByIdAsync((long)farmAcitivityId);
-                if (activity != null)
-                {
-                    DateOnly? activityStartDate = activity.StartDate;
-                    DateOnly? activityEndDate = activity.EndDate;
-                    if (activityStartDate == null || activityEndDate == null)
-                    {
-                        return (false, "Hoạt động chưa có ngày bắt đầu hoặc ngày kết thúc.");
-                    }
+            //#region Activity check Date
+            //long farmAcitivityId = schedule.FarmActivitiesId;
+            //if (farmAcitivityId != 0)
+            //{
+            //    var activity = await _farmActivityRepository.GetByIdAsync((long)farmAcitivityId);
+            //    if (activity != null)
+            //    {
+            //        DateOnly? activityStartDate = activity.StartDate;
+            //        DateOnly? activityEndDate = activity.EndDate;
+            //        if (activityStartDate == null || activityEndDate == null)
+            //        {
+            //            return (false, "Hoạt động chưa có ngày bắt đầu hoặc ngày kết thúc.");
+            //        }
 
-                    // Chỉ kiểm tra các mốc thời gian liên quan trực tiếp đến hoạt động
-                    if (activityStartDate < startDate || activityEndDate > endDate)
-                    {
-                        return (false, "Ngày gieo trồng phải nằm trong khoảng thời gian của hoạt động.");
-                    }
+            //        // Chỉ kiểm tra các mốc thời gian liên quan trực tiếp đến hoạt động
+            //        if (activityStartDate < startDate || activityEndDate > endDate)
+            //        {
+            //            return (false, "Ngày gieo trồng phải nằm trong khoảng thời gian của hoạt động.");
+            //        }
 
-                    //if (harvestDate < activityStartDate || harvestDate > activityEndDate)
-                    //{
-                    //    return (false, "Ngày thu hoạch phải nằm trong khoảng thời gian của hoạt động.");
-                    //}
-                }
-            }
+            //        //if (harvestDate < activityStartDate || harvestDate > activityEndDate)
+            //        //{
+            //        //    return (false, "Ngày thu hoạch phải nằm trong khoảng thời gian của hoạt động.");
+            //        //}
+            //    }
+           // }
             #endregion
 
             if (result == 0) return (true, "");
             return (false, message);
         }
-        #endregion
+        //#endregion
         #region Schedule mới
         public async Task<ResponseDTO> CreateSchedulesAsync(ScheduleRequest request)
         {

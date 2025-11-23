@@ -40,10 +40,10 @@ namespace WebAPI.Services
             var farmActivity = _mapper.Map<FarmActivity>(farmActivityRequest);
             farmActivity.Status = Domain.Enum.FarmActivityStatus.ACTIVE;
             farmActivity.ActivityType = activityType;
-            if (!CheckDate(farmActivity.StartDate, farmActivity.EndDate))
-            {
-                return new ResponseDTO(Const.FAIL_UPDATE_CODE, "Start date or end date is wrong!");
-            }
+            //if (!CheckDate(farmActivity.StartDate, farmActivity.EndDate))
+            //{
+            //    return new ResponseDTO(Const.FAIL_UPDATE_CODE, "Start date or end date is wrong!");
+            //}
             await _unitOfWork.farmActivityRepository.AddAsync(farmActivity);
 
             if (await _unitOfWork.SaveChangesAsync() < 0)
@@ -188,14 +188,14 @@ namespace WebAPI.Services
             }
             else
             {
-                farmActivity.StartDate = farmActivityrequest.StartDate;
-                farmActivity.EndDate = farmActivityrequest.EndDate;
+                //farmActivity.StartDate = farmActivityrequest.StartDate;
+                //farmActivity.EndDate = farmActivityrequest.EndDate;
                 farmActivity.ActivityType = activityType;
                 farmActivity.Status = farmActivityStatus;
-                if(!CheckDate(farmActivity.StartDate, farmActivity.EndDate))
-                {
-                    return new ResponseDTO(Const.FAIL_UPDATE_CODE, "Start date or end date is wrong required!");
-                }   
+                //if(!CheckDate(farmActivity.StartDate, farmActivity.EndDate))
+                //{
+                //    return new ResponseDTO(Const.FAIL_UPDATE_CODE, "Start date or end date is wrong required!");
+                //}   
                 await _unitOfWork.farmActivityRepository.UpdateAsync(farmActivity);
                 if (await _unitOfWork.SaveChangesAsync() < 0)
                 {

@@ -30,10 +30,10 @@ namespace Infrastructure.Repositories.Implement
             {
                 list = list.Where(fa => fa.Status == status).ToList();
             }
-            if (month > 0 && month <= 12)
-            {
-                list = list.Where(fa => fa.StartDate.HasValue && fa.StartDate.Value.Month == month).ToList();
-            }
+            //if (month > 0 && month <= 12)
+            //{
+            //    list = list.Where(fa => fa.StartDate.HasValue && fa.StartDate.Value.Month == month).ToList();
+            //}
             return list;
         }
         public async Task<FarmActivity> GetHarvestFarmActivityId(long scheduleId)

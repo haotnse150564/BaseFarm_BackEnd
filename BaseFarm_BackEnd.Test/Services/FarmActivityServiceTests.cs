@@ -63,8 +63,8 @@ namespace BaseFarm_BackEnd.Test.Services
             _mockMapper.Setup(m => m.Map<FarmActivity>(It.IsAny<FarmActivityRequest>()))
                        .Returns((FarmActivityRequest r) => new FarmActivity
                        {
-                           StartDate = r.StartDate,
-                           EndDate = r.EndDate,
+                           //StartDate = r.StartDate,
+                           //EndDate = r.EndDate,
                            Status = FarmActivityStatus.ACTIVE
                        });
 
@@ -196,8 +196,8 @@ namespace BaseFarm_BackEnd.Test.Services
         {
             var farmActivity = new FarmActivity
             {
-                StartDate = DateOnly.FromDateTime(DateTime.Now),
-                EndDate = DateOnly.FromDateTime(DateTime.Now),
+                //StartDate = DateOnly.FromDateTime(DateTime.Now),
+                //EndDate = DateOnly.FromDateTime(DateTime.Now),
                 Status = FarmActivityStatus.ACTIVE
             };
 
@@ -243,8 +243,8 @@ namespace BaseFarm_BackEnd.Test.Services
         {
             var farmActivity = new FarmActivity
             {
-                StartDate = DateOnly.FromDateTime(DateTime.Now),
-                EndDate = DateOnly.FromDateTime(DateTime.Now),
+                //StartDate = DateOnly.FromDateTime(DateTime.Now),
+                //EndDate = DateOnly.FromDateTime(DateTime.Now),
                 Status = FarmActivityStatus.ACTIVE
             };
 
@@ -282,8 +282,8 @@ namespace BaseFarm_BackEnd.Test.Services
         {
             var farmActivity = new FarmActivity
             {
-                StartDate = DateOnly.FromDateTime(DateTime.Now),
-                EndDate = DateOnly.FromDateTime(DateTime.Now),
+                //StartDate = DateOnly.FromDateTime(DateTime.Now),
+                //EndDate = DateOnly.FromDateTime(DateTime.Now),
                 Status = FarmActivityStatus.ACTIVE
             };
 
