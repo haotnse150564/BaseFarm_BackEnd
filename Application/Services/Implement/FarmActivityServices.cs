@@ -10,8 +10,6 @@ using Infrastructure.Repositories;
 using Infrastructure.ViewModel.Request;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System.Diagnostics;
-using System.Drawing.Printing;
 using static Infrastructure.ViewModel.Response.FarmActivityResponse;
 
 namespace WebAPI.Services
