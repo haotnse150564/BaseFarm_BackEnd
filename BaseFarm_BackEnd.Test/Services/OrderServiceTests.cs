@@ -14,6 +14,7 @@ using Application.Services;
 using Application;
 using Infrastructure.Repositories;
 using Application.ViewModel.Request;
+using Microsoft.AspNetCore.SignalR;
 
 namespace BaseFarm_BackEnd.Test.Services
 {
@@ -141,6 +142,10 @@ namespace BaseFarm_BackEnd.Test.Services
         private readonly Mock<CheckDate> _mockCheckDate;
         private readonly Mock<IDbContextTransaction> _mockDbTransaction;
 
+        private readonly Mock<IHubContext<OrderNotificationHub>> _mockHubContext;
+        private readonly Mock<IClientProxy> _mockClientProxy;
+        private readonly Mock<IHubClients> _mockHubClients;
+
         public OrderServiceTests()
         {
             _mockUow = new Mock<IUnitOfWorks>();
@@ -153,10 +158,20 @@ namespace BaseFarm_BackEnd.Test.Services
             _mockCheckDate = new Mock<CheckDate>();
             _mockDbTransaction = new Mock<IDbContextTransaction>();
 
+            // 🔔 Mock SignalR HubContext
+            _mockHubContext = new Mock<IHubContext<OrderNotificationHub>>();
+            _mockHubClients = new Mock<IHubClients>();
+            _mockClientProxy = new Mock<IClientProxy>();
+
+            _mockHubContext.Setup(h => h.Clients).Returns(_mockHubClients.Object);
+            _mockHubClients.Setup(c => c.All).Returns(_mockClientProxy.Object);
+
+            // Repo bindings
             _mockUow.SetupGet(u => u.orderRepository).Returns(_mockOrderRepo.Object);
             _mockUow.SetupGet(u => u.orderDetailRepository).Returns(_mockOrderDetailRepo.Object);
             _mockUow.SetupGet(u => u.productRepository).Returns(_mockProductRepo.Object);
             _mockUow.Setup(u => u.BeginTransactionAsync()).ReturnsAsync(_mockDbTransaction.Object);
+
             _mockConfig.Setup(c => c["BaseUrl"]).Returns("https://test-basefarm.com");
         }
 
@@ -166,10 +181,11 @@ namespace BaseFarm_BackEnd.Test.Services
             return new OrderServices(
                 _mockUow.Object,
                 _mockMapper.Object,
-                new FakeJWTUtils(),        // fake jwt
+                new FakeJWTUtils(),      // fake JWT
                 _mockVnPay.Object,
                 _mockCheckDate.Object,
-                _mockConfig.Object
+                _mockConfig.Object,
+                _mockHubContext.Object   // 🔔 thêm hubContext mới
             );
         }
 
@@ -284,10 +300,29 @@ namespace BaseFarm_BackEnd.Test.Services
         public async Task UpdateOrderDeliveryStatusAsync_ShouldSucceed_WhenOrderExists()
         {
             // Arrange
-            var order = new Order { OrderId = 1, Status = PaymentStatus.DELIVERED };
+            var order = new Order
+            {
+                OrderId = 1,
+                Status = PaymentStatus.PENDING,
+                CustomerId = 123
+            };
 
             _mockOrderRepo.Setup(r => r.GetOrderById(1))
                           .ReturnsAsync(order);
+
+            _mockOrderRepo.Setup(r => r.UpdateAsync(order))
+                          .ReturnsAsync(1);
+
+            // Mock SignalR
+            _mockHubClients.Setup(c => c.Group(It.IsAny<string>()))
+                           .Returns(_mockClientProxy.Object);
+
+            _mockClientProxy.Setup(c => c.SendCoreAsync(
+                    It.IsAny<string>(),
+                    It.IsAny<object[]>(),
+                    default
+                ))
+                .Returns(Task.CompletedTask);
 
             var service = CreateOrderService();
 
@@ -295,9 +330,11 @@ namespace BaseFarm_BackEnd.Test.Services
             var result = await service.UpdateOrderDeliveryStatusAsync(1);
 
             // Assert
-            Assert.Equal(Const.SUCCESS_CREATE_CODE, result.Status);
+            Assert.Equal(1, result.Status);
             Assert.Equal(PaymentStatus.DELIVERED, order.Status);
         }
+
+
 
         // ============================================
         // ✅ TEST 3: Đảm bảo Repository.UpdateAsync được gọi đúng 1 lần
