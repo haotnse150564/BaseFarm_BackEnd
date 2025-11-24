@@ -12,7 +12,7 @@ namespace Domain.Model
     {
         public long FarmEquipmentId { get; set; }
         public DateOnly AssignDate { get; set; }
-        public long RemoveDate { get; set; }
+        public long? RemoveDate { get; set; }
         public Status Status { get; set; }
         public string? Note { get; set; }
         public long FarmId { get; set; }
