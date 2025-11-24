@@ -11,7 +11,8 @@ namespace Application.Services
     {
         Task<IOTLog> CreateLogAsync(IOTLog log);
         Task<IOTLog> UpdateLogAsync(IOTLog log);
-        Task<IOTLog> GetLogByIdAsync(Guid id);
+        Task<IOTLog> GetLogByIdAsync(long id);
+        Task<IOTLog> LoadLog();
 
     }
 }

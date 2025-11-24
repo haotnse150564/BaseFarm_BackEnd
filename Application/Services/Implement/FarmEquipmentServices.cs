@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Application.Interfaces;
+using AutoMapper;
+using Infrastructure.Repositories;
+using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,14 +10,24 @@ using System.Threading.Tasks;
 
 namespace Application.Services.Implement
 {
+
     public class FarmEquipmentServices : IFarmEquipmentServices
     {
-        public Task<object> CreateFarmEquipment(object request)
+        private readonly IUnitOfWorks _unitOfWork;
+        private readonly ICurrentTime _currentTime;
+        private readonly IConfiguration configuration;
+        private readonly IMapper _mapper;
+        private readonly IFarmEquipmentRepository _farmEquipmentRepository;
+
+        public FarmEquipmentServices(IUnitOfWorks unitOfWork, ICurrentTime currentTime, IConfiguration configuration, IMapper mapper)
         {
-            throw new NotImplementedException();
+            _unitOfWork = unitOfWork;
+            _currentTime = currentTime;
+            this.configuration = configuration;
+            _mapper = mapper;
         }
 
-        public Task<bool> DeleteFarmEquipment(long id)
+        public Task<object> CreateFarmEquipment(List<int> listId)
         {
             throw new NotImplementedException();
         }
@@ -33,7 +47,7 @@ namespace Application.Services.Implement
             throw new NotImplementedException();
         }
 
-        public Task<object> UpdateFarmEquipment(long id, object request)
+        public Task<bool> RemmoveFarmEquipment(long id)
         {
             throw new NotImplementedException();
         }

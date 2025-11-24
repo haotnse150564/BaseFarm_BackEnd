@@ -32,6 +32,7 @@ namespace Infrastructure
         public DbSet<Farm> Farm { get; set; }
 
         public DbSet<FarmActivity> FarmActivity { get; set; }
+        public DbSet<FarmEquipment> FarmEquipment { get; set; }
 
         public DbSet<Feedback> Feedback { get; set; }
 

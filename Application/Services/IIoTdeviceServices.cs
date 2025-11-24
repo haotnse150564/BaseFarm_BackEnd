@@ -16,6 +16,6 @@ namespace Application.Services
         Task<ResponseDTO> UpdateDeviceAsync(long deviceId, IOTRequest device);
         Task<ResponseDTO> UpdateStatusDeviceAsync(long deviceId, string status);
         Task<ResponseDTO> GetInforInvironment(long deviceId);
-
+        Task<ResponseDTO> GetDivineUnused();
     }
 }

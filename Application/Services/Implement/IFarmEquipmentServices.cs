@@ -10,9 +10,8 @@ namespace Application.Services.Implement
     {
         Task<object> GetAll();
         Task<object> GetListEquipmentByFarmId(long id);
-        Task<object> CreateFarmEquipment(object request);
-        Task<object> UpdateFarmEquipment(long id, object request);
-        Task<bool> DeleteFarmEquipment(long id);
+        Task<object> CreateFarmEquipment(List<int> listId);
+        Task<bool> RemmoveFarmEquipment(long id);
         Task<object> GetFarmEquipmentByDevicesName(long farmId);
     }
 }

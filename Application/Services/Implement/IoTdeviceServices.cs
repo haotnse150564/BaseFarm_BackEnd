@@ -99,6 +99,22 @@ namespace Application.Services.Implement
             }
         }
 
+        public Task<ResponseDTO> GetDivineUnused()
+        {
+            var devices = _unitOfWork.deviceRepository.GetAllAsync();
+            var unusedDevices = devices.Result.Where(d => d.Status == Status.DEACTIVATED).ToList();
+
+            if (unusedDevices == null || unusedDevices.Count == 0)
+            {
+                return Task.FromResult(new ResponseDTO(Const.FAIL_READ_CODE, "Tất cả thiết bị đang được sử dụng"));
+            }
+            else
+            {
+                var result = _mapper.Map<List<IOTView>>(unusedDevices);
+                return Task.FromResult(new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result));
+            }
+        }
+
         public Task<ResponseDTO> GetInforInvironment(long deviceId)
         {
             throw new NotImplementedException();

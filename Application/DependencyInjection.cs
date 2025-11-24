@@ -60,6 +60,7 @@ public static class DependencyInjection
         services.AddScoped<ICartItemRepository, CartItemRepository>();
         services.AddScoped<IAddressRepository, AddressRepository>();
         services.AddScoped<IIOTLogRepository, IOTLogRepository>();
+        services.AddScoped<IFarmEquipmentRepository, FarmEquipmentRepository>();
         //service
         services.AddScoped<IProductServices, ProductServices>();
         services.AddScoped<IFeedbackSevices, FeedbackServices>();
@@ -79,6 +80,7 @@ public static class DependencyInjection
         services.AddScoped<IWeatherServices, WeatherService>();
         services.AddScoped<IAddressServices, AddressServices>();
         services.AddScoped<IIOTLogServices, IOTLogServices>();
+        services.AddScoped<IFarmEquipmentServices, FarmEquipmentServices>();
 
         //services.AddScoped<IOrderDetailServices, OrderDetailServices>();
         //services.AddScoped<IAccountProfileServices, AccountProfileServices>();

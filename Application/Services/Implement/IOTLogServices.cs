@@ -14,7 +14,12 @@ namespace Application.Services.Implement
             throw new NotImplementedException();
         }
 
-        public Task<IOTLog> GetLogByIdAsync(Guid id)
+        public Task<IOTLog> GetLogByIdAsync(long id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IOTLog> LoadLog()
         {
             throw new NotImplementedException();
         }
