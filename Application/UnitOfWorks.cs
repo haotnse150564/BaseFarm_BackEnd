@@ -33,6 +33,7 @@ namespace Infrastructure
         private ICartItemRepository _cartItemRepository;
         private IAddressRepository _addressRepository;
         private IIOTLogRepository _iotLogRepository;
+        private IFarmEquipmentRepository _farmEquipmentRepository;
 
         public UnitOfWorks(AppDbContext context, ICurrentTime currentTime, IClaimsServices claimsServices, IProductRepository productRepository
             , IFeedbackRepository feedbackRepository, IAccountProfileRepository accountProfileRepository, IOrderRepository orderRepository
@@ -40,7 +41,7 @@ namespace Infrastructure
             , IDevicesRepository deviceRepository, ICropRepository cropRepository, IFarmActivityRepository farmActivityRepository, IFarmRepository farmRepository
             , ICategoryRepository categoryRepository, IAccountRepository accountRepository, IInventoryRepository inventoryRepository
             , ICropRequirementRepository cropRequirementRepository, ICartRepository cartRepository, ICartItemRepository cartItemRepository
-            , IAddressRepository addressRepository, IIOTLogRepository iotLogRepository
+            , IAddressRepository addressRepository, IIOTLogRepository iotLogRepository, IFarmEquipmentRepository farmEquipmentRepository
 
             )
         {
@@ -67,8 +68,16 @@ namespace Infrastructure
             _addressRepository = addressRepository;
             _addressRepository = addressRepository;
             _iotLogRepository = iotLogRepository;
+            _farmEquipmentRepository = farmEquipmentRepository;
         }
 
+        public IFarmEquipmentRepository farmEquipmentRepository
+        {
+            get
+            {
+                return _farmEquipmentRepository ??= new FarmEquipmentRepository(_context);
+            }
+        }
         public IIOTLogRepository iotLogRepository
         {
             get
