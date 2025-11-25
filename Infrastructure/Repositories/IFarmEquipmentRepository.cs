@@ -10,5 +10,7 @@ namespace Infrastructure.Repositories
 {
     public interface IFarmEquipmentRepository : IGenericRepository<FarmEquipment>
     {
+        Task<List<FarmEquipment>> GetFarmEquipmentActive();
+        Task<List<FarmEquipment>> GetFarmEquipmentByDeviceName(string deviceName);
     }
 }

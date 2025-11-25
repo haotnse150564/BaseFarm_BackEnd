@@ -1,17 +1,19 @@
-﻿using System;
+﻿using Infrastructure.ViewModel.Request;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Infrastructure.ViewModel.Response.FarmEquipmentResponse;
 
 namespace Application.Services
 {
     public interface IFarmEquipmentServices
     {
-        Task<object> GetAll();
-        Task<object> GetListEquipmentByFarmId(long id);
-        Task<object> CreateFarmEquipment(List<int> listId);
-        Task<bool> RemmoveFarmEquipment(long id);
-        Task<object> GetFarmEquipmentByDevicesName(long farmId);
+        Task<ResponseDTO> GetAll();
+        Task<ResponseDTO> GetListEquipmentActive();
+        Task<ResponseDTO> CreateFarmEquipment(FarmEquipmentRequest request);
+        Task<ResponseDTO> RemmoveFarmEquipment(long id);
+        Task<ResponseDTO> GetFarmEquipmentByDevicesName(string name);
     }
 }
