@@ -29,7 +29,7 @@ namespace Infrastructure.Repositories.Implement
             return await _dbSet
                 .Include(fe => fe.Device)
                 .Include(fe => fe.Farm)
-                .Where(fe => fe.Device.DeviceName == deviceName)
+                .Where(fe => fe.Device.DeviceName.Contains(deviceName))
                 .ToListAsync();
         }
         public override async Task<List<FarmEquipment>> GetAllAsync()
