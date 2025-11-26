@@ -372,6 +372,22 @@ namespace Application.Services.Implement
                 // Lưu các thay đổi vào cơ sở dữ liệu
                 await _unitOfWork.orderRepository.UpdateAsync(order);
 
+                bool shouldNotify = order.Status == PaymentStatus.COMPLETED;
+                // Gửi thông báo real-time nếu cần
+                if (shouldNotify)
+                {
+                    var notification = new OrderStatusNotification
+                    {
+                        OrderId = order.OrderId,
+                        Message = $"Your order #{order.OrderId} has been completed successfully",
+                        Status = "COMPLETED"
+                    };
+
+                    // Gửi riêng cho khách hàng sở hữu đơn hàng này
+                    await _hubContext.Clients
+                        .Group($"User_{order.CustomerId}")
+                        .SendAsync("ReceiveOrderStatusUpdate", notification);
+                }
                 return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, "Change Status Succeed");
             }
             catch (Exception ex)
@@ -419,7 +435,22 @@ namespace Application.Services.Implement
                 //}
 
                 await _unitOfWork.SaveChangesAsync();
+                bool shouldNotify = order.Status == PaymentStatus.CANCELLED;
+                // Gửi thông báo real-time nếu cần
+                if (shouldNotify)
+                {
+                    var notification = new OrderStatusNotification
+                    {
+                        OrderId = order.OrderId,
+                        Message = $"Your order #{order.OrderId} has been cancelled.",
+                        Status = "CANCELLED"
+                    };
 
+                    // Gửi riêng cho khách hàng sở hữu đơn hàng này
+                    await _hubContext.Clients
+                        .Group($"User_{order.CustomerId}")
+                        .SendAsync("ReceiveOrderStatusUpdate", notification);
+                }
                 return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, "Order cancelled and stock quantity restored.");
             }
             catch (Exception ex)
