@@ -401,6 +401,16 @@ namespace BaseFarm_BackEnd.Test.Services
 
             _mockOrderRepo.Setup(r => r.GetOrderById(1)).ReturnsAsync(order);
 
+            // 🔥 Mock HubContext để tránh NullReferenceException
+            var mockClients = new Mock<IHubClients>();
+            var mockClientProxy = new Mock<IClientProxy>();
+
+            mockClients
+                .Setup(c => c.Group(It.IsAny<string>()))
+                .Returns(mockClientProxy.Object);
+
+            _mockHubContext.Setup(h => h.Clients).Returns(mockClients.Object);
+
             var service = CreateOrderService();
 
             // Act
@@ -410,6 +420,7 @@ namespace BaseFarm_BackEnd.Test.Services
             Assert.Equal(Const.SUCCESS_CREATE_CODE, result.Status);
             Assert.Equal(PaymentStatus.COMPLETED, order.Status);
         }
+
 
         [Fact]
         public async Task UpdateOrderCompletedStatusAsync_ShouldCallUpdateRepository()
@@ -488,16 +499,28 @@ namespace BaseFarm_BackEnd.Test.Services
 
             _mockOrderRepo.Setup(r => r.GetOrderById(1)).ReturnsAsync(order);
 
+            // Mock HubContext để tránh NullReference
+            var mockClients = new Mock<IHubClients>();
+            var mockClientProxy = new Mock<IClientProxy>();
+
+            mockClients
+                .Setup(c => c.Group(It.IsAny<string>()))
+                .Returns(mockClientProxy.Object);
+
+            _mockHubContext.Setup(h => h.Clients).Returns(mockClients.Object);
+
             var service = CreateOrderService();
 
             // Act
             var result = await service.UpdateOrderCancelStatusAsync(1);
 
             // Assert
-            Assert.Equal(Const.SUCCESS_CREATE_CODE, result.Status);
+            Assert.Equal(1, result.Status);
             Assert.Equal(PaymentStatus.CANCELLED, order.Status);
             Assert.Equal("Order cancelled and stock quantity restored.", result.Data);
         }
+
+
 
         [Fact]
         public async Task UpdateOrderCancelStatusAsync_ShouldCallUpdateAndSaveChanges()
