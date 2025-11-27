@@ -43,6 +43,7 @@ namespace Infrastructure.ViewModel.Response
             public FarmActivityView? farmActivityView { get; set; }
             public FarmView? farmView { get; set; }
             public CropView? cropView { get; set; }
+            public CropRequirement? CropRequirement { get; set; }
         }
         public class ResponseDTO
         {
