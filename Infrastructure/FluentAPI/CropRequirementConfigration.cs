@@ -1,34 +1,25 @@
 ﻿using Domain.Model;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infrastructure.FluentAPI
 {
-    class CropRequirementConfigration : IEntityTypeConfiguration<CropRequirement>
+    public class CropRequirementConfiguration : IEntityTypeConfiguration<CropRequirement>
     {
         public void Configure(EntityTypeBuilder<CropRequirement> builder)
         {
-            // Table name
             builder.ToTable("CropRequirements");
 
-            // Primary key
             builder.HasKey(cr => cr.CropRequirementId);
 
-            // Properties
             builder.Property(cr => cr.CropRequirementId)
-                   .HasColumnName("CropRequirementId")
                    .ValueGeneratedOnAdd();
 
             builder.Property(cr => cr.CropId)
                    .IsRequired();
 
             builder.Property(cr => cr.PlantStage)
-                   .HasConversion<int>() // Enum -> int
+                   .HasConversion<int>()
                    .HasColumnType("integer");
 
             builder.Property(cr => cr.EstimatedDate)
@@ -53,23 +44,25 @@ namespace Infrastructure.FluentAPI
                    .HasColumnType("text");
 
             builder.Property(cr => cr.CreatedDate)
-                   .HasColumnType("timestamp")
-                   .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                  .HasConversion(
+                      v => v.ToDateTime(TimeOnly.MinValue),   // DateOnly -> DateTime
+                      v => DateOnly.FromDateTime(v)           // DateTime -> DateOnly
+                  )
+                  .HasColumnType("date")                      // PostgreSQL 'date'
+                  .HasDefaultValueSql("CURRENT_DATE");        // mặc định ngày hiện tại
 
             builder.Property(cr => cr.UpdatedDate)
-                   .HasColumnType("timestamp");
+                   .HasConversion(
+                       v => v.HasValue ? v.Value.ToDateTime(TimeOnly.MinValue) : default,   // DateOnly? -> DateTime?
+                       v => v != default ? DateOnly.FromDateTime(v) : (DateOnly?)null       // DateTime? -> DateOnly?
+                   )
+                   .HasColumnType("date");
 
-            builder.Property(cr => cr.IsActive)
-                   .HasColumnType("boolean")
-                   .HasDefaultValue(true);
-
-            // Relationships
+            // Quan hệ
             builder.HasOne(cr => cr.Crop)
-                   .WithMany(c => c.CropRequirement)
+                   .WithMany(c => c.CropRequirement) // property trong Crop phải là ICollection<CropRequirement>
                    .HasForeignKey(cr => cr.CropId)
                    .OnDelete(DeleteBehavior.Cascade);
         }
-
-
     }
 }
