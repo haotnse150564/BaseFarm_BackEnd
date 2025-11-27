@@ -14,5 +14,6 @@ namespace Application.Services
         Task<ResponseDTO> UpdateStatus(long cropId);
         Task<ResponseDTO> UpdatePlantStage(long cropId, PlantStage plantStage);
         Task<ResponseDTO> GetAll();
+        Task<ResponseDTO> GetListCropRequirementByCropId(long cropId);
     }
 }

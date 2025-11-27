@@ -32,14 +32,14 @@ namespace Application.Services.Implement
         {
             try
             {
-                var cropReq = _mapper.Map<Domain.Model.CropRequirement>(cropRequirement);
+                var cropReq = _mapper.Map<CropRequirement>(cropRequirement);
                 cropReq.CropId = cropId;
                 cropReq.PlantStage = plantStage;
                 cropReq.CreatedDate = _currentTime.GetCurrentTime();
                 await _unitOfWork.cropRequirementRepository.AddAsync(cropReq);
                 await _unitOfWork.SaveChangesAsync();
 
-                var result = _mapper.Map<CropRequirementResponse>(cropReq);
+                var result = _mapper.Map<CropRequirementView>(cropReq);
                 return new ResponseDTO(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, result);
             }
             catch (Exception ex)
@@ -60,7 +60,7 @@ namespace Application.Services.Implement
                 await _unitOfWork.cropRequirementRepository.DeleteAsync(cropReq);
                 await _unitOfWork.SaveChangesAsync();
 
-                var result = _mapper.Map<CropRequirementResponse>(cropReq);
+                var result = _mapper.Map<CropRequirementView>(cropReq);
                 return new ResponseDTO(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, result);
             }
             catch (Exception ex)
@@ -73,19 +73,19 @@ namespace Application.Services.Implement
         {
             try
             {
-                var cropReqOrigin = _unitOfWork.cropRequirementRepository.GetByIdAsync(cropRequirementId);
-
+                var cropReqOrigin = await _unitOfWork.cropRequirementRepository.GetByIdAsync(cropRequirementId);
+                var newRequest = _mapper.Map<CropRequirementRequest>(cropReqOrigin);
                 if (cropReqOrigin == null)
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);
                 }
-                var newCropReq = _mapper.Map<CropRequirement>(cropReqOrigin);
+                var newCropReq = _mapper.Map<CropRequirement>(newRequest);
                 newCropReq.PlantStage = plantStage;
                 newCropReq.CropId = cropId;
                 await _unitOfWork.cropRequirementRepository.AddAsync(newCropReq);
                 await _unitOfWork.SaveChangesAsync();
 
-                var result = _mapper.Map<CropRequirementResponse>(newCropReq);
+                var result = _mapper.Map<CropRequirementView>(newCropReq);
                 return new ResponseDTO(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, result);
             }
             catch (Exception ex)
@@ -102,7 +102,7 @@ namespace Application.Services.Implement
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);
                 }
-                var result = _mapper.Map<List<CropRequirementResponse.CropRequirementView>>(cropReqs);
+                var result = _mapper.Map<List<CropRequirementView>>(cropReqs);
                 return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
             }
             catch (Exception ex)
@@ -120,7 +120,7 @@ namespace Application.Services.Implement
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);
                 }
-                var result = _mapper.Map<CropRequirementResponse.CropRequirementView>(cropReq);
+                var result = _mapper.Map<CropRequirementView>(cropReq);
                 return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
             }
             catch (Exception ex)
@@ -129,6 +129,23 @@ namespace Application.Services.Implement
             }
         }
 
+        public async Task<ResponseDTO> GetListCropRequirementByCropId(long cropId)
+        {
+            try
+            {
+                var cropReqs = await _unitOfWork.cropRequirementRepository.GetByCropIdAsynce(cropId);
+                if (cropReqs == null || cropReqs.Count == 0)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);
+                }
+                var result = _mapper.Map<List<CropRequirementView>>(cropReqs);
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.FAIL_READ_CODE, ex.Message);
+            }
+        }
         public async Task<ResponseDTO?> UpdateCropRequirementAsync(CropRequirementRequest cropRequirement, PlantStage plantStage, long cropId)
         {
             try
@@ -144,7 +161,7 @@ namespace Application.Services.Implement
                 await _unitOfWork.cropRequirementRepository.UpdateAsync(cropReq);
                 await _unitOfWork.SaveChangesAsync();
 
-                var result = _mapper.Map<CropRequirementResponse>(cropReq);
+                var result = _mapper.Map<CropRequirementView>(cropReq);
                 return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, result);
 
             }
@@ -168,7 +185,7 @@ namespace Application.Services.Implement
                 cropReq.UpdatedDate = _currentTime.GetCurrentTime();
                 await _unitOfWork.cropRequirementRepository.UpdateAsync(cropReq);
                 await _unitOfWork.SaveChangesAsync();
-                var result = _mapper.Map<CropRequirementResponse>(cropReq);
+                var result = _mapper.Map<CropRequirementView>(cropReq);
                 return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, result);
 
             }
@@ -193,7 +210,7 @@ namespace Application.Services.Implement
 
                 await _unitOfWork.cropRequirementRepository.UpdateAsync(cropReq);
                 await _unitOfWork.SaveChangesAsync();
-                var result = _mapper.Map<CropRequirementResponse>(cropReq);
+                var result = _mapper.Map<CropRequirementView>(cropReq);
                 return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, result);
 
             }
