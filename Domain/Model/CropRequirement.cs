@@ -17,6 +17,5 @@ public partial class CropRequirement
 
     public string? Fertilizer { get; set; }
 
-
     public virtual Crop? Crop { get; set; } = null!;
 }

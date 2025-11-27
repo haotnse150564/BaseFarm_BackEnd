@@ -16,7 +16,7 @@ namespace Infrastructure.Repositories.Implement
             var result = await _dbSet.Where(x => x.ScheduleId == id)
             .Include(s => s.AssignedToNavigation).ThenInclude(ap => ap.AccountProfile)
             .Include(f => f.FarmDetails)
-            .Include(c => c.Crop)
+            .Include(c => c.Crop).ThenInclude(c => c.CropRequirement)
             .Include(fa => fa.FarmActivities)
             .FirstOrDefaultAsync();
             return result;
@@ -26,7 +26,7 @@ namespace Infrastructure.Repositories.Implement
             var result = await _context.Schedule // Thêm _context.Schedules vào đây
             .Include(s => s.AssignedToNavigation).ThenInclude(ap => ap.AccountProfile)
             .Include(f => f.FarmDetails)
-            .Include(c => c.Crop)
+            .Include(c => c.Crop).ThenInclude(c => c.CropRequirement)
             .Include(fa => fa.FarmActivities)
             .OrderByDescending(x => x.ScheduleId)
             .ToListAsync();
@@ -37,7 +37,7 @@ namespace Infrastructure.Repositories.Implement
         {
             var result = await _context.Schedule
             .Include(a => a.AssignedToNavigation)
-            .Include(a => a.Crop)
+            .Include(a => a.Crop).ThenInclude(c => c.CropRequirement)
             .Include(a => a.AssignedToNavigation)
             .ThenInclude(a => a.AccountProfile)
             // .Include(a => a.FarmActivities)
@@ -64,6 +64,8 @@ namespace Infrastructure.Repositories.Implement
         public async Task<Schedule?> GetByCropId(long cropId)
         {
             return await _context.Schedule
+                .Include(s => s.Crop)
+                .ThenInclude(c => c.CropRequirement)
                 .FirstOrDefaultAsync(x => x.CropId == cropId);
         }
     }

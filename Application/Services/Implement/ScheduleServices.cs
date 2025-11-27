@@ -80,6 +80,10 @@ namespace Application.Services.Implement
             {
                 return (false, "Ngày tạo phải trước ngày kết thúc.");
             }
+            if (harvestDate > endDate)
+            {
+                return (false, "Ngày thu hoạch phải trước ngày kết thúc.");
+            }
             //logic về khoảng thời gian trong ngày 
             var dates = new[] { startDate.Value, endDate.Value, plantingDate.Value, harvestDate.Value };
             if (dates.Distinct().Count() < dates.Length)
@@ -104,7 +108,7 @@ namespace Application.Services.Implement
 
             #endregion
             //Schedule có activity
-            //#region Activity check Date
+            #region Activity check Date
             //long farmAcitivityId = schedule.FarmActivitiesId;
             //if (farmAcitivityId != 0)
             //{
@@ -135,7 +139,7 @@ namespace Application.Services.Implement
             if (result == 0) return (true, "");
             return (false, message);
         }
-        //#endregion
+        #endregion
         #region Schedule mới
         public async Task<ResponseDTO> CreateSchedulesAsync(ScheduleRequest request)
         {
@@ -150,7 +154,13 @@ namespace Application.Services.Implement
                 var schedule = _mapper.Map<Schedule>(request);
                 schedule.ManagerId = getCurrentUser.AccountId;
                 schedule.CreatedAt = _currentTime.GetCurrentTime();
-
+                var getCropRequirement = await _cropRepository.GetByIdAsync(request.CropId);
+                if (getCropRequirement == null)
+                {
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Loại cây trồng không tồn tại.");
+                }
+                schedule.HarvestDate = schedule.PlantingDate.Value.AddDays((int)getCropRequirement.CropRequirement.EstimatedDate);
+                //validate date của schedule
                 var validate = ValidateScheduleDate(schedule);
                 if (schedule.StartDate < DateOnly.FromDateTime(DateTime.Now))
                 {
@@ -166,6 +176,7 @@ namespace Application.Services.Implement
                 {
                     return new ResponseDTO(Const.FAIL_CREATE_CODE, Const.FAIL_CREATE_MSG, validate.Result.Item2);
                 }
+
                 await _unitOfWork.scheduleRepository.AddAsync(schedule);
                 await _unitOfWork.SaveChangesAsync();
                 //In ra kết quả
