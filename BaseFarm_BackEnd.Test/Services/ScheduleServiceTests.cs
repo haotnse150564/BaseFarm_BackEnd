@@ -64,7 +64,6 @@ namespace BaseFarm_BackEnd.Test.Services
                 StartDate = DateOnly.FromDateTime(DateTime.Now.AddDays(1)),
                 PlantingDate = DateOnly.FromDateTime(DateTime.Now.AddDays(2)),
                 EndDate = DateOnly.FromDateTime(DateTime.Now.AddDays(3)),
-                HarvestDate = DateOnly.FromDateTime(DateTime.Now.AddDays(10)),
                 StaffId = 2,
                 CropId = 1,
                 FarmId = 1,
@@ -92,7 +91,6 @@ namespace BaseFarm_BackEnd.Test.Services
                     StartDate = r.StartDate ?? DateOnly.FromDateTime(DateTime.Now),
                     PlantingDate = r.PlantingDate ?? DateOnly.FromDateTime(DateTime.Now),
                     EndDate = r.EndDate ?? DateOnly.FromDateTime(DateTime.Now.AddDays(1)),
-                    HarvestDate = r.HarvestDate ?? DateOnly.FromDateTime(DateTime.Now.AddDays(10)),
                     ManagerId = 1,
                     CreatedAt = DateOnly.FromDateTime(DateTime.Now),
                     Quantity = r.Quantity,
@@ -229,7 +227,6 @@ namespace BaseFarm_BackEnd.Test.Services
                     StartDate = r.StartDate,
                     PlantingDate = r.PlantingDate,
                     EndDate = r.EndDate,
-                    HarvestDate = r.HarvestDate,
                     ManagerId = 1,
                     CreatedAt = DateOnly.FromDateTime(DateTime.Now),
                     Quantity = r.Quantity,
@@ -394,7 +391,6 @@ namespace BaseFarm_BackEnd.Test.Services
                     s.StartDate = r.StartDate;
                     s.PlantingDate = r.PlantingDate;
                     s.EndDate = r.EndDate;
-                    s.HarvestDate = r.HarvestDate;
                     s.Quantity = r.Quantity;
                     s.Status = r.Status;
                     s.FarmId = r.FarmId;

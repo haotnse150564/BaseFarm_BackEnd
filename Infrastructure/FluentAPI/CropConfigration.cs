@@ -50,9 +50,9 @@ namespace Infrastructure.FluentAPI
                 .OnDelete(DeleteBehavior.SetNull);
 
             //// Quan hệ 1-1 với CropRequirement
-            builder.HasOne(e => e.CropRequirement)
+            builder.HasMany(e => e.CropRequirement)
                 .WithOne(r => r.Crop)
-                .HasForeignKey<CropRequirement>(r => r.CropRequirementId)
+                .HasForeignKey(r => r.CropId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Quan hệ 1-1 với Product

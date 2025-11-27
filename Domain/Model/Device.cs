@@ -18,11 +18,11 @@ public partial class Device
 
     public DateOnly? ExpiryDate { get; set; }
 
-    public long FarmDetailsId { get; set; }
+  //  public long FarmDetailsId { get; set; }
 
     // public virtual ICollection<CropRequirement> CropRequirements { get; set; } = new List<CropRequirement>();
     public virtual ICollection<FarmEquipment> FarmEquipments { get; set; } = new List<FarmEquipment>();
     public virtual ICollection<IOTLog> Log { get; set; } = new List<IOTLog>();
 
-    public virtual Farm FarmDetails { get; set; } = null!;
+   // public virtual Farm FarmDetails { get; set; } = null!;
 }
