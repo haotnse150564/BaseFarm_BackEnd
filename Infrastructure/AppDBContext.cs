@@ -169,7 +169,7 @@ namespace Infrastructure
               PlantStage = Domain.Enum.PlantStage.Sowing,
               LightRequirement = 200,
               WateringFrequency = 7,
-              CreatedDate = DateTime.Parse("2025-11-11"),
+              CreatedDate = DateOnly.Parse("2025-11-11"),
               Fertilizer = "NPK",
               CropId = 1
           },
@@ -182,7 +182,7 @@ namespace Infrastructure
               PlantStage = Domain.Enum.PlantStage.VigorousGrowth,
               LightRequirement = 200,
               WateringFrequency = 7,
-              CreatedDate = DateTime.Parse("2025-11-11"),
+              CreatedDate = DateOnly.Parse("2025-11-11"),
               Fertilizer = "NPK",
               CropId = 2
           },
@@ -195,7 +195,7 @@ namespace Infrastructure
               PlantStage = Domain.Enum.PlantStage.PostHarvest,
               LightRequirement = 200,
               WateringFrequency = 7,
-              CreatedDate = DateTime.Parse("2025-11-11"),
+              CreatedDate = DateOnly.Parse("2025-11-11"),
               Fertilizer = "NPK",
               CropId = 3
           }
