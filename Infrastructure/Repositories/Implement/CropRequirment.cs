@@ -1,4 +1,5 @@
 ﻿using Domain.Model;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,11 @@ namespace Infrastructure.Repositories.Implement
         {
             _context = context;
             _dbSet = _context.Set<CropRequirement>();
+        }
+
+        public async Task<List<CropRequirement>> GetByCropIdAsynce(long cropId)
+        {
+            return await _dbSet.Where(cr => cr.CropId == cropId).ToListAsync();
         }
     }
 }

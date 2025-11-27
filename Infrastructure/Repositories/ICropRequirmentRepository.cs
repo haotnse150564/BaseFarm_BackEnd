@@ -11,5 +11,6 @@ namespace Infrastructure.Repositories
 {
     public interface ICropRequirementRepository : IGenericRepository<CropRequirement>
     {
+        Task<List<CropRequirement>> GetByCropIdAsynce(long cropId);
     }
 }

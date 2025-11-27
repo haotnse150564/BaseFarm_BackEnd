@@ -12,6 +12,8 @@ namespace Infrastructure.ViewModel.Response
 
         public class CropRequirementView()
         {
+            public long CropRequirementId { get; set; }
+            public long CropId { get; set; }
             public string? PlantStage { get; set; }
             public int? EstimatedDate { get; set; }
             public decimal? Moisture { get; set; }

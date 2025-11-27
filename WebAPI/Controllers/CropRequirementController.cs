@@ -12,6 +12,14 @@ namespace WebAPI.Controllers
         {
             _cropRequirementServices = cropRequirementServices;
         }
+        [HttpGet("get-by-crop-id")]
+        public async Task<IActionResult> GetCropRequirementsByCropId([FromQuery] long cropId)
+        {
+            var result = await _cropRequirementServices.GetListCropRequirementByCropId(cropId);
+            return Ok(result);
+        }
+
+
         [HttpGet("get-all")]
         public async Task<IActionResult> GetCropRequirements()
         {
@@ -24,16 +32,16 @@ namespace WebAPI.Controllers
             var result = await _cropRequirementServices.DeleteCropRequirementAsync(cropRequirementId);
             return Ok(result);
         }
-        [HttpPut("update-status/{cropId}")]
-        public async Task<IActionResult> UpdateStatus(long cropId)
+        [HttpPut("update-status/{cropRequirementId}")]
+        public async Task<IActionResult> UpdateStatus(long cropRequirementId)
         {
-            var result = await _cropRequirementServices.UpdateStatus(cropId);
+            var result = await _cropRequirementServices.UpdateStatus(cropRequirementId);
             return Ok(result);
         }
-        [HttpPut("update-plant-stage/{cropId}")]
-        public async Task<IActionResult> UpdatePlantStage(long cropId, [FromQuery] Domain.Enum.PlantStage plantStage)
+        [HttpPut("update-plant-stage/{cropRequirementId}")]
+        public async Task<IActionResult> UpdatePlantStage(long cropRequirementId, [FromQuery] Domain.Enum.PlantStage plantStage)
         {
-            var result = await _cropRequirementServices.UpdatePlantStage(cropId, plantStage);
+            var result = await _cropRequirementServices.UpdatePlantStage(cropRequirementId, plantStage);
             return Ok(result);
         }
         [HttpPost("duplicate/{cropRequirementId}")]
@@ -42,22 +50,22 @@ namespace WebAPI.Controllers
             var result = await _cropRequirementServices.DuplicateCropRequirementAsynce(cropRequirementId, plantStage, cropId);
             return Ok(result);
         }
-        [HttpGet("get-by-id/{cropId}")]
-        public async Task<IActionResult> GetCropRequirementById(long cropId)
+        [HttpGet("get-by-id/{cropRequirementId}")]
+        public async Task<IActionResult> GetCropRequirementById(long cropRequirementId)
         {
-            var result = await _cropRequirementServices.GetCropRequirementByIdAsync(cropId);
+            var result = await _cropRequirementServices.GetCropRequirementByIdAsync(cropRequirementId);
             return Ok(result);
         }
-        [HttpPost("create/{cropId}")]
-        public async Task<IActionResult> CreateCropRequirement(long cropId, [FromBody] Infrastructure.ViewModel.Request.CropRequirementRequest cropRequirement, [FromQuery] Domain.Enum.PlantStage plantStage)
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateCropRequirement(long cropRequirementId, [FromBody] Infrastructure.ViewModel.Request.CropRequirementRequest cropRequirement, [FromQuery] Domain.Enum.PlantStage plantStage)
         {
-            var result = await _cropRequirementServices.CreateCropRequirementAsync(cropRequirement, plantStage, cropId);
+            var result = await _cropRequirementServices.CreateCropRequirementAsync(cropRequirement, plantStage, cropRequirementId);
             return Ok(result);
         }
-        [HttpPut("update/{cropId}")]
-        public async Task<IActionResult> UpdateCropRequirement(long cropId, [FromBody] Infrastructure.ViewModel.Request.CropRequirementRequest cropRequirement, [FromQuery] Domain.Enum.PlantStage plantStage)
+        [HttpPut("update/{cropRequirementId}")]
+        public async Task<IActionResult> UpdateCropRequirement(long cropRequirementId, [FromBody] Infrastructure.ViewModel.Request.CropRequirementRequest cropRequirement, [FromQuery] Domain.Enum.PlantStage plantStage)
         {
-            var result = await _cropRequirementServices.UpdateCropRequirementAsync(cropRequirement, plantStage, cropId);
+            var result = await _cropRequirementServices.UpdateCropRequirementAsync(cropRequirement, plantStage, cropRequirementId);
             return Ok(result);
         }
     }
