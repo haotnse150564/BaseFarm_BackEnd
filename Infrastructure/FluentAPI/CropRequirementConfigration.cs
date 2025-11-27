@@ -13,38 +13,63 @@ namespace Infrastructure.FluentAPI
     {
         public void Configure(EntityTypeBuilder<CropRequirement> builder)
         {
-            builder.ToTable("CropRequirement");
+            // Table name
+            builder.ToTable("CropRequirements");
 
-            builder.HasKey(e => e.CropRequirementId);
+            // Primary key
+            builder.HasKey(cr => cr.CropRequirementId);
 
-            builder.Property(e => e.CropRequirementId)
-                .HasColumnName("requirementId");
+            // Properties
+            builder.Property(cr => cr.CropRequirementId)
+                   .HasColumnName("CropRequirementId")
+                   .ValueGeneratedOnAdd();
 
-            builder.Property(e => e.PlantStage)
-                .HasColumnName("plantStage");
+            builder.Property(cr => cr.CropId)
+                   .IsRequired();
 
-            builder.Property(e => e.EstimatedDate)
-                .HasColumnName("estimatedDate");
+            builder.Property(cr => cr.PlantStage)
+                   .HasConversion<int>() // Enum -> int
+                   .HasColumnType("integer");
 
-            builder.Property(e => e.Moisture)
-                .HasColumnType("decimal(5,2)") // Tùy chỉnh độ chính xác nếu cần
-                .HasColumnName("moisture");
+            builder.Property(cr => cr.EstimatedDate)
+                   .HasColumnType("integer");
 
-            builder.Property(e => e.Temperature)
-                .HasColumnType("decimal(5,2)")
-                .HasColumnName("temperature");
+            builder.Property(cr => cr.Moisture)
+                   .HasColumnType("numeric(10,2)");
 
-            builder.Property(e => e.Fertilizer)
-                .HasMaxLength(255)
-                .IsUnicode(true) // Cho phép lưu tên phân bón bằng tiếng Việt
-                .HasColumnName("fertilizer");
+            builder.Property(cr => cr.Temperature)
+                   .HasColumnType("numeric(10,2)");
 
-            // Quan hệ 1-1 với Crop
-            builder.HasOne(e => e.Crop)
-                .WithOne(c => c.CropRequirement)
-                .HasForeignKey<CropRequirement>(e => e.CropRequirementId)
-                .OnDelete(DeleteBehavior.Cascade);
+            builder.Property(cr => cr.Fertilizer)
+                   .HasColumnType("text");
 
+            builder.Property(cr => cr.LightRequirement)
+                   .HasColumnType("numeric(10,2)");
+
+            builder.Property(cr => cr.WateringFrequency)
+                   .HasColumnType("text");
+
+            builder.Property(cr => cr.Notes)
+                   .HasColumnType("text");
+
+            builder.Property(cr => cr.CreatedDate)
+                   .HasColumnType("timestamp")
+                   .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            builder.Property(cr => cr.UpdatedDate)
+                   .HasColumnType("timestamp");
+
+            builder.Property(cr => cr.IsActive)
+                   .HasColumnType("boolean")
+                   .HasDefaultValue(true);
+
+            // Relationships
+            builder.HasOne(cr => cr.Crop)
+                   .WithMany(c => c.CropRequirement)
+                   .HasForeignKey(cr => cr.CropId)
+                   .OnDelete(DeleteBehavior.Cascade);
         }
+
+
     }
 }

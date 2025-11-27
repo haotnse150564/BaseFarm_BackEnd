@@ -159,8 +159,9 @@ namespace Application.Services.Implement
                 {
                     return new ResponseDTO(Const.FAIL_CREATE_CODE, "Loại cây trồng không tồn tại.");
                 }
-                schedule.HarvestDate = schedule.PlantingDate.Value.AddDays((int)getCropRequirement.CropRequirement.EstimatedDate);
+                schedule.HarvestDate = schedule.PlantingDate.Value.AddDays((int)getCropRequirement.CropRequirement.FirstOrDefault().EstimatedDate);
                 //validate date của schedule
+
                 var validate = ValidateScheduleDate(schedule);
                 if (schedule.StartDate < DateOnly.FromDateTime(DateTime.Now))
                 {

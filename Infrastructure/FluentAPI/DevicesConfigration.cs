@@ -34,8 +34,8 @@ namespace Infrastructure.FluentAPI
             builder.Property(e => e.ExpiryDate)
                 .HasColumnName("expiryDate");
 
-            builder.Property(e => e.FarmDetailsId)
-                .HasColumnName("farmDetailsId");
+            //builder.Property(e => e.FarmDetailsId)
+            //    .HasColumnName("farmDetailsId");
 
 
             //// Quan hệ 1-n với FarmEquipment

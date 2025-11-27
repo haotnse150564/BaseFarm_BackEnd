@@ -24,7 +24,7 @@ public partial class Crop
 
     public virtual Category? Category { get; set; } = null!;
 
-    public virtual CropRequirement? CropRequirement { get; set; }
+    public virtual ICollection<CropRequirement>? CropRequirement { get; set; }
 
     public virtual Product? Product { get; set; }
     public virtual ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();

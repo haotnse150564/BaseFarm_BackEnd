@@ -11,7 +11,7 @@ namespace Infrastructure
         public AppDbContext() { }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
- 
+
         }
         //protected override void OnConfiguring(DbContextOptionsBuilder optionBuilder)
         //{
@@ -117,8 +117,8 @@ namespace Infrastructure
                 );
             builder.Entity<Farm>().HasData(
                 new Farm { FarmId = 1, FarmName = "Rau Muong ", Location = "TP. Ho Chi Minh", CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AccountId = 4, }
-              //  new Farm { FarmId = 2, FarmName = "Rau Den", Location = "TP. Ho Chi Minh", CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("3/2/2025"), AccountId = 5 },
-              //  new Farm { FarmId = 3, FarmName = "Cai", Location = "TP. Ho Chi Minh", CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("3/5/2025"), AccountId = 7 }
+        //  new Farm { FarmId = 2, FarmName = "Rau Den", Location = "TP. Ho Chi Minh", CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("3/2/2025"), AccountId = 5 },
+        //  new Farm { FarmId = 3, FarmName = "Cai", Location = "TP. Ho Chi Minh", CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("3/5/2025"), AccountId = 7 }
         );
             builder.Entity<Crop>().HasData(
                 new Crop { CropId = 1, CropName = "Cop 01", Description = "3x3 m2", Status = Domain.Enum.CropStatus.ACTIVE, CategoryId = 1, CreateAt = DateOnly.Parse("3/1/2025"), UpdateAt = DateOnly.Parse("3/1/2025") },
@@ -129,15 +129,11 @@ namespace Infrastructure
                 );
 
             builder.Entity<Device>().HasData(
-                new Device { DevicesId = 1, DeviceName = "Thermocouple - 1", DeviceType = "Temperature IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 1 },
-                new Device { DevicesId = 2, DeviceName = "LM393 - 1", DeviceType = "Humidity measurement IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 1 },
-               // new Device { DevicesId = 3, DeviceName = "LM393 - 2", DeviceType = "Humidity measurement IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 2 },
-              //  new Device { DevicesId = 4, DeviceName = "Thermocouple  - 2", DeviceType = "Temperature IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 3 },
-               // new Device { DevicesId = 5, DeviceName = "Thermocouple  - 3", DeviceType = "Temperature IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 1 },
-               // new Device { DevicesId = 6, DeviceName = "LM393 - 3", DeviceType = "Humidity measurement IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 3 },
-                new Device { DevicesId = 3, DeviceName = "Soil Moisture Sensor 1", DeviceType = "Soil Moisture Sensor IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 1 }
-               // new Device { DevicesId = 8, DeviceName = "Soil Moisture Sensor 2", DeviceType = "Soil Moisture Sensor IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 2 },
-              //  new Device { DevicesId = 9, DeviceName = "Soil Moisture Sensor 3", DeviceType = "Soil Moisture Sensor IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 3 }
+                new Device { DevicesId = 1, DeviceName = "Thermocouple - 1", DeviceType = "Temperature IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025")},
+                new Device { DevicesId = 2, DeviceName = "LM393 - 1", DeviceType = "Humidity measurement IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025")},
+                new Device { DevicesId = 3, DeviceName = "Soil Moisture Sensor 1", DeviceType = "Soil Moisture Sensor IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025")},
+                new Device { DevicesId = 4, DeviceName = "Led Light", DeviceType = "Soil Moisture Sensor IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025")}
+                //  new Device { DevicesId = 9, DeviceName = "Soil Moisture Sensor 3", DeviceType = "Soil Moisture Sensor IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 3 }
                 );
             builder.Entity<Order>().HasData(
                 new Order { OrderId = 1, CustomerId = 8, TotalPrice = 200000, ShippingAddress = "TP. Ho Chi Minh", Status = Domain.Enum.PaymentStatus.PAID, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") },
@@ -159,15 +155,52 @@ namespace Infrastructure
                 new Payment { PaymentId = 3, OrderId = 3, TransactionId = "VNPay03", Amount = 21, PaymentMethod = "VNPay", VnPayResponseCode = "VNPayPayment03", Success = false, PaymentTime = DateTime.Parse("3/1/2025").ToUniversalTime(), CreateDate = DateTime.Parse("3/1/2025").ToUniversalTime(), UpdateDate = null }
                 );
             builder.Entity<FarmEquipment>().HasData(
-                new FarmEquipment { FarmEquipmentId = 1, AssignDate = DateOnly.Parse("3/1/2025"), Status = Domain.Enum.Status.ACTIVE, FarmId = 1, DeviceId = 1},
-                new FarmEquipment { FarmEquipmentId = 2, AssignDate = DateOnly.Parse("3/1/2025"), Status = Domain.Enum.Status.ACTIVE, FarmId = 1, DeviceId = 1 },
-                new FarmEquipment { FarmEquipmentId = 3, AssignDate = DateOnly.Parse("3/1/2025"), Status = Domain.Enum.Status.ACTIVE, FarmId = 1, DeviceId = 1 }
+                new FarmEquipment { FarmEquipmentId = 1, AssignDate = DateOnly.Parse("3/1/2025"), Status = Domain.Enum.Status.ACTIVE, FarmId = 1, DeviceId = 1 },
+                new FarmEquipment { FarmEquipmentId = 2, AssignDate = DateOnly.Parse("3/1/2025"), Status = Domain.Enum.Status.ACTIVE, FarmId = 1, DeviceId = 2 },
+                new FarmEquipment { FarmEquipmentId = 3, AssignDate = DateOnly.Parse("3/1/2025"), Status = Domain.Enum.Status.ACTIVE, FarmId = 1, DeviceId = 3 }
                 );
             builder.Entity<CropRequirement>().HasData(
-                new CropRequirement { CropRequirementId = 1, EstimatedDate = 25, Moisture = 1, Temperature = 29, Fertilizer = "NPK" },
-                new CropRequirement { CropRequirementId = 2, EstimatedDate = 25, Moisture = 1, Temperature = 24, Fertilizer = "NPK" },
-                new CropRequirement { CropRequirementId = 3, EstimatedDate = 30, Moisture = 1, Temperature = 26, Fertilizer = "NPK" }
-                );
+          new CropRequirement
+          {
+              CropRequirementId = 1,
+              EstimatedDate = 25,
+              Moisture = 1,
+              Temperature = 29,
+              PlantStage = Domain.Enum.PlantStage.Sowing,
+              LightRequirement = 200,
+              WateringFrequency = 7,
+              CreatedDate = DateTime.Parse("2025-11-11"),
+              Fertilizer = "NPK",
+              CropId = 1
+          },
+          new CropRequirement
+          {
+              CropRequirementId = 2,
+              EstimatedDate = 25,
+              Moisture = 1,
+              Temperature = 24,
+              PlantStage = Domain.Enum.PlantStage.VigorousGrowth,
+              LightRequirement = 200,
+              WateringFrequency = 7,
+              CreatedDate = DateTime.Parse("2025-11-11"),
+              Fertilizer = "NPK",
+              CropId = 2
+          },
+          new CropRequirement
+          {
+              CropRequirementId = 3,
+              EstimatedDate = 30,
+              Moisture = 1,
+              Temperature = 26,
+              PlantStage = Domain.Enum.PlantStage.PostHarvest,
+              LightRequirement = 200,
+              WateringFrequency = 7,
+              CreatedDate = DateTime.Parse("2025-11-11"),
+              Fertilizer = "NPK",
+              CropId = 3
+          }
+      );
+
             builder.Entity<Feedback>().HasData(
                 new Feedback { FeedbackId = 1, OrderDetailId = 1, CustomerId = 4, CreatedAt = DateOnly.Parse("4/3/2025"), Status = Domain.Enum.Status.ACTIVE, Rating = 4, Comment = "App very good, but load data slow" },
                 new Feedback { FeedbackId = 2, OrderDetailId = 2, CustomerId = 7, CreatedAt = DateOnly.Parse("4/10/2025"), Status = Domain.Enum.Status.ACTIVE, Rating = 5, Comment = "Rau ngon" },
