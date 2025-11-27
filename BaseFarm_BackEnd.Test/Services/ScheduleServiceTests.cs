@@ -63,7 +63,7 @@ namespace BaseFarm_BackEnd.Test.Services
             {
                 StartDate = DateOnly.FromDateTime(DateTime.Now.AddDays(1)),
                 PlantingDate = DateOnly.FromDateTime(DateTime.Now.AddDays(2)),
-                EndDate = DateOnly.FromDateTime(DateTime.Now.AddDays(3)),
+                EndDate = DateOnly.FromDateTime(DateTime.Now.AddDays(15)), // >= Planting + 10
                 StaffId = 2,
                 CropId = 1,
                 FarmId = 1,
@@ -71,6 +71,7 @@ namespace BaseFarm_BackEnd.Test.Services
                 Status = Status.ACTIVE
             };
         }
+
 
         private Account CreateManager()
         {
@@ -88,18 +89,21 @@ namespace BaseFarm_BackEnd.Test.Services
             _mockMapper.Setup(m => m.Map<Schedule>(It.IsAny<ScheduleRequest>()))
                 .Returns((ScheduleRequest r) => new Schedule
                 {
-                    StartDate = r.StartDate ?? DateOnly.FromDateTime(DateTime.Now),
-                    PlantingDate = r.PlantingDate ?? DateOnly.FromDateTime(DateTime.Now),
-                    EndDate = r.EndDate ?? DateOnly.FromDateTime(DateTime.Now.AddDays(1)),
+                    StartDate = r.StartDate,
+                    PlantingDate = r.PlantingDate,
+                    EndDate = r.EndDate,
                     ManagerId = 1,
                     CreatedAt = DateOnly.FromDateTime(DateTime.Now),
                     Quantity = r.Quantity,
                     Status = r.Status,
                     FarmId = r.FarmId,
                     CropId = r.CropId,
-                    AssignedTo = r.StaffId
+                    AssignedTo = r.StaffId,
+
+                    HarvestDate = r.PlantingDate.Value.AddDays(10)
                 });
         }
+
 
         // UC1: User không phải Manager → FAIL
         [Fact]
@@ -221,36 +225,50 @@ namespace BaseFarm_BackEnd.Test.Services
             var manager = CreateManager();
             var request = CreateValidRequest();
 
-            _mockMapper.Setup(m => m.Map<Schedule>(It.IsAny<ScheduleRequest>()))
-                .Returns((ScheduleRequest r) => new Schedule
+            SetupMapperMock(); // dùng mapper helper
+
+            // Mock ngày hiện tại
+            _mockCurrentTime.Setup(c => c.GetCurrentTime())
+                .Returns(DateOnly.FromDateTime(DateTime.Now));
+
+            // Mock CropRepository
+            _mockCropRepo.Setup(c => c.GetByIdAsync(request.CropId))
+                .ReturnsAsync(new Crop
                 {
-                    StartDate = r.StartDate,
-                    PlantingDate = r.PlantingDate,
-                    EndDate = r.EndDate,
-                    ManagerId = 1,
-                    CreatedAt = DateOnly.FromDateTime(DateTime.Now),
-                    Quantity = r.Quantity,
-                    Status = r.Status,
-                    FarmId = r.FarmId,
-                    CropId = r.CropId,
-                    AssignedTo = r.StaffId
+                    CropRequirement = new List<CropRequirement>
+                    {
+                new CropRequirement { EstimatedDate = 10 }
+                    }
                 });
 
-            _mockCurrentTime.Setup(c => c.GetCurrentTime()).Returns(DateOnly.FromDateTime(DateTime.Now));
+            // Mock AccountRepo
             _mockAccountRepo.Setup(a => a.GetByIdAsync(request.StaffId))
-                .ReturnsAsync(new Account { AccountProfile = new AccountProfile { Fullname = "Staff B" } });
-            _mockUow.Setup(u => u.scheduleRepository.AddAsync(It.IsAny<Schedule>()));
+                .ReturnsAsync(new Account
+                {
+                    AccountProfile = new AccountProfile { Fullname = "Staff B" }
+                });
+
+            // Mock Add + Save
+            _mockUow.Setup(u => u.scheduleRepository.AddAsync(It.IsAny<Schedule>()))
+                .Returns(Task.CompletedTask);
+
             _mockUow.Setup(u => u.SaveChangesAsync()).ReturnsAsync(1);
+
+            // Mock mapper ScheduleResponseView
             _mockMapper.Setup(m => m.Map<ScheduleResponseView>(It.IsAny<Schedule>()))
                 .Returns(new ScheduleResponseView());
 
             var service = CreateService(new JWTFake(manager));
 
+            // Act
             var result = await service.CreateSchedulesAsync(request);
 
+            // Assert
             Assert.Equal(Const.SUCCESS_CREATE_CODE, result.Status);
             Assert.NotNull(result.Data);
         }
+
+
 
         // -------------------- UPDATE SCHEDULE UC --------------------
 
