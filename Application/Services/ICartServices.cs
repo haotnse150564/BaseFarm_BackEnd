@@ -18,5 +18,6 @@ namespace Application.Services
         Task<CartResponse> GetCartItems();
         Task<CartResponse> ClearCart();
         Task<ResponseDTO> PrepareOrderAsync(HttpContext context);
+        Task<ResponseDTO> BuyAgainAsync(long orderId);
     }
 }
