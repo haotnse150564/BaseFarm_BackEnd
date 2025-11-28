@@ -1,5 +1,4 @@
-﻿using Domain.Enum;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,23 +6,19 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.ViewModel.Response
 {
-    public class IOTResponse
+    public class IOTLogResponse
     {
-        public class IOTView
+        public class IOTLogView
         {
             public long DevicesId { get; set; }
-            public string? DeviceName { get; set; }
 
-            public string? DeviceType { get; set; }
+            public string? VariableId { get; set; }
 
-            public Status? Status { get; set; }
+            public string? SensorName { get; set; }
 
-            public string? Unit { get; set; }
+            public double? Value { get; set; }
 
-            public DateOnly? LastUpdate { get; set; }
-
-            public DateOnly? ExpiryDate { get; set; }
-
+            public DateTime Timestamp { get; set; }
         }
         public class ResponseDTO
         {

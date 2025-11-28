@@ -1,9 +1,6 @@
 ﻿using Domain.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace Infrastructure.Repositories.Implement
 {
@@ -13,6 +10,11 @@ namespace Infrastructure.Repositories.Implement
         {
             _context = context;
             _dbSet = _context.Set<Device>();
+        }
+
+        public async Task<Device> GetDevieByName(string name)
+        {
+            return await _dbSet.FirstOrDefaultAsync(x => x.DeviceName.ToLower().Contains( name.ToLower()));
         }
     }
 }

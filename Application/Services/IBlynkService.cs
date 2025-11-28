@@ -1,9 +1,4 @@
-﻿using Infrastructure.ViewModel.Response;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using static Infrastructure.ViewModel.Response.IOTLogResponse;
 
 namespace Application.Services
 {
@@ -33,5 +28,7 @@ namespace Application.Services
         /// V11 - Ánh Sáng Ngưỡng Cao → servo 180° khi LDR ≥ value
         /// </summary>
         Task<bool> SetLdrHighThresholdAsync(int value);
+        Task<ResponseDTO> GetList();
+        Task<string> UpdateLogAsync();
     }
 }
