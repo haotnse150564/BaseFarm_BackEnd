@@ -14,7 +14,7 @@ namespace Infrastructure.Repositories.Implement
 
         public async Task<Device> GetDevieByName(string name)
         {
-            return await _dbSet.FirstOrDefaultAsync(x => x.DeviceName.ToLower() == name.ToLower());
+            return await _dbSet.FirstOrDefaultAsync(x => x.DeviceName.ToLower().Contains( name.ToLower()));
         }
     }
 }
