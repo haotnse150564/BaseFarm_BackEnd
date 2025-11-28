@@ -207,10 +207,11 @@ namespace Application.Services.Implement
                     var listIotLog = await _unitOfWork.iotLogRepository.GetAllAsync();
                     // Sắp xếp giảm dần theo thời gian tạo
                     int deleteCount = 200;
+
                     var sortedList = listIotLog.OrderByDescending(x => x.Timestamp).ToList();
                     if (sortedList.Count > deleteCount)
                     {
-                        var toDelete = sortedList.Skip(20).ToList(); // lấy những item từ vị trí 21 trở đi
+                        var toDelete = sortedList.Skip(deleteCount).ToList(); // lấy những item từ vị trí 201 trở đi
 
                         foreach (var item in toDelete)
                         {
@@ -222,9 +223,6 @@ namespace Application.Services.Implement
                         sortedList = sortedList.Take(deleteCount).ToList();
 
                     }
-
-
-
                     await _unitOfWork.iotLogRepository.AddAsync(iotLog);
                     await _unitOfWork.SaveChangesAsync();
                 }
@@ -234,7 +232,6 @@ namespace Application.Services.Implement
             {
                 return "Có lỗi xảy ra";
             }
-
         }
         class LogEntry
         {
