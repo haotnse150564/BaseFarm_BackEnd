@@ -200,10 +200,10 @@ namespace Application.Services.Implement
                 }
 
                 // check status
-                //if(order.Status != PaymentStatus.COMPLETED && order.Status != PaymentStatus.CANCELLED)
-                //{
-                //    return new ResponseDTO(Const.FAIL_READ_CODE, "Only completed or cancelled orders can be purchased again.");
-                //}
+                if (order.Status != PaymentStatus.COMPLETED && order.Status != PaymentStatus.CANCELLED)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Only completed or cancelled orders can be purchased again.");
+                }
 
                 // Lấy user hiện tại
                 var user = await _jwtUtils.GetCurrentUserAsync();
