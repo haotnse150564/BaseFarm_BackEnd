@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Application.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
 {
@@ -6,13 +7,23 @@ namespace WebAPI.Controllers
     [ApiController]
     public class IOTLogController : ControllerBase
     {
-        private readonly ILogger<IOTLogController> _logger;
-
-        public IOTLogController(ILogger<IOTLogController> logger)
+        private readonly IIOTLogServices iOTLogServices;
+        public IOTLogController(IIOTLogServices iOTLogServices)
         {
-            _logger = logger;
+            this.iOTLogServices = iOTLogServices;
         }
 
-
+        [HttpGet("UpdateLog")]
+        public ActionResult UpdateLog()
+        {
+            iOTLogServices.UpdateLogAsync();
+            return Ok("Log update initiated.");
+        }
+        [HttpGet("GetLogs")]
+        public async Task<IActionResult> GetLogs()
+        {
+            var logs = await iOTLogServices.GetList();
+            return Ok(logs);
+        }
     }
 }

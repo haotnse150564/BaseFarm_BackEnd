@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Infrastructure.ViewModel.Response.IOTLogResponse;
 using static Infrastructure.ViewModel.Response.IOTResponse;
 
 namespace Infrastructure.Mapper
@@ -19,6 +20,7 @@ namespace Infrastructure.Mapper
             CreateMap<Device, IOTRequest>().ReverseMap();
             CreateMap<Device, IOTView>().ReverseMap();
             CreateMap<Device, IOTResponse>().ReverseMap();
+            CreateMap<IOTLog, IOTLogView>().ReverseMap();
         }
     }
 

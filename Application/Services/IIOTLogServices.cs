@@ -4,15 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Infrastructure.ViewModel.Response.IOTLogResponse;
 
 namespace Application.Services
 {
     public interface IIOTLogServices
     {
-        Task<IOTLog> CreateLogAsync(IOTLog log);
-        Task<IOTLog> UpdateLogAsync(IOTLog log);
-        Task<IOTLog> GetLogByIdAsync(long id);
-        Task<IOTLog> LoadLog();
+        Task<string> UpdateLogAsync();
+        Task<ResponseDTO> GetList();
 
     }
 }
