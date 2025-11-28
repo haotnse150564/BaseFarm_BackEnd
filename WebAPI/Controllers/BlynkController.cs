@@ -159,5 +159,17 @@ namespace WebAPI.Controllers
                 ? Ok(new { success = true, message = $"Ngưỡng ánh sáng CAO đã đặt: {value}" })
                 : StatusCode(500, new { success = false, message = "Lỗi gửi lệnh đến thiết bị" });
         }
+        [HttpGet("logs")]
+        public async Task<IActionResult> GetIOTLogs()
+        {
+            var response = await _blynkService.GetList();
+            return Ok(response);
+        }
+        [HttpPost("logs/update")]
+        public async Task<IActionResult> UpdateIOTLogs()
+        {
+            var result = await _blynkService.UpdateLogAsync();
+           return Ok(result);
+        }
     }
 }

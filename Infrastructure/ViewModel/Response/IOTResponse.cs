@@ -11,6 +11,7 @@ namespace Infrastructure.ViewModel.Response
     {
         public class IOTView
         {
+            public long DevicesId { get; set; }
             public string? DeviceName { get; set; }
 
             public string? DeviceType { get; set; }
@@ -23,7 +24,6 @@ namespace Infrastructure.ViewModel.Response
 
             public DateOnly? ExpiryDate { get; set; }
 
-            public long FarmDetailsId { get; set; }
         }
         public class ResponseDTO
         {

@@ -21,6 +21,6 @@ namespace Infrastructure.ViewModel.Request
         public DateOnly? ExpiryDate { get; set; }
 
         //[Required(ErrorMessage = "FarmActivityName is required.")]
-        public long FarmDetailsId { get; set; }
+        //public long FarmDetailsId { get; set; }
     }
 }

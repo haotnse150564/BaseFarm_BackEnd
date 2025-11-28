@@ -80,7 +80,6 @@ public static class DependencyInjection
         services.AddScoped<ICartServices, CartServices>();
         services.AddScoped<IWeatherServices, WeatherService>();
         services.AddScoped<IAddressServices, AddressServices>();
-        services.AddScoped<IIOTLogServices, IOTLogServices>();
         services.AddScoped<IFarmEquipmentServices, FarmEquipmentServices>();
         services.AddScoped<ICropRequirementServices, CropRequirementServices>();
 

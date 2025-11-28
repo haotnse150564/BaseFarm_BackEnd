@@ -1,4 +1,7 @@
-﻿using Infrastructure.ViewModel.Response;
+﻿using AutoMapper;
+using Domain.Model;
+using Infrastructure;
+using Infrastructure.ViewModel.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,19 +9,23 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using static Infrastructure.ViewModel.Response.IOTLogResponse;
 
 namespace Application.Services.Implement
 {
     public class BlynkService : IBlynkService
     {
         private readonly HttpClient _httpClient;
-        private const string BlynkToken = "xRd0sDuPYqFjPI1ZSHRr7Bd1cJq3fH2Y"; 
+        private const string BlynkToken = "xRd0sDuPYqFjPI1ZSHRr7Bd1cJq3fH2Y";
         private const string BlynkBaseUrl = "https://sgp1.blynk.cloud";
         private const string BlynkWriteBaseUrl = "https://sgp1.blynk.cloud/external/api";
-
-        public BlynkService(HttpClient httpClient)
+        private readonly IUnitOfWorks _unitOfWork;
+        private readonly IMapper _mapper;
+        public BlynkService(HttpClient httpClient, IUnitOfWorks unitOfWork, IMapper mapper)
         {
             _httpClient = httpClient;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<Dictionary<string, object?>> GetAllDatastreamValuesAsync()
@@ -62,10 +69,10 @@ namespace Application.Services.Implement
             return element.ValueKind switch
             {
                 JsonValueKind.String => element.GetString(),
-                JsonValueKind.Number => element.ToString(), 
+                JsonValueKind.Number => element.ToString(),
                 JsonValueKind.True => "true",
                 JsonValueKind.False => "false",
-                _ => null, 
+                _ => null,
             };
         }
 
@@ -131,6 +138,119 @@ namespace Application.Services.Implement
         {
             if (value < 0 || value > 1023) return false;
             return await SendCommandAsync("V11", value.ToString());
+        }
+
+        /// <summary>
+        /// LOG dữ liệu từ Blynk về database
+        /// </summary>
+        /// <returns></returns>
+        public async Task<string> UpdateLogAsync()
+        {
+            try
+            {
+                var url = $"{BlynkBaseUrl}/external/api/getAll?token={BlynkToken}";
+                Console.WriteLine($"Fetching all Datastreams from URL: {url}");
+
+                var response = await _httpClient.GetAsync(url);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"Error fetching all datastreams: {response.StatusCode} - {response.ReasonPhrase}");
+                    return null;
+                }
+
+                var json = await response.Content.ReadAsStringAsync();
+                var data = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json);
+
+                // Chuyển đổi JsonElement sang object
+                var result = new Dictionary<string, object?>();
+                foreach (var kvp in data)
+                {
+                    result[kvp.Key] = ConvertJsonElementToString(kvp.Value);
+                }
+
+                var sortedResult = result
+                                   .OrderBy(kvp => int
+                                   .Parse(kvp.Key.Substring(1))) // lấy phần số sau chữ V
+                                   .ToList();
+
+                string[] DeviceName = ["Nhiet Do", "Do Am", "Luong Mua", "Do Am Dat", "Anh Sang"];
+                List<LogEntry> logEntries = new List<LogEntry>();
+                for (int i = 0; i < 5; i++)
+                {
+                    var entry = sortedResult[i];
+                    LogEntry logEntry = new LogEntry
+                    {
+                        Pin = entry.Key,
+                        Value = double.Parse(entry.Value.ToString() ?? "0"),
+                        DeviceName = DeviceName[i]
+                    };
+                    logEntries.Add(logEntry);
+                }
+                foreach (var log in logEntries)
+                {
+                    var divces = await _unitOfWork.deviceRepository.GetDevieByName(log.DeviceName);
+                    if (divces == null)
+                    {
+                        continue; // Hoặc xử lý lỗi tùy theo yêu cầu của bạn
+                    }
+
+                    IOTLog iotLog = new IOTLog
+                    {
+                        DevicesId = divces.DevicesId,
+                        VariableId = log.Pin,
+                        SensorName = log.DeviceName,
+                        Value = log.Value,
+                        Timestamp = DateTime.Now
+                    };
+
+                    var listIotLog = await _unitOfWork.iotLogRepository.GetAllAsync();
+                    // Sắp xếp giảm dần theo thời gian tạo
+                    int deleteCount = 200;
+                    var sortedList = listIotLog.OrderByDescending(x => x.Timestamp).ToList();
+                    if (sortedList.Count > deleteCount)
+                    {
+                        var toDelete = sortedList.Skip(20).ToList(); // lấy những item từ vị trí 21 trở đi
+
+                        foreach (var item in toDelete)
+                        {
+                            await _unitOfWork.iotLogRepository.DeleteAsync(item);
+                            await _unitOfWork.SaveChangesAsync();
+                        }
+
+                        // Giữ lại 20 item mới nhất
+                        sortedList = sortedList.Take(deleteCount).ToList();
+
+                    }
+
+
+
+                    await _unitOfWork.iotLogRepository.AddAsync(iotLog);
+                    await _unitOfWork.SaveChangesAsync();
+                }
+                return "Log đã được cập nhật";
+            }
+            catch (Exception ex)
+            {
+                return "Có lỗi xảy ra";
+            }
+
+        }
+        class LogEntry
+        {
+            public string Pin { get; set; }
+            public double Value { get; set; }
+            public string DeviceName { get; set; }
+        }
+        public async Task<ResponseDTO> GetList()
+        {
+            var list = await _unitOfWork.iotLogRepository.GetAllAsync();
+            if (list == null || list.Count == 0)
+            {
+                return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);
+            }
+            var result = _mapper.Map<List<IOTLogView>>(list);
+            return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
         }
     }
 }
