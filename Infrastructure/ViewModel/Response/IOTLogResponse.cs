@@ -10,6 +10,7 @@ namespace Infrastructure.ViewModel.Response
     {
         public class IOTLogView
         {
+            public long IotLogId { get; set; }
             public long DevicesId { get; set; }
 
             public string? VariableId { get; set; }
