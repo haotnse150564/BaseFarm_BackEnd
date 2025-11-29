@@ -1,4 +1,5 @@
-﻿using Application.Services;
+﻿using Application;
+using Application.Services;
 using Application.Services.Implement;
 using Microsoft.AspNetCore.Mvc;
 using static Application.ViewModel.Response.OrderResponse;
@@ -63,6 +64,24 @@ namespace WebAPI.Controllers
             }            
 
             return Ok(createOrderDTO.Data);
+        }
+
+        [HttpPost("buy-again/{orderId}")]
+        public async Task<IActionResult> BuyAgain(long orderId)
+        {
+            var response = await cartServices.BuyAgainAsync(orderId);
+
+            if (response.Status == Const.SUCCESS_CREATE_CODE)
+                return Ok(response);
+
+            if (response.Status == Const.FAIL_READ_CODE ||
+                response.Status == Const.WARNING_NO_DATA_CODE)
+                return BadRequest(response);
+
+            if (response.Status == Const.FAIL_CREATE_CODE)
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
+
+            return StatusCode(StatusCodes.Status500InternalServerError, response);
         }
     }
 }

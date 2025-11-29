@@ -188,5 +188,56 @@ namespace Application.Services.Implement
             }
         }
 
+        public async Task<ResponseDTO> BuyAgainAsync(long orderId)
+        {
+            try
+            {
+                // Lấy thông tin order cũ
+                var order = await _unitOfWork.orderRepository.GetOrderById(orderId);
+                if (order == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Order not found.");
+                }
+
+                // check status
+                if (order.Status != PaymentStatus.COMPLETED && order.Status != PaymentStatus.CANCELLED)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Only completed or cancelled orders can be purchased again.");
+                }
+
+                // Lấy user hiện tại
+                var user = await _jwtUtils.GetCurrentUserAsync();
+                if (user.AccountId == 0)
+                {
+                    return new ResponseDTO(Const.WARNING_NO_DATA_CODE, "User not authenticated.");
+                }
+
+                // Lấy danh sách sản phẩm trong order
+                var orderItems = order.OrderDetails;
+                if (orderItems == null || !orderItems.Any())
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Order has no items.");
+                }
+
+                // Duyệt từng sản phẩm và add vào cart
+                foreach (var item in orderItems)
+                {
+                    var result = await AddToCart(item.ProductId, item.Quantity ?? 0);
+
+                    if (!result)
+                    {
+                        return new ResponseDTO(Const.FAIL_CREATE_CODE,
+                            $"Failed to add product {item.ProductId} to cart.");
+                    }
+                }
+
+                return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Added all items to cart successfully.");
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+            }
+        }
+
     }
 }
