@@ -30,5 +30,6 @@ namespace Application.Services
         Task<bool> SetLdrHighThresholdAsync(int value);
         Task<ResponseDTO> GetList();
         Task<string> UpdateLogAsync();
+        Task<byte[]> ExportLogsToCsvAsync();
     }
 }

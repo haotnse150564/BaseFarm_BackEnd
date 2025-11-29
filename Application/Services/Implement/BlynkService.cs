@@ -254,5 +254,20 @@ namespace Application.Services.Implement
             var result = _mapper.Map<List<IOTLogView>>(list);
             return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
         }
+        public async Task<byte[]> ExportLogsToCsvAsync()
+        {
+            var logs = await _unitOfWork.iotLogRepository.GetAllAsync();
+
+            var sb = new StringBuilder();
+            sb.AppendLine("DevicesId,VariableId,SensorName,Value,Timestamp");
+
+            foreach (var log in logs)
+            {
+                sb.AppendLine($"{log.DevicesId},{log.VariableId},{log.SensorName},{log.Value},{log.Timestamp:yyyy-MM-dd HH:mm:ss}");
+            }
+
+            return Encoding.UTF8.GetBytes(sb.ToString());
+        }
+
     }
 }
