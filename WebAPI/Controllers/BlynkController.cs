@@ -165,7 +165,7 @@ namespace WebAPI.Controllers
             var response = await _blynkService.GetList();
             return Ok(response);
         }
-        [HttpPost("logs/update")]
+        [HttpGet("logs/update")]
         public async Task<IActionResult> UpdateIOTLogs()
         {
             var result = await _blynkService.UpdateLogAsync();
