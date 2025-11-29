@@ -171,5 +171,49 @@ namespace WebAPI.Controllers
             var result = await _blynkService.UpdateLogAsync();
            return Ok(result);
         }
+
+        /// <summary>
+        /// Bật/tắt đèn LED bổ sung (Grow Light) - Chỉ hoạt động khi ở chế độ Manual
+        /// </summary>
+        [HttpPost("light")]
+        public async Task<IActionResult> ControlLight([FromQuery] bool state)
+        {
+            bool result = await _blynkService.ControlLightAsync(state);
+            return result
+                ? Ok(new { success = true, message = $"Đèn LED đã được {(state ? "BẬT" : "TẮT")} thành công." })
+                : StatusCode(500, new { success = false, message = "Lỗi gửi lệnh đèn đến Blynk. (Có thể đang ở chế độ Auto)" });
+        }
+
+        /// <summary>
+        /// Cấu hình ngưỡng BẬT đèn khi trời tối (V13)
+        /// </summary>
+        [HttpPost("threshold/light-on")]
+        //[Authorize(Roles = "Manager")]
+        public async Task<IActionResult> SetLightOnThreshold([FromQuery] int value)
+        {
+            if (value < 0 || value > 1023)
+                return BadRequest(new { success = false, message = "Ngưỡng ánh sáng phải từ 0-1023" });
+
+            var result = await _blynkService.SetLightOnThresholdAsync(value);
+            return result
+                ? Ok(new { success = true, message = $"Ngưỡng BẬT đèn (trời tối) đã đặt: LDR ≤ {value}" })
+                : StatusCode(500, new { success = false, message = "Lỗi gửi ngưỡng bật đèn" });
+        }
+
+        /// <summary>
+        /// Cấu hình ngưỡng TẮT đèn khi trời sáng (V14)
+        /// </summary>
+        [HttpPost("threshold/light-off")]
+        //[Authorize(Roles = "Manager")]
+        public async Task<IActionResult> SetLightOffThreshold([FromQuery] int value)
+        {
+            if (value < 0 || value > 1023)
+                return BadRequest(new { success = false, message = "Ngưỡng ánh sáng phải từ 0-1023" });
+
+            var result = await _blynkService.SetLightOffThresholdAsync(value);
+            return result
+                ? Ok(new { success = true, message = $"Ngưỡng TẮT đèn (trời sáng) đã đặt: LDR ≥ {value}" })
+                : StatusCode(500, new { success = false, message = "Lỗi gửi ngưỡng tắt đèn" });
+        }
     }
 }

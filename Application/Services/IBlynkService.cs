@@ -30,5 +30,21 @@ namespace Application.Services
         Task<bool> SetLdrHighThresholdAsync(int value);
         Task<ResponseDTO> GetList();
         Task<string> UpdateLogAsync();
+
+        // ==================== ĐÈN LED (GROW LIGHT) ====================
+        /// <summary>
+        /// Bật/tắt đèn thủ công (V12) - Chỉ có hiệu lực khi hệ thống ở chế độ Manual (V7 = 1)
+        /// </summary>
+        Task<bool> ControlLightAsync(bool isOn);
+
+        /// <summary>
+        /// Ngưỡng bật đèn khi trời tối (V13) - LDR <= giá trị này → bật đèn (khi ở Auto)
+        /// </summary>
+        Task<bool> SetLightOnThresholdAsync(int value);
+
+        /// <summary>
+        /// Ngưỡng tắt đèn khi trời sáng (V14) - LDR >= giá trị này → tắt đèn (khi ở Auto)
+        /// </summary>
+        Task<bool> SetLightOffThresholdAsync(int value);
     }
 }

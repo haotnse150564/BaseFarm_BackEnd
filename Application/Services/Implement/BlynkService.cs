@@ -249,5 +249,34 @@ namespace Application.Services.Implement
             var result = _mapper.Map<List<IOTLogView>>(list);
             return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
         }
+
+        // ==================== ĐÈN LED ====================
+
+        /// <summary>
+        /// Bật/tắt đèn LED (V12) - Chỉ có hiệu lực khi ở chế độ Manual (V7 = 1)
+        /// </summary>
+        public async Task<bool> ControlLightAsync(bool isOn)
+        {
+            string value = isOn ? "1" : "0";
+            return await SendCommandAsync("V12", value);
+        }
+
+        /// <summary>
+        /// Cấu hình ngưỡng BẬT đèn khi trời tối (V13)
+        /// </summary>
+        public async Task<bool> SetLightOnThresholdAsync(int value)
+        {
+            if (value < 0 || value > 1023) return false;
+            return await SendCommandAsync("V13", value.ToString());
+        }
+
+        /// <summary>
+        /// Cấu hình ngưỡng TẮT đèn khi trời sáng (V14)
+        /// </summary>
+        public async Task<bool> SetLightOffThresholdAsync(int value)
+        {
+            if (value < 0 || value > 1023) return false;
+            return await SendCommandAsync("V14", value.ToString());
+        }
     }
 }
