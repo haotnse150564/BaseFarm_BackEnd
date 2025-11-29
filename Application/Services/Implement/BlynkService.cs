@@ -22,7 +22,7 @@ namespace Application.Services.Implement
         private readonly IUnitOfWorks _unitOfWork;
         private readonly IMapper _mapper;
         private readonly Timer _timer;
-        public BlynkService(HttpClient httpClient, IUnitOfWorks unitOfWork, IMapper mapper)
+        public BlynkService(HttpClient httpClient, IUnitOfWorks unitOfWork, IMapper mapper, Timer timer)
         {
             _httpClient = httpClient;
             _unitOfWork = unitOfWork;
