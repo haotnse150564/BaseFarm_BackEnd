@@ -21,16 +21,15 @@ namespace Application.Services.Implement
         private const string BlynkWriteBaseUrl = "https://sgp1.blynk.cloud/external/api";
         private readonly IUnitOfWorks _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly Timer _timer;
-        public BlynkService(HttpClient httpClient, IUnitOfWorks unitOfWork, IMapper mapper, Timer timer)
+        public BlynkService(HttpClient httpClient, IUnitOfWorks unitOfWork, IMapper mapper)
         {
             _httpClient = httpClient;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _timer = new Timer(async _ =>
-            {
-                await UpdateLogAsync();
-            }, null, TimeSpan.Zero, TimeSpan.FromSeconds(30));
+            //_timer = new Timer(async _ =>
+            //{
+            //    await UpdateLogAsync();
+            //}, null, TimeSpan.Zero, TimeSpan.FromSeconds(30));
 
         }
 
@@ -255,6 +254,21 @@ namespace Application.Services.Implement
             var result = _mapper.Map<List<IOTLogView>>(list);
             return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
         }
+        public async Task<byte[]> ExportLogsToCsvAsync()
+        {
+            var logs = await _unitOfWork.iotLogRepository.GetAllAsync();
+
+            var sb = new StringBuilder();
+            sb.AppendLine("DevicesId,VariableId,SensorName,Value,Timestamp");
+
+            foreach (var log in logs)
+            {
+                sb.AppendLine($"{log.DevicesId},{log.VariableId},{log.SensorName},{log.Value},{log.Timestamp:yyyy-MM-dd HH:mm:ss}");
+            }
+
+            return Encoding.UTF8.GetBytes(sb.ToString());
+        }
+
 
         // ==================== ĐÈN LED ====================
 

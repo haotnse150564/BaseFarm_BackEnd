@@ -1,6 +1,8 @@
-﻿using Application.Services;
+﻿using Application;
+using Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
 
 namespace WebAPI.Controllers
 {
@@ -9,7 +11,6 @@ namespace WebAPI.Controllers
     public class BlynkController : ControllerBase
     {
         private readonly IBlynkService _blynkService;
-
         public BlynkController(IBlynkService blynkService)
         {
             _blynkService = blynkService;
@@ -171,6 +172,14 @@ namespace WebAPI.Controllers
             var result = await _blynkService.UpdateLogAsync();
            return Ok(result);
         }
+        [HttpGet("export")]
+        public async Task<IActionResult> ExportCsv()
+        {
+            var fileBytes = await _blynkService.ExportLogsToCsvAsync();
+            return File(fileBytes, "text/csv", "iot_logs.csv");
+        }
+
+
 
         /// <summary>
         /// Bật/tắt đèn LED bổ sung (Grow Light) - Chỉ hoạt động khi ở chế độ Manual
