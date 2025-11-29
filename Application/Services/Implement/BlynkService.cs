@@ -263,7 +263,7 @@ namespace Application.Services.Implement
 
             foreach (var log in logs)
             {
-                sb.AppendLine($"{log.DevicesId},{log.VariableId},{log.SensorName},{log.Value},{log.Timestamp:yyyy-MM-dd HH:mm:ss}");
+                sb.AppendLine($"{log.IotLogId},{log.DevicesId},{log.VariableId},{log.SensorName},{log.Value},{log.Timestamp:yyyy-MM-dd HH:mm:ss}");
             }
 
             return Encoding.UTF8.GetBytes(sb.ToString());
