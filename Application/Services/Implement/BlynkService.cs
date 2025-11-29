@@ -21,11 +21,17 @@ namespace Application.Services.Implement
         private const string BlynkWriteBaseUrl = "https://sgp1.blynk.cloud/external/api";
         private readonly IUnitOfWorks _unitOfWork;
         private readonly IMapper _mapper;
-        public BlynkService(HttpClient httpClient, IUnitOfWorks unitOfWork, IMapper mapper)
+        private readonly Timer _timer;
+        public BlynkService(HttpClient httpClient, IUnitOfWorks unitOfWork, IMapper mapper, Timer timer)
         {
             _httpClient = httpClient;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _timer = new Timer(async _ =>
+            {
+                await UpdateLogAsync();
+            }, null, TimeSpan.Zero, TimeSpan.FromSeconds(30));
+
         }
 
         public async Task<Dictionary<string, object?>> GetAllDatastreamValuesAsync()
