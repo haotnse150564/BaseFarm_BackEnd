@@ -176,7 +176,7 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> ExportCsv()
         {
             var fileBytes = await _blynkService.ExportLogsToCsvAsync();
-            return File(fileBytes, "text/csv", "iot_logs.csv");
+            return File(fileBytes, "text/csv", "IFMS_iot_logs.csv");
         }
 
 

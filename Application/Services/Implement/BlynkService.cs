@@ -247,6 +247,7 @@ namespace Application.Services.Implement
         public async Task<ResponseDTO> GetList()
         {
             var list = await _unitOfWork.iotLogRepository.GetAllAsync();
+            list = list.OrderByDescending(x => x.Timestamp).ToList();
             if (list == null || list.Count == 0)
             {
                 return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);
@@ -259,7 +260,7 @@ namespace Application.Services.Implement
             var logs = await _unitOfWork.iotLogRepository.GetAllAsync();
 
             var sb = new StringBuilder();
-            sb.AppendLine("DevicesId,VariableId,SensorName,Value,Timestamp");
+            sb.AppendLine("IotLogId,DevicesId,VariableId,SensorName,Value,Timestamp");
 
             foreach (var log in logs)
             {
