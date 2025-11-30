@@ -2,6 +2,7 @@
 using Domain.Model;
 using System.Text.Json.Serialization;
 using static Infrastructure.ViewModel.Response.AccountResponse;
+using static Infrastructure.ViewModel.Response.CropRequirementResponse;
 using static Infrastructure.ViewModel.Response.CropResponse;
 using static Infrastructure.ViewModel.Response.DailyLogResponse;
 using static Infrastructure.ViewModel.Response.FarmActivityResponse;
@@ -43,7 +44,7 @@ namespace Infrastructure.ViewModel.Response
             public FarmActivityView? farmActivityView { get; set; }
             public FarmView? farmView { get; set; }
             public CropView? cropView { get; set; }
-            public CropRequirement? CropRequirement { get; set; }
+            public List<CropRequirementView>? CropRequirement { get; set; }
         }
         public class ResponseDTO
         {
