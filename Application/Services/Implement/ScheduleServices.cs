@@ -203,6 +203,8 @@ namespace Application.Services.Implement
                 {
                     return new ResponseDTO(Const.FAIL_CREATE_CODE, Const.FAIL_CREATE_MSG, validate.Item2);
                 }
+                await _unitOfWork.scheduleRepository.AddAsync(schedule);
+                await _unitOfWork.SaveChangesAsync();
 
                 var staffInfo = await _account.GetByIdAsync(request.StaffId);
                 var result = _mapper.Map<ScheduleResponseView>(schedule);
