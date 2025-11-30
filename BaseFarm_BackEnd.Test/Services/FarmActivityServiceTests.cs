@@ -112,9 +112,9 @@ namespace BaseFarm_BackEnd.Test.Services
             SetupMapperAndRepoMocks(request);
 
             var service = CreateService();
-            var result = await service.CreateFarmActivityAsync(request, ActivityType.Fertilization);
+            var result = await service.CreateFarmActivityAsync(request, ActivityType.Fertilization, PlantStage.CotyledonLeaves);
 
-            Assert.Equal(1, result.Status);
+            Assert.Equal(Const.SUCCESS_CREATE_CODE, result.Status); // hoặc 1 nếu bạn dùng 1
             Assert.NotNull(result.Data);
         }
 
@@ -129,9 +129,9 @@ namespace BaseFarm_BackEnd.Test.Services
             SetupMapperAndRepoMocks(request);
 
             var service = CreateService();
-            var result = await service.CreateFarmActivityAsync(request, ActivityType.Fertilization);
+            var result = await service.CreateFarmActivityAsync(request, ActivityType.Fertilization, PlantStage.Germination);
 
-            Assert.Equal(1, result.Status);
+            Assert.Equal(Const.SUCCESS_CREATE_CODE, result.Status);
             Assert.NotNull(result.Data);
         }
 
@@ -181,7 +181,8 @@ namespace BaseFarm_BackEnd.Test.Services
                 1,
                 request,
                 ActivityType.Fertilization,
-                FarmActivityStatus.ACTIVE
+                FarmActivityStatus.ACTIVE,
+                PlantStage.Germination
             );
 
             Assert.Equal(-1, result.Status);
@@ -266,7 +267,8 @@ namespace BaseFarm_BackEnd.Test.Services
                 1,
                 request,
                 ActivityType.Harvesting,
-                FarmActivityStatus.IN_PROGRESS
+                FarmActivityStatus.IN_PROGRESS,
+                PlantStage.Germination
             );
 
             Assert.Equal(1, result.Status);
