@@ -10,7 +10,7 @@ namespace Infrastructure.Repositories.Implement
 {
     public class CropRepository : GenericRepository<Crop>, ICropRepository
     {
-        public CropRepository(AppDbContext context) 
+        public CropRepository(AppDbContext context)
         {
             _context = context;
             _dbSet = _context.Set<Crop>();
@@ -25,6 +25,9 @@ namespace Infrastructure.Repositories.Implement
         {
             return await _context.Crops
                 .Include(c => c.Category)
+                .Include(s => s.Schedules).ThenInclude(s => s.FarmActivities)
+                .Include(p => p.Product)
+                .Include(cr => cr.CropRequirement)
                 .ToListAsync();
         }
 
@@ -33,17 +36,21 @@ namespace Infrastructure.Repositories.Implement
             var result = await _context.Crops
                 .Where(c => c.Status != Domain.Enum.CropStatus.INACTIVE)
                 .Include(c => c.Category)
+                .Include(s => s.Schedules).ThenInclude(s => s.FarmActivities)
+                .Include(p => p.Product)
+                .Include(cr => cr.CropRequirement)
                 .ToListAsync();
             return result;
         }
         public override async Task<Crop?> GetByIdAsync(long id)
         {
             var result = await _context.Crops
-                .Include(x => x.CropRequirement)
-                .Include(x => x.Category)
-                .Include(x => x.Product)
+                .Include(c => c.Category)
+                .Include(s => s.Schedules).ThenInclude(s => s.FarmActivities)
+                .Include(p => p.Product)
+                .Include(cr => cr.CropRequirement)
                 .FirstOrDefaultAsync(x => x.CropId == id);
-           return result;
+            return result;
         }
     }
 }

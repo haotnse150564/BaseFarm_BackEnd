@@ -20,9 +20,9 @@ namespace Infrastructure.ViewModel.Response
             public string? Images { get; set; }
             public string? Status { get; set; }
             public string? Origin { get; set; }
+            public List<CropRequirementResponse.CropRequirementView>? CropRequirements { get; set; }
 
-
-        }
+    }
         public class ResponseDTO
         {
             public int Status { get; set; }

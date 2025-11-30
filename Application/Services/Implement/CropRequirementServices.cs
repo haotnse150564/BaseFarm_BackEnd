@@ -36,6 +36,10 @@ namespace Application.Services.Implement
                 cropReq.CropId = cropId;
                 cropReq.PlantStage = plantStage;
                 cropReq.CreatedDate = _currentTime.GetCurrentTime();
+                if (!await IsUniquePlantStageAsync(cropReq.CropId, plantStage))
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Giai đoạn cây trồng này đã có sẵn trong mùa vụ");
+                }
                 await _unitOfWork.cropRequirementRepository.AddAsync(cropReq);
                 await _unitOfWork.SaveChangesAsync();
 
@@ -82,6 +86,11 @@ namespace Application.Services.Implement
                 var newCropReq = _mapper.Map<CropRequirement>(newRequest);
                 newCropReq.PlantStage = plantStage;
                 newCropReq.CropId = cropId;
+                newCropReq.CreatedDate = _currentTime.GetCurrentTime();
+                if (!await IsUniquePlantStageAsync(newCropReq.CropId, plantStage))
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Giai đoạn cây trồng này đã có sẵn trong mùa vụ");
+                }
                 await _unitOfWork.cropRequirementRepository.AddAsync(newCropReq);
                 await _unitOfWork.SaveChangesAsync();
 
@@ -97,7 +106,7 @@ namespace Application.Services.Implement
         {
             try
             {
-                var cropReqs =await _unitOfWork.cropRequirementRepository.GetAllAsync();
+                var cropReqs = await _unitOfWork.cropRequirementRepository.GetAllAsync();
                 if (cropReqs == null || cropReqs.Count == 0)
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);
@@ -158,6 +167,10 @@ namespace Application.Services.Implement
                 _mapper.Map(cropRequirement, cropReq);
                 cropReq.PlantStage = plantStage;
                 cropReq.UpdatedDate = _currentTime.GetCurrentTime();
+                if (!await IsUniquePlantStageAsync(cropReq.CropId, plantStage, cropReq.CropRequirementId))
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Giai đoạn cây trồng này đã có sẵn trong mùa vụ");
+                }
                 await _unitOfWork.cropRequirementRepository.UpdateAsync(cropReq);
                 await _unitOfWork.SaveChangesAsync();
 
@@ -183,6 +196,10 @@ namespace Application.Services.Implement
 
                 cropReq.PlantStage = plantStage;
                 cropReq.UpdatedDate = _currentTime.GetCurrentTime();
+                if (!await IsUniquePlantStageAsync(cropReq.CropId, plantStage, cropReq.CropRequirementId))
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Giai đoạn cây trồng này đã có sẵn trong mùa vụ");
+                }
                 await _unitOfWork.cropRequirementRepository.UpdateAsync(cropReq);
                 await _unitOfWork.SaveChangesAsync();
                 var result = _mapper.Map<CropRequirementView>(cropReq);
@@ -219,5 +236,20 @@ namespace Application.Services.Implement
                 return new ResponseDTO(Const.FAIL_READ_CODE, ex.Message);
             }
         }
+        public async Task<bool> IsUniquePlantStageAsync(long cropId, PlantStage plantStage, long excludeId = 0)
+        {
+            var list = await _unitOfWork.cropRequirementRepository.GetByCropIdsAsync(cropId);
+
+            // Kiểm tra có bản ghi nào cùng PlantStage nhưng khác Id
+            var existed = list.Any(x => x.CropId == cropId
+                                     && x.PlantStage == plantStage
+                                     && x.CropId != excludeId);
+
+            return !existed; // true nếu không trùng
+        }
+
+
     }
+
 }
+

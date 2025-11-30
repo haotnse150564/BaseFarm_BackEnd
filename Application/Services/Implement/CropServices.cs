@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Drawing.Printing;
 using static Application.ViewModel.Response.ProductResponse;
+using static Infrastructure.ViewModel.Response.CropRequirementResponse;
 using static Infrastructure.ViewModel.Response.CropResponse;
 using static Infrastructure.ViewModel.Response.ScheduleResponse;
 using ResponseDTO = Infrastructure.ViewModel.Response.CropResponse.ResponseDTO;
@@ -34,6 +35,7 @@ namespace Application.Services.Implement
             _cropRepository = cropRepository;
             _jwtUtils = jWTUtils;
         }
+        #region Get Crop All requirements
         public async Task<Pagination<CropView>> GetAllCropsAsync(int pageIndex, int pageSize)
         {
             try
@@ -215,5 +217,185 @@ namespace Application.Services.Implement
                 return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
             }
         }
+        #endregion
+        #region Get all Crop only 1 crop requirements
+        public async Task<Pagination<CropView>> Get_AllCropsAsync(int pageIndex, int pageSize)
+        {
+            try
+            {
+                var crops = await _unitOfWork.cropRepository.GetAllAsync();
+                if (crops == null || !crops.Any())
+                {
+                    throw new Exception("Không có dữ liệu");
+                }
+
+                var cropViews = new List<CropView>();
+
+                foreach (var crop in crops)
+                {
+                    // Xác định PlantStage hiện tại từ Schedule → FarmActivity
+                    var currentStage = crop.Schedules?
+                        .OrderByDescending(s => s.StartDate) // hoặc logic chọn schedule hiện tại
+                        .FirstOrDefault()?.FarmActivities?.PlantStage;
+
+                    // Lấy requirement tương ứng với stage
+                    var requirement = crop.CropRequirement?   // <-- sửa thành CropRequirements
+                        .FirstOrDefault(r => r.PlantStage == currentStage);
+
+                    // Map sang CropView
+                    var cropView = _mapper.Map<CropView>(crop);
+
+                    // Chỉ giữ requirement hiện tại
+                    cropView.CropRequirements = requirement != null
+                        ? new List<CropRequirementView> { _mapper.Map<CropRequirementView>(requirement) }
+                        : new List<CropRequirementView>();
+
+                    cropViews.Add(cropView);
+                }
+
+                var pagination = new Pagination<CropView>
+                {
+                    TotalItemCount = cropViews.Count,
+                    PageSize = pageSize,
+                    PageIndex = pageIndex,
+                    Items = cropViews.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList()
+                };
+
+                return pagination;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        public async Task<List<CropView>> Get_AllCropsActiveAsync()
+        {
+            var crops = await _unitOfWork.cropRepository.GetAllAsync();
+            var cropFilter = crops.Where(x => x.Status == Domain.Enum.CropStatus.ACTIVE).ToList();
+
+            if (cropFilter == null || !cropFilter.Any())
+            {
+                throw new Exception("Không có crop nào ACTIVE");
+            }
+
+            var cropViews = new List<CropView>();
+
+            foreach (var crop in cropFilter)
+            {
+                // Lấy PlantStage hiện tại từ Schedule → FarmActivity
+                var currentStage = crop.Schedules?
+                    .OrderByDescending(s => s.StartDate) // hoặc logic chọn schedule hiện tại
+                    .FirstOrDefault()?.FarmActivities?.PlantStage;
+
+                // Lấy requirement tương ứng với stage (dùng CropRequirements - collection)
+                var requirement = crop.CropRequirement?
+                    .FirstOrDefault(r => r.PlantStage == currentStage);
+
+                // Map sang CropView
+                var cropView = _mapper.Map<CropView>(crop);
+
+                // Chỉ giữ requirement hiện tại
+                cropView.CropRequirements = requirement != null
+                    ? new List<CropRequirementView> { _mapper.Map<CropRequirementView>(requirement) }
+                    : new List<CropRequirementView>();
+
+                cropViews.Add(cropView);
+            }
+
+            return cropViews;
+        }
+        public async Task<ResponseDTO> Search_Crop(string? cropName, Status? status, int pageIndex, int pageSize)
+        {
+            try
+            {
+                var crops = await _unitOfWork.cropRepository.GetAllAsync();
+                if (crops == null || !crops.Any())
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "crop not found !");
+                }
+
+                // Lọc theo cropName nếu có
+                if (!string.IsNullOrEmpty(cropName))
+                {
+                    crops = crops.Where(x => x.CropName != null &&
+                                             x.CropName.ToLower().Contains(cropName.ToLower()))
+                                 .ToList();
+                }
+
+                // Lọc theo status nếu có
+                if (status != null)
+                {
+                    crops = crops.Where(x => x.Status == status).ToList();
+                }
+
+                // Xử lý requirement theo PlantStage hiện tại
+                var cropViews = new List<CropView>();
+                foreach (var crop in crops)
+                {
+                    var currentStage = crop.Schedules?
+                        .OrderByDescending(s => s.StartDate)
+                        .FirstOrDefault()?.FarmActivities?.PlantStage;
+
+                    var requirement = crop.CropRequirement?
+                        .FirstOrDefault(r => r.PlantStage == currentStage);
+
+                    var cropView = _mapper.Map<CropView>(crop);
+                    cropView.CropRequirements = requirement != null
+                        ? new List<CropRequirementView> { _mapper.Map<CropRequirementView>(requirement) }
+                        : new List<CropRequirementView>();
+
+                    cropViews.Add(cropView);
+                }
+
+                var pagination = new Pagination<CropView>
+                {
+                    TotalItemCount = cropViews.Count,
+                    PageSize = pageSize,
+                    PageIndex = pageIndex,
+                    Items = cropViews.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList()
+                };
+
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, pagination);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+            }
+        }
+        public async Task<ResponseDTO> GetCropExcludingInactiveAsync()
+        {
+            var crops = await _unitOfWork.cropRepository.GetAllexcludingInactiveAsync();
+            if (crops == null || !crops.Any())
+            {
+                return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "No crops found.");
+            }
+
+            var cropViews = new List<CropView>();
+
+            foreach (var crop in crops)
+            {
+                // Lấy PlantStage hiện tại từ Schedule → FarmActivity
+                var currentStage = crop.Schedules?
+                    .OrderByDescending(s => s.StartDate) // hoặc logic chọn schedule hiện tại
+                    .FirstOrDefault()?.FarmActivities?.PlantStage;
+
+                // Lấy requirement tương ứng với stage
+                var requirement = crop.CropRequirement?
+                    .FirstOrDefault(r => r.PlantStage == currentStage);
+
+                // Map sang CropView
+                var cropView = _mapper.Map<CropView>(crop);
+
+                // Chỉ giữ requirement hiện tại
+                cropView.CropRequirements = requirement != null
+                    ? new List<CropRequirementView> { _mapper.Map<CropRequirementView>(requirement) }
+                    : new List<CropRequirementView>();
+
+                cropViews.Add(cropView);
+            }
+
+            return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, cropViews);
+        }
+        #endregion
     }
 }

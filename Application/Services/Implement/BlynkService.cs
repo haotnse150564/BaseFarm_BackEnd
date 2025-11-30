@@ -244,17 +244,39 @@ namespace Application.Services.Implement
             public double Value { get; set; }
             public string DeviceName { get; set; }
         }
-        public async Task<ResponseDTO> GetList()
+        public async Task<ResponseDTO> GetList(int pageNumber = 1)
         {
+            const int pageSize = 25;
+
             var list = await _unitOfWork.iotLogRepository.GetAllAsync();
-            list = list.OrderByDescending(x => x.Timestamp).ToList();
             if (list == null || list.Count == 0)
             {
                 return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);
             }
-            var result = _mapper.Map<List<IOTLogView>>(list);
-            return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+
+            // Sắp xếp giảm dần theo Timestamp
+            list = list.OrderByDescending(x => x.Timestamp).ToList();
+
+            // Áp dụng paging
+            var pagedList = list.Skip((pageNumber - 1) * pageSize)
+                                .Take(pageSize)
+                                .ToList();
+
+            var result = _mapper.Map<List<IOTLogView>>(pagedList);
+
+            // Có thể trả thêm thông tin tổng số trang, tổng số item
+            var responseData = new
+            {
+                TotalItems = list.Count,
+                PageSize = pageSize,
+                CurrentPage = pageNumber,
+                TotalPages = (int)Math.Ceiling(list.Count / (double)pageSize),
+                Items = result
+            };
+
+            return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, responseData);
         }
+
         public async Task<byte[]> ExportLogsToCsvAsync()
         {
             var logs = await _unitOfWork.iotLogRepository.GetAllAsync();
