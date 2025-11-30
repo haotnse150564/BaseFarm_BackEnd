@@ -33,7 +33,7 @@ namespace WebAPI.Services
             _inventory = inventory;
         }
 
-        public async Task<ResponseDTO> CreateFarmActivityAsync(FarmActivityRequest farmActivityRequest, ActivityType activityType)
+        public async Task<ResponseDTO> CreateFarmActivityAsync(FarmActivityRequest farmActivityRequest, ActivityType activityType, PlantStage plantStage)
         {
             var farmActivity = _mapper.Map<FarmActivity>(farmActivityRequest);
             farmActivity.Status = Domain.Enum.FarmActivityStatus.ACTIVE;
@@ -176,7 +176,7 @@ namespace WebAPI.Services
             }
         }
 
-        public async Task<ResponseDTO> UpdateFarmActivityAsync(long farmActivityId, FarmActivityRequest farmActivityrequest, ActivityType? activityType, FarmActivityStatus farmActivityStatus)
+        public async Task<ResponseDTO> UpdateFarmActivityAsync(long farmActivityId, FarmActivityRequest farmActivityrequest, ActivityType? activityType, FarmActivityStatus farmActivityStatus, PlantStage plantStage)
         {
             var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(farmActivityId);
 

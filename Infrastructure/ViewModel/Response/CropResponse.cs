@@ -17,8 +17,8 @@ namespace Infrastructure.ViewModel.Response
             public string? CropName { get; set; }
 
             public string? Description { get; set; }
-
-            public string Status { get; set; }
+            public string? Images { get; set; }
+            public string? Status { get; set; }
             public string? Origin { get; set; }
 
 

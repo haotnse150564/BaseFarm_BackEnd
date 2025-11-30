@@ -20,7 +20,9 @@ namespace Infrastructure.FluentAPI
                 .HasMaxLength(100)
                 .IsUnicode(true) // Cho phép lưu tên cây bằng tiếng Việt
                 .HasColumnName("cropName");
-
+            builder.Property(e => e.Images)
+                .IsUnicode(true) // Cho phép lưu tên cây bằng tiếng Việt
+                .HasColumnName("Image");
             builder.Property(e => e.Description)
                 .HasMaxLength(500)
                 .IsUnicode(true)

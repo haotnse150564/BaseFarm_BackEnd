@@ -14,6 +14,7 @@ public partial class Crop
 
     public string? Origin { get; set; }
 
+    public string? Images { get; set; }
     public CropStatus? Status { get; set; }
 
     public DateOnly CreateAt { get; set; }

@@ -23,7 +23,8 @@ namespace Infrastructure.FluentAPI
 
             builder.Property(e => e.ActivityType)
                 .HasColumnName("activityType");
-
+            builder.Property(e => e.PlantStage)
+                 .HasColumnName("planStage");
             //builder.Property(e => e.StartDate)
             //    .HasColumnName("startDate");
 
