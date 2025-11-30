@@ -15,6 +15,8 @@ namespace Infrastructure.Mapper
         public FarmActitvityMapping() {
             CreateMap<FarmActivity, FarmActivityView>()
                 .ForMember(dest => dest.FarmActivitiesId, opt => opt.MapFrom(src => src.FarmActivitiesId))
+                .ForMember(dest => dest.ActivityType, opt => opt.MapFrom(src => src.ActivityType.ToString()))
+                .ForMember(dest => dest.plantStage, opt => opt.MapFrom(src => src.PlantStage))
                 .ReverseMap();
             CreateMap<FarmActivity,FarmActivityRequest>().ReverseMap();
         }
