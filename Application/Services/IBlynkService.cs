@@ -28,7 +28,7 @@ namespace Application.Services
         /// V11 - Ánh Sáng Ngưỡng Cao → servo 180° khi LDR ≥ value
         /// </summary>
         Task<bool> SetLdrHighThresholdAsync(int value);
-        Task<ResponseDTO> GetList();
+        Task<ResponseDTO> GetList(int pageNum = 1);
         Task<string> UpdateLogAsync();
         Task<byte[]> ExportLogsToCsvAsync();
 

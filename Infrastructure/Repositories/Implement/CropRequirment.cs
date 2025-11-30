@@ -20,5 +20,10 @@ namespace Infrastructure.Repositories.Implement
         {
             return await _dbSet.Where(cr => cr.CropId == cropId).ToListAsync();
         }
+
+        public Task<List<CropRequirement>> GetByCropIdsAsync(long crop)
+        {
+            return _dbSet.Where(cr => cr.CropId == crop).ToListAsync();
+        }
     }
 }
