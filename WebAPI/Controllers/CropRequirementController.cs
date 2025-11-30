@@ -57,9 +57,9 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
         [HttpPost("create")]
-        public async Task<IActionResult> CreateCropRequirement(long cropRequirementId, [FromBody] Infrastructure.ViewModel.Request.CropRequirementRequest cropRequirement, [FromQuery] Domain.Enum.PlantStage plantStage)
+        public async Task<IActionResult> CreateCropRequirement(long cropId, [FromBody] Infrastructure.ViewModel.Request.CropRequirementRequest cropRequirement, [FromQuery] Domain.Enum.PlantStage plantStage)
         {
-            var result = await _cropRequirementServices.CreateCropRequirementAsync(cropRequirement, plantStage, cropRequirementId);
+            var result = await _cropRequirementServices.CreateCropRequirementAsync(cropRequirement, plantStage, cropId);
             return Ok(result);
         }
         [HttpPut("update/{cropRequirementId}")]

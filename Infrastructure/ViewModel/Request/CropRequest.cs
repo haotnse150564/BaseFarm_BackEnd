@@ -20,6 +20,7 @@ namespace Infrastructure.ViewModel.Request
         public string? Origin { get; set; }
         [Required(ErrorMessage = "Category is required.")]
         public long? CategoryId { get; set; }
+        public string? Images { get; set; }
 
     }
     public class Crop_Product

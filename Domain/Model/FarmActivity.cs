@@ -9,6 +9,7 @@ public partial class FarmActivity //update lên bảng cần sau này
     public long FarmActivitiesId { get; set; }
 
     public ActivityType? ActivityType { get; set; }
+    public PlantStage PlantStage { get; set; }
 
     //public DateOnly? StartDate { get; set; }
 
@@ -16,7 +17,6 @@ public partial class FarmActivity //update lên bảng cần sau này
 
     public FarmActivityStatus? Status { get; set; }
 
-   // public long? ScheduleId { get; set; }
 
     public virtual ICollection <Schedule> Schedule { get; set; } = null!;
 }
