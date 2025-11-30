@@ -494,6 +494,10 @@ namespace Application.Services.Implement
 
                 return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, schedules);
             }
+            catch
+            {
+                return new ResponseDTO(Const.FAIL_READ_CODE, "Lỗi khi lấy lịch trình.");
+            }
 
         }
     }
