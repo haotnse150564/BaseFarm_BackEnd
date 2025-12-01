@@ -29,7 +29,7 @@ namespace Application.Services
         /// </summary>
         Task<bool> SetLdrHighThresholdAsync(int value);
         Task<ResponseDTO> GetList(int pageNum = 1);
-        Task<string> UpdateLogAsync();
+        Task<string> UpdateLogAsync(Dictionary<string, object?> obj);
         Task<byte[]> ExportLogsToCsvAsync();
 
         // ==================== ĐÈN LED (GROW LIGHT) ====================

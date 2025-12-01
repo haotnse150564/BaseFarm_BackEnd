@@ -166,12 +166,12 @@ namespace WebAPI.Controllers
             var response = await _blynkService.GetList(pageNum);
             return Ok(response);
         }
-        [HttpGet("logs/update")]
-        public async Task<IActionResult> UpdateIOTLogs()
-        {
-            var result = await _blynkService.UpdateLogAsync();
-           return Ok(result);
-        }
+        //[HttpGet("logs/update")]
+        //public async Task<IActionResult> UpdateIOTLogs()
+        //{
+        //    var result = await _blynkService.UpdateLogAsync();
+        //   return Ok(result);
+        //}
         [HttpGet("export")]
         public async Task<IActionResult> ExportCsv()
         {
