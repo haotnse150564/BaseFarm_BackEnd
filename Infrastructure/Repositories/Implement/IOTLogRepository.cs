@@ -1,6 +1,5 @@
 ﻿using Domain.Model;
 
-
 namespace Infrastructure.Repositories.Implement
 {
     public class IOTLogRepository : GenericRepository<IOTLog>, IIOTLogRepository
@@ -9,6 +8,11 @@ namespace Infrastructure.Repositories.Implement
         {
             _context = context;
             _dbSet = _context.Set<IOTLog>();
+        }
+
+        public void DeleteRange(List<IOTLog> entities)
+        {
+            _context.IOTLog.RemoveRange(entities);
         }
     }
 }

@@ -199,11 +199,8 @@ namespace Application.Services.Implement
                     {
                         var toDelete = sortedList.Skip(deleteCount).ToList(); // lấy những item từ vị trí 201 trở đi
 
-                        foreach (var item in toDelete)
-                        {
-                            await _unitOfWork.iotLogRepository.DeleteAsync(item);
-                            await _unitOfWork.SaveChangesAsync();
-                        }
+                        _unitOfWork.iotLogRepository.DeleteRange(toDelete);
+                        await _unitOfWork.SaveChangesAsync();
 
                         // Giữ lại 200 item mới nhất
                         sortedList = sortedList.Take(deleteCount).ToList();
@@ -225,7 +222,7 @@ namespace Application.Services.Implement
             public double Value { get; set; }
             public string DeviceName { get; set; }
         }
-        public async Task<ResponseDTO> GetList(int pageNumber = 1)
+        public async Task<ResponseDTO> GetList(int pageNumber)
         {
             const int pageSize = 25;
 
