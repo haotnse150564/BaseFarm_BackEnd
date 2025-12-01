@@ -304,7 +304,7 @@ namespace Application.Services.Implement
 
             return cropViews;
         }
-        public async Task<ResponseDTO> Search_Crop(string? cropName, Status? status, int pageIndex, int pageSize)
+        public async Task<ResponseDTO> Search_Crop(string? cropName, CropStatus? status, int pageIndex, int pageSize)
         {
             try
             {
