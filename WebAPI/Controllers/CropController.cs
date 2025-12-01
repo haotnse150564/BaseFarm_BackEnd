@@ -86,7 +86,7 @@ namespace WebAPI.Controllers
 
         // 3. Search crops by name or status
         [HttpGet("new_search")]
-        public async Task<IActionResult> Search_Crop(string? cropName, Status? status, int pageIndex = 1, int pageSize = 10)
+        public async Task<IActionResult> Search_Crop(string? cropName, CropStatus? status, int pageIndex = 1, int pageSize = 10)
         {
             var result = await _cropServices.Search_Crop(cropName, status, pageIndex, pageSize);
             return Ok(result);
