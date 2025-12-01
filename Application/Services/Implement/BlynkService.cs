@@ -152,27 +152,8 @@ namespace Application.Services.Implement
         public async Task<string> UpdateLogAsync()
         {
             try
-            {
-                var url = $"{BlynkBaseUrl}/external/api/getAll?token={BlynkToken}";
-                Console.WriteLine($"Fetching all Datastreams from URL: {url}");
-
-                var response = await _httpClient.GetAsync(url);
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    Console.WriteLine($"Error fetching all datastreams: {response.StatusCode} - {response.ReasonPhrase}");
-                    return null;
-                }
-
-                var json = await response.Content.ReadAsStringAsync();
-                var data = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json);
-
-                // Chuyển đổi JsonElement sang object
-                var result = new Dictionary<string, object?>();
-                foreach (var kvp in data)
-                {
-                    result[kvp.Key] = ConvertJsonElementToString(kvp.Value);
-                }
+            { 
+                var result = await GetAllDatastreamValuesAsync();
 
                 var sortedResult = result
                                    .OrderBy(kvp => int
