@@ -57,7 +57,7 @@ namespace Application.Services.Implement
                 {
                     result[kvp.Key] = ConvertJsonElementToString(kvp.Value);
                 }
-
+                UpdateLogAsync(result).Wait();
                 return result;
             }
             catch (Exception ex)
@@ -149,11 +149,11 @@ namespace Application.Services.Implement
         /// LOG dữ liệu từ Blynk về database
         /// </summary>
         /// <returns></returns>
-        public async Task<string> UpdateLogAsync()
+        public async Task<string> UpdateLogAsync(Dictionary<string, object?> obj)
         {
             try
-            { 
-                var result = await GetAllDatastreamValuesAsync();
+            {
+                var result = obj;
 
                 var sortedResult = result
                                    .OrderBy(kvp => int
@@ -205,7 +205,7 @@ namespace Application.Services.Implement
                             await _unitOfWork.SaveChangesAsync();
                         }
 
-                        // Giữ lại 20 item mới nhất
+                        // Giữ lại 200 item mới nhất
                         sortedList = sortedList.Take(deleteCount).ToList();
 
                     }
