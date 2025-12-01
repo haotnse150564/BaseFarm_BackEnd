@@ -23,7 +23,7 @@ namespace Application.Services
         Task<ResponseDTO> GetCropExcludingInativeAsync();
         Task<Pagination<CropView>> Get_AllCropsAsync(int pageIndex, int pageSize);
         Task<List<CropView>> Get_AllCropsActiveAsync();
-        Task<ResponseDTO> Search_Crop(string? cropName, Status? status, int pageIndex, int pageSize);
+        Task<ResponseDTO> Search_Crop(string? cropName, CropStatus? status, int pageIndex, int pageSize);
         Task<ResponseDTO> GetCropExcludingInactiveAsync();
 
     }
