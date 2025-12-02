@@ -9,14 +9,12 @@ public partial class FarmActivity //update lên bảng cần sau này
     public long FarmActivitiesId { get; set; }
 
     public ActivityType? ActivityType { get; set; }
-    public PlantStage PlantStage { get; set; }
+    //public PlantStage PlantStage { get; set; }
 
-    //public DateOnly? StartDate { get; set; }
+    public DateOnly? StartDate { get; set; }
 
-    //public DateOnly? EndDate { get; set; }
+    public DateOnly? EndDate { get; set; }
 
     public FarmActivityStatus? Status { get; set; }
-
-
     public virtual ICollection <Schedule> Schedule { get; set; } = null!;
 }

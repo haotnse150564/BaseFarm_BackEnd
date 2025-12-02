@@ -41,11 +41,8 @@ namespace Infrastructure.FluentAPI
             builder.Property(e => e.DiseaseStatus)
                 .HasColumnName("diseaseStatus");
 
-            builder.Property(e => e.PlantingDate)
-                .HasColumnName("plantingDate");
-
-            builder.Property(e => e.HarvestDate)
-                .HasColumnName("harvestDate");
+            builder.Property(e => e.currentPlantStage)
+                .HasColumnName("currentPlantStage");
 
             builder.Property(e => e.CreatedAt)
                 .HasColumnName("createdAt");

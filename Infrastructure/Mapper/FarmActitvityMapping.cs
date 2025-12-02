@@ -16,9 +16,9 @@ namespace Infrastructure.Mapper
             CreateMap<FarmActivity, FarmActivityView>()
                 .ForMember(dest => dest.FarmActivitiesId, opt => opt.MapFrom(src => src.FarmActivitiesId))
                 .ForMember(dest => dest.ActivityType, opt => opt.MapFrom(src => src.ActivityType.ToString()))
-                .ForMember(dest => dest.plantStage, opt => opt.MapFrom(src => src.PlantStage))
+                .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate))
                 //                .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.sta))
-                .ForMember(dest => dest.plantStage, opt => opt.MapFrom(src => src.PlantStage))
+                .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate))
 
                 .ReverseMap();
             CreateMap<FarmActivity,FarmActivityRequest>().ReverseMap();
