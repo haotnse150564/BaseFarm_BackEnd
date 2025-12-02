@@ -65,40 +65,5 @@ namespace WebAPI.Controllers
             var result = await _cropServices.GetCropExcludingInativeAsync();
             return Ok(result);
         }
-
-
-
-        //mới
-        [HttpGet("new_all")]
-        public async Task<IActionResult> Get_AllCrops(int pageIndex = 1, int pageSize = 10)
-        {
-            var result = await _cropServices.Get_AllCropsAsync(pageIndex, pageSize);
-            return Ok(result);
-        }
-
-        // 2. Get all active crops
-        [HttpGet("new_active")]
-        public async Task<IActionResult> Get_AllCropsActive()
-        {
-            var result = await _cropServices.Get_AllCropsActiveAsync();
-            return Ok(result);
-        }
-
-        // 3. Search crops by name or status
-        [HttpGet("new_search")]
-        public async Task<IActionResult> Search_Crop(string? cropName, CropStatus? status, int pageIndex = 1, int pageSize = 10)
-        {
-            var result = await _cropServices.Search_Crop(cropName, status, pageIndex, pageSize);
-            return Ok(result);
-        }
-
-        // 4. Get crops excluding inactive
-        [HttpGet("new-excluding-inactive")]
-        public async Task<IActionResult> GetCropExcludingInactive()
-        {
-            var result = await _cropServices.GetCropExcludingInactiveAsync();
-            return Ok(result);
-        }
-
     }
 }
