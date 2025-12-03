@@ -35,6 +35,7 @@ namespace Infrastructure.Repositories.Implement
                 {
                     OrderId = o.OrderId,
                     TotalPrice = o.TotalPrice,
+                    Fullname = o.Customer.AccountProfile.Fullname,
                     Email = o.Customer.Email,
                     ShippingAddress = o.ShippingAddress,
                     Status = (Status?)o.Status,
