@@ -112,7 +112,7 @@ namespace BaseFarm_BackEnd.Test.Services
             SetupMapperAndRepoMocks(request);
 
             var service = CreateService();
-            var result = await service.CreateFarmActivityAsync(request, ActivityType.Fertilization, PlantStage.CotyledonLeaves);
+            var result = await service.CreateFarmActivityAsync(request, ActivityType.FertilizingLeaf, PlantStage.Germination);
 
             Assert.Equal(Const.SUCCESS_CREATE_CODE, result.Status); // hoặc 1 nếu bạn dùng 1
             Assert.NotNull(result.Data);
@@ -129,7 +129,7 @@ namespace BaseFarm_BackEnd.Test.Services
             SetupMapperAndRepoMocks(request);
 
             var service = CreateService();
-            var result = await service.CreateFarmActivityAsync(request, ActivityType.Fertilization, PlantStage.Germination);
+            var result = await service.CreateFarmActivityAsync(request, ActivityType.FertilizingLeaf, PlantStage.Germination);
 
             Assert.Equal(Const.SUCCESS_CREATE_CODE, result.Status);
             Assert.NotNull(result.Data);
@@ -180,7 +180,7 @@ namespace BaseFarm_BackEnd.Test.Services
             var result = await service.UpdateFarmActivityAsync(
                 1,
                 request,
-                ActivityType.Fertilization,
+                ActivityType.FertilizingLeaf,
                 FarmActivityStatus.ACTIVE,
                 PlantStage.Germination
             );
@@ -414,7 +414,7 @@ namespace BaseFarm_BackEnd.Test.Services
             var farmActivity = new FarmActivity
             {
                 Status = FarmActivityStatus.IN_PROGRESS,
-                ActivityType = ActivityType.Fertilization
+                ActivityType = ActivityType.FertilizingLeaf
             };
 
             _mockUow.Setup(u => u.farmActivityRepository).Returns(_mockFarmActivityRepo.Object);
@@ -437,7 +437,7 @@ namespace BaseFarm_BackEnd.Test.Services
             var farmActivity = new FarmActivity
             {
                 Status = FarmActivityStatus.IN_PROGRESS,
-                ActivityType = ActivityType.Fertilization
+                ActivityType = ActivityType.FertilizingLeaf
             };
 
             _mockUow.Setup(u => u.farmActivityRepository).Returns(_mockFarmActivityRepo.Object);

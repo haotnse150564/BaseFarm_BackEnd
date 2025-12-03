@@ -44,7 +44,22 @@ namespace Application.Services.Implement
             _jwtUtils = jwtUtils;
             _inventory = inventory;
         }
-
+        public (bool, string) ValidateScheduleRequest(Schedule schedule)
+        {
+            if (schedule.StartDate == null || schedule.EndDate == null)
+            {
+                return (false, "Ngày bắt đầu và ngày kết thúc không được để trống.");
+            }
+            if (schedule.StartDate > schedule.EndDate)
+            {
+                return (false, "Ngày bắt đầu phải trước ngày kết thúc.");
+            }
+            if (schedule.Quantity <= 0)
+            {
+                return (false, "Số lượng phải lớn hơn 0.");
+            }
+            return (true, string.Empty);
+        }
 
         #region Schedule mới
         public async Task<ResponseDTO> CreateSchedulesAsync(ScheduleRequest request)
@@ -66,7 +81,10 @@ namespace Application.Services.Implement
                 {
                     return new ResponseDTO(Const.FAIL_CREATE_CODE, "Không tìm thấy yêu cầu cây trồng.");
                 }
-                var requirement = getCropRequirement.CropRequirement.First();
+                if(!ValidateScheduleRequest(schedule).Item1)
+                {
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, ValidateScheduleRequest(schedule).Item2);
+                }
 
                 await _unitOfWork.scheduleRepository.AddAsync(schedule);
                 await _unitOfWork.SaveChangesAsync();
@@ -77,8 +95,6 @@ namespace Application.Services.Implement
                 result.StaffName = staffInfo?.AccountProfile?.Fullname;
 
                 return new ResponseDTO(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, result);
-
-
             }
             catch (Exception ex)
             {
@@ -107,7 +123,10 @@ namespace Application.Services.Implement
                 // Map dữ liệu mới vào schedule cũ
                 var updatedSchedule = _mapper.Map(request, schedule);
                 updatedSchedule.UpdatedAt = _currentTime.GetCurrentTime();
-
+                if (!ValidateScheduleRequest(schedule).Item1)
+                {
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, ValidateScheduleRequest(schedule).Item2);
+                }
                 await _unitOfWork.scheduleRepository.UpdateAsync(updatedSchedule);
                 await _unitOfWork.SaveChangesAsync();
 
@@ -230,7 +249,10 @@ namespace Application.Services.Implement
 
                 schedule.AssignedTo = staffId;
                 schedule.UpdatedAt = _currentTime.GetCurrentTime();
-
+                if (!ValidateScheduleRequest(schedule).Item1)
+                {
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, ValidateScheduleRequest(schedule).Item2);
+                }
                 await _unitOfWork.scheduleRepository.UpdateAsync(schedule);
                 await _unitOfWork.SaveChangesAsync();
 
@@ -270,7 +292,10 @@ namespace Application.Services.Implement
                 // Cập nhật activity
                 schedule.FarmActivitiesId = activityId;
                 schedule.UpdatedAt = _currentTime.GetCurrentTime();
-
+                if (!ValidateScheduleRequest(schedule).Item1)
+                {
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, ValidateScheduleRequest(schedule).Item2);
+                }
                 // Lưu thay đổi
                 _unitOfWork.scheduleRepository.Update(schedule);
                 await _unitOfWork.SaveChangesAsync();
@@ -328,7 +353,10 @@ namespace Application.Services.Implement
                 schedule.Status = newStatus;
                 schedule.UpdatedAt = _currentTime.GetCurrentTime();
 
-
+                if (!ValidateScheduleRequest(schedule).Item1)
+                {
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, ValidateScheduleRequest(schedule).Item2);
+                }
 
                 // Lưu thay đổi
                 _unitOfWork.scheduleRepository.Update(schedule);
@@ -367,7 +395,7 @@ namespace Application.Services.Implement
                 // Map sang response view
                 var schedules = _mapper.Map<List<ScheduleResponseView>>(list);
 
-               
+
 
                 return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, schedules);
             }
