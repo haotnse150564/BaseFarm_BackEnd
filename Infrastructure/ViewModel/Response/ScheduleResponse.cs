@@ -20,7 +20,7 @@ namespace Infrastructure.ViewModel.Response
             public DateOnly? StartDate { get; set; }
 
             public DateOnly? EndDate { get; set; }
-
+            public string? CurrentPlantStage { get; set; }
             public int? Quantity { get; set; }
 
             public Status? Status { get; set; }
@@ -29,9 +29,9 @@ namespace Infrastructure.ViewModel.Response
 
             public DiseaseStatus? DiseaseStatus { get; set; }
 
-            public DateOnly? PlantingDate { get; set; }
+            //public DateOnly? PlantingDate { get; set; }
 
-            public DateOnly? HarvestDate { get; set; }
+          //  public DateOnly? HarvestDate { get; set; }
 
             public DateOnly? CreatedAt { get; set; }
 

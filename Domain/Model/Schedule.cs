@@ -12,7 +12,8 @@ public partial class Schedule
     public DateOnly? StartDate { get; set; }
 
     public DateOnly? EndDate { get; set; }
-
+    public PlantStage currentPlantStage { get; set; }
+    public DateOnly toDay { get; set; }
     public int? Quantity { get; set; }
 
     public Status? Status { get; set; }
@@ -20,10 +21,6 @@ public partial class Schedule
     public bool PesticideUsed { get; set; }
 
     public DiseaseStatus? DiseaseStatus { get; set; }
-
-    public DateOnly? PlantingDate { get; set; }
-
-    public DateOnly? HarvestDate { get; set; }
 
     public DateOnly? CreatedAt { get; set; }
 

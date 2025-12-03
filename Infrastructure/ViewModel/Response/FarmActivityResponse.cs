@@ -14,7 +14,7 @@ namespace Infrastructure.ViewModel.Response
         {
             public long FarmActivitiesId { get; set; }
             public string? ActivityType { get; set; }
-            public string? plantStage { get; set; }
+            //public string? EndDate { get; set; }
             public string? StartDate { get; set; }
 
             public string? EndDate { get; set; }

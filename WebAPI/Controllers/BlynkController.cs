@@ -161,7 +161,7 @@ namespace WebAPI.Controllers
                 : StatusCode(500, new { success = false, message = "Lỗi gửi lệnh đến thiết bị" });
         }
         [HttpGet("logs")]
-        public async Task<IActionResult> GetIOTLogs(int pageNum = 1)
+        public async Task<IActionResult> GetIOTLogs(int pageNum)
         {
             var response = await _blynkService.GetList(pageNum);
             return Ok(response);
