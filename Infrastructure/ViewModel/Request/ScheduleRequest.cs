@@ -23,10 +23,6 @@ namespace Infrastructure.ViewModel.Request
 
         [Required]
         public DateOnly? EndDate { get; set; }
-        //[Required]
-        //public DateOnly? PlantingDate { get; set; }
-        //[Required]
-        //public DateOnly? HarvestDate { get; set; }
         [Required]
         public int? Quantity { get; set; }
 

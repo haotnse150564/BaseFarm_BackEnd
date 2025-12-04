@@ -32,16 +32,16 @@ namespace WebAPI.Controllers
         }
         [HttpPost("create")]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> CreateFarmActivity([FromBody] FarmActivityRequest farmActivityRequest, ActivityType activityType, PlantStage plantStage)
+        public async Task<IActionResult> CreateFarmActivity([FromBody] FarmActivityRequest farmActivityRequest, ActivityType activityType)
         {
-            var result = await _farmActivityServices.CreateFarmActivityAsync(farmActivityRequest, activityType, plantStage);
+            var result = await _farmActivityServices.CreateFarmActivityAsync(farmActivityRequest, activityType);
             return Ok(result);
         }
         [HttpPut("update/{farmActivityId}")]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> UpdateFarmActivity(long farmActivityId, [FromBody] FarmActivityRequest farmActivityRequest, ActivityType activityType, FarmActivityStatus farmActivityStatus, PlantStage plantStage)
+        public async Task<IActionResult> UpdateFarmActivity(long farmActivityId, [FromBody] FarmActivityRequest farmActivityRequest, ActivityType activityType, FarmActivityStatus farmActivityStatus)
         {
-            var result = await _farmActivityServices.UpdateFarmActivityAsync(farmActivityId, farmActivityRequest, activityType, farmActivityStatus, plantStage);
+            var result = await _farmActivityServices.UpdateFarmActivityAsync(farmActivityId, farmActivityRequest, activityType, farmActivityStatus);
             return Ok(result);
         }
         [HttpGet("get-by-id/{farmActivityId}")]
