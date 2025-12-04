@@ -68,5 +68,13 @@ namespace Infrastructure.Repositories.Implement
                 .ThenInclude(c => c.CropRequirement)
                 .FirstOrDefaultAsync(x => x.CropId == cropId);
         }
+
+        public async Task<Schedule?> GetByIdWithCropRequirementsAsync(long scheduleId, long managerId)
+        {
+            return await _dbSet
+                .Include(s => s.Crop)
+                    .ThenInclude(c => c.CropRequirement.Where(cr => cr.IsActive)) // chỉ lấy active, tối ưu
+                .FirstOrDefaultAsync(s => s.ScheduleId == scheduleId && s.ManagerId == managerId);
+        }
     }
 }

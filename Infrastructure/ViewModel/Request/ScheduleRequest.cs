@@ -23,8 +23,8 @@ namespace Infrastructure.ViewModel.Request
 
         [Required]
         public DateOnly? EndDate { get; set; }
-        [Required]
-        public DateOnly? PlantingDate { get; set; }
+        //[Required]
+        //public DateOnly? PlantingDate { get; set; }
         //[Required]
         //public DateOnly? HarvestDate { get; set; }
         [Required]
@@ -38,5 +38,12 @@ namespace Infrastructure.ViewModel.Request
         public DiseaseStatus? DiseaseStatus { get; set; }
 
         public long FarmActivitiesId { get; set; }
+    }
+
+    public class UpdateTodayRequest
+    {
+        // Nếu null → dùng ngày hiện tại
+        // Nếu có giá trị → dùng để demo / backdate
+        public DateOnly? CustomToday { get; set; } = null;
     }
 }

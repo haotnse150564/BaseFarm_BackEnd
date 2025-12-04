@@ -6,6 +6,7 @@ using Azure.Core;
 using Domain.Enum;
 using Domain.Model;
 using Infrastructure.Repositories;
+using Infrastructure.Repositories.Implement;
 using Infrastructure.ViewModel.Request;
 using Infrastructure.ViewModel.Response;
 using Microsoft.Extensions.Configuration;
@@ -79,7 +80,7 @@ namespace Application.Services.Implement
                 var getCropRequirement = await _cropRepository.GetByIdAsync(request.CropId);
                 if (getCropRequirement?.CropRequirement == null || !getCropRequirement.CropRequirement.Any())
                 {
-                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Không tìm thấy yêu cầu cây trồng.");
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Không tìm thấy cây trồng yêu cầu.");
                 }
                 if(!ValidateScheduleRequest(schedule).Item1)
                 {
@@ -100,6 +101,79 @@ namespace Application.Services.Implement
             {
                 return new ResponseDTO(Const.FAIL_READ_CODE, ex.Message);
             }
+        }
+
+        public async Task<UpdateTodayResponse> UpdateTodayAsync(long scheduleId, UpdateTodayRequest request)
+        {
+            var getCurrentUser = await _jwtUtils.GetCurrentUserAsync();
+            if (getCurrentUser == null || getCurrentUser.Role != Roles.Manager)
+            {
+                throw new UnauthorizedAccessException("Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.");
+            }
+
+            var schedule = await _unitOfWork.scheduleRepository.GetByIdWithCropRequirementsAsync(scheduleId, getCurrentUser.AccountId);
+
+            if (schedule == null)
+                throw new UnauthorizedAccessException("Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại.");
+
+            if (schedule.StartDate == null)
+                throw new InvalidOperationException("Schedule chưa có StartDate.");
+
+            // Xác định toDay
+            var today = request?.CustomToday ?? DateOnly.FromDateTime(DateTime.Now);
+
+            if (today < schedule.StartDate.Value)
+                throw new InvalidOperationException("Ngày hiện tại không thể nhỏ hơn StartDate.");
+
+            schedule.toDay = today;
+
+            // Tính số ngày đã trôi qua
+            var daysSinceStart = today.DayNumber - schedule.StartDate.Value.DayNumber;
+
+            // Lấy danh sách yêu cầu theo cây trồng, chỉ lấy các record active và sort theo EstimatedDate
+            var requirements = await _unitOfWork.cropRequirementRepository.GetActiveRequirementsOrderedAsync(schedule.CropId);
+
+            if (!requirements.Any())
+                throw new InvalidDataException("Cây trồng này chưa có yêu cầu chăm sóc nào.");
+
+            // Tìm stage hiện tại: stage có EstimatedDate lớn nhất mà daysSinceStart <= EstimatedDate
+            CropRequirement? currentReq = null;
+            CropRequirement? nextReq = null;
+
+            foreach (var req in requirements)
+            {
+                if (daysSinceStart <= req.EstimatedDate)
+                {
+                    currentReq = req;
+                    break;
+                }
+            }
+
+            // Nếu đã vượt qua tất cả các stage → lấy stage cuối cùng
+            currentReq ??= requirements.Last();
+
+            // Xác định vị trí của giai đoạn hiện tại trong chuỗi các giai đoạn
+            var currentIndex = requirements.IndexOf(currentReq);
+            //Lấy chính xác giai đoạn kế tiếp
+            if (currentIndex < requirements.Count - 1)
+                nextReq = requirements[currentIndex + 1];
+
+            // Gán stage hiện tại
+            schedule.currentPlantStage = currentReq.PlantStage ?? PlantStage.Germination;
+
+            // Cập nhật UpdatedAt
+            schedule.UpdatedAt = DateOnly.FromDateTime(DateTime.Now);
+
+            await _unitOfWork.SaveChangesAsync();
+
+            // Tính ngày còn lại đến stage tiếp theo
+            int? daysToNextStage = null;
+            if (nextReq != null)
+                daysToNextStage = nextReq.EstimatedDate - daysSinceStart;
+
+            var response = (schedule, today, daysSinceStart, currentReq, nextReq, daysToNextStage);
+
+            return _mapper.Map<UpdateTodayResponse>(response);
         }
 
         public async Task<ResponseDTO> UpdateSchedulesAsync(long scheduleId, ScheduleRequest request)

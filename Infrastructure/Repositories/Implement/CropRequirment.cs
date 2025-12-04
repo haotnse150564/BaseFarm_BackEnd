@@ -25,5 +25,13 @@ namespace Infrastructure.Repositories.Implement
         {
             return _dbSet.Where(cr => cr.CropId == crop).ToListAsync();
         }
+
+        public async Task<List<CropRequirement>> GetActiveRequirementsOrderedAsync(long cropId)
+        {
+            return await _context.Set<CropRequirement>()
+                .Where(cr => cr.CropId == cropId && cr.IsActive)
+                .OrderBy(cr => cr.EstimatedDate)   
+                .ToListAsync();
+        }
     }
 }

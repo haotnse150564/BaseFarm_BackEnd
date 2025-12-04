@@ -35,5 +35,17 @@ namespace Infrastructure.ViewModel.Response
                 Data = data;
             }
         }
+
+        public class CropRequirementDto
+        {
+            public PlantStage PlantStage { get; set; }
+            public int EstimatedDate { get; set; } // ngày tích lũy kết thúc stage
+            public decimal? Moisture { get; set; }
+            public decimal? Temperature { get; set; }
+            public string? Fertilizer { get; set; }
+            public decimal? LightRequirement { get; set; }
+            public int? WateringFrequency { get; set; }
+            public string? Notes { get; set; }
+        }
     }
 }

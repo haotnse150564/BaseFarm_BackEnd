@@ -1,8 +1,10 @@
 ﻿using Application;
 using Application.Services;
+using Application.Services.Implement;
 using Infrastructure.ViewModel.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static Infrastructure.ViewModel.Response.ScheduleResponse;
 
 namespace WebAPI.Controllers
 {
@@ -75,7 +77,7 @@ namespace WebAPI.Controllers
         [HttpPut("schedule-update-status")]
         [Authorize(Roles = "Manager")]
 
-        public async Task<IActionResult> UpdateScheduleStatus(long scheduleId,[FromBody] string status)
+        public async Task<IActionResult> UpdateScheduleStatus(long scheduleId, [FromBody] string status)
         {
             var result = await _schedule.ChangeScheduleStatusById(scheduleId, status.ToUpper());
 
@@ -109,10 +111,10 @@ namespace WebAPI.Controllers
 
             if (result.Status != Const.SUCCESS_READ_CODE)
             {
-                return BadRequest(result); 
+                return BadRequest(result);
             }
 
-            return Ok(result); 
+            return Ok(result);
         }
         [HttpPut("schedule-update-activities")]
         [Authorize(Roles = "Manager,Staff")]
@@ -124,6 +126,19 @@ namespace WebAPI.Controllers
                 return BadRequest(result); // Trả về lỗi 400 nếu thất bại
             }
             return Ok(result); // Trả về danh sách sản phẩm với phân trang
+        }
+
+        /// <summary>
+        /// Cập nhật ngày hiện tại cho Schedule (dùng để tính stage tự động)
+        /// </summary>
+        /// <param name="scheduleId">ID của Schedule</param>
+        /// <param name="request">CustomToday = null → lấy ngày hiện tại; có giá trị → dùng để demo/backdate</param>
+        [HttpPut("update-today{scheduleId}")]
+        [Authorize(Roles = "Manager")]
+        public async Task<ActionResult<UpdateTodayResponse>> UpdateToday(long scheduleId,[FromBody] UpdateTodayRequest? request)
+        {
+            var response = await _schedule.UpdateTodayAsync(scheduleId, request);
+            return Ok(response);
         }
     }
 }

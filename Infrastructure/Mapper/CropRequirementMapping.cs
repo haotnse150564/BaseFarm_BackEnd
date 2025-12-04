@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Domain.Enum;
 using Domain.Model;
 using Infrastructure.ViewModel.Request;
 using Infrastructure.ViewModel.Response;
@@ -22,6 +23,14 @@ namespace Infrastructure.Mapper
 
 
             CreateMap<CropRequirementRequest, CropRequirement>().ReverseMap();
+
+            CreateMap<CropRequirement, CropRequirementDto>()
+                .ForMember(dest => dest.PlantStage,
+                    opt => opt.MapFrom(src => src.PlantStage.GetValueOrDefault(PlantStage.Germination))) 
+                .ForMember(dest => dest.EstimatedDate,
+                    opt => opt.MapFrom(src => src.EstimatedDate.GetValueOrDefault(0)))
+                .ForMember(dest => dest.WateringFrequency,
+                    opt => opt.MapFrom(src => src.WateringFrequency));
         }
     }
 }

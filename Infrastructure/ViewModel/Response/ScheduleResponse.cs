@@ -58,5 +58,20 @@ namespace Infrastructure.ViewModel.Response
                 Data = data;
             }
         }
+
+        public class UpdateTodayResponse
+        {
+            public DateOnly Today { get; set; }
+            public PlantStage CurrentStage { get; set; }
+            public int DaysSinceStart { get; set; }
+
+            // Các yêu cầu chăm sóc của giai đoạn hiện tại
+            public CropRequirementDto? CurrentStageRequirements { get; set; }
+
+            public CropRequirementDto? NextStageRequirements { get; set; }
+            public int? DaysToNextStage { get; set; }
+        }
+
+        
     }
 }

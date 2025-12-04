@@ -13,5 +13,6 @@ namespace Infrastructure.Repositories
     {
         Task<List<CropRequirement>> GetByCropIdAsynce(long cropId);
         Task<List<CropRequirement>> GetByCropIdsAsync(long crop);
+        Task<List<CropRequirement>> GetActiveRequirementsOrderedAsync(long cropId);
     }
 }
