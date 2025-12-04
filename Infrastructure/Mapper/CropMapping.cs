@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Domain.Model;
 using Infrastructure.ViewModel.Request;
+using Infrastructure.ViewModel.Response;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,15 +16,42 @@ namespace Infrastructure.Mapper
     {
         public CropMapping()
         {
+            CreateMap<CropRequirement, CropRequirementView>()
+                .ForMember(dest => dest.CropRequirementId, opt => opt.MapFrom(src => src.CropRequirementId))
+                .ForMember(dest => dest.CropId, opt => opt.MapFrom(src => src.CropId))
+                .ForMember(dest => dest.PlantStage,
+                    opt => opt.MapFrom(src => src.PlantStage.HasValue
+                        ? src.PlantStage.Value.ToString()
+                        : null))
+                .ForMember(dest => dest.EstimatedDate, opt => opt.MapFrom(src => src.EstimatedDate))
+                .ForMember(dest => dest.Moisture, opt => opt.MapFrom(src => src.Moisture))
+                .ForMember(dest => dest.Temperature, opt => opt.MapFrom(src => src.Temperature))
+                .ForMember(dest => dest.Fertilizer, opt => opt.MapFrom(src => src.Fertilizer))
+                .ForMember(dest => dest.LightRequirement, opt => opt.MapFrom(src => src.LightRequirement))
+                .ForMember(dest => dest.WateringFrequency,
+                    opt => opt.MapFrom(src => src.WateringFrequency.HasValue
+                        ? src.WateringFrequency.Value.ToString()
+                        : null))
+                .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes));
+
             CreateMap<Crop, CropView>()
-                    .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
-                    .ForMember(dest => dest.CropRequirements, opt => opt.MapFrom(src => src.CropRequirement))
-                     .ReverseMap();
-
-            CreateMap<CropRequirement, CropRequirementView>().ReverseMap();
-
+                .ForMember(dest => dest.CropId, opt => opt.MapFrom(src => src.CropId))
+                .ForMember(dest => dest.CropName, opt => opt.MapFrom(src => src.CropName))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
+                .ForMember(dest => dest.Status,
+                    opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.Origin, opt => opt.MapFrom(src => src.Origin))
+                // Collection con – chỉ lấy những cái IsActive và sắp xếp theo EstimatedDate
+                .ForMember(dest => dest.CropRequirements,
+                    opt => opt.MapFrom(src => src.CropRequirement
+                        .Where(cr => cr.IsActive)
+                        .OrderBy(cr => cr.EstimatedDate)
+                        .ToList()));
 
             CreateMap<Crop, CropRequest>().ReverseMap();
+
+            
         }
     }
 }
