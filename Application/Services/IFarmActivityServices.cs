@@ -15,8 +15,8 @@ namespace Application.Services
         Task<ResponseDTO> GetFarmActivitiesAsync(int pageIndex, int pageSize, ActivityType? type, FarmActivityStatus? status, int? month);
         Task<ResponseDTO> GetFarmActivitiesByStaffAsync(int pageIndex, int pageSize, ActivityType? type, FarmActivityStatus? status, int? month);
         Task<ResponseDTO> GetFarmActivitiesActiveAsync(int pageIndex, int pageSize, long scheduleId);
-        Task<ResponseDTO> CreateFarmActivityAsync(FarmActivityRequest farmActivityRequest, ActivityType activityType, PlantStage plantStage);
-        Task<ResponseDTO> UpdateFarmActivityAsync(long farmActivityId, FarmActivityRequest farmActivityRequest, ActivityType? activityType, FarmActivityStatus farmActivityStatus, PlantStage plantStage);
+        Task<ResponseDTO> CreateFarmActivityAsync(FarmActivityRequest farmActivityRequest, ActivityType activityType);
+        Task<ResponseDTO> UpdateFarmActivityAsync(long farmActivityId, FarmActivityRequest farmActivityRequest, ActivityType? activityType, FarmActivityStatus farmActivityStatus);
         Task<ResponseDTO> GetFarmActivityByIdAsync(long farmActivityId);
         Task<ResponseDTO> ChangeFarmActivityStatusAsync(long farmActivityId);
         Task<ResponseDTO> CompleteFarmActivity(long id, string? location);

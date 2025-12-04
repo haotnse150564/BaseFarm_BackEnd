@@ -33,15 +33,11 @@ namespace WebAPI.Services
             _inventory = inventory;
         }
 
-        public async Task<ResponseDTO> CreateFarmActivityAsync(FarmActivityRequest farmActivityRequest, ActivityType activityType, PlantStage plantStage)
+        public async Task<ResponseDTO> CreateFarmActivityAsync(FarmActivityRequest farmActivityRequest, ActivityType activityType)
         {
             var farmActivity = _mapper.Map<FarmActivity>(farmActivityRequest);
             farmActivity.Status = Domain.Enum.FarmActivityStatus.ACTIVE;
             farmActivity.ActivityType = activityType;
-            //if (!CheckDate(farmActivity.StartDate, farmActivity.EndDate))
-            //{
-            //    return new ResponseDTO(Const.FAIL_UPDATE_CODE, "Start date or end date is wrong!");
-            //}
             await _unitOfWork.farmActivityRepository.AddAsync(farmActivity);
 
             if (await _unitOfWork.SaveChangesAsync() < 0)
@@ -176,7 +172,7 @@ namespace WebAPI.Services
             }
         }
 
-        public async Task<ResponseDTO> UpdateFarmActivityAsync(long farmActivityId, FarmActivityRequest farmActivityrequest, ActivityType? activityType, FarmActivityStatus farmActivityStatus, PlantStage plantStage)
+        public async Task<ResponseDTO> UpdateFarmActivityAsync(long farmActivityId, FarmActivityRequest farmActivityrequest, ActivityType? activityType, FarmActivityStatus farmActivityStatus)
         {
             var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(farmActivityId);
 
@@ -186,14 +182,8 @@ namespace WebAPI.Services
             }
             else
             {
-                //farmActivity.StartDate = farmActivityrequest.StartDate;
-                //farmActivity.EndDate = farmActivityrequest.EndDate;
                 farmActivity.ActivityType = activityType;
-                farmActivity.Status = farmActivityStatus;
-                //if(!CheckDate(farmActivity.StartDate, farmActivity.EndDate))
-                //{
-                //    return new ResponseDTO(Const.FAIL_UPDATE_CODE, "Start date or end date is wrong required!");
-                //}   
+                farmActivity.Status = farmActivityStatus;  
                 await _unitOfWork.farmActivityRepository.UpdateAsync(farmActivity);
                 if (await _unitOfWork.SaveChangesAsync() < 0)
                 {

@@ -66,16 +66,18 @@ namespace Application.Services.Implement
         {
             try
             {
+                // Kiểm tra quyền
                 var getCurrentUser = await _jwtUtils.GetCurrentUserAsync();
                 if (getCurrentUser == null || getCurrentUser.Role != Roles.Manager)
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, "Tài khoản không hợp lệ.");
                 }
-
+                // Tạo schedule mới
                 var schedule = _mapper.Map<Schedule>(request);
                 schedule.ManagerId = getCurrentUser.AccountId;
                 schedule.CreatedAt = _currentTime.GetCurrentTime();
-
+                schedule.currentPlantStage = PlantStage.Seedling;
+                // Kiểm tra yêu cầu cây trồng
                 var getCropRequirement = await _cropRepository.GetByIdAsync(request.CropId);
                 if (getCropRequirement?.CropRequirement == null || !getCropRequirement.CropRequirement.Any())
                 {
