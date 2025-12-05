@@ -7,7 +7,7 @@ namespace Domain.Model;
 public partial class Device
 {
     public long DevicesId { get; set; }
-
+    public string Pin { get; set; }
     public string? DeviceName { get; set; }
 
     public string? DeviceType { get; set; }
