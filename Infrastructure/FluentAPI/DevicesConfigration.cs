@@ -19,7 +19,10 @@ namespace Infrastructure.FluentAPI
                 .HasMaxLength(100)
                 .IsUnicode(true) // Cho phép tên thiết bị có tiếng Việt
                 .HasColumnName("deviceName");
-
+            builder.Property(e => e.Pin)
+                     .HasMaxLength(100)
+                     .IsUnicode(true) // Cho phép pin có tiếng Việt
+                    .HasColumnName("Ping");
             builder.Property(e => e.DeviceType)
                 .HasMaxLength(100)
                 .IsUnicode(true)
