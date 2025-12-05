@@ -133,7 +133,7 @@ namespace WebAPI.Controllers
         /// </summary>
         /// <param name="scheduleId">ID của Schedule</param>
         /// <param name="request">CustomToday = null → lấy ngày hiện tại; có giá trị → dùng để demo/backdate</param>
-        [HttpPut("update-today{scheduleId}")]
+        [HttpPut("update-today/{scheduleId}")]
         [Authorize(Roles = "Manager")]
         public async Task<ActionResult<UpdateTodayResponse>> UpdateToday(long scheduleId,[FromBody] UpdateTodayRequest? request)
         {
