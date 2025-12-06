@@ -17,8 +17,13 @@ namespace Infrastructure.Mapper
         public IOTMapping()
         {
             //CreateMap<Source, Destination>().ReverseMap();
-            CreateMap<Device, IOTRequest>().ReverseMap();
-            CreateMap<Device, IOTView>().ReverseMap();
+            CreateMap<Device, IOTRequest>()
+                .ForMember(dest => dest.PinCode, opt => opt.MapFrom(src => src.Pin))
+
+                .ReverseMap();
+            CreateMap<Device, IOTView>()
+                .ForMember(dest => dest.PinCode, opt => opt.MapFrom(src => src.Pin))
+                .ReverseMap();
             CreateMap<Device, IOTResponse>().ReverseMap();
             CreateMap<IOTLog, IOTLogView>().ReverseMap();
         }

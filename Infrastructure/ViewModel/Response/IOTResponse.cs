@@ -14,6 +14,7 @@ namespace Infrastructure.ViewModel.Response
             public long DevicesId { get; set; }
             public string? DeviceName { get; set; }
 
+            public string? PinCode { get; set; } 
             public string? DeviceType { get; set; }
 
             public Status? Status { get; set; }
