@@ -13,7 +13,7 @@ namespace Infrastructure.ViewModel.Request
 
         //[Required(ErrorMessage = "FarmActivityName is required.")]
         public string? DeviceName { get; set; }
-
+        public string? PinCode { get; set; }
         //[Required(ErrorMessage = "FarmActivityName is required.")]
         public string? DeviceType { get; set; }
 
