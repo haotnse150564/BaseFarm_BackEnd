@@ -26,9 +26,9 @@ namespace Infrastructure.FluentAPI
             builder.Property(x => x.DevicesId)
                 .IsRequired();
 
-            builder.Property(x => x.VariableId)
-                .HasMaxLength(10);
-
+            builder.Property(x => x.Pin)
+                .HasMaxLength(10)
+                .HasColumnName("Pin");
             builder.Property(x => x.SensorName)
                 .HasMaxLength(50);
 

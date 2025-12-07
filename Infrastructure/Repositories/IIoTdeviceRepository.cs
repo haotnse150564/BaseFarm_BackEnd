@@ -11,5 +11,6 @@ namespace Infrastructure.Repositories
     public interface IDevicesRepository : IGenericRepository<Device>
     {
         Task<Device> GetDevieByName(string name);
+        Task<Device> GetDeviceByPin(string pin);
     }
 }

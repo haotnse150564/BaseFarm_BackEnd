@@ -12,7 +12,7 @@ namespace Domain.Model
 
         public long DevicesId { get; set; } 
 
-        public string? VariableId { get; set; } 
+        public string Pin { get; set; } 
 
         public string? SensorName { get; set; } 
 
