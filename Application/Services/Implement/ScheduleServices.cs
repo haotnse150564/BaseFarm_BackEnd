@@ -88,7 +88,11 @@ namespace Application.Services.Implement
                 {
                     return new ResponseDTO(Const.FAIL_CREATE_CODE, ValidateScheduleRequest(schedule).Item2);
                 }
-
+                var checkStaff = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(request.StaffId, 0);
+                if (checkStaff != null && checkStaff.Any())
+                {
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Nhân viên đã được phân công ở một lịch khác!");
+                }
                 await _unitOfWork.scheduleRepository.AddAsync(schedule);
                 await _unitOfWork.SaveChangesAsync();
 
@@ -202,6 +206,11 @@ namespace Application.Services.Implement
                 if (!ValidateScheduleRequest(schedule).Item1)
                 {
                     return new ResponseDTO(Const.FAIL_CREATE_CODE, ValidateScheduleRequest(schedule).Item2);
+                }
+                var checkStaff = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(request.StaffId, 0);
+                if (checkStaff != null && checkStaff.Any())
+                {
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Nhân viên đã được phân công ở một lịch khác!");
                 }
                 await _unitOfWork.scheduleRepository.UpdateAsync(updatedSchedule);
                 await _unitOfWork.SaveChangesAsync();
@@ -322,7 +331,11 @@ namespace Application.Services.Implement
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, "Nhân viên không tồn tại.");
                 }
-
+                var checkStaff = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(schedule.AssignedTo, 0);
+                if (checkStaff != null && checkStaff.Any())
+                {
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Nhân viên đã được phân công ở một lịch khác!");
+                }
                 schedule.AssignedTo = staffId;
                 schedule.UpdatedAt = _currentTime.GetCurrentTime();
                 if (!ValidateScheduleRequest(schedule).Item1)
