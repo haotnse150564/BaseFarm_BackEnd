@@ -22,7 +22,7 @@ namespace Infrastructure.FluentAPI
             builder.Property(e => e.Pin)
                      .HasMaxLength(100)
                      .IsUnicode(true) // Cho phép pin có tiếng Việt
-                    .HasColumnName("Ping");
+                    .HasColumnName("Pin");
             builder.Property(e => e.DeviceType)
                 .HasMaxLength(100)
                 .IsUnicode(true)
@@ -46,7 +46,10 @@ namespace Infrastructure.FluentAPI
                 .WithOne(fe => fe.Device)
                 .HasForeignKey(fe => fe.DeviceId)
                 .OnDelete(DeleteBehavior.Cascade);
-
+            builder.HasMany(e => e.Log)
+                .WithOne(log => log.Device)
+                .HasForeignKey(log => log.DevicesId)
+                .OnDelete(DeleteBehavior.Cascade);
 
         }
     }

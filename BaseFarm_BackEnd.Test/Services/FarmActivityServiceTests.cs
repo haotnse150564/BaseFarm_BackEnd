@@ -112,7 +112,7 @@ namespace BaseFarm_BackEnd.Test.Services
             SetupMapperAndRepoMocks(request);
 
             var service = CreateService();
-            var result = await service.CreateFarmActivityAsync(request, ActivityType.FertilizingLeaf, PlantStage.Germination);
+            var result = await service.CreateFarmActivityAsync(request, ActivityType.FertilizingLeaf);
 
             Assert.Equal(Const.SUCCESS_CREATE_CODE, result.Status); // hoặc 1 nếu bạn dùng 1
             Assert.NotNull(result.Data);
@@ -129,7 +129,7 @@ namespace BaseFarm_BackEnd.Test.Services
             SetupMapperAndRepoMocks(request);
 
             var service = CreateService();
-            var result = await service.CreateFarmActivityAsync(request, ActivityType.FertilizingLeaf, PlantStage.Germination);
+            var result = await service.CreateFarmActivityAsync(request, ActivityType.FertilizingLeaf);
 
             Assert.Equal(Const.SUCCESS_CREATE_CODE, result.Status);
             Assert.NotNull(result.Data);
@@ -181,8 +181,7 @@ namespace BaseFarm_BackEnd.Test.Services
                 1,
                 request,
                 ActivityType.FertilizingLeaf,
-                FarmActivityStatus.ACTIVE,
-                PlantStage.Germination
+                FarmActivityStatus.ACTIVE
             );
 
             Assert.Equal(-1, result.Status);
@@ -267,8 +266,7 @@ namespace BaseFarm_BackEnd.Test.Services
                 1,
                 request,
                 ActivityType.Harvesting,
-                FarmActivityStatus.IN_PROGRESS,
-                PlantStage.Germination
+                FarmActivityStatus.IN_PROGRESS
             );
 
             Assert.Equal(1, result.Status);

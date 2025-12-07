@@ -153,29 +153,13 @@ namespace Application.Services.Implement
         {
             try
             {
-                var result = obj;
-
-                var sortedResult = result
-                                   .OrderBy(kvp => int
-                                   .Parse(kvp.Key.Substring(1))) // lấy phần số sau chữ V
-                                   .ToList();
-
-                string[] DeviceName = ["Nhiet Do", "Do Am", "Luong Mua", "Do Am Dat", "Anh Sang"];
-                List<LogEntry> logEntries = new List<LogEntry>();
-                for (int i = 0; i < 5; i++)
+                var sortedResult = obj
+                   .OrderBy(kvp => int
+                   .Parse(kvp.Key.Substring(1))) // lấy phần số sau chữ V
+                   .ToList();
+                foreach (var item in sortedResult)
                 {
-                    var entry = sortedResult[i];
-                    LogEntry logEntry = new LogEntry
-                    {
-                        Pin = entry.Key,
-                        Value = double.Parse(entry.Value.ToString() ?? "0"),
-                        DeviceName = DeviceName[i]
-                    };
-                    logEntries.Add(logEntry);
-                }
-                foreach (var log in logEntries)
-                {
-                    var divces = await _unitOfWork.deviceRepository.GetDevieByName(log.DeviceName);
+                    var divces = await _unitOfWork.deviceRepository.GetDeviceByPin(item.Key);
                     if (divces == null)
                     {
                         continue; // Hoặc xử lý lỗi tùy theo yêu cầu của bạn
@@ -184,9 +168,9 @@ namespace Application.Services.Implement
                     IOTLog iotLog = new IOTLog
                     {
                         DevicesId = divces.DevicesId,
-                        VariableId = log.Pin,
-                        SensorName = log.DeviceName,
-                        Value = log.Value,
+                        Pin = divces.Pin,
+                        SensorName = divces.DeviceName,
+                        Value = Convert.ToDouble(item.Value),
                         Timestamp = DateTime.Now
                     };
 
@@ -213,18 +197,17 @@ namespace Application.Services.Implement
             }
             catch (Exception ex)
             {
-                return "Có lỗi xảy ra";
+                return $"Lỗi khi cập nhật log: {ex.Message}";
             }
         }
-        class LogEntry
+    class LogEntry
         {
             public string Pin { get; set; }
             public double Value { get; set; }
             public string DeviceName { get; set; }
         }
-        public async Task<ResponseDTO> GetList(int pageNumber)
+        public async Task<ResponseDTO> GetList()
         {
-            const int pageSize = 25;
 
             var list = await _unitOfWork.iotLogRepository.GetAllAsync();
             if (list == null || list.Count == 0)
@@ -235,24 +218,7 @@ namespace Application.Services.Implement
             // Sắp xếp giảm dần theo Timestamp
             list = list.OrderByDescending(x => x.Timestamp).ToList();
 
-            // Áp dụng paging
-            var pagedList = list.Skip((pageNumber - 1) * pageSize)
-                                .Take(pageSize)
-                                .ToList();
-
-            var result = _mapper.Map<List<IOTLogView>>(pagedList);
-
-            // Có thể trả thêm thông tin tổng số trang, tổng số item
-            var responseData = new
-            {
-                TotalItems = list.Count,
-                PageSize = pageSize,
-                CurrentPage = pageNumber,
-                TotalPages = (int)Math.Ceiling(list.Count / (double)pageSize),
-                Items = result
-            };
-
-            return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, responseData);
+            return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, list);
         }
 
         public async Task<byte[]> ExportLogsToCsvAsync()
@@ -264,7 +230,7 @@ namespace Application.Services.Implement
 
             foreach (var log in logs)
             {
-                sb.AppendLine($"{log.IotLogId},{log.DevicesId},{log.VariableId},{log.SensorName},{log.Value},{log.Timestamp:yyyy-MM-dd HH:mm:ss}");
+                sb.AppendLine($"{log.IotLogId},{log.DevicesId},{log.Pin},{log.SensorName},{log.Value},{log.Timestamp:yyyy-MM-dd HH:mm:ss}");
             }
 
             return Encoding.UTF8.GetBytes(sb.ToString());
