@@ -31,7 +31,10 @@ namespace Infrastructure.Mapper
                 .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes));
 
             CreateMap<Crop, CropView>()
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+                .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+                .ReverseMap();
+
 
             CreateMap<Crop, CropRequest>().ReverseMap();
 
