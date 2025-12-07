@@ -45,5 +45,5 @@ app.UseAuthorization();
 app.MapControllers();
 // Map Hub
 app.MapHub<OrderNotificationHub>("/hubs/order-notification");
-
+app.MapHub<NotificationHub.ManagerNotificationHub>("/hubs/manager-notification");
 app.Run();

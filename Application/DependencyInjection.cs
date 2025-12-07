@@ -82,6 +82,7 @@ public static class DependencyInjection
         services.AddScoped<IAddressServices, AddressServices>();
         services.AddScoped<IFarmEquipmentServices, FarmEquipmentServices>();
         services.AddScoped<ICropRequirementServices, CropRequirementServices>();
+        services.AddScoped<ICropMonitoringService, CropMonitoringService>();
 
         //services.AddScoped<IOrderDetailServices, OrderDetailServices>();
         //services.AddScoped<IAccountProfileServices, AccountProfileServices>();

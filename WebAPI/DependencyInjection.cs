@@ -134,7 +134,10 @@ public static class DependencyInjection
                                   policy.AllowAnyOrigin()
                                   .AllowAnyHeader()
                                   .AllowAnyMethod();
+                                  policy.SetIsOriginAllowed(_ => true);
                               });
+            
+
         });
 
 
