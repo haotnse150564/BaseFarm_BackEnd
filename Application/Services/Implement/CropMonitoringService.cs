@@ -1,6 +1,8 @@
 ﻿using Application;
 using Application.Services;
 using Application.Services.Implement;
+using Application.Utils;
+using Domain.Enum;
 using Domain.Model;
 using Infrastructure;
 using Microsoft.AspNetCore.SignalR;
@@ -11,15 +13,18 @@ public class CropMonitoringService : ICropMonitoringService
     private readonly IWeatherServices _weatherService;
     private readonly IUnitOfWorks _unitOfWork;
     private readonly IHubContext<ManagerNotificationHub> _hubContext;
+    private readonly JWTUtils _jwt ;
 
     public CropMonitoringService(
         IWeatherServices weatherService,
         IUnitOfWorks unitOfWork,
-        IHubContext<ManagerNotificationHub> hubContext)
+        IHubContext<ManagerNotificationHub> hubContext,
+        JWTUtils jwtUtils)
     {
         _weatherService = weatherService;
         _unitOfWork = unitOfWork;
         _hubContext = hubContext;
+        _jwt = jwtUtils;
     }
 
     /// <summary>
@@ -27,6 +32,9 @@ public class CropMonitoringService : ICropMonitoringService
     /// </summary>
     public async Task CheckWeatherAndNotifyAllCropsAsync(string city)
     {
+        var getCurrentUserId = await _jwt.GetCurrentUserAsync();
+        if (getCurrentUserId == null) return;
+        if (getCurrentUserId.Role != Roles.Manager) return;
         // Lấy danh sách tất cả crop requirement từ DB
         var cropRequirements = await _unitOfWork.cropRequirementRepository.GetAllAsync();
         if (cropRequirements == null || !cropRequirements.Any()) return;
@@ -46,7 +54,7 @@ public class CropMonitoringService : ICropMonitoringService
 
                 if (actual > threshold * 1.1m || actual < threshold * 0.9m)
                 {
-                    alerts.Add($"🌡 Nhiệt độ {weather.TemperatureC:F1}°C lệch quá 10% so với ngưỡng {threshold}°C cho crop {cropRequirement.CropId}");
+                    alerts.Add($"Nhiệt độ {weather.TemperatureC:F1}°C lệch quá 10% so với ngưỡng {threshold}°C cho crop {cropRequirement.CropId}");
                 }
             }
 
@@ -58,29 +66,29 @@ public class CropMonitoringService : ICropMonitoringService
 
                 if (actual > threshold * 1.1m || actual < threshold * 0.9m)
                 {
-                    alerts.Add($"💧 Độ ẩm {actual}% lệch quá 10% so với ngưỡng {threshold}% cho crop {cropRequirement.CropId}");
+                    alerts.Add($"Độ ẩm {actual}% lệch quá 10% so với ngưỡng {threshold}% cho crop {cropRequirement.CropId}");
                 }
             }
 
             // Kiểm tra ánh sáng (ví dụ: nếu trời nhiều mây thì coi như không đủ ánh sáng)
             if (cropRequirement.LightRequirement.HasValue && weather.Summary.Contains("Cloud"))
             {
-                alerts.Add($"☁️ Ánh sáng không đủ cho crop {cropRequirement.CropId} (yêu cầu {cropRequirement.LightRequirement} lux)");
+                alerts.Add($"Ánh sáng không đủ cho crop {cropRequirement.CropId} (yêu cầu {cropRequirement.LightRequirement} lux)");
             }
 
             // Kiểm tra tần suất tưới (ví dụ: nếu mưa nhiều hơn 10% so với mức tưới)
 
-            if (cropRequirement.WateringFrequency.HasValue && weather.RainVolumeMm.HasValue)
-            {
-                var threshold = cropRequirement.WateringFrequency.Value; // decimal
-                var actual = Convert.ToDecimal(weather.RainVolumeMm.Value); // ép double sang decimal
+            //if (cropRequirement.WateringFrequency.HasValue && weather.RainVolumeMm.HasValue)
+            //{
+            //    var threshold = cropRequirement.WateringFrequency.Value; // decimal
+            //    var actual = Convert.ToDecimal(weather.RainVolumeMm.Value); // ép double sang decimal
 
-                if (actual > threshold * 1.1m || actual < threshold * 0.9m)
-                {
-                    alerts.Add($"🌧 Lượng mưa {actual}mm lệch quá 10% so với tần suất tưới {threshold} lần/ngày cho crop {cropRequirement.CropId}");
-                }
+            //    if (actual > threshold * 1.1m || actual < threshold * 0.9m)
+            //    {
+            //        alerts.Add($"Lượng mưa {actual}mm lệch quá 10% so với tần suất tưới {threshold} lần/ngày cho crop {cropRequirement.CropId}");
+            //    }
 
-            }
+            //}
             // Nếu có cảnh báo thì gửi cho Manager
             if (alerts.Any())
             {
