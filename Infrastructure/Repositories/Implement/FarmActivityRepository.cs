@@ -16,7 +16,7 @@ namespace Infrastructure.Repositories.Implement
         {
             var result = await _context.FarmActivity
                 .Where(fa => fa.Status == Domain.Enum.FarmActivityStatus.ACTIVE
-                          && fa.Schedule.Any()
+                          && !fa.Schedule.Any()
                           && fa.EndDate >= DateOnly.FromDateTime(DateTime.Today))
                 .OrderByDescending(fa => fa.FarmActivitiesId)
                 .ToListAsync();

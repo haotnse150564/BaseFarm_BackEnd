@@ -169,9 +169,11 @@ namespace WebAPI.Services
             else
             {
                 farmActivity.ActivityType = activityType;
-                farmActivity.Status = farmActivityStatus;  
-                await _unitOfWork.farmActivityRepository.UpdateAsync(farmActivity);
-                if (await _unitOfWork.SaveChangesAsync() < 0)
+                farmActivity.Status = farmActivityStatus; 
+                farmActivity.StartDate = farmActivityrequest.StartDate;
+                farmActivity.EndDate = farmActivityrequest.EndDate;
+                var checkUpdate = await _unitOfWork.farmActivityRepository.UpdateAsync(farmActivity);
+                if (checkUpdate < 0)
                 {
                     return new ResponseDTO(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);
                 }
