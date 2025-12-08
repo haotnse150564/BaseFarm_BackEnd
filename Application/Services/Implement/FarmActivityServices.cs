@@ -179,6 +179,28 @@ namespace WebAPI.Services
                 }
                 else
                 {
+                    if (farmActivity.ActivityType == ActivityType.Harvesting && farmActivity.Status == FarmActivityStatus.COMPLETED)
+                    {
+                        var product = await _unitOfWork.farmActivityRepository.GetProductWillHarves(farmActivity.FarmActivitiesId);
+                        if (product == null)
+                        {
+                            return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);
+                        }
+                        foreach (var item in product)
+                        {
+                            //CỘNG SL KHI THU HOẠCH
+                            var schedule = await _unitOfWork.scheduleRepository.GetByCropId(item.ProductId);
+                            item.StockQuantity += schedule.Quantity;
+                        }
+                        if (await _unitOfWork.SaveChangesAsync() < 0)
+                        {
+                            return new ResponseDTO(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);
+                        }
+                        else
+                        {
+                            return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG);
+                        }
+                    }
                     var result = _mapper.Map<FarmActivityView>(farmActivity);
                     return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, result);
                 }
@@ -194,10 +216,10 @@ namespace WebAPI.Services
            // {
                // return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity Don't Have Any Schedule");
            // }    
-            else if (farmActivity.Status != FarmActivityStatus.IN_PROGRESS)
-            {
-                return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity Already Completed or do not used by any Schedule");
-            }
+            //else if (farmActivity.Status != FarmActivityStatus.IN_PROGRESS)
+            //{
+            //    return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity Already Completed or do not used by any Schedule");
+            //}
             farmActivity.Status = Domain.Enum.FarmActivityStatus.COMPLETED; 
 
 
