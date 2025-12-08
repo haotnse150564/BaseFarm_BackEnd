@@ -15,6 +15,7 @@ namespace Infrastructure.Repositories.Implement
         public async Task<List<FarmActivity>> GetAllActive()
         {
             var result = await _context.FarmActivity
+                .Include(fa => fa.Schedule)
                 .Where(fa => fa.Status != Domain.Enum.FarmActivityStatus.DEACTIVATED)
                 .ToListAsync();
             return result;

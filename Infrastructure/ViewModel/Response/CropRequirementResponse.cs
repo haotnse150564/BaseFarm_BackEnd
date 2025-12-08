@@ -22,6 +22,7 @@ namespace Infrastructure.ViewModel.Response
             public decimal? LightRequirement { get; set; }
             public string? WateringFrequency { get; set; }
             public string? Notes { get; set; }
+            public bool IsActive { get; set; }
         }
         public class ResponseDTO
         {
