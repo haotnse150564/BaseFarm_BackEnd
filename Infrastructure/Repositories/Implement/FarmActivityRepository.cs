@@ -15,9 +15,12 @@ namespace Infrastructure.Repositories.Implement
         public async Task<List<FarmActivity>> GetAllActive()
         {
             var result = await _context.FarmActivity
-                .Include(fa => fa.Schedule)
-                .Where(fa => fa.Status != Domain.Enum.FarmActivityStatus.DEACTIVATED)
+                .Where(fa => fa.Status == Domain.Enum.FarmActivityStatus.ACTIVE
+                          && fa.Schedule.Any()
+                          && fa.EndDate >= DateOnly.FromDateTime(DateTime.Today))
+                .OrderByDescending(fa => fa.FarmActivitiesId)
                 .ToListAsync();
+
             return result;
         }
         public async Task<List<FarmActivity>> GetAllFiler(ActivityType? type, FarmActivityStatus? status, int? month)

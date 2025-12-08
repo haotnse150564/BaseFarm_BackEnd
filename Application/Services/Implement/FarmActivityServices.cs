@@ -77,14 +77,6 @@ namespace WebAPI.Services
         public async Task<ResponseDTO> GetFarmActivitiesActiveAsync(int pageIndex, int pageSize)
         {
             var list = await _unitOfWork.farmActivityRepository.GetAllActive();
-
-            list = list
-                .Where(x => x.Schedule == null
-                         && x.Status == FarmActivityStatus.ACTIVE
-                         && x.EndDate >= DateOnly.FromDateTime(DateTime.Today))
-                .OrderByDescending(x => x.FarmActivitiesId)
-                .ToList();
-
             if (list.IsNullOrEmpty())
             {
                 return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);
