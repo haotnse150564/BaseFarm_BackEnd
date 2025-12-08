@@ -1,4 +1,5 @@
 ﻿using Domain.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories.Implement
 {
@@ -13,6 +14,10 @@ namespace Infrastructure.Repositories.Implement
         public void DeleteRange(List<IOTLog> entities)
         {
             _context.IOTLog.RemoveRange(entities);
+        }
+        public override async Task<List<IOTLog>> GetAllAsync()
+        {
+            return await _dbSet.Include(d => d.Device).ToListAsync();
         }
     }
 }
