@@ -39,7 +39,7 @@ namespace Application.Utils
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.Add(TimeSpan.FromMinutes(30)),
+                Expires = DateTime.UtcNow.Add(TimeSpan.FromMinutes(120)),
                 Issuer = _config["Jwt:Issuer"],
                 Audience = _config["Jwt:Audience"],
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
