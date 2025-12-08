@@ -22,7 +22,9 @@ namespace Infrastructure.Mapper
            opt => opt.MapFrom(src => src.PlantStage.ToString()));
 
 
-            CreateMap<CropRequirementRequest, CropRequirement>().ReverseMap();
+            CreateMap<CropRequirementRequest, CropRequirement>().ReverseMap()
+                .ForMember(dest => dest.PlantStage,
+           opt => opt.MapFrom(src => src.PlantStage.ToString()));
 
             CreateMap<CropRequirement, CropRequirementDto>()
                 .ForMember(dest => dest.PlantStage,
