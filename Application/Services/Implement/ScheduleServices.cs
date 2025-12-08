@@ -424,30 +424,9 @@ namespace Application.Services.Implement
                 }
 
                 // Kiểm tra trạng thái hiện tại
-                if (schedule.Status == null)
-                {
-                    return new ResponseDTO(Const.FAIL_READ_CODE, "Trạng thái hiện tại chưa được thiết lập.");
-                }
-
-                if (schedule.Status.ToString() == status)
-                {
-                    return new ResponseDTO(Const.FAIL_READ_CODE, "Trạng thái không thay đổi.");
-                }
-
-                // Parse trạng thái mới
-                if (!Enum.TryParse<Status>(status, out var newStatus))
-                {
-                    return new ResponseDTO(Const.FAIL_READ_CODE, "Trạng thái không hợp lệ.");
-                }
-
-                // Cập nhật trạng thái
-                schedule.Status = newStatus;
-                schedule.UpdatedAt = _currentTime.GetCurrentTime();
-
-                if (!ValidateScheduleRequest(schedule).Item1)
-                {
-                    return new ResponseDTO(Const.FAIL_CREATE_CODE, ValidateScheduleRequest(schedule).Item2);
-                }
+                schedule.Status = (schedule.Status == Status.ACTIVE)
+                    ? Status.DEACTIVATED
+                    : Status.ACTIVE;
 
                 // Lưu thay đổi
                 _unitOfWork.scheduleRepository.Update(schedule);

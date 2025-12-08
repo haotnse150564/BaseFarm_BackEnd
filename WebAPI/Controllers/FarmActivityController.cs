@@ -25,9 +25,9 @@ namespace WebAPI.Controllers
         }
         [HttpGet("get-active")]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> GetFarmActivitiesActive(long scheduleId, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetFarmActivitiesActive([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
-            var result = await _farmActivityServices.GetFarmActivitiesActiveAsync(pageIndex, pageSize, scheduleId);
+            var result = await _farmActivityServices.GetFarmActivitiesActiveAsync(pageIndex, pageSize);
             return Ok(result);
         }
         [HttpPost("create")]

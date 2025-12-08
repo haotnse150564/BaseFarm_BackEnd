@@ -19,7 +19,8 @@ namespace Infrastructure.Mapper
             // CreateMap<Source, Destination>();
             CreateMap<CropRequirement, CropRequirementView>().ReverseMap()
                 .ForMember(dest => dest.PlantStage,
-           opt => opt.MapFrom(src => src.PlantStage.ToString()));
+           opt => opt.MapFrom(src => src.PlantStage.ToString()))
+                .ForMember(est => est.IsActive, opt => opt.MapFrom(src => src.IsActive));
 
 
             CreateMap<CropRequirementRequest, CropRequirement>().ReverseMap()

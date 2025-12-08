@@ -74,39 +74,33 @@ namespace WebAPI.Services
             }
         }
 
-        public async Task<ResponseDTO> GetFarmActivitiesActiveAsync(int pageIndex, int pageSize, long scheduleId)
+        public async Task<ResponseDTO> GetFarmActivitiesActiveAsync(int pageIndex, int pageSize)
         {
-            var list = await _unitOfWork.farmActivityRepository.GetAllAsync();
-            list.Sort((y, x) => x.FarmActivitiesId.CompareTo(y.FarmActivitiesId));
+            var list = await _unitOfWork.farmActivityRepository.GetAllActive();
+
+            list = list
+                .Where(x => x.Schedule == null
+                         && x.Status == FarmActivityStatus.ACTIVE
+                         && x.EndDate >= DateOnly.FromDateTime(DateTime.Today))
+                .OrderByDescending(x => x.FarmActivitiesId)
+                .ToList();
 
             if (list.IsNullOrEmpty())
             {
                 return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);
             }
-            else
+
+            var resultView = _mapper.Map<List<FarmActivityView>>(list);
+
+            var pagination = new Pagination<FarmActivityView>
             {
-                var result = list.Where(x => x.Status == Domain.Enum.FarmActivityStatus.ACTIVE).ToList();
-                if(scheduleId != 0)
-                {
-            //        result = result.Where(x => x.ScheduleId == scheduleId).ToList();
-                }
-                if (list.IsNullOrEmpty())
-                {
-                    return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);
-                }
-                else
-                {
-                    var resultView = _mapper.Map<List<FarmActivityView>>(result);
-                    var pagination = new Pagination<FarmActivityView>
-                    {
-                        TotalItemCount = resultView.Count,
-                        PageSize = pageSize,
-                        PageIndex = pageIndex,
-                        Items = resultView.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList()
-                    };
-                    return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, pagination);
-                }
-            }
+                TotalItemCount = resultView.Count,
+                PageSize = pageSize,
+                PageIndex = pageIndex,
+                Items = resultView.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList()
+            };
+
+            return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, pagination);
         }
 
         public async Task<ResponseDTO> GetFarmActivitiesAsync(int pageIndex, int pageSize, ActivityType? type, FarmActivityStatus? status, int? month)
