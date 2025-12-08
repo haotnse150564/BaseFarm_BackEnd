@@ -16,5 +16,6 @@ namespace Infrastructure.ViewModel.Request
         public decimal? LightRequirement { get; set; }
         public string? WateringFrequency { get; set; }
         public string? Notes { get; set; }
+        public string? PlantStage { get; set; }
     }
 }
