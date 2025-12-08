@@ -165,14 +165,17 @@ namespace Application.Services.Implement
                         continue; // Hoặc xử lý lỗi tùy theo yêu cầu của bạn
                     }
 
+                    var vnTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+
                     IOTLog iotLog = new IOTLog
                     {
                         DevicesId = divces.DevicesId,
                         Pin = divces.Pin,
                         SensorName = divces.DeviceName,
                         Value = Convert.ToDouble(item.Value),
-                        Timestamp = DateTime.Now
+                        Timestamp = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vnTimeZone)
                     };
+
 
                     var listIotLog = await _unitOfWork.iotLogRepository.GetAllAsync();
                     // Sắp xếp giảm dần theo thời gian tạo
@@ -226,14 +229,15 @@ namespace Application.Services.Implement
             var logs = await _unitOfWork.iotLogRepository.GetAllAsync();
 
             var sb = new StringBuilder();
-            sb.AppendLine("IotLogId,DevicesId,VariableId,SensorName,Value,Timestamp");
+            sb.AppendLine("IotLogId,DevicesId,VariableId,DeviceName,SensorName,Value,Timestamp");
 
             foreach (var log in logs)
             {
-                sb.AppendLine($"{log.IotLogId},{log.DevicesId},{log.Pin},{log.SensorName},{log.Value},{log.Timestamp:yyyy-MM-dd HH:mm:ss}");
+                sb.AppendLine($"{log.IotLogId},{log.DevicesId},{log.Pin},{log.Device.DeviceName},{log.SensorName},{log.Value},{log.Timestamp:yyyy-MM-dd HH:mm:ss}");
             }
 
-            return Encoding.UTF8.GetBytes(sb.ToString());
+            // UTF8Encoding(true) => UTF-8 có BOM
+            return new UTF8Encoding(true).GetBytes(sb.ToString());
         }
 
 

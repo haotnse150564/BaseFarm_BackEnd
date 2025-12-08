@@ -89,10 +89,12 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_CREATE_CODE, ValidateScheduleRequest(schedule).Item2);
                 }
                 var checkStaff = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(request.StaffId, 0);
-                if (checkStaff != null && checkStaff.Any())
+
+                if ((checkStaff != null && checkStaff.Any(s => s.Status.Equals(Status.ACTIVE))))
                 {
                     return new ResponseDTO(Const.FAIL_CREATE_CODE, "Nhân viên đã được phân công ở một lịch khác!");
                 }
+
                 await _unitOfWork.scheduleRepository.AddAsync(schedule);
                 await _unitOfWork.SaveChangesAsync();
 
