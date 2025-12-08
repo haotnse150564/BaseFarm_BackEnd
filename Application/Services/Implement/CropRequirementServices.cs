@@ -243,7 +243,7 @@ namespace Application.Services.Implement
             // Kiểm tra có bản ghi nào cùng PlantStage nhưng khác Id
             var existed = list.Any(x => x.CropId == cropId
                                      && x.PlantStage == plantStage
-                                     && x.CropId != excludeId);
+                                     && x.CropRequirementId != excludeId);
 
             return !existed; // true nếu không trùng
         }
