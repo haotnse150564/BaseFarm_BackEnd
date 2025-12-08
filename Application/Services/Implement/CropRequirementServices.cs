@@ -196,10 +196,10 @@ namespace Application.Services.Implement
 
                 cropReq.PlantStage = plantStage;
                 cropReq.UpdatedDate = _currentTime.GetCurrentTime();
-                if (!await IsUniquePlantStageAsync(cropReq.CropId, plantStage, cropReq.CropRequirementId))
-                {
-                    return new ResponseDTO(Const.FAIL_READ_CODE, "Giai đoạn cây trồng này đã có sẵn trong mùa vụ");
-                }
+                //if (!await IsUniquePlantStageAsync(cropReq.CropId, plantStage, cropReq.CropRequirementId))
+                //{
+                //    return new ResponseDTO(Const.FAIL_READ_CODE, "Giai đoạn cây trồng này đã có sẵn trong mùa vụ");
+                //}
                 await _unitOfWork.cropRequirementRepository.UpdateAsync(cropReq);
                 await _unitOfWork.SaveChangesAsync();
                 var result = _mapper.Map<CropRequirementView>(cropReq);
