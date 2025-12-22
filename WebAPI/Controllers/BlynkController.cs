@@ -3,6 +3,7 @@ using Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
+using System.Text.Json;
 
 namespace WebAPI.Controllers
 {
@@ -16,19 +17,40 @@ namespace WebAPI.Controllers
             _blynkService = blynkService;
         }
 
-        [HttpGet("get-blynk-data")]
-        //[Authorize(Roles = "Manager")]
-        public async Task<IActionResult> GetBlynkData()
-        {
-            var data = await _blynkService.GetAllDatastreamValuesAsync();
-            return Ok(data);
-        }
+        //[HttpGet("get-blynk-data")]
+        ////[Authorize(Roles = "Manager")]
+        //public async Task<IActionResult> GetBlynkData()
+        //{
+        //    var data = await _blynkService.GetAllDatastreamValuesAsync();
+        //    return Ok(data);
+        //}
 
+        [HttpGet("get-blynk-data")]
+        [Authorize(Roles = "Manager")]
+        public async Task BlynkStream()
+        {
+            Response.Headers.Add("Content-Type", "text/event-stream");
+            Response.Headers.Add("Cache-Control", "no-cache");
+            Response.Headers.Add("Connection", "keep-alive");
+
+            while (true)
+            {
+                var data = await _blynkService.GetAllDatastreamValuesAsync();
+                if (data != null)
+                {
+                    var json = JsonSerializer.Serialize(data);
+                    await Response.WriteAsync($"data: {json}\n\n");
+                    await Response.Body.FlushAsync();
+                }
+                await Task.Delay(5000); 
+            }
+        }
         /// <summary>
         /// Turn the pump ON or OFF via Blynk Cloud
         /// </summary>
         /// <param name="state">true = ON, false = OFF</param>
         [HttpPost("pump")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> ControlPump([FromQuery] bool state)
         {
             bool result = await _blynkService.ControlPumpAsync(state);
@@ -54,6 +76,7 @@ namespace WebAPI.Controllers
         /// Set servo angle (0–180 degrees) via Blynk Cloud
         /// </summary>
         [HttpPost("servo")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> ControlServo([FromQuery] int angle)
         {
             if (angle < 0 || angle > 180)
@@ -88,6 +111,7 @@ namespace WebAPI.Controllers
         /// </summary>
         /// <param name="state">true = Manual, false = Auto</param>
         [HttpPost("manual-mode")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> SetManualMode([FromQuery] bool state)
         {
             bool result = await _blynkService.SetManualModeAsync(state);
@@ -110,7 +134,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("threshold/soil-low")]   // V8
-        //[Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> SetSoilLowThreshold([FromQuery] int value)
         {
             if (value < 0 || value > 100)
@@ -123,7 +147,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("threshold/soil-high")]  // V9
-        //[Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> SetSoilHighThreshold([FromQuery] int value)
         {
             if (value < 0 || value > 100)
@@ -136,7 +160,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("threshold/ldr-low")]    // V10
-        //[Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> SetLdrLowThreshold([FromQuery] int value)
         {
             if (value < 0 || value > 1023)
@@ -149,7 +173,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("threshold/ldr-high")]   // V11
-        //[Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> SetLdrHighThreshold([FromQuery] int value)
         {
             if (value < 0 || value > 1023)
@@ -185,6 +209,7 @@ namespace WebAPI.Controllers
         /// Bật/tắt đèn LED bổ sung (Grow Light) - Chỉ hoạt động khi ở chế độ Manual
         /// </summary>
         [HttpPost("light")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> ControlLight([FromQuery] bool state)
         {
             bool result = await _blynkService.ControlLightAsync(state);
@@ -197,7 +222,7 @@ namespace WebAPI.Controllers
         /// Cấu hình ngưỡng BẬT đèn khi trời tối (V13)
         /// </summary>
         [HttpPost("threshold/light-on")]
-        //[Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> SetLightOnThreshold([FromQuery] int value)
         {
             if (value < 0 || value > 1023)
@@ -213,7 +238,7 @@ namespace WebAPI.Controllers
         /// Cấu hình ngưỡng TẮT đèn khi trời sáng (V14)
         /// </summary>
         [HttpPost("threshold/light-off")]
-        //[Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> SetLightOffThreshold([FromQuery] int value)
         {
             if (value < 0 || value > 1023)
