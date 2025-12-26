@@ -6,6 +6,7 @@ using Domain.Enum;
 using Domain.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using static Application.ViewModel.Request.OrderRequest;
 using static Application.ViewModel.Response.OrderResponse;
@@ -36,110 +37,111 @@ namespace Application.Services.Implement
 
         public async Task<ResponseDTO> CreateOrderAsync(CreateOrderDTO request, HttpContext context)
         {
-            try
+            var strategy = _unitOfWork.Database.CreateExecutionStrategy();
+
+            return await strategy.ExecuteAsync(async () =>
             {
-                var user = await _jwtUtils.GetCurrentUserAsync();
-                using var transaction = await _unitOfWork.BeginTransactionAsync();
-                var errorMessages = new List<string>();
-
-                var productList = new Dictionary<long, Product>();
-
-                foreach (var item in request.OrderItems)
+                await using var transaction = await _unitOfWork.Database.BeginTransactionAsync();
+                try
                 {
-                    var product = await _unitOfWork.productRepository.GetProductById(item.ProductId);
-                    if (product == null)
-                        errorMessages.Add($"Product ID {item.ProductId} not found.");
-                    else if (product.Status == 0)
-                        errorMessages.Add($"Product ID {item.ProductId} is unavailable.");
-                    else if (product.StockQuantity < item.StockQuantity)
-                        errorMessages.Add($"Product ID {item.ProductId} not enough stock.");
-                    else
-                        productList[item.ProductId] = product; // Lưu lại để tránh truy vấn lại
-                }
+                    var user = await _jwtUtils.GetCurrentUserAsync();
 
-                if (errorMessages.Any())
-                {
-                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Order creation failed.", errorMessages);
-                }
+                    var errorMessages = new List<string>();
+                    var productList = new Dictionary<long, Product>();
 
-                var order = new Order
-                {
-                    CustomerId = user.AccountId,
-                    TotalPrice = 0,
-                    Status = PaymentStatus.PENDING, // Đang xử lý
-                    CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow),
-                    ShippingAddress = request.ShippingAddress,
-                };
-
-                await _unitOfWork.orderRepository.AddAsync(order);
-                await _unitOfWork.SaveChangesAsync(); // 🔥 Đảm bảo OrderId đã cập nhật
-
-                decimal totalPrice = 0;
-                var orderItems = new List<OrderDetail>();
-
-                foreach (var item in request.OrderItems)
-                {
-                    var product = productList[item.ProductId];
-
-                    var orderDetail = new OrderDetail
+                    // Validate products
+                    foreach (var item in request.OrderItems)
                     {
-                        OrderId = order.OrderId,
-                        ProductId = item.ProductId,
-                        Quantity = item.StockQuantity,
-                        UnitPrice = product.Price
+                        var product = await _unitOfWork.productRepository.GetProductById(item.ProductId);
+                        if (product == null)
+                            errorMessages.Add($"Product ID {item.ProductId} not found.");
+                        else if (product.Status == 0)
+                            errorMessages.Add($"Product ID {item.ProductId} is unavailable.");
+                        else if (product.StockQuantity < item.StockQuantity)
+                            errorMessages.Add($"Product ID {item.ProductId} not enough stock.");
+                        else
+                            productList[item.ProductId] = product;
+                    }
+
+                    if (errorMessages.Any())
+                    {
+                        return new ResponseDTO(Const.FAIL_CREATE_CODE, "Order creation failed.", errorMessages);
+                    }
+
+                    // Tạo Order
+                    var order = new Order
+                    {
+                        CustomerId = user.AccountId,
+                        TotalPrice = 0,
+                        Status = PaymentStatus.PENDING,
+                        CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow),
+                        ShippingAddress = request.ShippingAddress,
                     };
 
-                    await _unitOfWork.orderDetailRepository.AddAsync(orderDetail);
-                    orderItems.Add(orderDetail); // 🔥 Lưu ngay OrderDetail
+                    await _unitOfWork.orderRepository.AddAsync(order);
+                    await _unitOfWork.SaveChangesAsync(); // Lưu để lấy OrderId
 
-                    //product.StockQuantity -= item.StockQuantity;
-                    //if (product.StockQuantity == 0) product.Status = 0;
-                    await _unitOfWork.productRepository.UpdateAsync(product);
-                    totalPrice += (decimal)((product.Price ?? 0) * item.StockQuantity);
+                    decimal totalPrice = 0;
+                    var orderItems = new List<OrderDetail>();
+
+                    foreach (var item in request.OrderItems)
+                    {
+                        var product = productList[item.ProductId];
+
+                        var orderDetail = new OrderDetail
+                        {
+                            OrderId = order.OrderId,
+                            ProductId = item.ProductId,
+                            Quantity = item.StockQuantity,
+                            UnitPrice = product.Price
+                        };
+
+                        await _unitOfWork.orderDetailRepository.AddAsync(orderDetail);
+                        orderItems.Add(orderDetail);
+
+                        // Cập nhật tồn kho (bạn đang comment, nên mình bỏ comment lại)
+                        product.StockQuantity -= item.StockQuantity;
+                        if (product.StockQuantity == 0) product.Status = 0;
+
+                        await _unitOfWork.productRepository.UpdateAsync(product);
+
+                        totalPrice += (decimal)((product.Price ?? 0) * item.StockQuantity);
+                    }
+
+                    // Cập nhật tổng tiền
+                    order.TotalPrice = totalPrice;
+                    await _unitOfWork.orderRepository.UpdateAsync(order);
+                    await _unitOfWork.SaveChangesAsync();
+
+                    // Commit transaction
+                    await transaction.CommitAsync();
+
+                    // Tạo payment URL và mapping DTO
+                    var baseUrl = _configuration["BaseUrl"];
+                    var paymentUrl = $"{baseUrl}/api/vnpay/redirect?orderId={order.OrderId}";
+
+                    var orderDetailDTOs = orderItems.Select(od => new OrderDetailDTO
+                    {
+                        ProductId = od.ProductId,
+                        Images = productList[od.ProductId].Images,
+                        ProductName = productList[od.ProductId].ProductName,
+                        UnitPrice = od.UnitPrice,
+                        Quantity = od.Quantity
+                    }).ToList();
+
+                    var orderResultDTO = _mapper.Map<CreateOrderResultDTO>(order);
+                    orderResultDTO.OrderItems = _mapper.Map<List<ViewProductDTO>>(orderDetailDTOs);
+                    orderResultDTO.PaymentUrl = paymentUrl;
+
+                    return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Order created. Redirect to payment.", orderResultDTO);
                 }
-
-                order.TotalPrice = totalPrice;
-                await _unitOfWork.orderRepository.UpdateAsync(order);
-                await _unitOfWork.SaveChangesAsync(); // 🔥 Lưu thay đổi Order
-
-                // Commit transaction sau khi tất cả dữ liệu được thêm thành công
-                await transaction.CommitAsync();
-
-                var paymentModel = new PaymentInformationModel
+                catch (Exception ex)
                 {
-                    OrderId = order.OrderId, // Sử dụng OrderId của hệ thống bạn
-                    Amount = (double)totalPrice,
-                    OrderDescription = $"Thanh toán đơn hàng #{order.OrderId}",
-                    OrderType = "billpayment",
-                    Name = "IOT Base Farm"
-                };
-
-                //var paymentUrl = _vnPayService.CreatePaymentUrl(paymentModel, context);
-                var baseUrl = _configuration["BaseUrl"];
-                var paymentUrl = $"{baseUrl}/api/vnpay/redirect?orderId={order.OrderId}";
-
-
-
-                // 🔥 Mapping lại OrderDetail sang OrderDetailDTO có ProductName
-                var orderDetailDTOs = orderItems.Select(od => new OrderDetailDTO
-                {
-                    ProductId = od.ProductId,
-                    Images = productList[od.ProductId].Images,
-                    ProductName = productList[od.ProductId].ProductName, // ✅ Lấy ProductName từ danh sách đã lưu
-                    UnitPrice = od.UnitPrice,
-                    Quantity = od.Quantity
-                }).ToList();
-
-                var orderResultDTO = _mapper.Map<CreateOrderResultDTO>(order);
-                orderResultDTO.OrderItems = _mapper.Map<List<ViewProductDTO>>(orderDetailDTOs);
-                orderResultDTO.PaymentUrl = paymentUrl;
-
-                return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Order created. Redirect to payment.", orderResultDTO);
-            }
-            catch (Exception ex)
-            {
-                return new ResponseDTO(Const.ERROR_EXCEPTION, "An error occurred while creating the order.", ex.Message);
-            }
+                    await transaction.RollbackAsync();
+                    // Log lỗi nếu cần
+                    return new ResponseDTO(Const.ERROR_EXCEPTION, "An error occurred while creating the order.", ex.Message);
+                }
+            });
         }
 
         public async Task<ResponseDTO> GetAllOrderAsync(int pageIndex, int pageSize, PaymentStatus? status)

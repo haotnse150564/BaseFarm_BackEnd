@@ -38,9 +38,9 @@ namespace Infrastructure.Repositories.Implement
             var result = await _context.Schedule
             .Include(a => a.AssignedToNavigation)
             .Include(a => a.Crop).ThenInclude(c => c.CropRequirement)
-            .Include(a => a.AssignedToNavigation)
+            .Include(a => a.AssignedToNavigation)            
             .ThenInclude(a => a.AccountProfile)
-            // .Include(a => a.FarmActivities)
+            .Include(a => a.FarmActivities)
             .Include(a => a.FarmDetails)
             .Where(x => x.AssignedTo == staffId)
             .OrderByDescending(x => x.ScheduleId)

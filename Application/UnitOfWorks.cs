@@ -5,6 +5,7 @@ using Domain.Model;
 using Infrastructure.Repositories;
 using Infrastructure.Repositories.Implement;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Infrastructure
@@ -35,6 +36,7 @@ namespace Infrastructure
         private IIOTLogRepository _iotLogRepository;
         private IFarmEquipmentRepository _farmEquipmentRepository;
 
+        public DatabaseFacade Database => _context.Database;
         public UnitOfWorks(AppDbContext context, ICurrentTime currentTime, IClaimsServices claimsServices, IProductRepository productRepository
             , IFeedbackRepository feedbackRepository, IAccountProfileRepository accountProfileRepository, IOrderRepository orderRepository
             , IOrderDetailRepository orderDetailRepository, IPaymentRepository paymentRepository, IScheduleRepository scheduleRepository
