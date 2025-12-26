@@ -15,20 +15,16 @@ RUN dotnet restore WebAPI/WebAPI.csproj
 # Copy source code
 COPY . .
 
-# Build Release
-RUN dotnet build WebAPI/WebAPI.csproj -c Release -o /app/build
+# Build Release (bật TieredCompilation để giảm RAM)
+RUN dotnet build WebAPI/WebAPI.csproj -c Release -o /app/build /p:TieredCompilation=true
 
 # Stage 2: Publish
 FROM build AS publish
 
-# Publish Release + ReadyToRun + TieredCompilation (TẮT Trimmed để tránh lỗi Npgsql)
+# Publish Release đơn giản, KHÔNG ReadyToRun, KHÔNG Trimmed, KHÔNG --no-restore
 RUN dotnet publish WebAPI/WebAPI.csproj \
     -c Release \
-    -o /app/publish \
-    /p:PublishReadyToRun=true \
-    /p:TieredCompilation=true \
-    --self-contained false \
-    --no-restore
+    -o /app/publish
 
 # Stage 3: Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
@@ -36,7 +32,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-# Render dùng port động qua biến môi trường $PORT
+# Render dùng port động
 ENV ASPNETCORE_URLS=http://0.0.0.0:$PORT
 
 EXPOSE 8080
