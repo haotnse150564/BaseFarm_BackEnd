@@ -45,22 +45,44 @@ namespace Application.Services.Implement
             _jwtUtils = jwtUtils;
             _inventory = inventory;
         }
+        // Kiểm tra ngày bắt đầu và kết thúc của schedule
         public (bool, string) ValidateScheduleRequest(Schedule schedule)
         {
+            // Kiểm tra ngày bắt đầu/kết thúc của schedule
             if (schedule.StartDate == null || schedule.EndDate == null)
             {
-                return (false, "Ngày bắt đầu và ngày kết thúc không được để trống.");
+                return (false, "Ngày bắt đầu và ngày kết thúc của lịch không được để trống.");
             }
             if (schedule.StartDate > schedule.EndDate)
             {
                 return (false, "Ngày bắt đầu phải trước ngày kết thúc.");
             }
-            if (schedule.Quantity <= 0)
+
+            // Kiểm tra farm activity
+            if (schedule.FarmActivities == null)
             {
-                return (false, "Số lượng phải lớn hơn 0.");
+                return (false, "Hoạt động nông trại không được để trống.");
             }
+            if (schedule.FarmActivities.StartDate == null || schedule.FarmActivities.EndDate == null)
+            {
+                return (false, "Ngày bắt đầu và kết thúc của hoạt động không được để trống.");
+            }
+            if (schedule.FarmActivities.StartDate > schedule.FarmActivities.EndDate)
+            {
+                return (false, "Ngày bắt đầu của hoạt động phải trước ngày kết thúc.");
+            }
+
+            // Kiểm tra hoạt động nằm trong khoảng của schedule
+            if (schedule.FarmActivities.StartDate < schedule.StartDate
+                || schedule.FarmActivities.EndDate > schedule.EndDate)
+            {
+                return (false, $"Hoạt động từ {schedule.FarmActivities.StartDate:dd/MM/yyyy} đến {schedule.FarmActivities.EndDate:dd/MM/yyyy} nằm ngoài khoảng thời gian của lịch.");
+            }
+
+            // Vì mỗi schedule chỉ có 1 farm activity, không cần check trùng ngày nhiều activity
             return (true, string.Empty);
         }
+
 
         #region Schedule mới
         public async Task<ResponseDTO> CreateSchedulesAsync(ScheduleRequest request)
