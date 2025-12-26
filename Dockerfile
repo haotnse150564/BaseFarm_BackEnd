@@ -9,24 +9,23 @@ COPY Domain/*.csproj ./Domain/
 COPY Infrastructure/*.csproj ./Infrastructure/
 COPY WebAPI/*.csproj ./WebAPI/
 
-# Restore dependencies (không cần --no-restore nữa)
+# Restore dependencies
 RUN dotnet restore WebAPI/WebAPI.csproj
 
-# Copy toàn bộ source code
+# Copy source code
 COPY . .
 
-# Build ở Release mode và bật các option tối ưu
-RUN dotnet build WebAPI/WebAPI.csproj -c Release -o /app/build /p:TieredCompilation=true
+# Build Release
+RUN dotnet build WebAPI/WebAPI.csproj -c Release -o /app/build
 
 # Stage 2: Publish
 FROM build AS publish
 
-# Publish ở Release, bật ReadyToRun và Trimmed để giảm RAM + startup nhanh
+# Publish Release + ReadyToRun + TieredCompilation (TẮT Trimmed để tránh lỗi Npgsql)
 RUN dotnet publish WebAPI/WebAPI.csproj \
     -c Release \
     -o /app/publish \
     /p:PublishReadyToRun=true \
-    /p:PublishTrimmed=true \
     /p:TieredCompilation=true \
     --self-contained false \
     --no-restore
@@ -37,11 +36,9 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-# Expose port (Render sẽ tự map, nhưng giữ lại để rõ ràng)
-EXPOSE 8080
-# Hoặc nếu bạn dùng port khác trong code, đổi thành 5255 hoặc $PORT
-
-# Render khuyến nghị dùng $PORT
+# Render dùng port động qua biến môi trường $PORT
 ENV ASPNETCORE_URLS=http://0.0.0.0:$PORT
+
+EXPOSE 8080
 
 ENTRYPOINT ["dotnet", "WebAPI.dll"]
