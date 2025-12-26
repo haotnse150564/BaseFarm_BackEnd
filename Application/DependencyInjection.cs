@@ -91,8 +91,19 @@ public static class DependencyInjection
         services.AddSingleton<ICurrentTime, CurrentTime>();
         // Use local DB
         //services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(config.GetConnectionString("Default")));
+        //    services.AddDbContext<AppDbContext>(options =>
+        //options.UseNpgsql(config.GetConnectionString("Default")));
         services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(config.GetConnectionString("Default")));
+    options.UseNpgsql(
+        config.GetConnectionString("Default"),
+        npgsqlOptions => npgsqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 10,                          // Thử lại tối đa 10 lần
+            maxRetryDelay: TimeSpan.FromSeconds(30),    // Khoảng cách tối đa giữa các lần retry
+            errorCodesToAdd: null                       // null = retry tất cả các lỗi transient mà Npgsql nhận diện
+                                                        // (bao gồm timeout, deadlock 40P01, connection exception...)
+        )
+    )
+);
 
         services.AddAutoMapper(typeof(MapperConfigs).Assembly);
         //AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
