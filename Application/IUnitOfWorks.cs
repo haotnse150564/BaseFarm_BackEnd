@@ -1,6 +1,7 @@
 ﻿
 
 using Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Application
@@ -8,6 +9,7 @@ namespace Application
     public interface IUnitOfWorks : IDisposable
     {
         Task<IDbContextTransaction> BeginTransactionAsync();
+        DatabaseFacade Database { get; }
         Task<int> SaveChangesAsync();
         IProductRepository productRepository { get; }
         IFeedbackRepository feedbackRepository { get; }
