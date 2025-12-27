@@ -320,7 +320,7 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_CREATE_CODE, "Ngày kết thúc của hoạt động phải trước hoặc bằng ngày kết thúc của lịch.");
                 }
 
-                
+
 
                 // Lấy tất cả lịch của staff (dùng hàm hiện tại của bạn)
                 var allSchedulesOfStaff = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(request.StaffId, 0);
@@ -466,26 +466,27 @@ namespace Application.Services.Implement
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, "Nhân viên không tồn tại.");
                 }
-                var checkStaff = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(schedule.AssignedTo, 0);
-                foreach (var item in checkStaff)
+                var checkStaff = await _unitOfWork.scheduleRepository.GetScheduleByStaffIdAsync(staffId, 0);
                 {
-                    if (item != null && item.Status == Status.ACTIVE)
+                    if (checkStaff.Any())
                     {
                         return new ResponseDTO(Const.FAIL_CREATE_CODE, "Nhân viên đã được phân công ở một lịch khác!");
                     }
+
+                    schedule.AssignedTo = staffId;
+                    schedule.UpdatedAt = _currentTime.GetCurrentTime();
+
+                    await _unitOfWork.scheduleRepository.UpdateAsync(schedule);
+                    await _unitOfWork.SaveChangesAsync();
+
+                    // In ra kết quả
+                    var result = _mapper.Map<ScheduleResponseView>(schedule);
+                    var manager = await _account.GetByIdAsync(schedule.ManagerId);
+                    result.ManagerName = manager?.AccountProfile?.Fullname;
+                    result.StaffName = staffInfo?.AccountProfile?.Fullname;
+
+                    return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, result);
                 }
-                schedule.AssignedTo = staffId;
-                schedule.UpdatedAt = _currentTime.GetCurrentTime();
-                await _unitOfWork.scheduleRepository.UpdateAsync(schedule);
-                await _unitOfWork.SaveChangesAsync();
-
-                // In ra kết quả
-                var result = _mapper.Map<ScheduleResponseView>(schedule);
-                var manager = await _account.GetByIdAsync(schedule.ManagerId);
-                result.ManagerName = manager?.AccountProfile?.Fullname;
-                result.StaffName = staffInfo?.AccountProfile?.Fullname;
-
-                return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, result);
             }
 
             catch

@@ -11,6 +11,7 @@ namespace Infrastructure.Repositories
     public interface IScheduleRepository : IGenericRepository<Schedule>
     {
         Task<List<Schedule?>> GetByStaffIdAsync(long staffId, int month);
+        Task<List<Schedule?>> GetScheduleByStaffIdAsync(long staffId, int month);
         Task<Schedule?> GetByIdWithFarmActivitiesAsync(long scheduleId);
         Task<Schedule?> GetByCropId(long cropId);
 

@@ -51,7 +51,24 @@ namespace Infrastructure.Repositories.Implement
             }
             return result;
         }
-
+        public async Task<List<Schedule?>> GetScheduleByStaffIdAsync(long staffId, int month)
+        {
+            var result = await _context.Schedule
+            .Include(a => a.AssignedToNavigation)
+            .Include(a => a.Crop).ThenInclude(c => c.CropRequirement)
+            .Include(a => a.AssignedToNavigation)
+            .ThenInclude(a => a.AccountProfile)
+            .Include(a => a.FarmActivities)
+            .Include(a => a.FarmDetails)
+            .Where(x => x.AssignedTo == staffId && x.Status == Domain.Enum.Status.ACTIVE)
+            .OrderByDescending(x => x.ScheduleId)
+            .ToListAsync();
+            if (month > 0 && month < 12)
+            {
+                result = result.Where(x => x.StartDate.HasValue && x.StartDate.Value.Month == month).ToList();
+            }
+            return result;
+        }
         public async Task<Schedule?> GetByIdWithFarmActivitiesAsync(long scheduleId)
         {
             return await _context.Schedule
