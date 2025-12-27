@@ -88,31 +88,31 @@ namespace Application.Services.Implement
                 {
                     return new ResponseDTO(Const.FAIL_CREATE_CODE, ValidateScheduleRequest(schedule).Item2);
                 }
-                //var checkStaff = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(request.StaffId, 0);
+                var checkStaff = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(request.StaffId, 0);
 
-                //if ((checkStaff != null && checkStaff.Any(s => s.Status.Equals(Status.ACTIVE))))
-                //{
-                //    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Nhân viên đã được phân công ở một lịch khác!");
-                //}
-
-                // Lấy tất cả lịch của staff (có thể tối ưu chỉ lấy các field cần thiết)
-                var existingSchedules = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(request.StaffId, 0);
-
-                // Kiểm tra chồng lấn thời gian chỉ với các lịch đang ACTIVE
-                var hasOverlap = existingSchedules.Any(s =>
-                    s.StartDate.HasValue &&
-                    s.EndDate.HasValue &&
-                    schedule.StartDate.HasValue &&
-                    schedule.EndDate.HasValue &&
-                    schedule.StartDate < s.EndDate &&   // lịch mới bắt đầu trước khi lịch cũ kết thúc
-                    schedule.EndDate > s.StartDate      // lịch mới kết thúc sau khi lịch cũ bắt đầu
-                );
-
-                if (hasOverlap)
+                if ((checkStaff != null && checkStaff.Any(s => s.Status.Equals(Status.ACTIVE))))
                 {
-                    return new ResponseDTO(Const.FAIL_CREATE_CODE,
-                        "Thời gian lịch mới bị chồng lấn với lịch đang active của nhân viên!");
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Nhân viên đã được phân công ở một lịch khác!");
                 }
+
+                //// Lấy tất cả lịch của staff (có thể tối ưu chỉ lấy các field cần thiết)
+                //var existingSchedules = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(request.StaffId, 0);
+
+                //// Kiểm tra chồng lấn thời gian chỉ với các lịch đang ACTIVE
+                //var hasOverlap = existingSchedules.Any(s =>
+                //    s.StartDate.HasValue &&
+                //    s.EndDate.HasValue &&
+                //    schedule.StartDate.HasValue &&
+                //    schedule.EndDate.HasValue &&
+                //    schedule.StartDate < s.EndDate &&   // lịch mới bắt đầu trước khi lịch cũ kết thúc
+                //    schedule.EndDate > s.StartDate      // lịch mới kết thúc sau khi lịch cũ bắt đầu
+                //);
+
+                //if (hasOverlap)
+                //{
+                //    return new ResponseDTO(Const.FAIL_CREATE_CODE,
+                //        "Thời gian lịch mới bị chồng lấn với lịch đang active của nhân viên!");
+                //}
 
                 await _unitOfWork.scheduleRepository.AddAsync(schedule);
                 await _unitOfWork.SaveChangesAsync();
@@ -224,15 +224,47 @@ namespace Application.Services.Implement
                 // Map dữ liệu mới vào schedule cũ
                 var updatedSchedule = _mapper.Map(request, schedule);
                 updatedSchedule.UpdatedAt = _currentTime.GetCurrentTime();
-                if (!ValidateScheduleRequest(schedule).Item1)
+                //if (!ValidateScheduleRequest(schedule).Item1)
+                //{
+                //    return new ResponseDTO(Const.FAIL_CREATE_CODE, ValidateScheduleRequest(schedule).Item2);
+                //}
+                //var checkStaff = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(request.StaffId, 0);
+                //if (checkStaff != null && checkStaff.Any())
+                //{
+                //    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Nhân viên đã được phân công ở một lịch khác!");
+                //}
+
+                // Validate request cơ bản (sử dụng updatedSchedule để có dữ liệu mới nhất)
+                if (!ValidateScheduleRequest(updatedSchedule).Item1)
                 {
-                    return new ResponseDTO(Const.FAIL_CREATE_CODE, ValidateScheduleRequest(schedule).Item2);
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, ValidateScheduleRequest(updatedSchedule).Item2);
                 }
-                var checkStaff = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(request.StaffId, 0);
-                if (checkStaff != null && checkStaff.Any())
+
+                // Lấy tất cả lịch của staff (dùng hàm hiện tại của bạn)
+                var allSchedulesOfStaff = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(request.StaffId, 0);
+
+                // Loại bỏ chính schedule đang được update (vì nó là cùng lịch, được phép overlap với chính nó)
+                var otherSchedules = allSchedulesOfStaff
+                    .Where(s => s.ScheduleId != scheduleId)
+                    .ToList();
+
+                // Kiểm tra xem có lịch KHÁC nào đang ACTIVE và bị overlap thời gian với dữ liệu mới không
+                var hasOverlapWithActiveSchedule = otherSchedules.Any(s =>
+                    s.Status == Status.ACTIVE &&
+                    s.StartDate.HasValue &&
+                    s.EndDate.HasValue &&
+                    updatedSchedule.StartDate.HasValue &&
+                    updatedSchedule.EndDate.HasValue &&
+                    updatedSchedule.StartDate < s.EndDate &&
+                    updatedSchedule.EndDate > s.StartDate
+                );
+
+                if (hasOverlapWithActiveSchedule)
                 {
-                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Nhân viên đã được phân công ở một lịch khác!");
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE,
+                        "Thời gian cập nhật bị chồng lấn với một lịch đang active khác của nhân viên này!");
                 }
+
                 await _unitOfWork.scheduleRepository.UpdateAsync(updatedSchedule);
                 await _unitOfWork.SaveChangesAsync();
 
