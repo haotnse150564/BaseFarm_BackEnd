@@ -240,6 +240,56 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_CREATE_CODE, ValidateScheduleRequest(updatedSchedule).Item2);
                 }
 
+                // Lấy FarmActivity mới từ request
+                var newActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(request.FarmActivitiesId);
+                if (newActivity == null)
+                {
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Hoạt động không tồn tại.");
+                }
+
+                var today = _currentTime.GetCurrentTime(); // Ngày hiện tại 
+
+                // Validate thời gian activity không trong quá khứ
+                if (newActivity.StartDate.HasValue && newActivity.StartDate.Value < today.AddDays(-1)) // Cho phép hôm qua
+                {
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Ngày bắt đầu của hoạt động không được trước hôm qua.");
+                }
+                if (newActivity.EndDate.HasValue && newActivity.EndDate.Value < today)
+                {
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Ngày kết thúc của hoạt động không được trong quá khứ.");
+                }
+
+                // Validate thời gian activity phải nằm trong khung của Schedule
+                if (updatedSchedule.StartDate.HasValue && newActivity.StartDate.HasValue &&
+                    newActivity.StartDate.Value < updatedSchedule.StartDate.Value)
+                {
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Ngày bắt đầu của hoạt động phải sau hoặc bằng ngày bắt đầu của lịch.");
+                }
+                if (updatedSchedule.EndDate.HasValue && newActivity.EndDate.HasValue &&
+                    newActivity.EndDate.Value > updatedSchedule.EndDate.Value)
+                {
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Ngày kết thúc của hoạt động phải trước hoặc bằng ngày kết thúc của lịch.");
+                }
+
+                var currentActivityId = schedule.FarmActivitiesId;
+                var requestedActivityId = request.FarmActivitiesId;
+
+                if (currentActivityId != requestedActivityId && currentActivityId > 0)
+                {
+                    var currentActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(currentActivityId);
+                    if (currentActivity == null)
+                    {
+                        return new ResponseDTO(Const.FAIL_CREATE_CODE, "Hoạt động hiện tại không tồn tại hoặc đã bị xóa.");
+                    }
+
+                    // Thay ActivityStatus.COMPLETED bằng enum thực tế của bạn (ví dụ: Completed, Done, Finished)
+                    if (currentActivity.Status != FarmActivityStatus.COMPLETED)
+                    {
+                        return new ResponseDTO(Const.FAIL_CREATE_CODE,
+                            "Không thể cập nhật sang hoạt động mới vì hoạt động hiện tại chưa được hoàn thành.");
+                    }
+                }
+
                 // Lấy tất cả lịch của staff (dùng hàm hiện tại của bạn)
                 var allSchedulesOfStaff = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(request.StaffId, 0);
 
