@@ -467,9 +467,12 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_READ_CODE, "Nhân viên không tồn tại.");
                 }
                 var checkStaff = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(schedule.AssignedTo, 0);
-                if (checkStaff != null && checkStaff.Any())
+                foreach (var item in checkStaff)
                 {
-                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Nhân viên đã được phân công ở một lịch khác!");
+                    if (item != null && item.Status == Status.ACTIVE)
+                    {
+                        return new ResponseDTO(Const.FAIL_CREATE_CODE, "Nhân viên đã được phân công ở một lịch khác!");
+                    }
                 }
                 schedule.AssignedTo = staffId;
                 schedule.UpdatedAt = _currentTime.GetCurrentTime();
