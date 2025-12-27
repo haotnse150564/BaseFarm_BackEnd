@@ -14,7 +14,6 @@ using System.Drawing.Printing;
 using System.Threading.Tasks;
 using static Infrastructure.ViewModel.Response.CropRequirementResponse;
 using static Infrastructure.ViewModel.Response.ScheduleResponse;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using ResponseDTO = Infrastructure.ViewModel.Response.ScheduleResponse.ResponseDTO;
 
 namespace Application.Services.Implement
@@ -46,50 +45,22 @@ namespace Application.Services.Implement
             _jwtUtils = jwtUtils;
             _inventory = inventory;
         }
-        // Kiểm tra ngày bắt đầu và kết thúc của schedule
-        public (bool, string) ValidateScheduleRequest(Schedule schedule, FarmActivity farmActivity)
+        public (bool, string) ValidateScheduleRequest(Schedule schedule)
         {
-            // Kiểm tra ngày bắt đầu/kết thúc của schedule
             if (schedule.StartDate == null || schedule.EndDate == null)
             {
-                return (false, "Ngày bắt đầu và ngày kết thúc của lịch không được để trống.");
+                return (false, "Ngày bắt đầu và ngày kết thúc không được để trống.");
             }
             if (schedule.StartDate > schedule.EndDate)
             {
                 return (false, "Ngày bắt đầu phải trước ngày kết thúc.");
             }
-
-            //Kiểm tra farm activity
-            if (farmActivity == null)
+            if (schedule.Quantity <= 0)
             {
-                return (false, "Hoạt động nông trại không được để trống.");
+                return (false, "Số lượng phải lớn hơn 0.");
             }
-            if (farmActivity.StartDate == null || farmActivity.EndDate == null)
-            {
-                return (false, "Ngày bắt đầu và kết thúc của hoạt động không được để trống.");
-            }
-            if (farmActivity.StartDate > farmActivity.EndDate)
-            {
-                return (false, "Ngày bắt đầu của hoạt động phải trước ngày kết thúc.");
-            }
-
-            // Kiểm tra hoạt động nằm trong khoảng của schedule
-            if (farmActivity.StartDate < schedule.StartDate
-                || farmActivity.EndDate > schedule.EndDate)
-            {
-                return (false, $"Hoạt động từ {farmActivity.StartDate:dd/MM/yyyy} đến {farmActivity.EndDate:dd/MM/yyyy} nằm ngoài khoảng thời gian của lịch.");
-            }
-            // Kiểm tra ngày bắt đầu của hoạt động phải ít nhất là hôm nay
-            if (farmActivity.StartDate < DateOnly.FromDateTime(DateTime.Today))
-            {
-                return (false, "Ngày bắt đầu của hoạt động phải từ hôm nay trở đi.");
-            }
-
-
-            // Vì mỗi schedule chỉ có 1 farm activity, không cần check trùng ngày nhiều activity
             return (true, string.Empty);
         }
-
 
         #region Schedule mới
         public async Task<ResponseDTO> CreateSchedulesAsync(ScheduleRequest request)
@@ -113,16 +84,34 @@ namespace Application.Services.Implement
                 {
                     return new ResponseDTO(Const.FAIL_CREATE_CODE, "Không tìm thấy cây trồng yêu cầu.");
                 }
-                var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(request.FarmActivitiesId);
-                if (!ValidateScheduleRequest(schedule, farmActivity).Item1)
+                if(!ValidateScheduleRequest(schedule).Item1)
                 {
-                    return new ResponseDTO(Const.FAIL_CREATE_CODE, ValidateScheduleRequest(schedule, farmActivity).Item2);
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, ValidateScheduleRequest(schedule).Item2);
                 }
-                var checkStaff = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(request.StaffId, 0);
+                //var checkStaff = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(request.StaffId, 0);
 
-                if ((checkStaff != null && checkStaff.Any(s => s.Status.Equals(Status.ACTIVE))))
+                //if ((checkStaff != null && checkStaff.Any(s => s.Status.Equals(Status.ACTIVE))))
+                //{
+                //    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Nhân viên đã được phân công ở một lịch khác!");
+                //}
+
+                // Lấy tất cả lịch của staff (có thể tối ưu chỉ lấy các field cần thiết)
+                var existingSchedules = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(request.StaffId, 0);
+
+                // Kiểm tra chồng lấn thời gian chỉ với các lịch đang ACTIVE
+                var hasOverlap = existingSchedules.Any(s =>
+                    s.StartDate.HasValue &&
+                    s.EndDate.HasValue &&
+                    schedule.StartDate.HasValue &&
+                    schedule.EndDate.HasValue &&
+                    schedule.StartDate < s.EndDate &&   // lịch mới bắt đầu trước khi lịch cũ kết thúc
+                    schedule.EndDate > s.StartDate      // lịch mới kết thúc sau khi lịch cũ bắt đầu
+                );
+
+                if (hasOverlap)
                 {
-                    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Nhân viên đã được phân công ở một lịch khác!");
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE,
+                        "Thời gian lịch mới bị chồng lấn với lịch đang active của nhân viên!");
                 }
 
                 await _unitOfWork.scheduleRepository.AddAsync(schedule);
@@ -233,12 +222,11 @@ namespace Application.Services.Implement
                 }
 
                 // Map dữ liệu mới vào schedule cũ
-                var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(request.FarmActivitiesId);
                 var updatedSchedule = _mapper.Map(request, schedule);
                 updatedSchedule.UpdatedAt = _currentTime.GetCurrentTime();
-                if (!ValidateScheduleRequest(schedule, farmActivity).Item1)
+                if (!ValidateScheduleRequest(schedule).Item1)
                 {
-                    return new ResponseDTO(Const.FAIL_CREATE_CODE, ValidateScheduleRequest(schedule, farmActivity).Item2);
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, ValidateScheduleRequest(schedule).Item2);
                 }
                 var checkStaff = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(request.StaffId, 0);
                 if (checkStaff != null && checkStaff.Any())
@@ -371,7 +359,10 @@ namespace Application.Services.Implement
                 }
                 schedule.AssignedTo = staffId;
                 schedule.UpdatedAt = _currentTime.GetCurrentTime();
-
+                if (!ValidateScheduleRequest(schedule).Item1)
+                {
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, ValidateScheduleRequest(schedule).Item2);
+                }
                 await _unitOfWork.scheduleRepository.UpdateAsync(schedule);
                 await _unitOfWork.SaveChangesAsync();
 
@@ -409,12 +400,11 @@ namespace Application.Services.Implement
                 }
 
                 // Cập nhật activity
-                var farmactivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(activityId);
                 schedule.FarmActivitiesId = activityId;
                 schedule.UpdatedAt = _currentTime.GetCurrentTime();
-                if (!ValidateScheduleRequest(schedule, farmactivity).Item1)
+                if (!ValidateScheduleRequest(schedule).Item1)
                 {
-                    return new ResponseDTO(Const.FAIL_CREATE_CODE, ValidateScheduleRequest(schedule, farmactivity).Item2);
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, ValidateScheduleRequest(schedule).Item2);
                 }
                 // Lưu thay đổi
                 _unitOfWork.scheduleRepository.Update(schedule);
