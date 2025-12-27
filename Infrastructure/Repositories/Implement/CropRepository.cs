@@ -28,6 +28,7 @@ namespace Infrastructure.Repositories.Implement
                 .Include(s => s.Schedules).ThenInclude(s => s.FarmActivities)
                 .Include(p => p.Product)
                 .Include(cr => cr.CropRequirement)
+                .Include(ca => ca.Category)
                 .ToListAsync();
         }
 

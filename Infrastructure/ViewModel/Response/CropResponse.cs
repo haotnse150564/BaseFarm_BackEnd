@@ -20,6 +20,7 @@ namespace Infrastructure.ViewModel.Response
             public string? Images { get; set; }
             public string? Status { get; set; }
             public string? Origin { get; set; }
+            public long? CategoryId { get; set; }
             public List<CropRequirementResponse.CropRequirementView>? CropRequirement { get; set; }
 
     }
