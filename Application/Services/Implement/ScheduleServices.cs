@@ -397,7 +397,7 @@ namespace Application.Services.Implement
 
                 // Map sang response view
                 var result = _mapper.Map<ScheduleResponseView>(schedule);
-
+                result.Staff.AccountId = schedule.AssignedTo;
                 // Lấy thông tin manager
                 var manager = await _account.GetByIdAsync(schedule.ManagerId);
                 result.ManagerName = manager?.AccountProfile?.Fullname;
