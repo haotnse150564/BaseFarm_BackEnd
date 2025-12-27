@@ -71,7 +71,18 @@ namespace WebAPI.Services
             }
             return _mapper.Map<ViewAccount>(newAccount);
         }
+        public async Task<List<AvailableStaffDTO>> GetAvailableStaffAsync()
+        {
+            var availableStaff = await _unitOfWork.accountRepository.GetAvailableStaffAsync();
 
+            return availableStaff.Select(s => new AvailableStaffDTO
+            {
+                AccountId = s.AccountId,
+                Email = s.Email ?? "",
+                FullName = s.AccountProfile?.Fullname ?? "Chưa có hồ sơ",
+                Phone = s.AccountProfile?.Phone ?? ""
+            }).ToList();
+        }
         public async Task<Pagination<ViewAccount>> GetAllAccountAsync(int pageSize, int pageIndex, AccountStatus? status, Roles? role)
         {
             try

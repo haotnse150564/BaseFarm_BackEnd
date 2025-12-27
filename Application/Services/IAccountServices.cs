@@ -24,6 +24,7 @@ namespace Application.Services
         Task<ViewAccount> UpdateRoleForUser(long id, int roleId);
         Task<ResponseDTO> ChangePassword(ChangePasswordDTO request);
         Task<ResponseDTO> ChangePasswordByUserID(long accountID, string password);
+        Task<List<AvailableStaffDTO>> GetAvailableStaffAsync();
 
     }
 }
