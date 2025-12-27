@@ -11,5 +11,7 @@ namespace Infrastructure.Repositories
         Task<List<Account>> GetAllAccountWithProfiles(AccountStatus? status, Roles? role);
         Task<Account> GetByEmail(string email);
 
+        Task<List<Account>> GetAvailableStaffAsync();
+
     }
 }

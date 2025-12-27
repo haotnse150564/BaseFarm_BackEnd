@@ -1,10 +1,12 @@
 ﻿using Application.Services;
+using Application.Services.Implement;
 using Domain.Enum;
 using Infrastructure.ViewModel.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Services;
 using static Infrastructure.ViewModel.Request.AccountRequest;
+using static Infrastructure.ViewModel.Response.AccountResponse;
 
 namespace WebAPI.Controllers
 {
@@ -124,6 +126,19 @@ namespace WebAPI.Controllers
             if (result != null)
                 return Ok(result);
             return BadRequest("Failed to update password.");
+        }
+
+        /// <summary>
+        /// Lấy danh sách staff đang rảnh (không có lịch ACTIVE vào ngày hiện tại)
+        /// Chỉ Manager mới được truy cập
+        /// </summary>
+        [HttpGet("available-staff")]        
+        public async Task<ActionResult<ResponseDTO>> GetAvailableStaff()
+        {
+            
+            var availableStaff = await _accountServices.GetAvailableStaffAsync();
+            return Ok(availableStaff);
+
         }
     }
 }

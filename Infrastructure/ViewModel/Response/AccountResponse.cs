@@ -26,6 +26,15 @@ namespace Infrastructure.ViewModel.Response
             public string UpdatedAt { get; set; }
             public AccountProfileResponse.ProfileResponseDTO? AccountProfile { get; set; }
         }
+
+        public class AvailableStaffDTO
+        {
+            public long AccountId { get; set; }
+            public string Email { get; set; } = string.Empty;
+            public string FullName { get; set; } = "Chưa có hồ sơ";
+            public string Phone { get; set; } = string.Empty;
+        }
+
         public class ResponseDTO
         {
             public int Status { get; set; }

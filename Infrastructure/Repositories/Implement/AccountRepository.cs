@@ -54,5 +54,31 @@ namespace Infrastructure.Repositories.Implement
         {
             return await _dbSet.Include(x => x.AccountProfile).FirstOrDefaultAsync(x => x.AccountId == id);
         }
+
+        public async Task<List<Account>> GetAvailableStaffAsync()
+        {
+            var today = DateOnly.FromDateTime(DateTime.Today);
+
+            // Lấy tất cả staff có Role = Staff
+            var allStaffQuery = _context.Account
+                .Where(a => a.Role == Roles.Staff)
+                .Include(a => a.AccountProfile); // Để lấy FullName, Phone
+
+            // Lấy danh sách StaffId đang bận (có lịch ACTIVE hôm nay)
+            var busyStaffIds = await _context.Schedule
+                .Where(s => s.Status == Status.ACTIVE &&
+                           s.StartDate <= today &&
+                           s.EndDate >= today)
+                .Select(s => s.AssignedTo)
+                .Distinct()
+                .ToListAsync();
+
+            // Lọc ra staff không có trong danh sách bận
+            var availableStaff = await allStaffQuery
+                .Where(a => !busyStaffIds.Contains(a.AccountId))
+                .ToListAsync();
+
+            return availableStaff;
+        }
     }
 }
