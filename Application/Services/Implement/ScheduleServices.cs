@@ -58,12 +58,12 @@ namespace Application.Services.Implement
             }
 
             // Kiểm tra farm activity
-            if (farmActivity == null)
-                //Kiểm tra farm activity
-                if (farmActivity == null)
-                {
-                    return (false, "Hoạt động nông trại không được để trống.");
-                }
+            //if (farmActivity == null)
+            //    //Kiểm tra farm activity
+            //    if (farmActivity == null)
+            //    {
+            //        return (false, "Hoạt động nông trại không được để trống.");
+            //    }
             if (farmActivity.StartDate == null || farmActivity.EndDate == null)
                 if (farmActivity.StartDate == null || farmActivity.EndDate == null)
                 {
@@ -117,32 +117,10 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_CREATE_CODE, "Không tìm thấy cây trồng yêu cầu.");
                 }
                 var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(request.FarmActivitiesId);
-                if (!ValidateScheduleRequest(schedule, farmActivity).Item1)
-                {
-                    return new ResponseDTO(Const.FAIL_CREATE_CODE, ValidateScheduleRequest(schedule, farmActivity).Item2);
-                }
-                //var checkStaff = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(request.StaffId, 0);
-
-                //if ((checkStaff != null && checkStaff.Any(s => s.Status.Equals(Status.ACTIVE))))
+                //if (!ValidateScheduleRequest(schedule, farmActivity).Item1)
                 //{
-                //    return new ResponseDTO(Const.FAIL_CREATE_CODE, "Nhân viên đã được phân công ở một lịch khác!");
+                //    return new ResponseDTO(Const.FAIL_CREATE_CODE, ValidateScheduleRequest(schedule, farmActivity).Item2);
                 //}
-
-                // CHECK OVERLAP THỜI GIAN KHI TẠO MỚI
-                var existingSchedules = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(request.StaffId, 0);
-
-                var hasOverlap = existingSchedules.Any(s =>
-                    s.Status == Status.ACTIVE &&
-                    s.StartDate.HasValue && s.EndDate.HasValue &&
-                    schedule.StartDate.HasValue && schedule.EndDate.HasValue &&
-                    schedule.StartDate < s.EndDate &&
-                    schedule.EndDate > s.StartDate);
-
-                if (hasOverlap)
-                {
-                    return new ResponseDTO(Const.FAIL_CREATE_CODE,
-                        "Thời gian lịch mới bị chồng lấn với lịch đang active của nhân viên này!");
-                }
 
                 await _unitOfWork.scheduleRepository.AddAsync(schedule);
                 await _unitOfWork.SaveChangesAsync();
