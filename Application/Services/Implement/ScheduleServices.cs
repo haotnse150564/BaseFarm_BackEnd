@@ -58,31 +58,31 @@ namespace Application.Services.Implement
             }
 
             // Kiểm tra farm activity
-            if (schedule.FarmActivities == null)
+            if (farmActivity == null)
                 //Kiểm tra farm activity
                 if (farmActivity == null)
                 {
                     return (false, "Hoạt động nông trại không được để trống.");
                 }
-            if (schedule.FarmActivities.StartDate == null || schedule.FarmActivities.EndDate == null)
+            if (farmActivity.StartDate == null || farmActivity.EndDate == null)
                 if (farmActivity.StartDate == null || farmActivity.EndDate == null)
                 {
                     return (false, "Ngày bắt đầu và kết thúc của hoạt động không được để trống.");
                 }
-            if (schedule.FarmActivities.StartDate > schedule.FarmActivities.EndDate)
+            if (farmActivity.StartDate > farmActivity.EndDate)
                 if (farmActivity.StartDate > farmActivity.EndDate)
                 {
                     return (false, "Ngày bắt đầu của hoạt động phải trước ngày kết thúc.");
                 }
 
             // Kiểm tra hoạt động nằm trong khoảng của schedule
-            if (schedule.FarmActivities.StartDate < schedule.StartDate
-                || schedule.FarmActivities.EndDate > schedule.EndDate)
+            if (farmActivity.StartDate < schedule.StartDate
+                || farmActivity.EndDate > schedule.EndDate)
                 if (farmActivity.StartDate < schedule.StartDate
                     || farmActivity.EndDate > schedule.EndDate)
                 {
-                    return (false, $"Hoạt động từ {schedule.FarmActivities.StartDate:dd/MM/yyyy} đến {schedule.FarmActivities.EndDate:dd/MM/yyyy} nằm ngoài khoảng thời gian của lịch.");
                     return (false, $"Hoạt động từ {farmActivity.StartDate:dd/MM/yyyy} đến {farmActivity.EndDate:dd/MM/yyyy} nằm ngoài khoảng thời gian của lịch.");
+                    //return (false, $"Hoạt động từ {farmActivity.StartDate:dd/MM/yyyy} đến {farmActivity.EndDate:dd/MM/yyyy} nằm ngoài khoảng thời gian của lịch.");
                 }
             // Kiểm tra ngày bắt đầu của hoạt động phải ít nhất là hôm nay
             if (farmActivity.StartDate < DateOnly.FromDateTime(DateTime.Today))
