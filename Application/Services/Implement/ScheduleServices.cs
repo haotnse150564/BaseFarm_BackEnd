@@ -116,11 +116,11 @@ namespace Application.Services.Implement
                 {
                     return new ResponseDTO(Const.FAIL_CREATE_CODE, "Không tìm thấy cây trồng yêu cầu.");
                 }
-                //var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(request.FarmActivitiesId);
-                //if (!ValidateScheduleRequest(schedule, farmActivity).Item1)
-                //{
-                //    return new ResponseDTO(Const.FAIL_CREATE_CODE, ValidateScheduleRequest(schedule, farmActivity).Item2);
-                //}
+                var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(request.FarmActivitiesId);
+                if (!ValidateScheduleRequest(schedule, farmActivity).Item1)
+                {
+                    return new ResponseDTO(Const.FAIL_CREATE_CODE, ValidateScheduleRequest(schedule, farmActivity).Item2);
+                }
 
                 await _unitOfWork.scheduleRepository.AddAsync(schedule);
                 await _unitOfWork.SaveChangesAsync();
