@@ -16,7 +16,7 @@ namespace Application.ViewModel.Request
             public string? ProductName { get; set; }
 
             [Required(ErrorMessage = "Price is required.")]
-            [Range(10000.00, double.MaxValue, ErrorMessage = "Price must be greater than 0.")]
+            [Range(5000.00, double.MaxValue, ErrorMessage = "Price must be greater than 5000.")]
             public decimal? Price { get; set; }
             public string? Images { get; set; }
 
