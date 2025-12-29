@@ -31,6 +31,7 @@ public partial class Schedule
     public long FarmId { get; set; }
 
     public long CropId { get; set; }
+
     public long FarmActivitiesId { get; set; }
 
     public virtual Account AssignedToNavigation { get; set; } = null!;
@@ -42,4 +43,5 @@ public partial class Schedule
     public virtual Farm FarmDetails { get; set; } = null!;
 
     public virtual ICollection<Inventory> Inventories { get; set; } = new List<Inventory>();
+    public virtual ICollection<ScheduleLog>? ScheduleLog { get; set; }
 }

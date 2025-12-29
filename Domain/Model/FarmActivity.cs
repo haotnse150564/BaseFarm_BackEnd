@@ -16,5 +16,9 @@ public partial class FarmActivity //update lên bảng cần sau này
     public DateOnly? EndDate { get; set; }
 
     public FarmActivityStatus? Status { get; set; }
+    public DateTime? CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+    public long createdBy { get; set; }
+    public long updatedBy { get; set; }
     public virtual ICollection <Schedule> Schedule { get; set; } = null!;
 }
