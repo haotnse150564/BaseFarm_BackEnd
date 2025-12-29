@@ -5,6 +5,7 @@ using Application.Utils;
 using AutoMapper;
 using Domain.Enum;
 using Domain.Model;
+using OneOf;
 using Infrastructure.Repositories;
 using Microsoft.IdentityModel.Tokens;
 using static Infrastructure.ViewModel.Request.AccountRequest;
@@ -144,32 +145,59 @@ namespace WebAPI.Services
                 return null;
             }
         }
-        public async Task<LoginResponseDTO> LoginAsync(string email, string password)
-        {
-            // Kiểm tra tài khoản có tồn tại hay không
-            var account = await _unitOfWork.accountRepository
-                .GetByEmailAsync(email);
+        //public async Task<LoginResponseDTO> LoginAsync(string email, string password)
+        //{
+        //    // Kiểm tra tài khoản có tồn tại hay không
+        //    var account = await _unitOfWork.accountRepository
+        //        .GetByEmailAsync(email);
 
-            if (account == null)
+        //    if (account == null)
+        //    {
+        //        throw new UnauthorizedAccessException("Invalid email.");
+        //    }
+        //    // Kiểm tra mật khẩu có khớp không (dùng BCrypt)
+        //    if (!PasswordHelper.VerifyPassword(password, account.PasswordHash))
+        //    {
+        //        throw new UnauthorizedAccessException("Invalid password.");
+        //    }
+        //    if (account.Status != AccountStatus.ACTIVE)
+        //    {
+        //        throw new UnauthorizedAccessException("Account is not accitve.");
+        //    }
+        //    // Tạo JWT Token
+        //    string token = _jwtUtils.GenerateToken(account);
+
+        //    // Trả về thông tin đăng nhập
+        //    return new LoginResponseDTO
+        //    {
+        //        Token = token
+        //    };
+        //}
+
+        public async Task<OneOf<LoginResponseDTO, ResponseDTO>> LoginAsync(string email, string password)
+        {
+            var account = await _unitOfWork.accountRepository.GetByEmailAsync(email);
+
+            // Sai email hoặc password
+            if (account == null || !PasswordHelper.VerifyPassword(password, account.PasswordHash))
             {
-                throw new UnauthorizedAccessException("Invalid email.");
+                return new ResponseDTO(400, "Invalid email or password.");
             }
-            // Kiểm tra mật khẩu có khớp không (dùng BCrypt)
-            if (!PasswordHelper.VerifyPassword(password, account.PasswordHash))
-            {
-                throw new UnauthorizedAccessException("Invalid password.");
-            }
+
+            // Tài khoản bị khóa/không active
             if (account.Status != AccountStatus.ACTIVE)
             {
-                throw new UnauthorizedAccessException("Account is not accitve.");
+                return new ResponseDTO(400, "Account is not active.");
             }
-            // Tạo JWT Token
-            string token = _jwtUtils.GenerateToken(account);
 
-            // Trả về thông tin đăng nhập
+            // Thành công
+            string token = _jwtUtils.GenerateToken(account);
+            // string refreshToken = GenerateRefreshToken(); // nếu có
+
             return new LoginResponseDTO
             {
-                Token = token
+                Token = token,
+                RefreshToken = null // hoặc giá trị thật
             };
         }
 

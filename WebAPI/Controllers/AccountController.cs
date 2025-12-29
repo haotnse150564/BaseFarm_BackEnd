@@ -21,11 +21,22 @@ namespace WebAPI.Controllers
             _accountServices = accountServices;
         }
 
+        //[HttpPost("login")]
+        //public async Task<IActionResult> Login([FromBody] LoginRequestDTO request)
+        //{
+        //    var result = await _accountServices.LoginAsync(request.Email, request.Password);
+        //    return Ok(result);
+        //}
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequestDTO request)
         {
             var result = await _accountServices.LoginAsync(request.Email, request.Password);
-            return Ok(result);
+
+            return result.Match(
+                success => Ok(success),
+                error => StatusCode(error.Status, error)
+            );
         }
 
         [HttpPost("register")]

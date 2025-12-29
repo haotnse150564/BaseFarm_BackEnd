@@ -2,6 +2,7 @@
 using Domain.Enum;
 using Infrastructure.ViewModel.Request;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using OneOf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,8 @@ namespace Application.Services
 {
     public interface IAccountServices
     {
-        Task<LoginResponseDTO> LoginAsync(string email, string password);
+        //Task<LoginResponseDTO> LoginAsync(string email, string password);
+        Task<OneOf<LoginResponseDTO, ResponseDTO>> LoginAsync(string email, string password);
         Task<ResponseDTO> RegisterAsync(RegisterRequestDTO request);
         Task<ViewAccount> UpdateAccountStatusAsync(long id);
         Task<ViewAccount> CreateAccountAsync(AccountForm request);

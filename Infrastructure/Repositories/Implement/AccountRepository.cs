@@ -61,7 +61,7 @@ namespace Infrastructure.Repositories.Implement
 
             // Lấy tất cả staff có Role = Staff
             var allStaffQuery = _context.Account
-                .Where(a => a.Role == Roles.Staff)
+                .Where(a => a.Role == Roles.Staff && a.Status == AccountStatus.ACTIVE)
                 .Include(a => a.AccountProfile); // Để lấy FullName, Phone
 
             // Lấy danh sách StaffId đang bận (có lịch ACTIVE hôm nay)
