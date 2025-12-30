@@ -62,6 +62,7 @@ public static class DependencyInjection
         services.AddScoped<IIOTLogRepository, IOTLogRepository>();
         services.AddScoped<IFarmEquipmentRepository, FarmEquipmentRepository>();
         services.AddScoped<ICropRequirementRepository, CropRequirementtRepository>();
+        services.AddScoped<IScheduleLogRepository, ScheduleLogRepository>();
         //service
         services.AddScoped<IProductServices, ProductServices>();
         services.AddScoped<IFeedbackSevices, FeedbackServices>();
@@ -83,6 +84,7 @@ public static class DependencyInjection
         services.AddScoped<IFarmEquipmentServices, FarmEquipmentServices>();
         services.AddScoped<ICropRequirementServices, CropRequirementServices>();
         services.AddScoped<ICropMonitoringService, CropMonitoringService>();
+        services.AddScoped<IScheduleLogServices, ScheduleLogServices>();
 
         //services.AddScoped<IOrderDetailServices, OrderDetailServices>();
         //services.AddScoped<IAccountProfileServices, AccountProfileServices>();

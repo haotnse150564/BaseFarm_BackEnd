@@ -35,6 +35,7 @@ namespace Infrastructure
         private IAddressRepository _addressRepository;
         private IIOTLogRepository _iotLogRepository;
         private IFarmEquipmentRepository _farmEquipmentRepository;
+        private IScheduleLogRepository _scheduleLogRepository;
 
         public DatabaseFacade Database => _context.Database;
         public UnitOfWorks(AppDbContext context, ICurrentTime currentTime, IClaimsServices claimsServices, IProductRepository productRepository
@@ -44,6 +45,7 @@ namespace Infrastructure
             , ICategoryRepository categoryRepository, IAccountRepository accountRepository, IInventoryRepository inventoryRepository
             , ICropRequirementRepository cropRequirementRepository, ICartRepository cartRepository, ICartItemRepository cartItemRepository
             , IAddressRepository addressRepository, IIOTLogRepository iotLogRepository, IFarmEquipmentRepository farmEquipmentRepository
+            , IScheduleLogRepository scheduleLogRepository
 
             )
         {
@@ -71,8 +73,17 @@ namespace Infrastructure
             _addressRepository = addressRepository;
             _iotLogRepository = iotLogRepository;
             _farmEquipmentRepository = farmEquipmentRepository;
+            _scheduleLogRepository = scheduleLogRepository;
+            _scheduleLogRepository = scheduleLogRepository;
         }
 
+        public IScheduleLogRepository scheduleLogRepository
+        {
+            get
+            {
+                return _scheduleLogRepository ??= new ScheduleLogRepository(_context);
+            }
+        }
         public IFarmEquipmentRepository farmEquipmentRepository
         {
             get
