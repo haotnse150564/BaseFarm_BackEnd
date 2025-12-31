@@ -19,7 +19,7 @@ namespace WebAPI.Controllers
             _scheduleLogServices = scheduleLogServices;
         }
 
-        [HttpGet("log/{scheduleId}")]
+        [HttpGet("get-all-log-by-schedule/{scheduleId}")]
         public async Task<ActionResult> GetScheduleLogs(long scheduleId, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
             var result = await _scheduleLogServices.GetLogsByScheduleIdAsync(scheduleId);
