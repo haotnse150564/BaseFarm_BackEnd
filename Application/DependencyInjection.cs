@@ -36,6 +36,7 @@ public static class DependencyInjection
         services.AddAutoMapper(typeof(CategoryMapping));
         services.AddAutoMapper(typeof(CartMapping));
         services.AddAutoMapper(typeof(AddressMapping));
+        services.AddAutoMapper(typeof(ScheduleLogMapping));
 
 
 
@@ -61,7 +62,7 @@ public static class DependencyInjection
         services.AddScoped<IAddressRepository, AddressRepository>();
         services.AddScoped<IIOTLogRepository, IOTLogRepository>();
         services.AddScoped<IFarmEquipmentRepository, FarmEquipmentRepository>();
-        services.AddScoped<ICropRequirementRepository, CropRequirementtRepository>();
+        //services.AddScoped<ICropRequirementRepository, CropRequirementtRepository>();
         services.AddScoped<IScheduleLogRepository, ScheduleLogRepository>();
         //service
         services.AddScoped<IProductServices, ProductServices>();

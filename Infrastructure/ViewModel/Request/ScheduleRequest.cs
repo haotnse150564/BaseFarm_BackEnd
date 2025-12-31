@@ -17,6 +17,8 @@ namespace Infrastructure.ViewModel.Request
         [Required]
         public long CropId { get; set; }
         [Required]
+        public long StaffId { get; set; }
+        [Required]
         public DateOnly? StartDate { get; set; }
 
         [Required]
@@ -39,5 +41,21 @@ namespace Infrastructure.ViewModel.Request
         // Nếu null → dùng ngày hiện tại
         // Nếu có giá trị → dùng để demo / backdate
         public DateOnly? CustomToday { get; set; } = null;
+    }
+
+    public class ScheduleLogDto
+    {
+        public long CropLogId { get; set; }
+        public string? Notes { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public long CreatedBy { get; set; }
+        public DateTime UpdatedAt { get; set; }
+        public long UpdatedBy { get; set; }
+    }
+
+    public class CreateScheduleLogRequest
+    {
+        public long ScheduleId { get; set; }
+        public string Notes { get; set; } = string.Empty;
     }
 }

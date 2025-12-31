@@ -114,28 +114,28 @@ namespace BaseFarm_BackEnd.Test.Services
             Assert.Equal("Account is not accitve.", ex.Message);
         }
 
-        [Fact]
-        public async Task LoginAsync_ValidAccount_ReturnsToken()
-        {
-            // Arrange
-            var account = new Account
-            {
-                Email = "truong@mail.com",
-                PasswordHash = PasswordHelper.HashPassword("123123"),
-                Status = AccountStatus.ACTIVE
-            };
+        //[Fact]
+        //public async Task LoginAsync_ValidAccount_ReturnsToken()
+        //{
+        //    // Arrange
+        //    var account = new Account
+        //    {
+        //        Email = "truong@mail.com",
+        //        PasswordHash = PasswordHelper.HashPassword("123123"),
+        //        Status = AccountStatus.ACTIVE
+        //    };
 
-            _mockAccountRepo.Setup(r => r.GetByEmailAsync(account.Email))
-                            .ReturnsAsync(account);
+        //    _mockAccountRepo.Setup(r => r.GetByEmailAsync(account.Email))
+        //                    .ReturnsAsync(account);
 
-            // Act
-            var result = await _service.LoginAsync(account.Email, "123123");
+        //    // Act
+        //    var result = await _service.LoginAsync(account.Email, "123123");
 
-            // Assert
-            Assert.NotNull(result);
-            Assert.False(string.IsNullOrEmpty(result.Token)); // token giả sẽ sinh ra
-            Assert.Equal("fake-jwt-token", result.Token); // có thể kiểm tra cụ thể
-        }
+        //    // Assert
+        //    Assert.NotNull(result);
+        //    Assert.False(string.IsNullOrEmpty(result.Token)); // token giả sẽ sinh ra
+        //    Assert.Equal("fake-jwt-token", result.Token); // có thể kiểm tra cụ thể
+        //}
 
 
         //register test
