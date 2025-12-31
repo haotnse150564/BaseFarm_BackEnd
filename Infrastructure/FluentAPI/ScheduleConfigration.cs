@@ -56,7 +56,7 @@ namespace Infrastructure.FluentAPI
             builder.Property(e => e.CropId)
                 .HasColumnName("cropId");
 
-            // Quan hệ n-1 với Account (AssignedTo)
+            // Quan hệ n-1 với Account (Manager)
             builder.HasOne(e => e.AssignedToNavigation)
                 .WithMany(a => a.Schedules)
                 .HasForeignKey(e => e.ManagerId)

@@ -101,18 +101,12 @@ namespace Infrastructure
                 new Product { ProductId = 2, ProductName = "Rau Dền", Images = rau1, Price = 15000, StockQuantity = 10000, Description = "Rau Dền Sản Phẩm Thử Nghiệm", Status = Domain.Enum.ProductStatus.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, },
                 new Product { ProductId = 3, ProductName = "Rau Chân Vịt", Images = rau3, Price = 20000, StockQuantity = 10000, Description = "Rau Chân Vịt Sản Phẩm thử Nghiệm", Status = Domain.Enum.ProductStatus.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, }
              );
-           // builder.Entity<Schedule>().HasData(
-           //    new Schedule { ScheduleId = 1, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("4/3/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 3, FarmId = 1, CropId = 1, Quantity = 100, FarmActivitiesId = 1 },
-           //     new Schedule { ScheduleId = 2, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/11/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 9, FarmId = 1, CropId = 2, Quantity = 100, FarmActivitiesId = 2 },
-           //     new Schedule { ScheduleId = 3, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/3/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AssignedTo = 6, FarmId = 1, CropId = 3, Quantity = 100, FarmActivitiesId = 3 }
-           //);
-            //builder.Entity<FarmActivity>().HasData(
-            //    new FarmActivity { FarmActivitiesId = 1, ActivityType = Domain.Enum.ActivityType.Sowing, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("4/1/2025"), Status = Domain.Enum.FarmActivityStatus.ACTIVE },
-            //    new FarmActivity { FarmActivitiesId = 2, ActivityType = Domain.Enum.ActivityType.SoilPreparation, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("2/11/2025"), Status = Domain.Enum.FarmActivityStatus.ACTIVE },
-            //    new FarmActivity { FarmActivitiesId = 5, ActivityType = Domain.Enum.ActivityType.Weeding, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("2/11/2025"), Status = Domain.Enum.FarmActivityStatus.ACTIVE },
-            //    new FarmActivity { FarmActivitiesId = 3, ActivityType = Domain.Enum.ActivityType.Harvesting, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/11/2025"), Status = Domain.Enum.FarmActivityStatus.ACTIVE },
-            //    new FarmActivity { FarmActivitiesId = 4, ActivityType = Domain.Enum.ActivityType.FertilizingDiluted, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/3/2025"), Status = Domain.Enum.FarmActivityStatus.ACTIVE }
-            //    );
+            builder.Entity<Schedule>().HasData(
+               new Schedule { ScheduleId = 1, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("4/3/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"),ManagerId = 1, FarmId = 1, CropId = 1, Quantity = 100, FarmActivitiesId = 1 },
+                new Schedule { ScheduleId = 2, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/11/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), ManagerId = 1, FarmId = 1, CropId = 2, Quantity = 100, FarmActivitiesId = 2 },
+                new Schedule { ScheduleId = 3, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/3/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), ManagerId = 1, FarmId = 1, CropId = 3, Quantity = 100, FarmActivitiesId = 3 }
+           );
+            
             builder.Entity<Farm>().HasData(
                 new Farm { FarmId = 1, FarmName = "Vườn Rau Sài Gòn", Location = "TP. Ho Chi Minh", CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), AccountId = 4, }
         //  new Farm { FarmId = 2, FarmName = "Rau Den", Location = "TP. Ho Chi Minh", CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("3/2/2025"), AccountId = 5 },
@@ -133,19 +127,19 @@ namespace Infrastructure
                 new Device { DevicesId = 4, Pin = "V999", DeviceName = "Led Light", DeviceType = "Soil Moisture Sensor IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025")}
                 //  new Device { DevicesId = 9, DeviceName = "Soil Moisture Sensor 3", DeviceType = "Soil Moisture Sensor IC", Status = Domain.Enum.Status.ACTIVE, LastUpdate = DateOnly.Parse("5/4/2025"), ExpiryDate = DateOnly.Parse("4/3/2025"), FarmDetailsId = 3 }
                 );
-            //builder.Entity<Order>().HasData(
-            //    new Order { OrderId = 1, CustomerId = 8, TotalPrice = 200000, ShippingAddress = "TP. Ho Chi Minh", Status = Domain.Enum.PaymentStatus.PAID, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") },
-            //    new Order { OrderId = 2, CustomerId = 8, TotalPrice = 105000, ShippingAddress = "TP. Ho Chi Minh", Status = Domain.Enum.PaymentStatus.PAID, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") },
-            //    new Order { OrderId = 3, CustomerId = 8, TotalPrice = 315000, ShippingAddress = "TP. Ho Chi Minh", Status = Domain.Enum.PaymentStatus.PAID, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") },
-            //    new Order { OrderId = 4, CustomerId = 8, TotalPrice = 300000, ShippingAddress = "TP. Ho Chi Minh", Status = Domain.Enum.PaymentStatus.PAID, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") },
-            //    new Order { OrderId = 5, CustomerId = 8, TotalPrice = 150000, ShippingAddress = "TP. Ho Chi Minh", Status = Domain.Enum.PaymentStatus.PAID, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") }
-            //    );
+            builder.Entity<Order>().HasData(
+                new Order { OrderId = 1, CustomerId = 8, TotalPrice = 200000, ShippingAddress = "TP. Ho Chi Minh", Status = Domain.Enum.PaymentStatus.PAID, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") },
+                new Order { OrderId = 2, CustomerId = 8, TotalPrice = 105000, ShippingAddress = "TP. Ho Chi Minh", Status = Domain.Enum.PaymentStatus.PAID, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") },
+                new Order { OrderId = 3, CustomerId = 8, TotalPrice = 315000, ShippingAddress = "TP. Ho Chi Minh", Status = Domain.Enum.PaymentStatus.PAID, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") }
+                //new Order { OrderId = 4, CustomerId = 8, TotalPrice = 300000, ShippingAddress = "TP. Ho Chi Minh", Status = Domain.Enum.PaymentStatus.PAID, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") },
+                //new Order { OrderId = 5, CustomerId = 8, TotalPrice = 150000, ShippingAddress = "TP. Ho Chi Minh", Status = Domain.Enum.PaymentStatus.PAID, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025") }
+                );
             builder.Entity<OrderDetail>().HasData(
                 new OrderDetail { OrderDetailId = 1, OrderId = 1, Quantity = 20, UnitPrice = 10, ProductId = 1 },
                 new OrderDetail { OrderDetailId = 2, OrderId = 2, Quantity = 10, UnitPrice = 15, ProductId = 2 },
-                new OrderDetail { OrderDetailId = 3, OrderId = 3, Quantity = 21, UnitPrice = 10, ProductId = 2 },
-                new OrderDetail { OrderDetailId = 4, OrderId = 3, Quantity = 20, UnitPrice = 10, ProductId = 2 },
-                new OrderDetail { OrderDetailId = 5, OrderId = 3, Quantity = 10, UnitPrice = 10, ProductId = 2 }
+                new OrderDetail { OrderDetailId = 3, OrderId = 3, Quantity = 21, UnitPrice = 10, ProductId = 2 }
+            //    new OrderDetail { OrderDetailId = 4, OrderId = 3, Quantity = 20, UnitPrice = 10, ProductId = 2 },
+            //    new OrderDetail { OrderDetailId = 5, OrderId = 3, Quantity = 10, UnitPrice = 10, ProductId = 2 }
                 );
             //builder.Entity<Payment>().HasData(
             //    new Payment { PaymentId = 1, OrderId = 1, TransactionId = "VNPay01", Amount = 10, PaymentMethod = "VNPay", VnPayResponseCode = "VNPayPayment01", Success = true, PaymentTime = DateTime.Parse("3/1/2025").ToUniversalTime(), CreateDate = DateTime.Parse("3/1/2025").ToUniversalTime(), UpdateDate = null },

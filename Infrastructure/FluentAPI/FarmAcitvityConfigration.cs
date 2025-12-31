@@ -23,7 +23,7 @@ namespace Infrastructure.FluentAPI
                 .HasColumnName("farmActivitiesId")
                 .ValueGeneratedOnAdd();
             builder.Property(e => e.AssignedTo)
-                .HasColumnName("farmActivitiesId");
+                .HasColumnName("AssignedTo");
             // Enum ActivityType
             builder.Property(e => e.ActivityType)
                 .HasColumnName("activityType");
@@ -57,6 +57,11 @@ namespace Infrastructure.FluentAPI
             builder.HasOne(e => e.Schedule)
                 .WithMany(s => s.FarmActivities) // giả định Schedule có navigation FarmActivities
                 .HasForeignKey(s => s.FarmActivitiesId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(s => s.AssignedToNavigation)
+                .WithMany(f => f.FarmActivities)
+                .HasForeignKey(s => s.AssignedTo)
                 .OnDelete(DeleteBehavior.Cascade);
         }
 
