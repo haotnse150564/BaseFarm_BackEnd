@@ -26,19 +26,14 @@ namespace Infrastructure.Mapper
 
             CreateMap<Schedule, ScheduleRequest>()
                    .ForMember(dest => dest.CropId, opt => opt.MapFrom(src => src.CropId))
-                   .ForMember(dest => dest.StaffId, opt => opt.MapFrom(src => src.AssignedTo))
                    .ReverseMap();
 
             CreateMap<Schedule, ScheduleResponseView>()
                 .ForMember(dest => dest.cropView, opt => opt.MapFrom(src => src.Crop))
                 .ForMember(dest => dest.farmView, opt => opt.MapFrom(src => src.FarmDetails))
-                .ForMember(dest => dest.Staff, opt => opt.MapFrom(src => src.AssignedToNavigation.AccountProfile))
                 .ForMember(dest => dest.farmActivityView, opt => opt.MapFrom(src => src.FarmActivities))
-                .ForPath(destinationMember => destinationMember.StaffName, opt => opt.MapFrom(src => src.AssignedToNavigation.AccountProfile.Fullname))
-                .ForPath(dest => dest.CropRequirement, opt => opt.MapFrom(src => src.Crop.CropRequirement))
                 .ForPath(dest => dest.CurrentPlantStage, opt => opt.MapFrom(src => src.currentPlantStage))
 
-                .ForPath(dest => dest.ManagerName, opt => opt.MapFrom(src => src.AssignedToNavigation.AccountProfile.Fullname))
                 .ReverseMap();
 
             // CreateMap<DailyLog, DailyLogView>().ReverseMap();

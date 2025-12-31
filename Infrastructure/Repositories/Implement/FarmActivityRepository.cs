@@ -16,7 +16,7 @@ namespace Infrastructure.Repositories.Implement
         {
             var result = await _context.FarmActivity
                 .Where(fa => fa.Status == Domain.Enum.FarmActivityStatus.ACTIVE
-                          && !fa.Schedule.Any()
+                          //&& !fa.Schedule.Any()
                           && fa.EndDate >= DateOnly.FromDateTime(DateTime.Today))
                 .OrderByDescending(fa => fa.FarmActivitiesId)
                 .ToListAsync();
@@ -68,7 +68,7 @@ namespace Infrastructure.Repositories.Implement
                 .Include(c => c.Product) // Include Product từ Crop
                 .Include(c => c.Schedules)
                     .ThenInclude(s => s.FarmActivities)
-                .Where(c => c.Schedules.Any(s => s.FarmActivities.FarmActivitiesId == acitivityId))
+               // .Where(c => c.Schedules.Any(s => s.FarmActivities.FarmActivitiesId == acitivityId))
                 .Select(c => c.Product) // Lấy Product từ mỗi Crop
                 .ToListAsync();
 
