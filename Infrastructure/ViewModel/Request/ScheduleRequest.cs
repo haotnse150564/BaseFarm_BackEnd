@@ -57,4 +57,10 @@ namespace Infrastructure.ViewModel.Request
         public long ScheduleId { get; set; }
         public string Notes { get; set; } = string.Empty;
     }
+
+    public class UpdateScheduleLogRequest
+    {
+        public long LogId { get; set; }
+        public string Notes { get; set; } = string.Empty;
+    }
 }

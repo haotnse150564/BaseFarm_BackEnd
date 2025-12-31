@@ -2,6 +2,7 @@
 using Application.Interfaces;
 using Application.Utils;
 using AutoMapper;
+using Domain.Enum;
 using Domain.Model;
 using Infrastructure.Repositories;
 using Infrastructure.ViewModel.Request;
@@ -105,6 +106,46 @@ namespace Application.Services.Implement
             var logDto = _mapper.Map<ScheduleLogDto>(log);
 
             return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Ghi log thành công", logDto);
+        }
+
+        public async Task<ResponseDTO> UpdateManualLogAsync(UpdateScheduleLogRequest request)
+        {
+            var user = await _jwtUtils.GetCurrentUserAsync();
+            if (user == null)
+            {
+                return new ResponseDTO(Const.FAIL_READ_CODE, "Người dùng không hợp lệ");
+            }
+            // Validate
+            if (request.LogId <= 0)
+                return new ResponseDTO(Const.FAIL_UPDATE_CODE, "LogId không hợp lệ");
+
+            if (string.IsNullOrWhiteSpace(request.Notes))
+                return new ResponseDTO(Const.FAIL_UPDATE_CODE, "Ghi chú không được để trống");
+
+            // Tìm log cần update
+            var existingLog = await _scheduleLogRepo.GetByIdAsync(request.LogId);
+            if (existingLog == null)
+                return new ResponseDTO(Const.WARNING_NO_DATA_CODE, "Không tìm thấy bản ghi log này");
+
+            // Chỉ cho phép update log do chính mình tạo hoặc Manager
+            if (existingLog.CreatedBy != user.AccountId && user.Role != Roles.Manager)
+                return new ResponseDTO(Const.FAIL_UPDATE_CODE, "Bạn không có quyền sửa log này");
+
+            // Backup old notes để ghi lịch sử thay đổi (tùy chọn nâng cao)
+            var oldNotes = existingLog.Notes;
+
+            // Update
+            existingLog.Notes = $"[Ghi chú thủ công (Đã sửa lúc {DateTime.UtcNow:HH:mm dd/MM/yyyy})] {request.Notes.Trim()}";
+
+            existingLog.UpdatedAt = DateTime.UtcNow;
+            existingLog.UpdatedBy = user.AccountId;
+
+            await _scheduleLogRepo.UpdateAsync(existingLog);
+            await _unitOfWork.SaveChangesAsync();
+
+            var logDto = _mapper.Map<ScheduleLogDto>(existingLog);
+
+            return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, "Cập nhật log thành công", logDto);
         }
     }
 }
