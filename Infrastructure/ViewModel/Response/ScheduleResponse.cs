@@ -37,14 +37,10 @@ namespace Infrastructure.ViewModel.Response
 
             public DateOnly? UpdatedAt { get; set; }
 
-            public string? ManagerName { get; set; }
-            public string? StaffName { get; set; }
             public ViewAccount? Manager { get; set; }
-            public ViewAccount? Staff { get; set; }
-            public FarmActivityView? farmActivityView { get; set; }
+            public List<FarmActivityView>? farmActivityView { get; set; }
             public FarmView? farmView { get; set; }
             public CropView? cropView { get; set; }
-            public List<CropRequirementView>? CropRequirement { get; set; }
         }
         public class ResponseDTO
         {

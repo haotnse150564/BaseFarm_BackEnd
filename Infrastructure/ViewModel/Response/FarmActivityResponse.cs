@@ -20,6 +20,9 @@ namespace Infrastructure.ViewModel.Response
             public string? EndDate { get; set; }
 
             public string? Status { get; set; }
+
+            public AvailableStaffDTO? StaffDTO { get; set; }
+
         }
         public class ResponseDTO
         {

@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.FluentAPI
 {
-    class CropLogConfigration : IEntityTypeConfiguration<ScheduleLog>
+    class ScheduleLogConfigration : IEntityTypeConfiguration<ScheduleLog>
     {
         public void Configure(EntityTypeBuilder<ScheduleLog> builder)
         {
             // Tên bảng
-            builder.ToTable("CropLog");
+            builder.ToTable("ScheduleLog");
 
             // Khóa chính
             builder.HasKey(e => e.CropLogId);

@@ -10,9 +10,11 @@ namespace Infrastructure.ViewModel.Request
 {
     public class FarmActivityRequest
     {
-        [Required(ErrorMessage = "FarmActivityName is required.")]
+        [Required(ErrorMessage = "FarmActivity Start Date is required.")]
         public DateOnly? StartDate { get; set; }
-        [Required(ErrorMessage = "FarmActivityName is required.")]
+        [Required(ErrorMessage = "FarmActivity End Date is required.")]
         public DateOnly? EndDate { get; set; }
+        [Required(ErrorMessage = "Staff is required.")]
+        public long StaffId { get; set; }
     }
 }
