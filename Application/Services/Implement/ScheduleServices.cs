@@ -125,10 +125,7 @@ namespace Application.Services.Implement
                 await _unitOfWork.scheduleRepository.AddAsync(schedule);
                 await _unitOfWork.SaveChangesAsync();
 
-                var staffInfo = await _account.GetByIdAsync(request.StaffId);
                 var result = _mapper.Map<ScheduleResponseView>(schedule);
-                result.ManagerName = getCurrentUser.AccountProfile?.Fullname;
-                result.StaffName = staffInfo?.AccountProfile?.Fullname;
 
                 return new ResponseDTO(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, result);
             }
@@ -298,38 +295,32 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_CREATE_CODE, "Ngày kết thúc của hoạt động phải trước hoặc bằng ngày kết thúc của lịch.");
                 }
 
-
-
-                // Lấy tất cả lịch của staff (dùng hàm hiện tại của bạn)
-                var allSchedulesOfStaff = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(request.StaffId, 0);
-
                 // Loại bỏ chính schedule đang được update (vì nó là cùng lịch, được phép overlap với chính nó)
-                var otherSchedules = allSchedulesOfStaff
-                    .Where(s => s.ScheduleId != scheduleId)
-                    .ToList();
+                //var otherSchedules = allSchedulesOfStaff
+                //    .Where(s => s.ScheduleId != scheduleId)
+                //    .ToList();
 
-                // Kiểm tra xem có lịch KHÁC nào đang ACTIVE và bị overlap thời gian với dữ liệu mới không
-                var hasOverlapWithActiveSchedule = otherSchedules.Any(s =>
-                    s.Status == Status.ACTIVE &&
-                    s.StartDate.HasValue &&
-                    s.EndDate.HasValue &&
-                    updatedSchedule.StartDate.HasValue &&
-                    updatedSchedule.EndDate.HasValue &&
-                    updatedSchedule.StartDate < s.EndDate &&
-                    updatedSchedule.EndDate > s.StartDate
-                );
+                //// Kiểm tra xem có lịch KHÁC nào đang ACTIVE và bị overlap thời gian với dữ liệu mới không
+                //var hasOverlapWithActiveSchedule = otherSchedules.Any(s =>
+                //    s.Status == Status.ACTIVE &&
+                //    s.StartDate.HasValue &&
+                //    s.EndDate.HasValue &&
+                //    updatedSchedule.StartDate.HasValue &&
+                //    updatedSchedule.EndDate.HasValue &&
+                //    updatedSchedule.StartDate < s.EndDate &&
+                //    updatedSchedule.EndDate > s.StartDate
+                //);
 
-                if (hasOverlapWithActiveSchedule)
-                {
-                    return new ResponseDTO(Const.FAIL_CREATE_CODE,
-                        "Thời gian cập nhật bị chồng lấn với một lịch đang active khác của nhân viên này!");
-                }
+                //if (hasOverlapWithActiveSchedule)
+                //{
+                //    return new ResponseDTO(Const.FAIL_CREATE_CODE,
+                //        "Thời gian cập nhật bị chồng lấn với một lịch đang active khác của nhân viên này!");
+                //}
 
                 await _unitOfWork.scheduleRepository.UpdateAsync(updatedSchedule);
                 await _unitOfWork.SaveChangesAsync();
 
                 // Lấy thông tin staff và manager
-                var staffInfo = await _account.GetByIdAsync(request.StaffId);
                 var manager = await _account.GetByIdAsync(updatedSchedule.ManagerId);
 
                 // Map sang response view
@@ -337,8 +328,6 @@ namespace Application.Services.Implement
                 result.Manager = manager != null
                     ? _mapper.Map<Infrastructure.ViewModel.Response.AccountResponse.ViewAccount>(manager)
                     : null;
-                result.ManagerName = manager?.AccountProfile?.Fullname;
-                result.StaffName = staffInfo?.AccountProfile?.Fullname;
 
                 return new ResponseDTO(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, result);
             }
@@ -361,11 +350,7 @@ namespace Application.Services.Implement
 
                 var list = await _unitOfWork.scheduleRepository.GetAllAsync();
                 var schedules = _mapper.Map<List<ScheduleResponseView>>(list);
-                foreach (var item in schedules)
-                {
-                    var manager = await _account.GetByIdAsync(item.ManagerId);
-                    item.ManagerName = manager != null ? manager.AccountProfile.Fullname : null;
-                }
+
                 //In ra kết quả
 
                 var safePageIndex = Math.Max(pageIndex, 1); // Đảm bảo pageIndex >= 1
@@ -410,10 +395,8 @@ namespace Application.Services.Implement
 
                 // Map sang response view
                 var result = _mapper.Map<ScheduleResponseView>(schedule);
-                result.Staff.AccountId = schedule.AssignedTo;
                 // Lấy thông tin manager
                 var manager = await _account.GetByIdAsync(schedule.ManagerId);
-                result.ManagerName = manager?.AccountProfile?.Fullname;
 
                 return new ResponseDTO(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, result);
             }
@@ -451,7 +434,6 @@ namespace Application.Services.Implement
                         return new ResponseDTO(Const.FAIL_CREATE_CODE, "Nhân viên đã được phân công ở một lịch khác!");
                     }
 
-                    schedule.AssignedTo = staffId;
                     schedule.UpdatedAt = _currentTime.GetCurrentTime();
 
                     await _unitOfWork.scheduleRepository.UpdateAsync(schedule);
@@ -460,8 +442,6 @@ namespace Application.Services.Implement
                     // In ra kết quả
                     var result = _mapper.Map<ScheduleResponseView>(schedule);
                     var manager = await _account.GetByIdAsync(schedule.ManagerId);
-                    result.ManagerName = manager?.AccountProfile?.Fullname;
-                    result.StaffName = staffInfo?.AccountProfile?.Fullname;
 
                     return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, result);
                 }
