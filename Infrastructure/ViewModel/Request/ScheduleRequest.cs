@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using static Infrastructure.ViewModel.Response.AccountResponse;
@@ -22,8 +23,6 @@ namespace Infrastructure.ViewModel.Request
         public DateOnly? StartDate { get; set; }
 
         [Required]
-        public DateOnly? EndDate { get; set; }
-        [Required]
         public int? Quantity { get; set; }
 
         [Required]
@@ -33,7 +32,7 @@ namespace Infrastructure.ViewModel.Request
 
         public DiseaseStatus? DiseaseStatus { get; set; }
 
-        public long FarmActivitiesId { get; set; }
+        public long[]? FarmActivitiesId { get; set; }
     }
 
     public class UpdateTodayRequest
