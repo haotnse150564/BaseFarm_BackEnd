@@ -13,36 +13,57 @@ namespace Infrastructure.FluentAPI
     {
         public void Configure(EntityTypeBuilder<FarmActivity> builder)
         {
-
+            // Tên bảng
             builder.ToTable("FarmActivities");
 
+            // Khóa chính
             builder.HasKey(e => e.FarmActivitiesId);
 
             builder.Property(e => e.FarmActivitiesId)
-                .HasColumnName("farmActivitiesId");
-
+                .HasColumnName("farmActivitiesId")
+                .ValueGeneratedOnAdd();
+            builder.Property(e => e.AssignedTo)
+                .HasColumnName("AssignedTo");
+            // Enum ActivityType
             builder.Property(e => e.ActivityType)
                 .HasColumnName("activityType");
-            //builder.Property(e => e.PlantStage)
-            //     .HasColumnName("planStage");
+
+            // StartDate và EndDate (PostgreSQL hỗ trợ Date)
             builder.Property(e => e.StartDate)
-                .HasColumnName("startDate");
+                .HasColumnName("startDate")
+                .HasColumnType("date");
 
             builder.Property(e => e.EndDate)
-                .HasColumnName("endDate");
+                .HasColumnName("endDate")
+                .HasColumnType("date");
 
+            // Status
             builder.Property(e => e.Status)
                 .HasColumnName("status");
 
-            //builder.Property(e => e.ScheduleId)
-            //    .HasColumnName("scheduleId");
+            builder.Property(e => e.CreatedAt)
+                .HasColumnName("createdAt");
 
-            //Quan hệ n-1 với Schedule
-            builder.HasMany(e => e.Schedule)
-                .WithOne(s => s.FarmActivities)
-                .HasForeignKey(e => e.FarmActivitiesId)
-                .OnDelete(DeleteBehavior.SetNull);
+            builder.Property(e => e.UpdatedAt)
+                .HasColumnName("updatedAt");
 
+            builder.Property(e => e.createdBy)
+                .HasColumnName("createdBy");
+
+            builder.Property(e => e.updatedBy)
+                .HasColumnName("updatedBy");
+
+            // Quan hệ 1-n với Schedule
+            builder.HasOne(e => e.Schedule)
+                .WithMany(s => s.FarmActivities) // giả định Schedule có navigation FarmActivities
+                .HasForeignKey(s => s.FarmActivitiesId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(s => s.AssignedToNavigation)
+                .WithMany(f => f.FarmActivities)
+                .HasForeignKey(s => s.AssignedTo)
+                .OnDelete(DeleteBehavior.Cascade);
         }
+
     }
 }

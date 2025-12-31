@@ -50,19 +50,16 @@ namespace Infrastructure.FluentAPI
             builder.Property(e => e.UpdatedAt)
                 .HasColumnName("updatedAt");
 
-            builder.Property(e => e.AssignedTo)
-                .HasColumnName("assignedTo");
-
             builder.Property(e => e.FarmId)
                 .HasColumnName("farmId");
 
             builder.Property(e => e.CropId)
                 .HasColumnName("cropId");
 
-            // Quan hệ n-1 với Account (AssignedTo)
+            // Quan hệ n-1 với Account (Manager)
             builder.HasOne(e => e.AssignedToNavigation)
                 .WithMany(a => a.Schedules)
-                .HasForeignKey(e => e.AssignedTo)
+                .HasForeignKey(e => e.ManagerId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Quan hệ n-1 với Crop
@@ -81,6 +78,11 @@ namespace Infrastructure.FluentAPI
             builder.HasMany(e => e.Inventories)
                 .WithOne(i => i.Schedule)
                 .HasForeignKey(i => i.ScheduleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(e => e.FarmActivities)
+                .WithOne(i => i.Schedule)
+                .HasForeignKey(i => i.FarmActivitiesId)
                 .OnDelete(DeleteBehavior.Cascade);
 
         }

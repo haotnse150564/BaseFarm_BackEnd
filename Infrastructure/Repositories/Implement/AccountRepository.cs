@@ -67,7 +67,7 @@ namespace Infrastructure.Repositories.Implement
             // Lấy danh sách StaffId đang bận (có lịch ACTIVE hôm nay)
             var busyStaffIds = await _context.Schedule
                 .Where(s => s.Status == Status.ACTIVE)
-                .Select(s => s.AssignedTo)
+                .Select(s => s.ManagerId)
                 .Distinct()
                 .ToListAsync();
 

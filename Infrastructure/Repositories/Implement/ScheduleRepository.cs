@@ -42,7 +42,7 @@ namespace Infrastructure.Repositories.Implement
             .ThenInclude(a => a.AccountProfile)
             .Include(a => a.FarmActivities)
             .Include(a => a.FarmDetails)
-            .Where(x => x.AssignedTo == staffId)
+            //.Where(x => x.AssignedTo == staffId)
             .OrderByDescending(x => x.ScheduleId)
             .ToListAsync();
             if (month > 0 && month < 12)
@@ -60,7 +60,7 @@ namespace Infrastructure.Repositories.Implement
             .ThenInclude(a => a.AccountProfile)
             .Include(a => a.FarmActivities)
             .Include(a => a.FarmDetails)
-            .Where(x => x.AssignedTo == staffId && x.Status == Domain.Enum.Status.ACTIVE)
+            //.Where(x => x.AssignedTo == staffId && x.Status == Domain.Enum.Status.ACTIVE)
             .OrderByDescending(x => x.ScheduleId)
             .ToListAsync();
             if (month > 0 && month < 12)

@@ -64,12 +64,16 @@ namespace Infrastructure.FluentAPI
             // Quan hệ 1-n với Schedule
             builder.HasMany(e => e.Schedules)
                 .WithOne(s => s.AssignedToNavigation)
-                .HasForeignKey(s => s.AssignedTo)
+                .HasForeignKey(s => s.ManagerId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasMany(a => a.Address)
                 .WithOne(ad => ad.Account)
                 .HasForeignKey(ad => ad.AddressID)
+                .OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany(a => a.FarmActivities)
+                .WithOne(fa => fa.AssignedToNavigation)
+                .HasForeignKey(fa => fa.AssignedTo)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }
