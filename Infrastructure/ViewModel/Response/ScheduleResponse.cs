@@ -54,7 +54,14 @@ namespace Infrastructure.ViewModel.Response
                 Data = data;
             }
         }
-
+        public class ScheduleLogResponse
+        {
+            public string? Notes { get; set; }
+            public DateTime CreatedAt { get; set; }
+            public string StaffNameCreate { get; set; }
+            public DateTime UpdatedAt { get; set; }
+            public string StaffNameUpdate { get; set; }
+        }
         public class UpdateTodayResponse
         {
             public DateOnly Today { get; set; }

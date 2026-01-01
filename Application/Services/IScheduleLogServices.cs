@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Application.ViewModel.Response.OrderResponse;
+using static Infrastructure.ViewModel.Response.ScheduleResponse;
 
 namespace Application.Services
 {

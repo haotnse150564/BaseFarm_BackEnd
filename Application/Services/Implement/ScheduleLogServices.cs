@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Application.ViewModel.Response.OrderResponse;
+using static Infrastructure.ViewModel.Response.ScheduleResponse;
 
 namespace Application.Services.Implement
 {
@@ -52,11 +52,11 @@ namespace Application.Services.Implement
                 // hoặc Const.NOT_FOUND_CODE nếu bạn có
             }
 
-            var list = await _scheduleLogRepo.GetAllByScheduleIdAsync(scheduleId);
+            var resultView = await _scheduleLogRepo.GetAllWithName(scheduleId);
 
-            var resultView = _mapper.Map<List<ScheduleLogDto>>(list ?? new List<ScheduleLog>());
+            //var resultView = _mapper.Map<List<ScheduleLogDto>>(list ?? new List<ScheduleLog>());
 
-            var pagination = new Pagination<ScheduleLogDto>
+            var pagination = new Pagination<ScheduleLogResponse>
             {
                 TotalItemCount = resultView.Count,
                 PageSize = pageSize,
