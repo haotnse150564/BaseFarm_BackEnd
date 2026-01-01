@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Infrastructure.ViewModel.Response.ScheduleResponse;
 
 namespace Infrastructure.Mapper
 {
@@ -15,6 +16,7 @@ namespace Infrastructure.Mapper
         public ScheduleLogMapping()
         {
             CreateMap<ScheduleLog, ScheduleLogDto>().ReverseMap();
+            CreateMap<ScheduleLog, ScheduleLogResponse>().ReverseMap();
         }
     }
 }

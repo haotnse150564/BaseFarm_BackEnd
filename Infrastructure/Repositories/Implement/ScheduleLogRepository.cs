@@ -43,6 +43,7 @@ namespace Infrastructure.Repositories.Implement
                         orderby log.CreatedAt descending
                         select new ScheduleLogResponse
                         {
+                            CropLogId = log.CropLogId,
                             Notes = log.Notes,
                             CreatedAt = log.CreatedAt,
                             StaffNameCreate = createBy.Fullname != null ? createBy.Fullname : "Không lấy được tên người dùng", // giả sử AccountProfile có StaffName

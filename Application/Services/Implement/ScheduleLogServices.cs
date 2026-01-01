@@ -142,8 +142,16 @@ namespace Application.Services.Implement
 
             await _scheduleLogRepo.UpdateAsync(existingLog);
             await _unitOfWork.SaveChangesAsync();
+            var account1 = await _unitOfWork.accountRepository.GetByIdAsync(existingLog.CreatedBy);
+            var account2 = await _unitOfWork.accountRepository.GetByIdAsync(existingLog.UpdatedBy);
+            var logDto = _mapper.Map<ScheduleLogResponse>(existingLog);
+            logDto.StaffNameCreate = account1 != null && account1.AccountProfile != null
+                ? account1.AccountProfile.Fullname
+                : "Không tìm thấy tên người dùng";
 
-            var logDto = _mapper.Map<ScheduleLogDto>(existingLog);
+            logDto.StaffNameUpdate = account2 != null && account2.AccountProfile != null
+                ? account2.AccountProfile.Fullname
+                : "Không tìm thấy tên người dùng";
 
             return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, "Cập nhật log thành công", logDto);
         }
