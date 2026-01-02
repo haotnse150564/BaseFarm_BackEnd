@@ -1,4 +1,5 @@
-﻿using Domain.Model;
+﻿using Domain.Enum;
+using Domain.Model;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -92,6 +93,19 @@ namespace Infrastructure.Repositories.Implement
                 .Include(s => s.Crop)
                     .ThenInclude(c => c.CropRequirement.Where(cr => cr.IsActive)) // chỉ lấy active, tối ưu
                 .FirstOrDefaultAsync(s => s.ScheduleId == scheduleId && s.ManagerId == managerId);
+        }
+
+        public async Task<List<Schedule>> GetAllActiveScheduleAsync()
+        {
+            var result = await _context.Schedule
+            .Include(s => s.AssignedToNavigation).ThenInclude(ap => ap.AccountProfile)
+            .Include(f => f.FarmDetails)
+            .Include(c => c.Crop).ThenInclude(c => c.CropRequirement)
+            .Include(fa => fa.FarmActivities)
+            .OrderByDescending(x => x.ScheduleId)
+            .Where(s => s.Status == Status.ACTIVE)
+            .ToListAsync();
+            return result;
         }
     }
 }
