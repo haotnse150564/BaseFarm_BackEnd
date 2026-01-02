@@ -7,6 +7,7 @@ using Domain.Enum;
 using Domain.Model;
 using Infrastructure.Repositories;
 using Infrastructure.ViewModel.Request;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Drawing.Printing;
@@ -26,7 +27,8 @@ namespace Application.Services.Implement
         private readonly IMapper _mapper;
         private readonly ICropRepository _cropRepository;
         private readonly JWTUtils _jwtUtils;
-        public CropServices(IUnitOfWorks unitOfWork, ICurrentTime currentTime, IConfiguration configuration, IMapper mapper, ICropRepository cropRepository, JWTUtils jWTUtils)
+        private readonly IHubContext<NotificationHub.ManagerNotificationHub> _hubContext;
+        public CropServices(IUnitOfWorks unitOfWork, ICurrentTime currentTime, IConfiguration configuration, IMapper mapper, ICropRepository cropRepository, JWTUtils jWTUtils, IHubContext<NotificationHub.ManagerNotificationHub> hubContext)
         {
             _unitOfWork = unitOfWork;
             _currentTime = currentTime;
@@ -34,6 +36,7 @@ namespace Application.Services.Implement
             _mapper = mapper;
             _cropRepository = cropRepository;
             _jwtUtils = jWTUtils;
+            _hubContext = hubContext;
         }
         #region Get Crop All requirements
         public async Task<Pagination<CropView>> GetAllCropsAsync(int pageIndex, int pageSize)
@@ -217,7 +220,74 @@ namespace Application.Services.Implement
                 return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
             }
         }
+
+        public async Task<Dictionary<string, object>> CheckTemperatureAlertsAsync()
+        {
+            var currentUser = await _jwtUtils.GetCurrentUserAsync();
+            if (currentUser == null || currentUser.Role != Roles.Manager)
+            {
+                throw new Exception("Chưa Login hoặc role không phải là Manager");
+            }
+            var result = new Dictionary<string, object>
+            {
+                { "Timestamp", DateTime.Now },
+                { "AlertsSent", 0 },
+                { "ActiveSchedules", 0 }
+            };
+
+            try
+            {
+                // Lấy tất cả Schedule active
+                var activeSchedules = await _unitOfWork.scheduleRepository.GetAllActiveScheduleAsync();
+                result["ActiveSchedules"] = activeSchedules.Count;
+
+                // Lấy nhiệt độ mới nhất từ DHT11 (V0)
+                var latestTempLog = await _unitOfWork.iotLogRepository.GetLatestByPinAsync("V0");
+                if (latestTempLog == null)
+                {
+                    result["Message"] = "Không có dữ liệu nhiệt độ mới nhất";
+                    return result;
+                }
+
+                decimal currentTemp = (decimal)latestTempLog.Value;
+                result["CurrentTemperature"] = currentTemp;
+
+                int alertsSent = 0;
+
+                foreach (var schedule in activeSchedules)
+                {
+                    var requirement = schedule.Crop.CropRequirement
+                        .FirstOrDefault(r => r.PlantStage == schedule.currentPlantStage);
+
+                    if (requirement == null) continue;
+
+                    bool tempAlert = requirement.Temperature.HasValue &&
+                        (currentTemp < requirement.Temperature.Value - 3 ||
+                         currentTemp > requirement.Temperature.Value + 3);
+
+                    if (tempAlert)
+                    {
+                        string message = $"Cảnh báo môi trường cho cây {schedule.Crop.CropName} (Lịch {schedule.ScheduleId}):\n" +
+                                         $"Nhiệt độ hiện tại: {currentTemp}°C (Yêu cầu: {requirement.Temperature}°C)";
+
+                        await _hubContext.Clients.Group($"User_{currentUser.AccountId}")
+                                         .SendAsync("ReceiveNotification", message);
+
+                        alertsSent++;
+                    }
+                }
+
+                result["AlertsSent"] = alertsSent;
+                result["Message"] = alertsSent > 0 ? $"Đã gửi {alertsSent} cảnh báo" : "Không có cảnh báo";
+            }
+            catch (Exception ex)
+            {
+                result["Error"] = ex.Message;
+            }
+
+            return result;
+        }
         #endregion
-       
+
     }
 }

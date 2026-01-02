@@ -11,5 +11,6 @@ namespace Infrastructure.Repositories
     public interface IIOTLogRepository : IGenericRepository<IOTLog>
     {
         void DeleteRange(List<IOTLog> entities);
+        Task<IOTLog?> GetLatestByPinAsync(string pin);
     }
 }

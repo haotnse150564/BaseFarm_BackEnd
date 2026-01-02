@@ -21,7 +21,7 @@ namespace Application.Services
         Task<ResponseDTO> SearchCrop(string? cropName, Status? status, int pageIndex, int pageSize);
         Task<ResponseDTO> UpdateCrop(CropRequest cropUpdate, long cropId);
         Task<ResponseDTO> GetCropExcludingInativeAsync();
-
+        Task<Dictionary<string, object>> CheckTemperatureAlertsAsync();
 
     }
 }

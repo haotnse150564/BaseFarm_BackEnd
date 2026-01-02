@@ -19,5 +19,13 @@ namespace Infrastructure.Repositories.Implement
         {
             return await _dbSet.Include(d => d.Device).ToListAsync();
         }
+
+        public async Task<IOTLog?> GetLatestByPinAsync(string pin)
+        {
+            return await _context.IOTLog
+                .Where(l => l.Pin == pin)
+                .OrderByDescending(l => l.Timestamp)
+                .FirstOrDefaultAsync();
+        }
     }
 }

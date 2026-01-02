@@ -65,5 +65,15 @@ namespace WebAPI.Controllers
             var result = await _cropServices.GetCropExcludingInativeAsync();
             return Ok(result);
         }
+
+        /// <summary>
+        /// Kiểm tra và gửi cảnh báo nhiệt độ 
+        /// </summary>
+        [HttpPost("check-alerts")]
+        public async Task<IActionResult> CheckAlerts()
+        {
+            var result = await _cropServices.CheckTemperatureAlertsAsync();
+            return Ok(result);
+        }
     }
 }

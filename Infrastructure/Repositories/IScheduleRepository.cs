@@ -16,5 +16,7 @@ namespace Infrastructure.Repositories
         Task<Schedule?> GetByCropId(long cropId);
 
         Task<Schedule?> GetByIdWithCropRequirementsAsync(long scheduleId, long managerId);
+
+        Task<List<Schedule>> GetAllActiveScheduleAsync();
     }
 }
