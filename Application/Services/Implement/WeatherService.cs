@@ -181,7 +181,9 @@ namespace Application.Services.Implement
             bool hasRainAlert = false;
             WeatherAlertNotification? rainAlert = null;
 
-            DateTime nowVn = DateTime.Now;
+            //DateTime nowVn = DateTime.Now;
+            // Luôn lấy giờ Việt Nam chính xác, dù server ở múi giờ nào
+            DateTime nowVn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
 
             foreach (var item in data["list"])
             {
