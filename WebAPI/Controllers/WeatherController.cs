@@ -40,6 +40,50 @@ namespace WebAPI.Controllers
             await _monitoringService.CheckWeatherAndNotifyAllCropsAsync(city);
             return Ok("Đã kiểm tra và gửi cảnh báo nếu vượt ngưỡng.");
         }
+
+        [HttpGet("forecast")]
+        public async Task<IActionResult> GetForecast([FromQuery] string city = "Hanoi")
+        {
+            if (string.IsNullOrWhiteSpace(city))
+                return BadRequest("Vui lòng nhập tên thành phố.");
+
+            try
+            {
+                var forecast = await _weatherService.GetForecastAsync(city);
+                return Ok(forecast);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("hourly")]
+        public async Task<IActionResult> GetHourlyForecast([FromQuery] string city = "Hanoi",[FromQuery] int hours = 6)
+        {
+            if (string.IsNullOrWhiteSpace(city))
+                return BadRequest("Vui lòng nhập tên thành phố.");
+
+            if (hours < 1 || hours > 24)
+                return BadRequest("Chỉ hỗ trợ từ 1 đến 24 giờ.");
+
+            try
+            {
+                var forecast = await _weatherService.GetHourlyForecastAsync(city, hours);
+                return Ok(new
+                {
+                    city = city,
+                    note = "Dự báo được cập nhật mỗi 3 giờ một lần. Đây là các mốc gần nhất.",
+                    requested_hours = hours,
+                    count = forecast.Count,
+                    data = forecast
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
     }
 }
 
