@@ -74,4 +74,14 @@ namespace Infrastructure.ViewModel.Response
         public string IconUrl { get; set; } = string.Empty;
         public double? RainVolumeMm { get; set; }
     }
+
+    public class WeatherAlertNotification
+    {
+        public string CityName { get; set; } = string.Empty;
+        public DateTime ForecastTime { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string IconUrl { get; set; } = string.Empty;
+        public double? RainVolumeMm { get; set; }
+    }
 }

@@ -1,4 +1,6 @@
 ﻿using Infrastructure.ViewModel.Response;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -12,10 +14,12 @@ namespace Application.Services.Implement
     {
         private readonly HttpClient _httpClient;
         private readonly string _apiKey = "fbe7011d37ee38f0eaa77f13e1b4c9c4"; // Thay bằng API key của bạn
+        private readonly IHubContext<Hub> _hubContext;
 
-        public WeatherService(HttpClient httpClient)
+        public WeatherService(HttpClient httpClient, IConfiguration configuration, IHubContext<Hub> hubContext)
         {
             _httpClient = httpClient;
+            _hubContext = hubContext;
         }
 
         public async Task<WeatherResponse> GetWeatherAsync(string city)
@@ -141,23 +145,22 @@ namespace Application.Services.Implement
         /// Lấy dự báo thời tiết theo giờ từ hiện tại đến hours giờ sau (tối đa 3-9 giờ tùy dữ liệu)
         /// API trả về mỗi 3 giờ 1 lần → sẽ lấy các điểm gần nhất
         /// </summary>
-        public async Task<List<HourlyForecastResponse>> GetHourlyForecastAsync(string city, int maxHoursAhead = 6)
+        public async Task<List<HourlyForecastResponse>> GetHourlyForecastAsync(string city, int maxHoursAhead = 6, long? managerId = null)
         {
-            string encodedCity = Uri.EscapeDataString(city);
-            string url = $"https://api.openweathermap.org/data/2.5/forecast" +
-                         $"?q={encodedCity}" +
-                         $"&appid={_apiKey}" +
-                         $"&units=metric" +
-                         $"&lang=vi";
+            if (string.IsNullOrWhiteSpace(city))
+                throw new ArgumentException("Tên thành phố không được để trống.");
 
-            var response = await _httpClient.GetAsync(url);
-            if (!response.IsSuccessStatusCode)
+            string encodedCity = Uri.EscapeDataString(city.Trim());
+            string url = $"https://api.openweathermap.org/data/2.5/forecast?q={encodedCity}&appid={_apiKey}&units=metric&lang=vi";
+
+            var httpResponse = await _httpClient.GetAsync(url);
+            if (!httpResponse.IsSuccessStatusCode)
             {
-                var error = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Lỗi API dự báo theo giờ: {error}");
+                var error = await httpResponse.Content.ReadAsStringAsync();
+                throw new Exception($"Lỗi API OpenWeatherMap: {error}");
             }
 
-            var json = await response.Content.ReadAsStringAsync();
+            var json = await httpResponse.Content.ReadAsStringAsync();
             var data = JObject.Parse(json);
 
             if (data["cod"].ToString() != "200")
@@ -166,48 +169,43 @@ namespace Application.Services.Implement
             string cityName = $"{data["city"]["name"]}, {data["city"]["country"]}";
 
             var forecastList = new List<HourlyForecastResponse>();
+            bool hasRainAlert = false;
+            WeatherAlertNotification? rainAlert = null;
 
-            DateTime now = DateTime.UtcNow; // Thời gian hiện tại theo UTC (API dùng UTC)
+            DateTime nowVn = DateTime.Now;
 
             foreach (var item in data["list"])
             {
-                DateTime forecastTimeUtc = DateTimeOffset.FromUnixTimeSeconds((long)item["dt"]).DateTime;
-
-                // Chuyển về giờ Việt Nam để dễ hiểu hơn (UTC+7)
+                long unixTime = (long)item["dt"];
+                DateTime forecastTimeUtc = DateTimeOffset.FromUnixTimeSeconds(unixTime).UtcDateTime;
                 DateTime forecastTimeVn = forecastTimeUtc.AddHours(7);
 
-                TimeSpan diff = forecastTimeVn - DateTime.Now; // So sánh với giờ máy chủ/local (gần đúng giờ VN)
+                TimeSpan diff = forecastTimeVn - nowVn;
 
-                // Chỉ lấy các mốc từ hiện tại trở đi
                 if (diff.TotalHours >= -1 && diff.TotalHours <= maxHoursAhead + 1)
                 {
                     string label;
-
-                    if (diff.TotalMinutes <= 60) // trong vòng 1 giờ
-                    {
-                        if (diff.TotalMinutes < 5)
-                            label = "Bây giờ";
-                        else
-                        {
-                            int minutes = (int)Math.Round(diff.TotalMinutes);
-                            label = $"{minutes} phút nữa";
-                        }
-                    }
-                    else // trên 1 giờ
+                    if (diff.TotalMinutes < 5)
+                        label = "Bây giờ";
+                    else if (diff.TotalMinutes <= 60)
+                        label = $"{(int)Math.Round(diff.TotalMinutes)} phút nữa";
+                    else
                     {
                         int hours = (int)Math.Floor(diff.TotalHours);
                         int minutes = (int)Math.Round(diff.TotalMinutes - hours * 60);
-
-                        if (minutes == 0)
-                            label = hours == 1 ? "1 giờ nữa" : $"{hours} giờ nữa";
-                        else
-                            label = $"{hours} giờ {minutes} phút nữa";
+                        label = minutes == 0
+                            ? (hours == 1 ? "1 giờ nữa" : $"{hours} giờ nữa")
+                            : $"{hours} giờ {minutes} phút nữa";
                     }
+
+                    double? rainVolume = item["rain"]?["3h"] != null ? (double?)item["rain"]["3h"] : null;
+                    //bool isRaining = rainVolume > 0.3;
+                    bool isRaining = true;
 
                     var weather = new HourlyForecastResponse
                     {
                         CityName = cityName,
-                        TimeStamp = forecastTimeVn, // Hiển thị giờ Việt Nam luôn cho chính xác
+                        TimeStamp = forecastTimeVn,
                         ForecastFor = label,
                         TemperatureC = (double)item["main"]["temp"],
                         FeelsLikeC = (double)item["main"]["feels_like"],
@@ -216,15 +214,49 @@ namespace Application.Services.Implement
                         Summary = (string)item["weather"][0]["main"],
                         Description = (string)item["weather"][0]["description"],
                         IconUrl = $"http://openweathermap.org/img/wn/{(string)item["weather"][0]["icon"]}@2x.png",
-                        RainVolumeMm = item["rain"]?["3h"] != null ? (double?)item["rain"]["3h"] : null
+                        RainVolumeMm = rainVolume
                     };
 
                     forecastList.Add(weather);
+
+                    // Phát hiện mưa → chuẩn bị alert
+                    if (isRaining && diff.TotalHours >= 0 && diff.TotalHours <= 12 && !hasRainAlert)
+                    {
+                        hasRainAlert = true;
+                        rainAlert = new WeatherAlertNotification
+                        {
+                            CityName = cityName,
+                            ForecastTime = forecastTimeVn,
+                            Message = $"⚠️ Cảnh báo mưa tại {cityName}\n" +
+                                      $"Thời gian: {forecastTimeVn:HH:mm} - {forecastTimeVn:dd/MM/yyyy}\n" +
+                                      $"Lượng mưa: ~{rainVolume:F1} mm\n" +
+                                      $"Trạng thái: {(string)item["weather"][0]["description"]}",
+                            Description = (string)item["weather"][0]["description"],
+                            IconUrl = weather.IconUrl,
+                            RainVolumeMm = rainVolume
+                        };
+                    }
                 }
             }
 
             if (forecastList.Count == 0)
-                throw new Exception("Không có dữ liệu dự báo trong khoảng thời gian gần.");
+                throw new Exception("Không có dữ liệu dự báo trong khoảng thời gian yêu cầu.");
+
+            // GỬI NOTIFICATION RIÊNG CHO MANAGER ĐANG GỌI API
+            if (hasRainAlert && rainAlert != null && managerId.HasValue && managerId > 0)
+            {
+                try
+                {
+                    await _hubContext.Clients
+                        .Group($"User_{managerId.Value}")
+                        .SendAsync("ReceiveWeatherAlert", rainAlert);
+                }
+                catch (Exception ex)
+                {
+                    // Không làm hỏng API
+                    Console.WriteLine($"Lỗi gửi cảnh báo mưa cho Manager {managerId}: {ex.Message}");
+                }
+            }
 
             return forecastList;
         }

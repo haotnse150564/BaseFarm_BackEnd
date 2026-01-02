@@ -3,6 +3,7 @@ using Application.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Security.Claims;
 
 namespace WebAPI.Controllers
 {
@@ -59,22 +60,39 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("hourly")]
-        public async Task<IActionResult> GetHourlyForecast([FromQuery] string city = "Hanoi",[FromQuery] int hours = 6)
+        [Authorize(Roles = "Manager")] // Chỉ Manager mới được gọi
+        public async Task<IActionResult> GetHourlyForecast(
+        [FromQuery] string city = "Hanoi",
+        [FromQuery] int hours = 6)
         {
             if (string.IsNullOrWhiteSpace(city))
-                return BadRequest("Vui lòng nhập tên thành phố.");
+                return BadRequest(new { error = "Vui lòng nhập tên thành phố." });
 
             if (hours < 1 || hours > 24)
-                return BadRequest("Chỉ hỗ trợ từ 1 đến 24 giờ.");
+                return BadRequest(new { error = "Chỉ hỗ trợ từ 1 đến 24 giờ." });
+
+            // Lấy ManagerId từ token JWT
+            var managerIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)
+                                 ?? User.FindFirst("userId")
+                                 ?? User.FindFirst("sub");
+
+            long? managerId = null;
+            if (managerIdClaim != null && long.TryParse(managerIdClaim.Value, out long id))
+            {
+                managerId = id;
+            }
 
             try
             {
-                var forecast = await _weatherService.GetHourlyForecastAsync(city, hours);
+                var forecast = await _weatherService.GetHourlyForecastAsync(city, hours, managerId);
+
                 return Ok(new
                 {
-                    city = city,
-                    note = "Dự báo được cập nhật mỗi 3 giờ một lần. Đây là các mốc gần nhất.",
+                    city,
+                    note = "Dự báo được cập nhật mỗi 3 giờ một lần.",
                     requested_hours = hours,
+                    current_time_vn = DateTime.Now.ToString("HH:mm dd/MM/yyyy"),
+                    rain_alert_sent = forecast.Any(f => f.RainVolumeMm > 0.3),
                     count = forecast.Count,
                     data = forecast
                 });
