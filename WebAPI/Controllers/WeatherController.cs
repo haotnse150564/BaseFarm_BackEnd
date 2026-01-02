@@ -69,12 +69,15 @@ namespace WebAPI.Controllers
             {
                 var forecast = await _weatherService.GetHourlyForecastAsync(city, hours);
 
+                TimeZoneInfo vietnamZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                DateTime currentVn = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vietnamZone);
+
                 return Ok(new
                 {
                     city,
                     note = "Dự báo được cập nhật mỗi 3 giờ một lần.",
                     requested_hours = hours,
-                    current_time_vn = DateTime.Now.ToString("HH:mm dd/MM/yyyy"),
+                    current_time_vn = currentVn.ToString("HH:mm - dd/MM/yyyy"), // ví dụ: "14:59 - 02/01/2026"
                     rain_alert_sent = forecast.Any(f => f.RainVolumeMm > 0.3),
                     count = forecast.Count,
                     data = forecast
