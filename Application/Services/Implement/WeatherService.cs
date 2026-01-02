@@ -1,4 +1,6 @@
-﻿using Infrastructure.ViewModel.Response;
+﻿using Application.Utils;
+using Domain.Enum;
+using Infrastructure.ViewModel.Response;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
@@ -14,12 +16,14 @@ namespace Application.Services.Implement
     {
         private readonly HttpClient _httpClient;
         private readonly string _apiKey = "fbe7011d37ee38f0eaa77f13e1b4c9c4"; // Thay bằng API key của bạn
-        private readonly IHubContext<Hub> _hubContext;
+        private readonly IHubContext<NotificationHub.ManagerNotificationHub> _hubContext;
+        private readonly JWTUtils _jwtUtils;
 
-        public WeatherService(HttpClient httpClient, IConfiguration configuration, IHubContext<Hub> hubContext)
+        public WeatherService(HttpClient httpClient, IConfiguration configuration, IHubContext<NotificationHub.ManagerNotificationHub> hubContext, JWTUtils jwtUtils)
         {
             _httpClient = httpClient;
             _hubContext = hubContext;
+            _jwtUtils = jwtUtils;
         }
 
         public async Task<WeatherResponse> GetWeatherAsync(string city)
@@ -145,8 +149,13 @@ namespace Application.Services.Implement
         /// Lấy dự báo thời tiết theo giờ từ hiện tại đến hours giờ sau (tối đa 3-9 giờ tùy dữ liệu)
         /// API trả về mỗi 3 giờ 1 lần → sẽ lấy các điểm gần nhất
         /// </summary>
-        public async Task<List<HourlyForecastResponse>> GetHourlyForecastAsync(string city, int maxHoursAhead = 6, long? managerId = null)
+        public async Task<List<HourlyForecastResponse>> GetHourlyForecastAsync(string city, int maxHoursAhead = 6)
         {
+            var currentUser = await _jwtUtils.GetCurrentUserAsync();
+            if (currentUser == null || currentUser.Role != Roles.Manager)
+            {
+                throw new Exception("Chưa Login hoặc role không phải là Manager");
+            }
             if (string.IsNullOrWhiteSpace(city))
                 throw new ArgumentException("Tên thành phố không được để trống.");
 
@@ -199,8 +208,8 @@ namespace Application.Services.Implement
                     }
 
                     double? rainVolume = item["rain"]?["3h"] != null ? (double?)item["rain"]["3h"] : null;
-                    //bool isRaining = rainVolume > 0.3;
-                    bool isRaining = true;
+                    bool isRaining = rainVolume > 0.3;
+                    //bool isRaining = true;
 
                     var weather = new HourlyForecastResponse
                     {
@@ -243,18 +252,18 @@ namespace Application.Services.Implement
                 throw new Exception("Không có dữ liệu dự báo trong khoảng thời gian yêu cầu.");
 
             // GỬI NOTIFICATION RIÊNG CHO MANAGER ĐANG GỌI API
-            if (hasRainAlert && rainAlert != null && managerId.HasValue && managerId > 0)
+            if (hasRainAlert && rainAlert != null)
             {
                 try
                 {
                     await _hubContext.Clients
-                        .Group($"User_{managerId.Value}")
+                        .Group($"User_{currentUser.AccountId}")
                         .SendAsync("ReceiveWeatherAlert", rainAlert);
                 }
                 catch (Exception ex)
                 {
                     // Không làm hỏng API
-                    Console.WriteLine($"Lỗi gửi cảnh báo mưa cho Manager {managerId}: {ex.Message}");
+                    Console.WriteLine($"Lỗi gửi cảnh báo mưa cho Manager {currentUser.AccountId}: {ex.Message}");
                 }
             }
 

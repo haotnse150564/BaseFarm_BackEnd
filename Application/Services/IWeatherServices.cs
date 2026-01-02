@@ -11,6 +11,6 @@ namespace Application.Services
     {
         Task<WeatherResponse> GetWeatherAsync(string city);
         Task<WeatherForecastResponse> GetForecastAsync(string city);
-        Task<List<HourlyForecastResponse>> GetHourlyForecastAsync(string city, int maxHoursAhead = 6, long? managerId = null);
+        Task<List<HourlyForecastResponse>> GetHourlyForecastAsync(string city, int maxHoursAhead = 6);
     }
 }

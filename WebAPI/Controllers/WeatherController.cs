@@ -64,27 +64,10 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> GetHourlyForecast(
         [FromQuery] string city = "Hanoi",
         [FromQuery] int hours = 6)
-        {
-            if (string.IsNullOrWhiteSpace(city))
-                return BadRequest(new { error = "Vui lòng nhập tên thành phố." });
-
-            if (hours < 1 || hours > 24)
-                return BadRequest(new { error = "Chỉ hỗ trợ từ 1 đến 24 giờ." });
-
-            // Lấy ManagerId từ token JWT
-            var managerIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)
-                                 ?? User.FindFirst("userId")
-                                 ?? User.FindFirst("sub");
-
-            long? managerId = null;
-            if (managerIdClaim != null && long.TryParse(managerIdClaim.Value, out long id))
-            {
-                managerId = id;
-            }
-
+        {            
             try
             {
-                var forecast = await _weatherService.GetHourlyForecastAsync(city, hours, managerId);
+                var forecast = await _weatherService.GetHourlyForecastAsync(city, hours);
 
                 return Ok(new
                 {
