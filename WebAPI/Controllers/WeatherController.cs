@@ -62,8 +62,8 @@ namespace WebAPI.Controllers
         [HttpGet("hourly")]
         [Authorize(Roles = "Manager")] // Chỉ Manager mới được gọi
         public async Task<IActionResult> GetHourlyForecast(
-        [FromQuery] string city = "Hanoi",
-        [FromQuery] int hours = 6)
+        [FromQuery] string city = "Ho Chi Minh",
+        [FromQuery] int hours = 24)
         {            
             try
             {
