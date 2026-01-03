@@ -25,7 +25,7 @@ namespace Infrastructure.Repositories.Implement
         {
             return await _context.Crops
                 .Include(c => c.Category)
-                .Include(s => s.Schedules).ThenInclude(s => s.FarmActivities)
+                .Include(s => s.Schedules)
                 .Include(p => p.Product)
                 .Include(cr => cr.CropRequirement)
                 .Include(ca => ca.Category)
@@ -37,7 +37,7 @@ namespace Infrastructure.Repositories.Implement
             var result = await _context.Crops
                 .Where(c => c.Status != Domain.Enum.CropStatus.INACTIVE)
                 .Include(c => c.Category)
-                .Include(s => s.Schedules).ThenInclude(s => s.FarmActivities)
+                .Include(s => s.Schedules)
                 .Include(p => p.Product)
                 .Include(cr => cr.CropRequirement)
                 .ToListAsync();
@@ -47,7 +47,7 @@ namespace Infrastructure.Repositories.Implement
         {
             var result = await _context.Crops
                 .Include(c => c.Category)
-                .Include(s => s.Schedules).ThenInclude(s => s.FarmActivities)
+                .Include(s => s.Schedules)
                 .Include(p => p.Product)
                 .Include(cr => cr.CropRequirement)
                 .FirstOrDefaultAsync(x => x.CropId == id);

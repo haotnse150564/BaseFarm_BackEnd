@@ -21,6 +21,8 @@ namespace Infrastructure.ViewModel.Request
         public long StaffId { get; set; }
         [Required]
         public DateOnly? StartDate { get; set; }
+        [Required]
+        public DateOnly? EndDate { get; set; }
 
         [Required]
         public int? Quantity { get; set; }

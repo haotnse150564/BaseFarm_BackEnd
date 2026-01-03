@@ -4,6 +4,7 @@ using Application.Services.Implement;
 using Infrastructure.ViewModel.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.InteropServices;
 using static Infrastructure.ViewModel.Response.ScheduleResponse;
 
 namespace WebAPI.Controllers
@@ -118,9 +119,9 @@ namespace WebAPI.Controllers
         }
         [HttpPut("schedule-update-activities")]
         [Authorize(Roles = "Manager,Staff")]
-        public async Task<IActionResult> UpdateActivity(long scheduleId, long activityId)
+        public async Task<IActionResult> UpdateActivity(long scheduleId, long[] activityIds)
         {
-            var result = await _schedule.UpdateActivities(scheduleId, activityId);
+            var result = await _schedule.UpdateActivities(scheduleId, activityIds);
             if (result.Status != Const.FAIL_UPDATE_CODE)
             {
                 return BadRequest(result); // Trả về lỗi 400 nếu thất bại
