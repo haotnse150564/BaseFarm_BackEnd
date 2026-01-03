@@ -62,7 +62,7 @@ namespace Infrastructure.ViewModel.Response
     {
         public string CityName { get; set; } = string.Empty;
         // Thời gian thực tế của dữ liệu dự báo
-        public DateTime TimeStamp { get; set; }
+        public string TimeStamp { get; set; } = string.Empty;
         public string ForecastFor { get; set; } = string.Empty; // ví dụ: "Bây giờ", "3 giờ nữa", "6 giờ nữa"
         // Các thông tin thời tiết
         public double TemperatureC { get; set; }

@@ -216,7 +216,7 @@ namespace Application.Services.Implement
                     var weather = new HourlyForecastResponse
                     {
                         CityName = cityName,
-                        TimeStamp = forecastTimeVn,
+                        TimeStamp = forecastTimeVn.ToString("HH:mm, dd/MM/yyyy"),
                         ForecastFor = label,
                         TemperatureC = (double)item["main"]["temp"],
                         FeelsLikeC = (double)item["main"]["feels_like"],
