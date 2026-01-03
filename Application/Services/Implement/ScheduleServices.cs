@@ -118,10 +118,36 @@ namespace Application.Services.Implement
                     await _unitOfWork.scheduleRepository.AddAsync(schedule);
                     await _unitOfWork.SaveChangesAsync();
                 }
+
+                var result = _mapper.Map<ScheduleResponseView>(schedule);
+
+                return new ResponseDTO(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, result);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.FAIL_READ_CODE, ex.Message);
+            }
+        }
+        public async Task<ResponseDTO> AddFarmActivityToSchedule(long scheduleId, long[] farmActivities)
+        {
+            try
+            {
+                // Kiểm tra quyền
+                var currentUser = await _jwtUtils.GetCurrentUserAsync();
+                if (currentUser == null || currentUser.Role != Roles.Manager)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Tài khoản không hợp lệ.");
+                }
+                // Tìm schedule
+                var schedule = await _unitOfWork.scheduleRepository.GetByIdAsync(scheduleId);
+                if (schedule == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Lịch  không tồn tại.");
+                }
                 else
                 {
                     // Kiểm tra và thêm các hoạt động nông trại
-                    foreach (var activityId in request.FarmActivitiesId)
+                    foreach (var activityId in farmActivities)
                     {
                         var farmActivity = await _farmActivityRepository.GetByIdAsync(activityId);
                         if (farmActivity == null)
@@ -138,10 +164,9 @@ namespace Application.Services.Implement
                     await _unitOfWork.scheduleRepository.AddAsync(schedule);
                     await _unitOfWork.SaveChangesAsync();
                 }
-
+                // Map sang response view
                 var result = _mapper.Map<ScheduleResponseView>(schedule);
-
-                return new ResponseDTO(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, result);
+                return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, result);
             }
             catch (Exception ex)
             {
