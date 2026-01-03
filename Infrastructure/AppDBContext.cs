@@ -102,9 +102,9 @@ namespace Infrastructure
                 new Product { ProductId = 3, ProductName = "Rau Chân Vịt", Images = rau3, Price = 20000, StockQuantity = 10000, Description = "Rau Chân Vịt Sản Phẩm thử Nghiệm", Status = Domain.Enum.ProductStatus.ACTIVE, CreatedAt = DateOnly.Parse("2/1/2025"), UpdatedAt = DateOnly.Parse("2/1/2025"), CategoryId = 1, }
              );
             builder.Entity<Schedule>().HasData(
-               new Schedule { ScheduleId = 1, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("4/3/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"),ManagerId = 1, FarmId = 1, CropId = 1, Quantity = 100, FarmActivitiesId = 1 },
-                new Schedule { ScheduleId = 2, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/11/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), ManagerId = 1, FarmId = 1, CropId = 2, Quantity = 100, FarmActivitiesId = 2 },
-                new Schedule { ScheduleId = 3, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/3/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), ManagerId = 1, FarmId = 1, CropId = 3, Quantity = 100, FarmActivitiesId = 3 }
+               new Schedule { ScheduleId = 1, StartDate = DateOnly.Parse("3/1/2025"), EndDate = DateOnly.Parse("4/3/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"),ManagerId = 1, FarmId = 1, CropId = 1, Quantity = 100 },
+                new Schedule { ScheduleId = 2, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/11/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), ManagerId = 1, FarmId = 1, CropId = 2, Quantity = 100 },
+                new Schedule { ScheduleId = 3, StartDate = DateOnly.Parse("5/4/2025"), EndDate = DateOnly.Parse("4/3/2025"), Status = Domain.Enum.Status.ACTIVE, CreatedAt = DateOnly.Parse("3/1/2025"), UpdatedAt = DateOnly.Parse("3/1/2025"), ManagerId = 1, FarmId = 1, CropId = 3, Quantity = 100 }
            );
             
             builder.Entity<Farm>().HasData(

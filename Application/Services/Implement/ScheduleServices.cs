@@ -10,7 +10,9 @@ using Infrastructure.Repositories.Implement;
 using Infrastructure.ViewModel.Request;
 using Infrastructure.ViewModel.Response;
 using Microsoft.Extensions.Configuration;
+using OneOf.Types;
 using System.Drawing.Printing;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using static Infrastructure.ViewModel.Response.CropRequirementResponse;
 using static Infrastructure.ViewModel.Response.ScheduleResponse;
@@ -111,8 +113,31 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_CREATE_CODE, "Không tìm thấy cây trồng yêu cầu.");
                 }
 
-                await _unitOfWork.scheduleRepository.AddAsync(schedule);
-                await _unitOfWork.SaveChangesAsync();
+                if(request.FarmActivitiesId == null || request.FarmActivitiesId.Length == 0)
+                {
+                    await _unitOfWork.scheduleRepository.AddAsync(schedule);
+                    await _unitOfWork.SaveChangesAsync();
+                }
+                else
+                {
+                    // Kiểm tra và thêm các hoạt động nông trại
+                    foreach (var activityId in request.FarmActivitiesId)
+                    {
+                        var farmActivity = await _farmActivityRepository.GetByIdAsync(activityId);
+                        if (farmActivity == null)
+                        {
+                            return new ResponseDTO(Const.FAIL_CREATE_CODE, $"Không tìm thấy hoạt động nông trại với ID: {activityId}");
+                        }
+                        // Kiểm tra tính hợp lệ của schedule với farm activity
+                        var (isValid, validationMessage) = ValidateScheduleRequest(schedule, farmActivity);
+                        if (!isValid)
+                        {
+                            return new ResponseDTO(Const.FAIL_CREATE_CODE, validationMessage);
+                        }
+                    }
+                    await _unitOfWork.scheduleRepository.AddAsync(schedule);
+                    await _unitOfWork.SaveChangesAsync();
+                }
 
                 var result = _mapper.Map<ScheduleResponseView>(schedule);
 
@@ -123,7 +148,6 @@ namespace Application.Services.Implement
                 return new ResponseDTO(Const.FAIL_READ_CODE, ex.Message);
             }
         }
-
         public async Task<UpdateTodayResponse> UpdateTodayAsync(long scheduleId, UpdateTodayRequest request)
         {
             var getCurrentUser = await _jwtUtils.GetCurrentUserAsync();
@@ -214,7 +238,6 @@ namespace Application.Services.Implement
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, "Lịch  không tồn tại.");
                 }
-                var currentActivityId = schedule.FarmActivitiesId;
                 var requestedActivityId = request.FarmActivitiesId;
 
                 // Map dữ liệu mới vào schedule cũ
@@ -360,7 +383,7 @@ namespace Application.Services.Implement
             }
         }
 
-        public async Task<ResponseDTO> UpdateActivities(long scheduleId, long activityId)
+        public async Task<ResponseDTO> UpdateActivities(long scheduleId, long[]? activityId)
         {
             try
             {
@@ -379,14 +402,14 @@ namespace Application.Services.Implement
                 }
 
                 // Cập nhật activity
-                schedule.FarmActivitiesId = activityId;
-                schedule.UpdatedAt = _currentTime.GetCurrentTime();
-                var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(schedule.FarmActivitiesId);
+                //schedule.FarmActivitiesId = activityId;
+                //schedule.UpdatedAt = _currentTime.GetCurrentTime();
+                //var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(schedule.FarmActivitiesId);
 
-                if (!ValidateScheduleRequest(schedule, farmActivity).Item1)
-                {
-                    return new ResponseDTO(Const.FAIL_CREATE_CODE, ValidateScheduleRequest(schedule, farmActivity).Item2);
-                }
+                //if (!ValidateScheduleRequest(schedule, farmActivity).Item1)
+                //{
+                //    return new ResponseDTO(Const.FAIL_CREATE_CODE, ValidateScheduleRequest(schedule, farmActivity).Item2);
+                //}
                 // Lưu thay đổi
                 _unitOfWork.scheduleRepository.Update(schedule);
                 await _unitOfWork.SaveChangesAsync();

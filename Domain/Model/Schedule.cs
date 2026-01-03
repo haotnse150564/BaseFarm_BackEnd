@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Runtime.InteropServices;
 
 namespace Domain.Model;
 
@@ -21,7 +22,7 @@ public partial class Schedule
     public DateOnly? UpdatedAt { get; set; }
     public long FarmId { get; set; }
     public long CropId { get; set; }
-    public long FarmActivitiesId { get; set; }
+    //public long[]? FarmActivitiesId { get; set; }
     public virtual Account AssignedToNavigation { get; set; } = null!;
 
     public virtual Crop Crop { get; set; } = null!;
