@@ -21,6 +21,11 @@ namespace Infrastructure.ViewModel.Response
 
             public string? Status { get; set; }
 
+            //public long? AccountId { get; set; }
+            //public string? Email { get; set; } 
+            //public string? FullName { get; set; } 
+            //public string? Phone { get; set; } 
+
             public AvailableStaffDTO? StaffDTO { get; set; }
 
         }

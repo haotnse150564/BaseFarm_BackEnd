@@ -21,8 +21,11 @@ namespace Infrastructure.Mapper
                 .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate.HasValue ? src.StartDate.Value.ToString("yyyy-MM-dd") : null))
                 .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate.HasValue ? src.EndDate.Value.ToString("yyyy-MM-dd") : null))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+                //.ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.AssignedToNavigation.AccountId))
+                //.ForPath(dest => dest.FullName, opt => opt.MapFrom(src => src.AssignedToNavigation.AccountProfile.Fullname))
+                //.ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.AssignedToNavigation.Email))
+                //.ForPath(dest => dest.Phone, opt => opt.MapFrom(src => src.AssignedToNavigation.AccountProfile.Phone))
                 .ForMember(dest => dest.StaffDTO, opt => opt.MapFrom(src => src.AssignedToNavigation))
-
                 .ReverseMap();
             CreateMap<FarmActivity, FarmActivityRequest>()
                 .ForMember(dest => dest.StaffId, opt => opt.MapFrom(src => src.AssignedTo))
