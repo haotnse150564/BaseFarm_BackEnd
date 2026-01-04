@@ -231,7 +231,7 @@ namespace Application.Services.Implement
                     forecastList.Add(weather);
 
                     // Phát hiện mưa → chuẩn bị alert
-                    if (isRaining && diff.TotalHours >= 0 && diff.TotalHours <= 12 && !hasRainAlert)
+                    if (isRaining && diff.TotalHours >= 0 && diff.TotalHours <= 24 && !hasRainAlert)
                     {
                         hasRainAlert = true;
                         rainAlert = new WeatherAlertNotification
