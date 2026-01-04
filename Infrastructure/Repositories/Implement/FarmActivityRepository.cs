@@ -15,6 +15,8 @@ namespace Infrastructure.Repositories.Implement
         public async Task<List<FarmActivity>> GetAllActive()
         {
             var result = await _context.FarmActivity
+                .Include(x => x.AssignedToNavigation)
+                .ThenInclude(x => x.AccountProfile)
                 .Where(fa => fa.Status == Domain.Enum.FarmActivityStatus.ACTIVE
                           //&& !fa.Schedule.Any()
                           && fa.EndDate >= DateOnly.FromDateTime(DateTime.Today))
@@ -25,7 +27,10 @@ namespace Infrastructure.Repositories.Implement
         }
         public async Task<List<FarmActivity>> GetAllFiler(ActivityType? type, FarmActivityStatus? status, int? month)
         {
-            var list = await _context.FarmActivity.ToListAsync();
+            var list = await _context.FarmActivity
+                .Include(x => x.AssignedToNavigation)
+                .ThenInclude(x => x.AccountProfile)
+                .ToListAsync();
             if (type != null)
             {
                 list = list.Where(fa => fa.ActivityType == type).ToList();
@@ -50,6 +55,8 @@ namespace Infrastructure.Repositories.Implement
         public async Task<List<FarmActivity>> GetListFarmActivityByScheduleId(long scheduleId)
         {
             return await _context.FarmActivity
+                .Include(x => x.AssignedToNavigation)
+.ThenInclude(x => x.AccountProfile)
                  //.Where(fa => fa.ScheduleId == scheduleId)
                  .ToListAsync();
         }
@@ -57,6 +64,8 @@ namespace Infrastructure.Repositories.Implement
         public Task<List<FarmActivity>> GetListFarmActivityUpdate(IEnumerable<long>? farmActivityId)
         {
             var result = _context.FarmActivity
+                .Include(x => x.AssignedToNavigation)
+.ThenInclude(x => x.AccountProfile)
                 .Where(fa => farmActivityId.Contains(fa.FarmActivitiesId))
                 .ToListAsync();
             return result;
