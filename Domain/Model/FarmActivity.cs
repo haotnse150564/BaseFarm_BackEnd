@@ -19,7 +19,8 @@ public partial class FarmActivity //update lên bảng cần sau này
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public long createdBy { get; set; }
-    public long updatedBy { get; set; }
+    public long? updatedBy { get; set; }
+    public long? scheduleId { get; set; }
     public virtual Schedule Schedule { get; set; } = null!;
     public virtual Account AssignedToNavigation { get; set; } = null!;
 }

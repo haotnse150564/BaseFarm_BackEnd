@@ -18,8 +18,6 @@ namespace Infrastructure.ViewModel.Request
         [Required]
         public long CropId { get; set; }
         [Required]
-        public long StaffId { get; set; }
-        [Required]
         public DateOnly? StartDate { get; set; }
         [Required]
         public DateOnly? EndDate { get; set; }
@@ -33,8 +31,6 @@ namespace Infrastructure.ViewModel.Request
         public bool PesticideUsed { get; set; }
 
         public DiseaseStatus? DiseaseStatus { get; set; }
-
-        public long[]? FarmActivitiesId { get; set; }
     }
 
     public class UpdateTodayRequest

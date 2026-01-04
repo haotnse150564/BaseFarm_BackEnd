@@ -2,6 +2,7 @@
 using Application.Commons;
 using Application.Interfaces;
 using Application.Services;
+using Application.Utils;
 using AutoMapper;
 using Azure.Core;
 using Domain.Enum;
@@ -11,6 +12,7 @@ using Infrastructure.ViewModel.Request;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using static Infrastructure.ViewModel.Response.FarmActivityResponse;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WebAPI.Services
 {
@@ -23,7 +25,10 @@ namespace WebAPI.Services
         private readonly IMapper _mapper;
         private readonly IFarmActivityRepository _farmActivityRepository;
         private readonly IInventoryService _inventory;
-        public FarmActivityServices(IUnitOfWorks unitOfWork, ICurrentTime currentTime, IConfiguration configuration, IMapper mapper, IFarmActivityRepository farmActivityRepository, IInventoryService inventory)
+        private readonly JWTUtils _jwtUtils;
+        public FarmActivityServices(IUnitOfWorks unitOfWork, ICurrentTime currentTime, IConfiguration configuration, IMapper mapper
+            , IFarmActivityRepository farmActivityRepository, IInventoryService inventory, JWTUtils jWTUtils)
+
         {
             _unitOfWork = unitOfWork;
             _currentTime = currentTime;
@@ -31,13 +36,23 @@ namespace WebAPI.Services
             _mapper = mapper;
             _farmActivityRepository = farmActivityRepository;
             _inventory = inventory;
+            _jwtUtils = jWTUtils;
         }
 
         public async Task<ResponseDTO> CreateFarmActivityAsync(FarmActivityRequest farmActivityRequest, ActivityType activityType)
         {
+            var utcDate = DateTime.UtcNow.ToUniversalTime();
+
+            var user = await _jwtUtils.GetCurrentUserAsync();
             var farmActivity = _mapper.Map<FarmActivity>(farmActivityRequest);
             farmActivity.Status = Domain.Enum.FarmActivityStatus.ACTIVE;
             farmActivity.ActivityType = activityType;
+            farmActivity.CreatedAt = utcDate;
+            farmActivity.createdBy = user.AccountId;
+            farmActivity.UpdatedAt = DateTime.UtcNow;
+            farmActivity.updatedBy = user.AccountId;
+            
+
             await _unitOfWork.farmActivityRepository.AddAsync(farmActivity);
 
             if (await _unitOfWork.SaveChangesAsync() < 0)
@@ -160,6 +175,7 @@ namespace WebAPI.Services
 
         public async Task<ResponseDTO> UpdateFarmActivityAsync(long farmActivityId, FarmActivityRequest farmActivityrequest, ActivityType? activityType, FarmActivityStatus farmActivityStatus)
         {
+            var user = await _jwtUtils.GetCurrentUserAsync();
             var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(farmActivityId);
 
             if (farmActivity == null)
@@ -172,6 +188,8 @@ namespace WebAPI.Services
                 farmActivity.Status = farmActivityStatus; 
                 farmActivity.StartDate = farmActivityrequest.StartDate;
                 farmActivity.EndDate = farmActivityrequest.EndDate;
+                farmActivity.UpdatedAt = DateTime.Now;
+                farmActivity.updatedBy = user.AccountId;
                 var checkUpdate = await _unitOfWork.farmActivityRepository.UpdateAsync(farmActivity);
                 if (checkUpdate < 0)
                 {

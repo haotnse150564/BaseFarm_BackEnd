@@ -16,5 +16,7 @@ namespace Infrastructure.ViewModel.Request
         public DateOnly? EndDate { get; set; }
         [Required(ErrorMessage = "Staff is required.")]
         public long StaffId { get; set; }
+        public long? ScheduleId { get; set; }
+
     }
 }
