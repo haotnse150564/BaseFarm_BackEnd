@@ -18,8 +18,6 @@ namespace Infrastructure.ViewModel.Request
         [Required]
         public long CropId { get; set; }
         [Required]
-        public long StaffId { get; set; }
-        [Required]
         public DateOnly? StartDate { get; set; }
         [Required]
         public DateOnly? EndDate { get; set; }
