@@ -141,5 +141,16 @@ namespace WebAPI.Controllers
             var response = await _schedule.UpdateTodayAsync(scheduleId, request);
             return Ok(response);
         }
+        [HttpPut("add-farm-activity/{scheduleId}")]
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> AddFarmActivityToSchedule(long scheduleId, [FromBody] long farmActivities)
+        {
+            var result = await _schedule.AddFarmActivityToSchedule(scheduleId, farmActivities);
+            if (result.Status != Const.SUCCESS_READ_CODE)
+            {
+                return BadRequest(result); // Trả về lỗi 400 nếu thất bại
+            }
+            return Ok(result); // Trả về danh sách sản phẩm với phân trang
+        }
     }
 }

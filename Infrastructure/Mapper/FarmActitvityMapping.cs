@@ -19,9 +19,12 @@ namespace Infrastructure.Mapper
                 .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate))
                 //                .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.sta))
                 .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate))
+                .ReverseMap();
+            CreateMap<FarmActivity,FarmActivityRequest>()
+                .ForMember(dest => dest.StaffId, opt => opt.MapFrom(src => src.AssignedTo))
+                .ForMember(dest => dest.ScheduleId, opt => opt.MapFrom(src => src.scheduleId))
 
                 .ReverseMap();
-            CreateMap<FarmActivity,FarmActivityRequest>().ReverseMap();
         }
     }
 }

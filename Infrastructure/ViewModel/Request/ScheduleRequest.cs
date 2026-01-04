@@ -33,8 +33,6 @@ namespace Infrastructure.ViewModel.Request
         public bool PesticideUsed { get; set; }
 
         public DiseaseStatus? DiseaseStatus { get; set; }
-
-        public long[]? FarmActivitiesId { get; set; }
     }
 
     public class UpdateTodayRequest

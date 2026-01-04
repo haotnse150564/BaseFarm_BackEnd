@@ -112,12 +112,8 @@ namespace Application.Services.Implement
                 {
                     return new ResponseDTO(Const.FAIL_CREATE_CODE, "Không tìm thấy cây trồng yêu cầu.");
                 }
-
-                if(request.FarmActivitiesId == null || request.FarmActivitiesId.Length == 0)
-                {
-                    await _unitOfWork.scheduleRepository.AddAsync(schedule);
-                    await _unitOfWork.SaveChangesAsync();
-                }
+                await _unitOfWork.scheduleRepository.AddAsync(schedule);
+                await _unitOfWork.SaveChangesAsync();
 
                 var result = _mapper.Map<ScheduleResponseView>(schedule);
 
@@ -128,7 +124,7 @@ namespace Application.Services.Implement
                 return new ResponseDTO(Const.FAIL_READ_CODE, ex.Message);
             }
         }
-        public async Task<ResponseDTO> AddFarmActivityToSchedule(long scheduleId, long[] farmActivities)
+        public async Task<ResponseDTO> AddFarmActivityToSchedule(long scheduleId, long farmActivities)
         {
             try
             {
@@ -146,21 +142,19 @@ namespace Application.Services.Implement
                 }
                 else
                 {
-                    // Kiểm tra và thêm các hoạt động nông trại
-                    foreach (var activityId in farmActivities)
+
+                    var farmActivity = await _farmActivityRepository.GetByIdAsync(farmActivities);
+                    if (farmActivity == null)
                     {
-                        var farmActivity = await _farmActivityRepository.GetByIdAsync(activityId);
-                        if (farmActivity == null)
-                        {
-                            return new ResponseDTO(Const.FAIL_CREATE_CODE, $"Không tìm thấy hoạt động nông trại với ID: {activityId}");
-                        }
-                        // Kiểm tra tính hợp lệ của schedule với farm activity
-                        var (isValid, validationMessage) = ValidateScheduleRequest(schedule, farmActivity);
-                        if (!isValid)
-                        {
-                            return new ResponseDTO(Const.FAIL_CREATE_CODE, validationMessage);
-                        }
+                        return new ResponseDTO(Const.FAIL_CREATE_CODE, $"Không tìm thấy hoạt động nông trại với ID: {farmActivities}");
                     }
+                    // Kiểm tra tính hợp lệ của schedule với farm activity
+                    var (isValid, validationMessage) = ValidateScheduleRequest(schedule, farmActivity);
+                    if (!isValid)
+                    {
+                        return new ResponseDTO(Const.FAIL_CREATE_CODE, validationMessage);
+                    }
+
                     await _unitOfWork.scheduleRepository.AddAsync(schedule);
                     await _unitOfWork.SaveChangesAsync();
                 }
@@ -263,7 +257,6 @@ namespace Application.Services.Implement
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, "Lịch  không tồn tại.");
                 }
-                var requestedActivityId = request.FarmActivitiesId;
 
                 // Map dữ liệu mới vào schedule cũ
                 var updatedSchedule = _mapper.Map(request, schedule);
