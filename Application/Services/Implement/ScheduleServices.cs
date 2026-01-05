@@ -14,7 +14,9 @@ using OneOf.Types;
 using System.Drawing.Printing;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using static Infrastructure.ViewModel.Response.AccountResponse;
 using static Infrastructure.ViewModel.Response.CropRequirementResponse;
+using static Infrastructure.ViewModel.Response.FarmActivityResponse;
 using static Infrastructure.ViewModel.Response.ScheduleResponse;
 using ResponseDTO = Infrastructure.ViewModel.Response.ScheduleResponse.ResponseDTO;
 
@@ -297,31 +299,53 @@ namespace Application.Services.Implement
                 }
 
                 var list = await _unitOfWork.scheduleRepository.GetAllAsync();
-                var schedules = _mapper.Map<List<ScheduleResponseView>>(list);
 
-                //In ra kết quả
+                var schedulesView = list.Select(schedule =>
+                {
+                    // map Schedule trước
+                    var scheduleView = _mapper.Map<ScheduleResponseView>(schedule);
 
-                var safePageIndex = Math.Max(pageIndex, 1); // Đảm bảo pageIndex >= 1
+                    // map tay FarmActivity + Staff
+                    scheduleView.farmActivityView = schedule.FarmActivities?
+                        .Select(fa => new FarmActivityView
+                        {
+                            FarmActivitiesId = fa.FarmActivitiesId,
+                            ActivityType = fa.ActivityType?.ToString(),
+                            StartDate = fa.StartDate?.ToString("dd/MM/yyyy"),
+                            EndDate = fa.EndDate?.ToString("dd/MM/yyyy"),
+                            Status = fa.Status?.ToString(),
+
+                            StaffId = (long)(fa.AssignedToNavigation?.AccountId),
+                            StaffEmail = fa.AssignedToNavigation?.Email,
+                            StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
+                            StaffPhone = fa.AssignedToNavigation?.AccountProfile?.Phone
+                        })
+                        .ToList();
+
+                    return scheduleView;
+                }).ToList();
+
+                var safePageIndex = Math.Max(pageIndex, 1);
 
                 var result = new Pagination<ScheduleResponseView>
                 {
-                    TotalItemCount = schedules.Count,
+                    TotalItemCount = schedulesView.Count,
                     PageSize = pageSize,
-                    PageIndex = pageIndex,
-                    Items = schedules.Skip((safePageIndex - 1) * pageSize).Take(pageSize).ToList()
+                    PageIndex = safePageIndex,
+                    Items = schedulesView
+                        .Skip((safePageIndex - 1) * pageSize)
+                        .Take(pageSize)
+                        .ToList()
                 };
 
-
-
-                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_CREATE_MSG, result);
-
-
+                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
             }
             catch (Exception ex)
             {
                 return new ResponseDTO(Const.FAIL_READ_CODE, ex.Message);
             }
         }
+
 
         public async Task<ResponseDTO> ScheduleByIdAsync(long scheduleId)
         {
@@ -334,25 +358,45 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_READ_CODE, "Tài khoản không hợp lệ.");
                 }
 
-                // Tìm schedule
+                // Lấy schedule
                 var schedule = await _unitOfWork.scheduleRepository.GetByIdAsync(scheduleId);
                 if (schedule == null)
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, "Lịch không tồn tại.");
                 }
 
-                // Map sang response view
-                var result = _mapper.Map<ScheduleResponseView>(schedule);
-                // Lấy thông tin manager
-                var manager = await _account.GetByIdAsync(schedule.ManagerId);
+                // Map Schedule trước
+                var scheduleView = _mapper.Map<ScheduleResponseView>(schedule);
 
-                return new ResponseDTO(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, result);
+                // ===== MAP TAY FarmActivity + Staff (GIỐNG HÀM LIST) =====
+                scheduleView.farmActivityView = schedule.FarmActivities?
+                    .Select(fa => new FarmActivityView
+                    {
+                        FarmActivitiesId = fa.FarmActivitiesId,
+                        ActivityType = fa.ActivityType?.ToString(),
+                        StartDate = fa.StartDate?.ToString("dd/MM/yyyy"),
+                        EndDate = fa.EndDate?.ToString("dd/MM/yyyy"),
+                        Status = fa.Status?.ToString(),
+
+                        StaffId = (long)(fa.AssignedToNavigation?.AccountId),
+                        StaffEmail = fa.AssignedToNavigation?.Email,
+                        StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
+                        StaffPhone = fa.AssignedToNavigation?.AccountProfile?.Phone
+                    })
+                    .ToList();
+
+                return new ResponseDTO(
+                    Const.SUCCESS_READ_CODE,
+                    Const.SUCCESS_READ_MSG,
+                    scheduleView
+                );
             }
             catch (Exception ex)
             {
                 return new ResponseDTO(Const.FAIL_READ_CODE, ex.Message);
             }
         }
+
 
         public async Task<ResponseDTO> AssignTask(long scheduleID, long staffId)
         {
@@ -494,25 +538,60 @@ namespace Application.Services.Implement
                     return new ResponseDTO(Const.FAIL_READ_CODE, "Tài khoản không hợp lệ.");
                 }
 
-                // Lấy danh sách lịch  theo staff và tháng
-                var list = await _unitOfWork.scheduleRepository.GetByStaffIdAsync(currentUser.AccountId, month);
+                // Lấy danh sách schedule theo staff + tháng
+                var list = await _unitOfWork.scheduleRepository
+                    .GetByStaffIdAsync(currentUser.AccountId, month);
+
                 if (list == null || !list.Any())
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, "Không tìm thấy lịch.");
                 }
 
-                // Map sang response view
-                var schedules = _mapper.Map<List<ScheduleResponseView>>(list);
+                // ===== MAP TAY SCHEDULE + FARM ACTIVITY + STAFF =====
+                var schedulesView = list.Select(schedule =>
+                {
+                    // Map Schedule trước
+                    var scheduleView = _mapper.Map<ScheduleResponseView>(schedule);
 
+                    // Chỉ lấy FarmActivity của staff đang đăng nhập
+                    scheduleView.farmActivityView = schedule.FarmActivities?
+                        .Where(fa =>
+                            fa.AssignedToNavigation != null &&
+                            fa.AssignedToNavigation.AccountId == currentUser.AccountId
+                        )
+                        .Select(fa => new FarmActivityView
+                        {
+                            FarmActivitiesId = fa.FarmActivitiesId,
+                            ActivityType = fa.ActivityType?.ToString(),
+                            StartDate = fa.StartDate?.ToString("dd/MM/yyyy"),
+                            EndDate = fa.EndDate?.ToString("dd/MM/yyyy"),
+                            Status = fa.Status?.ToString(),
 
+                            StaffId = (long)(fa.AssignedToNavigation?.AccountId),
+                            StaffEmail = fa.AssignedToNavigation?.Email,
+                            StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
+                            StaffPhone = fa.AssignedToNavigation?.AccountProfile?.Phone
+                        })
+                        .ToList();
 
-                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, schedules);
+                    return scheduleView;
+                }).ToList();
+
+                return new ResponseDTO(
+                    Const.SUCCESS_READ_CODE,
+                    Const.SUCCESS_READ_MSG,
+                    schedulesView
+                );
             }
             catch (Exception ex)
             {
-                return new ResponseDTO(Const.FAIL_READ_CODE, $"Lỗi khi lấy lịch : {ex.Message}");
+                return new ResponseDTO(
+                    Const.FAIL_READ_CODE,
+                    $"Lỗi khi lấy lịch: {ex.Message}"
+                );
             }
         }
+
     }
     #endregion
 }
