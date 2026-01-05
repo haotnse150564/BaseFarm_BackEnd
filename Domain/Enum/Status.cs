@@ -28,6 +28,7 @@ namespace Domain.Enum
     }
     public enum DiseaseStatus
     {
+        None = 0,             // Không có bệnh
         DownyMildew,          // Nấm phấn trắng
         PowderyMildew,        // Nấm phấn
         LeafSpot,             // Đốm lá
