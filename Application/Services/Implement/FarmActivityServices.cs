@@ -89,89 +89,140 @@ namespace WebAPI.Services
             }
         }
 
-        public async Task<ResponseDTO> GetFarmActivitiesActiveAsync(int pageIndex, int pageSize)
+        public async Task<ResponseDTO> GetFarmActivitiesActiveAsync(int pageIndex,int pageSize)
         {
             var list = await _unitOfWork.farmActivityRepository.GetAllActive();
+
             if (list.IsNullOrEmpty())
             {
-                return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);
+                return new ResponseDTO(Const.FAIL_READ_CODE,Const.FAIL_READ_MSG,"Not Found");
             }
 
-            var resultView = _mapper.Map<List<FarmActivityView>>(list);
+            // ===== Map tay, không dùng AutoMapper =====
+            var views = list.Select(fa => new FarmActivityView
+            {
+                FarmActivitiesId = fa.FarmActivitiesId,
+                ActivityType = fa.ActivityType?.ToString(),
+                StartDate = fa.StartDate?.ToString("dd/MM/yyyy"),
+                EndDate = fa.EndDate?.ToString("dd/MM/yyyy"),
+                Status = fa.Status?.ToString(),
+
+                StaffId = (long)(fa.AssignedToNavigation?.AccountId),
+                StaffEmail = fa.AssignedToNavigation?.Email,
+                StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
+                StaffPhone = fa.AssignedToNavigation?.AccountProfile?.Phone
+            }).ToList();
 
             var pagination = new Pagination<FarmActivityView>
             {
-                TotalItemCount = resultView.Count,
+                TotalItemCount = views.Count,
                 PageSize = pageSize,
                 PageIndex = pageIndex,
-                Items = resultView.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList()
+                Items = views.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList()
             };
 
-            return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, pagination);
+            return new ResponseDTO(Const.SUCCESS_READ_CODE,Const.SUCCESS_READ_MSG,pagination);
         }
+
 
         public async Task<ResponseDTO> GetFarmActivitiesAsync(int pageIndex, int pageSize, ActivityType? type, FarmActivityStatus? status, int? month)
         {
             var result = await _unitOfWork.farmActivityRepository.GetAllFiler(type, status, month);
-            result.Sort((y, x) => x.FarmActivitiesId.CompareTo(y.FarmActivitiesId));
 
             if (result.IsNullOrEmpty())
-            {
-                return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG,"Not Found");
-            }
-            else
-            {
-                // Map dữ liệu sang DTO
-                var resultView = _mapper.Map<List<FarmActivityView>>(result);
+                return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Not Found");
 
-                var pagination = new Pagination<FarmActivityView>
-                {
-                    TotalItemCount = resultView.Count,
-                    PageSize = pageSize,
-                    PageIndex = pageIndex,
-                    Items = resultView.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList()
-                };
-                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, pagination);
-            }
+            result.Sort((y, x) => x.FarmActivitiesId.CompareTo(y.FarmActivitiesId));
+
+            var views = result.Select(fa => new FarmActivityView
+            {
+                FarmActivitiesId = fa.FarmActivitiesId,
+                ActivityType = fa.ActivityType.ToString(),
+                StartDate = fa.StartDate?.ToString("dd/MM/yyyy"),
+                EndDate = fa.EndDate?.ToString("dd/MM/yyyy"),
+                Status = fa.Status.ToString(),
+
+                StaffId = (long)(fa.AssignedToNavigation?.AccountId),
+                StaffEmail = fa.AssignedToNavigation?.Email,
+                StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
+                StaffPhone = fa.AssignedToNavigation?.AccountProfile?.Phone
+            }).ToList();
+
+            var pagination = new Pagination<FarmActivityView>
+            {
+                TotalItemCount = views.Count,
+                PageSize = pageSize,
+                PageIndex = pageIndex,
+                Items = views.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList()
+            };
+
+            return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, pagination);
         }
-        public async Task<ResponseDTO> GetFarmActivitiesByStaffAsync(int pageIndex, int pageSize, ActivityType? type, FarmActivityStatus? status, int? month)
+        public async Task<ResponseDTO> GetFarmActivitiesByStaffAsync(int pageIndex,int pageSize,ActivityType? type,FarmActivityStatus? status,int? month)
         {
             var result = await _unitOfWork.farmActivityRepository.GetAllFiler(type, status, month);
-            result.Sort((y, x) => x.FarmActivitiesId.CompareTo(y.FarmActivitiesId));
+
             if (result.IsNullOrEmpty())
             {
-                return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Not Found");
+                return new ResponseDTO(Const.FAIL_READ_CODE,Const.FAIL_READ_MSG,"Not Found");
             }
-            else
+
+            result.Sort((y, x) => x.FarmActivitiesId.CompareTo(y.FarmActivitiesId));
+
+            var views = result.Select(fa => new FarmActivityView
             {
-                // Map dữ liệu sang DTO
-                var resultView = _mapper.Map<List<FarmActivityView>>(result);
+                FarmActivitiesId = fa.FarmActivitiesId,
+                ActivityType = fa.ActivityType?.ToString(),
+                StartDate = fa.StartDate?.ToString("dd/MM/yyyy"),
+                EndDate = fa.EndDate?.ToString("dd/MM/yyyy"),
+                Status = fa.Status?.ToString(),
 
-                var pagination = new Pagination<FarmActivityView>
-                {
-                    TotalItemCount = resultView.Count,
-                    PageSize = pageSize,
-                    PageIndex = pageIndex,
-                    Items = resultView.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList()
-                };
-                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, pagination);
-            }
+                StaffId = (long)(fa.AssignedToNavigation?.AccountId),
+                StaffEmail = fa.AssignedToNavigation?.Email,
+                StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
+                StaffPhone = fa.AssignedToNavigation?.AccountProfile?.Phone
+            }).ToList();
 
+            var pagination = new Pagination<FarmActivityView>
+            {
+                TotalItemCount = views.Count,
+                PageSize = pageSize,
+                PageIndex = pageIndex,
+                Items = views.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList()
+            };
+
+            return new ResponseDTO(Const.SUCCESS_READ_CODE,Const.SUCCESS_READ_MSG,pagination);
         }
+
 
         public async Task<ResponseDTO> GetFarmActivityByIdAsync(long farmActivityId)
         {
-            var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(farmActivityId);
-            if (farmActivity == null)
+            var farmActivity = await _unitOfWork.farmActivityRepository.GetAllFiler(null, null, null);
+
+            var fa = farmActivity.FirstOrDefault(x => x.FarmActivitiesId == farmActivityId);
+
+            if (fa == null)
             {
                 return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);
             }
-            else
+
+            var view = new FarmActivityView
             {
-                var result = _mapper.Map<FarmActivityView>(farmActivity);
-                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
-            }
+                FarmActivitiesId = fa.FarmActivitiesId,
+                ActivityType = fa.ActivityType?.ToString(),
+                StartDate = fa.StartDate?.ToString("dd/MM/yyyy"),
+                EndDate = fa.EndDate?.ToString("dd/MM/yyyy"),
+                Status = fa.Status?.ToString(),
+
+                StaffId = (long)(fa.AssignedToNavigation?.AccountId),
+                StaffEmail = fa.AssignedToNavigation?.Email,
+                StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
+                StaffPhone = fa.AssignedToNavigation?.AccountProfile?.Phone
+            };
+
+            return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, view);
         }
+
 
         public async Task<ResponseDTO> UpdateFarmActivityAsync(long farmActivityId, FarmActivityRequest farmActivityrequest, ActivityType? activityType, FarmActivityStatus farmActivityStatus)
         {
