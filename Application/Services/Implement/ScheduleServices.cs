@@ -102,12 +102,28 @@ namespace Application.Services.Implement
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, "Tài khoản không hợp lệ.");
                 }
+
+                var getCrop = await _unitOfWork.cropRepository.GetByIdAsync(request.CropId);
+                if(getCrop == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Không tìm thấy cây trồng.");
+                }
+                int totalTimes = getCrop.CropRequirement?
+                                    .Where(r => r.EstimatedDate.HasValue)
+                                    .Sum(r => r.EstimatedDate.Value) ?? 0;
+
+                // Tính ngày kết thúc dự kiến nếu có StartDate từ Schedule
+                DateOnly? estimatedEndDate = null;
+                if (request?.StartDate.HasValue == true) 
+                {
+                    estimatedEndDate = request.StartDate.Value.AddDays(totalTimes);
+                }
                 // Tạo schedule mới
                 var schedule = _mapper.Map<Schedule>(request);
                 schedule.ManagerId = getCurrentUser.AccountId;
                 schedule.CreatedAt = _currentTime.GetCurrentTime();
                 schedule.currentPlantStage = PlantStage.Seedling;
-
+                schedule.EndDate = estimatedEndDate;
                 // Kiểm tra yêu cầu cây trồng
                 var getCropRequirement = await _cropRepository.GetByIdAsync(request.CropId);
                 if (getCropRequirement?.CropRequirement == null || !getCropRequirement.CropRequirement.Any())
