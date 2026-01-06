@@ -126,16 +126,16 @@ public static class DependencyInjection
         services.AddFluentValidationClientsideAdapters();
 
 
-        services.AddCors(options =>
+        builder.Services.AddCors(options =>
         {
-            options.AddPolicy("_myAllowSpecificOrigins", policy =>
-            {
-                policy
-                    .WithOrigins("http://localhost:5173") // FE port
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials();
-            });
+            options.AddPolicy(name: "_myAllowSpecificOrigins",
+                policy =>
+                {
+                    policy.WithOrigins("https://ifms.io.vn")  // Origin frontend
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials();
+                });
         });
 
 
