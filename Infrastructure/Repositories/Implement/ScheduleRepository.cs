@@ -12,46 +12,69 @@ namespace Infrastructure.Repositories.Implement
             _context = context;
             _dbSet = _context.Set<Schedule>();
         }
+
         public override async Task<Schedule?> GetByIdAsync(long id)
         {
-            var result = await _dbSet.Where(x => x.ScheduleId == id)
-            .Include(s => s.AssignedToNavigation).ThenInclude(ap => ap.AccountProfile)
-            .Include(f => f.FarmDetails)
-            .Include(c => c.Crop).ThenInclude(c => c.CropRequirement)
-            .Include(fa => fa.FarmActivities)
-            .FirstOrDefaultAsync();
-            return result;
-        }
-        public override async Task<List<Schedule>> GetAllAsync()
-        {
-            var result = await _context.Schedule // Thêm _context.Schedules vào đây
-            .Include(s => s.AssignedToNavigation).ThenInclude(ap => ap.AccountProfile)
-            .Include(f => f.FarmDetails)
-            .Include(c => c.Crop).ThenInclude(c => c.CropRequirement)
-            .Include(fa => fa.FarmActivities)
-            .OrderByDescending(x => x.ScheduleId)
-            .ToListAsync();
-            return result;
+            return await _dbSet
+                .Where(s => s.ScheduleId == id)
+
+                // FarmActivities + Staff + Profile
+                .Include(s => s.FarmActivities)
+                    .ThenInclude(fa => fa.AssignedToNavigation)
+                        .ThenInclude(a => a.AccountProfile)
+
+                // Farm
+                .Include(s => s.FarmDetails)
+
+                // Crop + Requirement
+                .Include(s => s.Crop)
+                    .ThenInclude(c => c.CropRequirement)
+
+                .FirstOrDefaultAsync();
         }
 
-        public async Task<List<Schedule?>> GetByStaffIdAsync(long staffId, int month)
+
+        public override async Task<List<Schedule>> GetAllAsync()
         {
-            var result = await _context.Schedule
-            .Include(a => a.AssignedToNavigation)
-            .Include(a => a.Crop).ThenInclude(c => c.CropRequirement)
-            .Include(a => a.AssignedToNavigation)            
-            .ThenInclude(a => a.AccountProfile)
-            .Include(a => a.FarmActivities)
-            .Include(a => a.FarmDetails)
-            //.Where(x => x.AssignedTo == staffId)
-            .OrderByDescending(x => x.ScheduleId)
-            .ToListAsync();
-            if (month > 0 && month < 12)
-            {
-                result = result.Where(x => x.StartDate.HasValue && x.StartDate.Value.Month == month).ToList();
-            }
-            return result;
+            return await _context.Schedule
+                .Include(s => s.FarmActivities)
+                    .ThenInclude(fa => fa.AssignedToNavigation)
+                        .ThenInclude(a => a.AccountProfile)
+                .Include(s => s.FarmDetails)
+                .Include(s => s.Crop)
+                    .ThenInclude(c => c.CropRequirement)
+                .OrderByDescending(s => s.ScheduleId)
+                .ToListAsync();
         }
+
+
+        public async Task<List<Schedule>> GetByStaffIdAsync(long staffId, int month)
+        {
+            var query = _context.Schedule
+                .Include(s => s.AssignedToNavigation)
+                    .ThenInclude(a => a.AccountProfile)
+                .Include(s => s.Crop)
+                    .ThenInclude(c => c.CropRequirement)
+                .Include(s => s.FarmDetails)
+                .Include(s => s.FarmActivities)
+                    .ThenInclude(fa => fa.AssignedToNavigation)
+                        .ThenInclude(a => a.AccountProfile)
+                // CHỈ LẤY schedule có activity của staff
+                .Where(s => s.FarmActivities.Any(fa => fa.AssignedTo == staffId))
+                .OrderByDescending(s => s.ScheduleId);
+
+            if (month >= 1 && month <= 12)
+            {
+                query = (IOrderedQueryable<Schedule>)query.Where(s =>
+                    s.StartDate.HasValue &&
+                    s.StartDate.Value.Month == month
+                );
+            }
+
+            return await query.ToListAsync();
+        }
+
+
         public async Task<List<Schedule?>> GetScheduleByStaffIdAsync(long staffId, int month)
         {
             var result = await _context.Schedule
