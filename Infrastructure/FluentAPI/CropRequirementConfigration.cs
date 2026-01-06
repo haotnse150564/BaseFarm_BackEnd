@@ -25,7 +25,7 @@ namespace Infrastructure.FluentAPI
             builder.Property(cr => cr.EstimatedDate)
                    .HasColumnType("integer");
 
-            builder.Property(cr => cr.Moisture)
+            builder.Property(cr => cr.SoilMoisture)
                    .HasColumnType("numeric(10,2)");
 
             builder.Property(cr => cr.Temperature)
@@ -35,6 +35,9 @@ namespace Infrastructure.FluentAPI
                    .HasColumnType("text");
 
             builder.Property(cr => cr.LightRequirement)
+                   .HasColumnType("numeric(10,2)");
+
+            builder.Property(cr => cr.Humidity)
                    .HasColumnType("numeric(10,2)");
 
             builder.Property(cr => cr.WateringFrequency)

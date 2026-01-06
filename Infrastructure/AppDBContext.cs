@@ -156,8 +156,9 @@ namespace Infrastructure
           {
               CropRequirementId = 1,
               EstimatedDate = 25,
-              Moisture = 1,
+              SoilMoisture = 1,
               Temperature = 29,
+              Humidity = 70,
               PlantStage = Domain.Enum.PlantStage.Seedling,
               LightRequirement = 200,
               WateringFrequency = 7,
@@ -169,8 +170,9 @@ namespace Infrastructure
           {
               CropRequirementId = 2,
               EstimatedDate = 25,
-              Moisture = 1,
+              SoilMoisture = 1,
               Temperature = 24,
+              Humidity = 60,
               PlantStage = Domain.Enum.PlantStage.Germination,
               LightRequirement = 200,
               WateringFrequency = 7,
@@ -182,7 +184,8 @@ namespace Infrastructure
           {
               CropRequirementId = 3,
               EstimatedDate = 30,
-              Moisture = 1,
+              SoilMoisture = 1,
+              Humidity = 60,
               Temperature = 26,
               PlantStage = Domain.Enum.PlantStage.Harvest,
               LightRequirement = 200,

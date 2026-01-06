@@ -11,10 +11,11 @@ public partial class CropRequirement
     public PlantStage? PlantStage { get; set; }
 
     public int? EstimatedDate { get; set; }
-    public decimal? Moisture { get; set; }
+    public decimal? SoilMoisture { get; set; }
     public decimal? Temperature { get; set; }
     public string? Fertilizer { get; set; }
     public decimal? LightRequirement { get; set; }
+    public decimal? Humidity { get; set; }
     public int? WateringFrequency { get; set; }
     public string? Notes { get; set; }
 

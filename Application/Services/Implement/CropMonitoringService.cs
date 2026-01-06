@@ -59,9 +59,9 @@ public class CropMonitoringService : ICropMonitoringService
             }
 
             // So sánh độ ẩm (±10%)
-            if (cropRequirement.Moisture.HasValue)
+            if (cropRequirement.SoilMoisture.HasValue)
             {
-                var threshold = cropRequirement.Moisture.Value;
+                var threshold = cropRequirement.SoilMoisture.Value;
                 var actual = weather.Humidity;
 
                 if (actual > threshold * 1.1m || actual < threshold * 0.9m)

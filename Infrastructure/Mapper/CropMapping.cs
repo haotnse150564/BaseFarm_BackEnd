@@ -22,7 +22,8 @@ namespace Infrastructure.Mapper
                 .ForMember(dest => dest.PlantStage,
                     opt => opt.MapFrom(src => src.PlantStage.HasValue ? src.PlantStage.Value.ToString() : null))
                 .ForMember(dest => dest.EstimatedDate, opt => opt.MapFrom(src => src.EstimatedDate))
-                .ForMember(dest => dest.Moisture, opt => opt.MapFrom(src => src.Moisture))
+                .ForMember(dest => dest.SoilMoisture, opt => opt.MapFrom(src => src.SoilMoisture))
+                .ForMember(dest => dest.Humidity, opt => opt.MapFrom(src => src.Humidity))
                 .ForMember(dest => dest.Temperature, opt => opt.MapFrom(src => src.Temperature))
                 .ForMember(dest => dest.Fertilizer, opt => opt.MapFrom(src => src.Fertilizer))
                 .ForMember(dest => dest.LightRequirement, opt => opt.MapFrom(src => src.LightRequirement))
