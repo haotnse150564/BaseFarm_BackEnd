@@ -239,7 +239,7 @@ namespace WebAPI.Services
                 farmActivity.Status = farmActivityStatus; 
                 farmActivity.StartDate = farmActivityrequest.StartDate;
                 farmActivity.EndDate = farmActivityrequest.EndDate;
-                farmActivity.UpdatedAt = DateTime.Now;
+                farmActivity.UpdatedAt = DateTime.UtcNow;
                 farmActivity.updatedBy = user.AccountId;
                 var checkUpdate = await _unitOfWork.farmActivityRepository.UpdateAsync(farmActivity);
                 if (checkUpdate < 0)
@@ -255,12 +255,12 @@ namespace WebAPI.Services
                         {
                             return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);
                         }
-                        foreach (var item in product)
-                        {
-                            //CỘNG SL KHI THU HOẠCH
-                            var schedule = await _unitOfWork.scheduleRepository.GetByCropId(item.ProductId);
-                            item.StockQuantity += schedule.Quantity;
-                        }
+                        //foreach (var item in product)
+                        //{
+                        //    //CỘNG SL KHI THU HOẠCH
+                        //    var schedule = await _unitOfWork.scheduleRepository.GetByCropId(item.ProductId);
+                        //    item.StockQuantity += schedule.Quantity;
+                        //}
                         if (await _unitOfWork.SaveChangesAsync() < 0)
                         {
                             return new ResponseDTO(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);
