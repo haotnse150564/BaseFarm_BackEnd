@@ -90,14 +90,18 @@ namespace Application.Services.Implement
             if (scheduleExists == null)
                 return new ResponseDTO(Const.WARNING_NO_DATA_CODE, "Không tìm thấy lịch với ID này");
 
+            TimeZoneInfo vietnamZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+            DateTime vietnamNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vietnamZone);
+            DateTime utcKindVietnamTime = DateTime.SpecifyKind(vietnamNow, DateTimeKind.Utc);
             // Tạo log
             var log = new ScheduleLog
             {
                 ScheduleId = request.ScheduleId,
                 Notes = $"[Ghi chú thủ công] {request.Notes.Trim()}",
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
+                CreatedAt = utcKindVietnamTime,
+                UpdatedAt = utcKindVietnamTime,
                 CreatedBy = user.AccountId,
+                UpdatedBy = user.AccountId
             };
 
             await _scheduleLogRepo.AddAsync(log);
@@ -134,10 +138,14 @@ namespace Application.Services.Implement
             // Backup old notes để ghi lịch sử thay đổi (tùy chọn nâng cao)
             var oldNotes = existingLog.Notes;
 
-            // Update
-            existingLog.Notes = $"[Ghi chú thủ công (Đã sửa lúc {DateTime.UtcNow:HH:mm dd/MM/yyyy})] {request.Notes.Trim()}";
+            TimeZoneInfo vietnamZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+            DateTime vietnamNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vietnamZone);
+            DateTime utcKindVietnamTime = DateTime.SpecifyKind(vietnamNow, DateTimeKind.Utc);
 
-            existingLog.UpdatedAt = DateTime.UtcNow;
+            // Update
+            existingLog.Notes = $"[Ghi chú thủ công (Đã sửa lúc {utcKindVietnamTime:HH:mm dd/MM/yyyy})] {request.Notes.Trim()}";
+
+            existingLog.UpdatedAt = utcKindVietnamTime;
             existingLog.UpdatedBy = user.AccountId;
 
             await _scheduleLogRepo.UpdateAsync(existingLog);
@@ -145,11 +153,11 @@ namespace Application.Services.Implement
             var account1 = await _unitOfWork.accountRepository.GetByIdAsync(existingLog.CreatedBy);
             var account2 = await _unitOfWork.accountRepository.GetByIdAsync(existingLog.UpdatedBy);
             var logDto = _mapper.Map<ScheduleLogResponse>(existingLog);
-            logDto.StaffNameCreate = account1 != null && account1.AccountProfile != null
+            logDto.CreateBy = account1 != null && account1.AccountProfile != null
                 ? account1.AccountProfile.Fullname
                 : "Không tìm thấy tên người dùng";
 
-            logDto.StaffNameUpdate = account2 != null && account2.AccountProfile != null
+            logDto.UpdateBy = account2 != null && account2.AccountProfile != null
                 ? account2.AccountProfile.Fullname
                 : "Không tìm thấy tên người dùng";
 

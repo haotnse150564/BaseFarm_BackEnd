@@ -46,9 +46,9 @@ namespace Infrastructure.Repositories.Implement
                             CropLogId = log.CropLogId,
                             Notes = log.Notes,
                             CreatedAt = log.CreatedAt,
-                            StaffNameCreate = createBy.Fullname != null ? createBy.Fullname : "Không lấy được tên người dùng", // giả sử AccountProfile có StaffName
+                            CreateBy = createBy.Fullname != null ? createBy.Fullname : null,
                             UpdatedAt = log.UpdatedAt,
-                            StaffNameUpdate = updateBy.Fullname != null ? updateBy.Fullname : "Không lấy được tên người dùng"
+                            UpdateBy = updateBy.Fullname != null ? updateBy.Fullname : null
                         };
 
             return await query.AsNoTracking().ToListAsync();

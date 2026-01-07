@@ -59,9 +59,9 @@ namespace Infrastructure.ViewModel.Response
             public long CropLogId { get; set; }
             public string? Notes { get; set; }
             public DateTime CreatedAt { get; set; }
-            public string StaffNameCreate { get; set; }
+            public string CreateBy { get; set; }
             public DateTime UpdatedAt { get; set; }
-            public string StaffNameUpdate { get; set; }
+            public string UpdateBy { get; set; }
         }
         public class UpdateTodayResponse
         {

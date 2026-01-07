@@ -26,8 +26,9 @@ namespace WebAPI.Services
         private readonly IFarmActivityRepository _farmActivityRepository;
         private readonly IInventoryService _inventory;
         private readonly JWTUtils _jwtUtils;
+        private readonly IScheduleLogRepository _scheduleLogRepo;
         public FarmActivityServices(IUnitOfWorks unitOfWork, ICurrentTime currentTime, IConfiguration configuration, IMapper mapper
-            , IFarmActivityRepository farmActivityRepository, IInventoryService inventory, JWTUtils jWTUtils)
+            , IFarmActivityRepository farmActivityRepository, IInventoryService inventory, JWTUtils jWTUtils, IScheduleLogRepository scheduleLogRepo)
 
         {
             _unitOfWork = unitOfWork;
@@ -37,6 +38,7 @@ namespace WebAPI.Services
             _farmActivityRepository = farmActivityRepository;
             _inventory = inventory;
             _jwtUtils = jWTUtils;
+            _scheduleLogRepo = scheduleLogRepo;
         }
 
         public async Task<ResponseDTO> CreateFarmActivityAsync(FarmActivityRequest farmActivityRequest, ActivityType activityType)
@@ -282,17 +284,39 @@ namespace WebAPI.Services
             {
                 return new ResponseDTO(Const.FAIL_READ_CODE, "Not Found Farm Activity");
             }//else if (farmActivity.ScheduleId == null)
-           // {
-               // return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity Don't Have Any Schedule");
-           // }    
-            //else if (farmActivity.Status != FarmActivityStatus.IN_PROGRESS)
-            //{
-            //    return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity Already Completed or do not used by any Schedule");
-            //}
+             // {
+             // return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity Don't Have Any Schedule");
+             // }    
+             //else if (farmActivity.Status != FarmActivityStatus.IN_PROGRESS)
+             //{
+             //    return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity Already Completed or do not used by any Schedule");
+             //}
+
+            var user = await _jwtUtils.GetCurrentUserAsync();
+            if (user == null)
+            {
+                return new ResponseDTO(Const.FAIL_READ_CODE, "Người dùng không hợp lệ");
+            }
+
             farmActivity.Status = Domain.Enum.FarmActivityStatus.COMPLETED; 
 
-
             await _unitOfWork.farmActivityRepository.UpdateAsync(farmActivity);
+
+            var Schedule = await _unitOfWork.scheduleRepository.GetByIdAsync(farmActivity.scheduleId ?? 0);
+            if (Schedule == null)
+            {
+                return new ResponseDTO(Const.FAIL_READ_CODE, "Schedule not found!");
+            }
+            var scheduleLog = new ScheduleLog
+            {
+                ScheduleId = (long)farmActivity.scheduleId,
+                Notes = $"[Ghi chú tự động] Hoạt động {farmActivity.ActivityType} đã được {farmActivity.AssignedToNavigation.AccountProfile.Fullname} hoàn thành",
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = user.AccountId,
+            };
+            await _scheduleLogRepo.AddAsync(scheduleLog);
+            await _unitOfWork.SaveChangesAsync();
+
             if (farmActivity.ActivityType == ActivityType.Harvesting)
             {
                 var product = await _unitOfWork.farmActivityRepository.GetProductWillHarves(farmActivity.FarmActivitiesId);
