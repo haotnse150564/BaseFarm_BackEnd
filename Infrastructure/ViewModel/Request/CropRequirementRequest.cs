@@ -10,7 +10,8 @@ namespace Infrastructure.ViewModel.Request
     public class CropRequirementRequest
     {
         public int? EstimatedDate { get; set; }
-        public decimal? Moisture { get; set; }
+        public decimal? MoilMoisture { get; set; }
+        public decimal? Humidity { get; set; }
         public decimal? Temperature { get; set; }
         public string? Fertilizer { get; set; }
         public decimal? LightRequirement { get; set; }
