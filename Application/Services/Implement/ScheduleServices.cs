@@ -533,38 +533,78 @@ namespace Application.Services.Implement
         {
             try
             {
-                // Kiểm tra quyền
+                // 1. Kiểm tra quyền Manager
                 var currentUser = await _jwtUtils.GetCurrentUserAsync();
                 if (currentUser == null || currentUser.Role != Roles.Manager)
                 {
-                    return new ResponseDTO(Const.FAIL_READ_CODE, "Tài khoản không hợp lệ.");
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Bạn không có quyền thay đổi trạng thái lịch trình.");
                 }
 
-                // Tìm schedule
+                // 2. Tìm Schedule
                 var schedule = await _unitOfWork.scheduleRepository.GetByIdAsync(scheduleId);
                 if (schedule == null)
                 {
-                    return new ResponseDTO(Const.FAIL_READ_CODE, "Lịch  không tồn tại.");
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Lịch trình không tồn tại.");
                 }
 
-                // Kiểm tra trạng thái hiện tại
-                schedule.Status = (schedule.Status == Status.ACTIVE)
-                    ? Status.DEACTIVATED
-                    : Status.ACTIVE;
+                // 3. Xác định trạng thái mới mà user muốn chuyển đến
+                if (!Enum.TryParse<Status>(status, true, out Status targetStatus))
+                {
+                    return new ResponseDTO(Const.ERROR_EXCEPTION, "Trạng thái không hợp lệ.");
+                }
 
-                // Lưu thay đổi
+                if (!Enum.IsDefined(typeof(Status), targetStatus))
+                {
+                    return new ResponseDTO(Const.ERROR_EXCEPTION, "Trạng thái không hợp lệ.");
+                }
+
+                // Nếu không thay đổi gì → trả về thành công luôn
+                if (schedule.Status == targetStatus)
+                {
+                    var statusResult = _mapper.Map<ScheduleResponseView>(schedule);
+                    return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, "Trạng thái không thay đổi.", statusResult);
+                }
+
+                // 4. Validate theo hành động cụ thể
+                if (targetStatus == Status.ACTIVE)
+                {
+                    // Kiểm tra chồng chéo thời gian với các Schedule ACTIVE hiện tại
+                    bool hasOverlapping = await _unitOfWork.scheduleRepository.HasOverlappingActiveScheduleAsync(
+                        startDate: schedule.StartDate.Value,
+                        endDate: schedule.EndDate.Value);
+
+                    if (hasOverlapping)
+                    {
+                        return new ResponseDTO(Const.ERROR_EXCEPTION,
+                            $"Không thể kích hoạt lịch trình vì thời gian từ {schedule.StartDate:dd/MM/yyyy} đến {schedule.EndDate:dd/MM/yyyy} đang chồng chéo với lịch trình đang hoạt động khác.");
+                    }
+
+                    // ko cho active lịch quá khứ
+                    var today = DateOnly.FromDateTime(_currentTime.GetCurrentTime().ToDateTime(TimeOnly.MinValue));
+                    if (schedule.StartDate < today)
+                    {
+                        return new ResponseDTO(Const.ERROR_EXCEPTION, "Không thể kích hoạt lại lịch trình đã bắt đầu trong quá khứ.");
+                    }
+                }
+                else
+                {
+                    // Các trạng thái khác (Draft, Completed...) nếu có
+                    return new ResponseDTO(Const.ERROR_EXCEPTION, "Trạng thái chuyển đến không được hỗ trợ.");
+                }
+
+                // 5. Cập nhật trạng thái
+                schedule.Status = targetStatus;
+
                 _unitOfWork.scheduleRepository.Update(schedule);
                 await _unitOfWork.SaveChangesAsync();
 
-                // Map sang response view
+                // 6. Trả kết quả
                 var result = _mapper.Map<ScheduleResponseView>(schedule);
-
-
                 return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, result);
             }
             catch (Exception ex)
             {
-                return new ResponseDTO(Const.FAIL_READ_CODE, ex.Message);
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Đã xảy ra lỗi khi thay đổi trạng thái lịch trình.");
             }
         }
 
