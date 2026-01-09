@@ -13,7 +13,7 @@ namespace Application.Services
         Task<ResponseDTO> UpdateSchedulesAsync(long ScheduleId, ScheduleRequest request);
         Task<ResponseDTO> GetAllSchedulesAsync(int pageIndex, int pageSize);
         Task<ResponseDTO> ScheduleByIdAsync(long ScheduleId);
-        Task<ResponseDTO> ChangeScheduleStatusById(long ScheduleId, string status);
+        Task<ResponseDTO> ChangeScheduleStatusById(long ScheduleId);
         Task<ResponseDTO> AssignTask(long scheduleID, long staffId);
         Task<ResponseDTO> UpdateActivities(long ScheduleId, long[] activityId);
         Task<ResponseDTO> ScheduleStaffView(int month);

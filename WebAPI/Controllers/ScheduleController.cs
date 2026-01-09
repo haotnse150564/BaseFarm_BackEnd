@@ -78,9 +78,9 @@ namespace WebAPI.Controllers
         [HttpPut("schedule-update-status")]
         [Authorize(Roles = "Manager")]
 
-        public async Task<IActionResult> UpdateScheduleStatus(long scheduleId, [FromBody] string status)
+        public async Task<IActionResult> UpdateScheduleStatus(long scheduleId)
         {
-            var result = await _schedule.ChangeScheduleStatusById(scheduleId, status.ToUpper());
+            var result = await _schedule.ChangeScheduleStatusById(scheduleId);
 
             if (result.Status != Const.SUCCESS_READ_CODE)
             {
