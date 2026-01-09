@@ -166,6 +166,7 @@ namespace WebAPI.Services
                 EndDate = fa.EndDate?.ToString("dd/MM/yyyy"),
                 Status = fa.Status?.ToString(),
 
+                CropName = fa.Schedule?.Crop?.CropName,
                 StaffId = (long)(fa.AssignedToNavigation?.AccountId),
                 StaffEmail = fa.AssignedToNavigation?.Email,
                 StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
@@ -201,6 +202,7 @@ namespace WebAPI.Services
                 EndDate = fa.EndDate?.ToString("dd/MM/yyyy"),
                 Status = fa.Status.ToString(),
 
+                CropName = fa.Schedule?.Crop?.CropName,
                 StaffId = (long)(fa.AssignedToNavigation?.AccountId),
                 StaffEmail = fa.AssignedToNavigation?.Email,
                 StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
@@ -236,6 +238,7 @@ namespace WebAPI.Services
                 EndDate = fa.EndDate?.ToString("dd/MM/yyyy"),
                 Status = fa.Status?.ToString(),
 
+                CropName = fa.Schedule?.Crop?.CropName,
                 StaffId = (long)(fa.AssignedToNavigation?.AccountId),
                 StaffEmail = fa.AssignedToNavigation?.Email,
                 StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
@@ -273,6 +276,7 @@ namespace WebAPI.Services
                 EndDate = fa.EndDate?.ToString("dd/MM/yyyy"),
                 Status = fa.Status?.ToString(),
 
+                CropName = fa.Schedule?.Crop?.CropName,
                 StaffId = (long)(fa.AssignedToNavigation?.AccountId),
                 StaffEmail = fa.AssignedToNavigation?.Email,
                 StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
