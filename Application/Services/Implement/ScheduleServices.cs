@@ -49,45 +49,58 @@ namespace Application.Services.Implement
             _jwtUtils = jwtUtils;
             _inventory = inventory;
         }
-        public (bool, string) ValidateScheduleRequest(Schedule schedule, FarmActivity farmActivity)
+        /// <summary>
+        /// Validate nghiệp vụ khi tạo/cập nhật Schedule
+        /// Trả về (true, "") nếu hợp lệ
+        /// Trả về (false, message) nếu có lỗi
+        /// </summary>
+        private async Task<(bool IsValid, string ErrorMessage)> ValidateScheduleRequestAsync(ScheduleRequest request)
         {
-            // Kiểm tra ngày bắt đầu/kết thúc của schedule
-            if (schedule.StartDate == null || schedule.EndDate == null)
+            // 1. Validate input cơ bản từ DTO
+            if (!request.StartDate.HasValue)
+                return (false, "Ngày bắt đầu lịch trình là bắt buộc.");
+
+            if (request.Quantity <= 0)
+                return (false, "Số lượng trồng phải lớn hơn 0.");
+
+            if (request.Status == null)
+                return (false, "Trạng thái lịch trình là bắt buộc.");
+
+            var today = DateOnly.FromDateTime(_currentTime.GetCurrentTime().ToDateTime(TimeOnly.MinValue));
+
+            if (request.StartDate.Value < today)
             {
-                return (false, "Ngày bắt đầu và ngày kết thúc của lịch không được để trống.");
-            }
-            if (schedule.StartDate > schedule.EndDate)
-            {
-                return (false, "Ngày bắt đầu phải trước ngày kết thúc.");
+                return (false, "Ngày bắt đầu không được trong quá khứ. Chỉ được chọn từ hôm nay trở đi.");
             }
 
-            //if (farmActivity.StartDate == null || farmActivity.EndDate == null)
-            //    if (farmActivity.StartDate == null || farmActivity.EndDate == null)
-            //    {
-            //        return (false, "Ngày bắt đầu và kết thúc của hoạt động không được để trống.");
-            //    }
-            //if (farmActivity.StartDate > farmActivity.EndDate)
-            //    if (farmActivity.StartDate > farmActivity.EndDate)
-            //    {
-            //        return (false, "Ngày bắt đầu của hoạt động phải trước ngày kết thúc.");
-            //    }
+            // 2. Kiểm tra Crop và CropRequirement
+            var crop = await _unitOfWork.cropRepository.GetByIdAsync(request.CropId);
+            if (crop == null)
+                return (false, "Không tìm thấy cây trồng.");
 
-            //// Kiểm tra hoạt động nằm trong khoảng của schedule
-            //if (farmActivity.StartDate < schedule.StartDate
-            //    || farmActivity.EndDate > schedule.EndDate)
-            //    if (farmActivity.StartDate < schedule.StartDate
-            //        || farmActivity.EndDate > schedule.EndDate)
-            //    {
-            //        return (false, $"Hoạt động từ {farmActivity.StartDate:dd/MM/yyyy} đến {farmActivity.EndDate:dd/MM/yyyy} nằm ngoài khoảng thời gian của lịch.");
-            //        //return (false, $"Hoạt động từ {farmActivity.StartDate:dd/MM/yyyy} đến {farmActivity.EndDate:dd/MM/yyyy} nằm ngoài khoảng thời gian của lịch.");
-            //    }
-            //// Kiểm tra ngày bắt đầu của hoạt động phải ít nhất là hôm nay
-            //if (farmActivity.StartDate < DateOnly.FromDateTime(DateTime.Today))
-            //{
-            //    return (false, "Ngày bắt đầu của hoạt động phải từ hôm nay trở đi.");
-            //}
+            if (crop.CropRequirement == null || !crop.CropRequirement.Any())
+                return (false, "Cây trồng này chưa có thông tin yêu cầu chăm sóc (CropRequirement).");
 
-            // Vì mỗi schedule chỉ có 1 farm activity, không cần check trùng ngày nhiều activity
+            int totalDays = crop.CropRequirement
+                .Where(r => r.EstimatedDate.HasValue)
+                .Sum(r => r.EstimatedDate.Value);
+
+            if (totalDays <= 0)
+                return (false, "Tổng thời gian chăm sóc của cây trồng không hợp lệ.");
+
+            // 3. Tính EndDate và kiểm tra chồng lịch ACTIVE
+            DateOnly estimatedEndDate = request.StartDate.Value.AddDays(totalDays);
+
+            bool hasOverlapping = await _unitOfWork.scheduleRepository.HasOverlappingActiveScheduleAsync(
+                //farmId: request.FarmId,
+                startDate: request.StartDate.Value,
+                endDate: estimatedEndDate);
+
+            if (hasOverlapping)
+                return (false,
+                    $"Nông trại này đã có lịch trình đang hoạt động chồng chéo từ {request.StartDate.Value:dd/MM/yyyy} đến {estimatedEndDate:dd/MM/yyyy}.");
+
+            // Nếu mọi thứ đều hợp lệ
             return (true, string.Empty);
         }
 
@@ -96,6 +109,12 @@ namespace Application.Services.Implement
         {
             try
             {
+                // Gọi hàm validate
+                var (isValid, errorMessage) = await ValidateScheduleRequestAsync(request);
+
+                if (!isValid)
+                    return new ResponseDTO(Const.ERROR_EXCEPTION, errorMessage);
+
                 // Kiểm tra quyền
                 var getCurrentUser = await _jwtUtils.GetCurrentUserAsync();
                 if (getCurrentUser == null || getCurrentUser.Role != Roles.Manager)
@@ -142,49 +161,49 @@ namespace Application.Services.Implement
                 return new ResponseDTO(Const.FAIL_READ_CODE, ex.Message);
             }
         }
-        public async Task<ResponseDTO> AddFarmActivityToSchedule(long scheduleId, long farmActivities)
-        {
-            try
-            {
-                // Kiểm tra quyền
-                var currentUser = await _jwtUtils.GetCurrentUserAsync();
-                if (currentUser == null || currentUser.Role != Roles.Manager)
-                {
-                    return new ResponseDTO(Const.FAIL_READ_CODE, "Tài khoản không hợp lệ.");
-                }
-                // Tìm schedule
-                var schedule = await _unitOfWork.scheduleRepository.GetByIdAsync(scheduleId);
-                if (schedule == null)
-                {
-                    return new ResponseDTO(Const.FAIL_READ_CODE, "Lịch  không tồn tại.");
-                }
-                else
-                {
+        //public async Task<ResponseDTO> AddFarmActivityToSchedule(long scheduleId, long farmActivities)
+        //{
+        //    try
+        //    {
+        //        // Kiểm tra quyền
+        //        var currentUser = await _jwtUtils.GetCurrentUserAsync();
+        //        if (currentUser == null || currentUser.Role != Roles.Manager)
+        //        {
+        //            return new ResponseDTO(Const.FAIL_READ_CODE, "Tài khoản không hợp lệ.");
+        //        }
+        //        // Tìm schedule
+        //        var schedule = await _unitOfWork.scheduleRepository.GetByIdAsync(scheduleId);
+        //        if (schedule == null)
+        //        {
+        //            return new ResponseDTO(Const.FAIL_READ_CODE, "Lịch  không tồn tại.");
+        //        }
+        //        else
+        //        {
 
-                    var farmActivity = await _farmActivityRepository.GetByIdAsync(farmActivities);
-                    if (farmActivity == null)
-                    {
-                        return new ResponseDTO(Const.FAIL_CREATE_CODE, $"Không tìm thấy hoạt động nông trại với ID: {farmActivities}");
-                    }
-                    // Kiểm tra tính hợp lệ của schedule với farm activity
-                    var (isValid, validationMessage) = ValidateScheduleRequest(schedule, farmActivity);
-                    if (!isValid)
-                    {
-                        return new ResponseDTO(Const.FAIL_CREATE_CODE, validationMessage);
-                    }
+        //            var farmActivity = await _farmActivityRepository.GetByIdAsync(farmActivities);
+        //            if (farmActivity == null)
+        //            {
+        //                return new ResponseDTO(Const.FAIL_CREATE_CODE, $"Không tìm thấy hoạt động nông trại với ID: {farmActivities}");
+        //            }
+        //            // Kiểm tra tính hợp lệ của schedule với farm activity
+        //            var (isValid, validationMessage) = ValidateScheduleRequest(schedule, farmActivity);
+        //            if (!isValid)
+        //            {
+        //                return new ResponseDTO(Const.FAIL_CREATE_CODE, validationMessage);
+        //            }
 
-                    await _unitOfWork.scheduleRepository.AddAsync(schedule);
-                    await _unitOfWork.SaveChangesAsync();
-                }
-                // Map sang response view
-                var result = _mapper.Map<ScheduleResponseView>(schedule);
-                return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, result);
-            }
-            catch (Exception ex)
-            {
-                return new ResponseDTO(Const.FAIL_READ_CODE, ex.Message);
-            }
-        }
+        //            await _unitOfWork.scheduleRepository.AddAsync(schedule);
+        //            await _unitOfWork.SaveChangesAsync();
+        //        }
+        //        // Map sang response view
+        //        var result = _mapper.Map<ScheduleResponseView>(schedule);
+        //        return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new ResponseDTO(Const.FAIL_READ_CODE, ex.Message);
+        //    }
+        //}
         public async Task<UpdateTodayResponse> UpdateTodayAsync(long scheduleId, UpdateTodayRequest request)
         {
             var getCurrentUser = await _jwtUtils.GetCurrentUserAsync();
@@ -262,6 +281,12 @@ namespace Application.Services.Implement
         {
             try
             {
+                // Gọi hàm validate
+                var (isValid, errorMessage) = await ValidateScheduleRequestAsync(request);
+
+                if (!isValid)
+                    return new ResponseDTO(Const.ERROR_EXCEPTION, errorMessage);
+
                 // Kiểm tra quyền
                 var currentUser = await _jwtUtils.GetCurrentUserAsync();
                 if (currentUser == null || currentUser.Role != Roles.Manager)

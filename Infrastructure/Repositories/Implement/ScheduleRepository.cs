@@ -130,5 +130,20 @@ namespace Infrastructure.Repositories.Implement
             .ToListAsync();
             return result;
         }
+
+        public async Task<bool> HasOverlappingActiveScheduleAsync(DateOnly startDate, DateOnly endDate)
+        {
+            // Logic chồng chéo thời gian:
+            // Có xung đột nếu:
+            // - Status = Active
+            // - (StartDate mới <= EndDate cũ) AND (EndDate mới >= StartDate cũ)
+
+            return await _context.Schedule
+                .AnyAsync(s =>
+                    //s.FarmId == farmId &&
+                    s.Status == Status.ACTIVE && 
+                    s.StartDate <= endDate &&
+                    s.EndDate >= startDate);
+        }
     }
 }

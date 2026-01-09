@@ -18,5 +18,6 @@ namespace Infrastructure.Repositories
         Task<Schedule?> GetByIdWithCropRequirementsAsync(long scheduleId, long managerId);
 
         Task<List<Schedule>> GetAllActiveScheduleAsync();
+        Task<bool> HasOverlappingActiveScheduleAsync(DateOnly startDate, DateOnly endDate);
     }
 }
