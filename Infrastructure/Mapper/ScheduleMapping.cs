@@ -52,7 +52,7 @@ namespace Infrastructure.Mapper
             // Chuyển từ CropRequirement (entity) sang CropRequirementDto (có PlantStage là enum, WateringFrequency là int?)
             CreateMap<CropRequirement, CropRequirementResponse.CropRequirementDto>()
                 .ForMember(dest => dest.PlantStage,
-                    opt => opt.MapFrom(src => src.PlantStage.GetValueOrDefault(PlantStage.Germination)))
+                    opt => opt.MapFrom(src => src.PlantStage.GetValueOrDefault(PlantStage.Preparation)))
                 .ForMember(dest => dest.EstimatedDate,
                     opt => opt.MapFrom(src => src.EstimatedDate.GetValueOrDefault(0)))
                 .ForMember(dest => dest.WateringFrequency,

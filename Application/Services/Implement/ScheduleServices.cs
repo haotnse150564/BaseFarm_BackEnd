@@ -141,7 +141,7 @@ namespace Application.Services.Implement
                 var schedule = _mapper.Map<Schedule>(request);
                 schedule.ManagerId = getCurrentUser.AccountId;
                 schedule.CreatedAt = _currentTime.GetCurrentTime();
-                schedule.currentPlantStage = PlantStage.Seedling;
+                schedule.currentPlantStage = PlantStage.Preparation;
                 schedule.EndDate = estimatedEndDate;
                 // Kiểm tra yêu cầu cây trồng
                 var getCropRequirement = await _cropRepository.GetByIdAsync(request.CropId);
@@ -237,30 +237,41 @@ namespace Application.Services.Implement
             if (!requirements.Any())
                 throw new InvalidDataException("Cây trồng này chưa có yêu cầu chăm sóc nào.");
 
-            // Tìm stage hiện tại: stage có EstimatedDate lớn nhất mà daysSinceStart <= EstimatedDate
+            // Tính giai đoạn hiện tại dựa trên số ngày đã trôi qua (daysSinceStart)
             CropRequirement? currentReq = null;
             CropRequirement? nextReq = null;
 
+            int cumulativeDays = 0;
+
             foreach (var req in requirements)
             {
-                if (daysSinceStart <= req.EstimatedDate)
+                if (req.EstimatedDate.HasValue && req.EstimatedDate.Value > 0)
                 {
-                    currentReq = req;
-                    break;
+                    int stageEndDay = cumulativeDays + req.EstimatedDate.Value;
+
+                    // Nếu ngày hiện tại nằm trong giai đoạn này (bao gồm ngày cuối)
+                    if (daysSinceStart < stageEndDay || (daysSinceStart == stageEndDay && req == requirements.Last()))
+                    {
+                        currentReq = req;
+                        break;
+                    }
+
+                    cumulativeDays = stageEndDay; // Cập nhật ngày kết thúc giai đoạn hiện tại
                 }
             }
 
-            // Nếu đã vượt qua tất cả các stage → lấy stage cuối cùng
-            currentReq ??= requirements.Last();
+            // Nếu đã vượt quá tổng ngày → lấy giai đoạn cuối cùng
+            currentReq ??= requirements.LastOrDefault();
 
-            // Xác định vị trí của giai đoạn hiện tại trong chuỗi các giai đoạn
-            var currentIndex = requirements.IndexOf(currentReq);
-            //Lấy chính xác giai đoạn kế tiếp
-            if (currentIndex < requirements.Count - 1)
+            // Tìm giai đoạn tiếp theo
+            var currentIndex = currentReq != null ? requirements.IndexOf(currentReq) : -1;
+            if (currentIndex >= 0 && currentIndex < requirements.Count - 1)
+            {
                 nextReq = requirements[currentIndex + 1];
+            }
 
             // Gán stage hiện tại
-            schedule.currentPlantStage = currentReq.PlantStage ?? PlantStage.Germination;
+            schedule.currentPlantStage = currentReq?.PlantStage ?? PlantStage.Preparation;
 
             // Cập nhật UpdatedAt
             schedule.UpdatedAt = DateOnly.FromDateTime(DateTime.Now);

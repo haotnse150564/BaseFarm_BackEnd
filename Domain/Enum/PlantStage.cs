@@ -8,7 +8,7 @@ namespace Domain.Enum
 {
     public enum PlantStage
     {
-        Germination,   // 0–7 days
+        Preparation,   // 0–7 days
         Seedling,      // 8–18 days
         Vegetative,    // 19–35 days
         Harvest        // 36–37 days
