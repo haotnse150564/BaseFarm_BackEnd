@@ -23,6 +23,7 @@ namespace Infrastructure.Mapper
                 .ReverseMap();
             CreateMap<Device, IOTView>()
                 .ForMember(dest => dest.PinCode, opt => opt.MapFrom(src => src.Pin))
+                .ForPath(dest => dest.FarmName, opt => opt.MapFrom(src => src.FarmEquipments.FirstOrDefault().Farm.FarmName))
                 .ReverseMap();
             CreateMap<Device, IOTResponse>().ReverseMap();
             CreateMap<IOTLog, IOTLogView>().ReverseMap();
