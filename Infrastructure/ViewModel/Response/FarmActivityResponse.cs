@@ -22,6 +22,7 @@ namespace Infrastructure.ViewModel.Response
             public string? Status { get; set; }
 
             public string? CropName { get; set; }
+            public long? scheduleId { get; set; }
             //public AvailableStaffDTO? StaffDTO { get; set; }
             public long StaffId { get; set; }
             public string StaffEmail { get; set; } = string.Empty;

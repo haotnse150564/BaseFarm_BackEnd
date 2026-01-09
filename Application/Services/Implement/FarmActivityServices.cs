@@ -179,6 +179,7 @@ namespace WebAPI.Services
                 Status = fa.Status?.ToString(),
 
                 CropName = fa.Schedule?.Crop?.CropName,
+                scheduleId = fa.scheduleId,
                 StaffId = (long)(fa.AssignedToNavigation?.AccountId),
                 StaffEmail = fa.AssignedToNavigation?.Email,
                 StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
@@ -215,6 +216,7 @@ namespace WebAPI.Services
                 Status = fa.Status.ToString(),
 
                 CropName = fa.Schedule?.Crop?.CropName,
+                scheduleId = fa.scheduleId,
                 StaffId = (long)(fa.AssignedToNavigation?.AccountId),
                 StaffEmail = fa.AssignedToNavigation?.Email,
                 StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
@@ -251,6 +253,7 @@ namespace WebAPI.Services
                 Status = fa.Status?.ToString(),
 
                 CropName = fa.Schedule?.Crop?.CropName,
+                scheduleId = fa.scheduleId,
                 StaffId = (long)(fa.AssignedToNavigation?.AccountId),
                 StaffEmail = fa.AssignedToNavigation?.Email,
                 StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
@@ -289,6 +292,7 @@ namespace WebAPI.Services
                 Status = fa.Status?.ToString(),
 
                 CropName = fa.Schedule?.Crop?.CropName,
+                scheduleId = fa.scheduleId,
                 StaffId = (long)(fa.AssignedToNavigation?.AccountId),
                 StaffEmail = fa.AssignedToNavigation?.Email,
                 StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
