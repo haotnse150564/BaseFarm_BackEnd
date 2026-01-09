@@ -106,6 +106,8 @@ namespace Infrastructure.Repositories.Implement
         public Task<List<FarmActivity>> GetListFarmActivityUpdate(IEnumerable<long>? farmActivityId)
         {
             var result = _context.FarmActivity
+                .Include(x => x.AssignedToNavigation)
+.ThenInclude(x => x.AccountProfile)
                 .Where(fa => farmActivityId.Contains(fa.FarmActivitiesId))
                .Include(fa => fa.Schedule)
                 .ThenInclude(s => s.Crop)
