@@ -30,7 +30,7 @@ namespace Infrastructure.Repositories.Implement
         {
             return await _context.Set<CropRequirement>()
                 .Where(cr => cr.CropId == cropId && cr.IsActive)
-                .OrderBy(cr => cr.EstimatedDate)   
+                .OrderBy(cr => cr.PlantStage)
                 .ToListAsync();
         }
     }

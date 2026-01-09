@@ -20,15 +20,17 @@ namespace Infrastructure.Mapper
             CreateMap<CropRequirement, CropRequirementView>().ReverseMap()
                 .ForMember(dest => dest.PlantStage,
            opt => opt.MapFrom(src => src.PlantStage.ToString()))
+                .ForMember(est => est.SoilMoisture, opt => opt.MapFrom(src => src.SoilMoisture))
                 .ForMember(est => est.IsActive, opt => opt.MapFrom(src => src.IsActive));
 
 
             CreateMap<CropRequirementRequest, CropRequirement>().ReverseMap()
+                .ForMember(des => des.SoilMoisture, opt => opt.MapFrom(src => src.SoilMoisture))
                 .ForMember(des => des.WateringFrequency, opt => opt.MapFrom(src => src.WateringFrequency));
 
             CreateMap<CropRequirement, CropRequirementDto>()
                 .ForMember(dest => dest.PlantStage,
-                    opt => opt.MapFrom(src => src.PlantStage.GetValueOrDefault(PlantStage.Germination))) 
+                    opt => opt.MapFrom(src => src.PlantStage.GetValueOrDefault(PlantStage.Preparation))) 
                 .ForMember(dest => dest.EstimatedDate,
                     opt => opt.MapFrom(src => src.EstimatedDate.GetValueOrDefault(0)))
                 .ForMember(dest => dest.WateringFrequency,
