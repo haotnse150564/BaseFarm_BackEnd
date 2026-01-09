@@ -42,7 +42,8 @@ namespace Infrastructure.ViewModel.Response
         {
             public PlantStage PlantStage { get; set; }
             public int EstimatedDate { get; set; } // ngày tích lũy kết thúc stage
-            public decimal? Moisture { get; set; }
+            public decimal? SoilMoisture { get; set; }
+            public decimal? Humidity { get; set; }
             public decimal? Temperature { get; set; }
             public string? Fertilizer { get; set; }
             public decimal? LightRequirement { get; set; }
