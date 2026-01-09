@@ -30,6 +30,9 @@ namespace Domain.Enum
         [Description("Bón phân cho lá (N, hữu cơ)")]
         FertilizingLeaf,
 
+        [Description("Phủ bạt che lạnh")]
+        FrostProtectionCovering,
+
         [Description("Thu hoạch")]
         Harvesting,
 

@@ -173,7 +173,7 @@ namespace Infrastructure
               SoilMoisture = 1,
               Temperature = 24,
               Humidity = 60,
-              PlantStage = Domain.Enum.PlantStage.Germination,
+              PlantStage = Domain.Enum.PlantStage.Preparation,
               LightRequirement = 200,
               WateringFrequency = 7,
               CreatedDate = DateOnly.Parse("2025-11-11"),
