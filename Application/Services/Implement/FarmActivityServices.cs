@@ -43,6 +43,18 @@ namespace WebAPI.Services
 
         public async Task<ResponseDTO?> ValidateCreateAsync(FarmActivityRequest request, ActivityType activityType)
         {
+            if (request == null)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Dữ liệu yêu cầu không hợp lệ.");
+
+            if (!request.StartDate.HasValue)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Ngày bắt đầu hoạt động là bắt buộc.");
+
+            if (!request.EndDate.HasValue)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Ngày kết thúc hoạt động là bắt buộc.");
+
+            if (request.StartDate.Value > request.EndDate.Value)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày kết thúc.");
+
             // 1. ScheduleId bắt buộc và tồn tại
             var schedule = await _unitOfWork.scheduleRepository.GetByIdAsync(request.ScheduleId.Value);
             if (schedule == null)
