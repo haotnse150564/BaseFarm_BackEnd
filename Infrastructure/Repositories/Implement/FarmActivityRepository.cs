@@ -46,6 +46,8 @@ namespace Infrastructure.Repositories.Implement
         {
             return await _context.FarmActivity
                 .AsNoTracking()
+                .Include(fa => fa.Schedule)
+                .ThenInclude(s => s.Crop)
                 .Include(fa => fa.AssignedToNavigation)
                     .ThenInclude(a => a.AccountProfile)
                 .Where(fa =>
@@ -59,7 +61,9 @@ namespace Infrastructure.Repositories.Implement
         public async Task<List<FarmActivity>> GetAllFiler(ActivityType? type, FarmActivityStatus? status, int? month)
         {
             IQueryable<FarmActivity> query = _context.FarmActivity
-                .AsNoTracking() 
+                .AsNoTracking()
+                .Include(fa => fa.Schedule)
+                .ThenInclude(s => s.Crop)
                 .Include(fa => fa.AssignedToNavigation) // Load thông tin nhân viên
                 .ThenInclude(a => a.AccountProfile)
                 .OrderByDescending(fa => fa.FarmActivitiesId); // Sort ngay từ DB
@@ -94,7 +98,8 @@ namespace Infrastructure.Repositories.Implement
         public async Task<List<FarmActivity>> GetListFarmActivityByScheduleId(long scheduleId)
         {
             return await _context.FarmActivity
-                 //.Where(fa => fa.ScheduleId == scheduleId)
+                .Include(fa => fa.Schedule)
+                .ThenInclude(s => s.Crop) //.Where(fa => fa.ScheduleId == scheduleId)
                  .ToListAsync();
         }
 
@@ -102,6 +107,8 @@ namespace Infrastructure.Repositories.Implement
         {
             var result = _context.FarmActivity
                 .Where(fa => farmActivityId.Contains(fa.FarmActivitiesId))
+               .Include(fa => fa.Schedule)
+                .ThenInclude(s => s.Crop)
                 .ToListAsync();
             return result;
         }
@@ -112,7 +119,7 @@ namespace Infrastructure.Repositories.Implement
                 .Include(c => c.Product) // Include Product từ Crop
                 .Include(c => c.Schedules)
                     .ThenInclude(s => s.FarmActivities)
-               // .Where(c => c.Schedules.Any(s => s.FarmActivities.FarmActivitiesId == acitivityId))
+                // .Where(c => c.Schedules.Any(s => s.FarmActivities.FarmActivitiesId == acitivityId))
                 .Select(c => c.Product) // Lấy Product từ mỗi Crop
                 .ToListAsync();
 
