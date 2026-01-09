@@ -13,7 +13,7 @@ namespace Infrastructure.ViewModel.Response
         {
             public long DevicesId { get; set; }
             public string? DeviceName { get; set; }
-
+            public string? FarmName { get; set; } = "Chưa có kết nối trang trại";
             public string? PinCode { get; set; } 
             public string? DeviceType { get; set; }
 
