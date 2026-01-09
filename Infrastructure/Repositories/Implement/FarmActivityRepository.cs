@@ -119,5 +119,44 @@ namespace Infrastructure.Repositories.Implement
             return products;
 
         }
+
+        public async Task<bool> HasStaffTimeConflictAsync(long staffId, DateOnly startDate, DateOnly endDate, long? excludeActivityId = null)
+        {
+            // Điều kiện chồng chéo thời gian:
+            // (StartDate mới <= EndDate cũ) AND (EndDate mới >= StartDate cũ)
+            var query = _context.FarmActivity
+                .Where(a =>
+                    a.AssignedTo == staffId &&
+                    (excludeActivityId == null || a.FarmActivitiesId != excludeActivityId) &&
+                    a.Status != FarmActivityStatus.DEACTIVATED &&
+                    a.Schedule.Status == Status.ACTIVE &&
+                    a.StartDate <= endDate &&
+                    a.EndDate >= startDate);
+
+            return await query.AnyAsync();
+        }
+
+        private static readonly HashSet<ActivityType> AllowMultiple = new()
+{
+                ActivityType.FertilizingDiluted,
+                ActivityType.FertilizingLeaf,
+                ActivityType.PestControl,
+                ActivityType.Weeding
+};
+
+        public async Task<bool> HasDuplicateActivityTypeInScheduleAsync(long scheduleId, ActivityType activityType, long? excludeActivityId = null)
+        {
+            if (AllowMultiple.Contains(activityType))
+                return false; // Cho phép nhiều lần
+
+            var query = _context.FarmActivity
+                .Where(a =>
+                    a.scheduleId == scheduleId &&
+                    a.ActivityType == activityType &&
+                    (excludeActivityId == null || a.FarmActivitiesId != excludeActivityId) &&
+                    a.Status != FarmActivityStatus.DEACTIVATED);
+
+            return await query.AnyAsync();
+        }
     }
 }

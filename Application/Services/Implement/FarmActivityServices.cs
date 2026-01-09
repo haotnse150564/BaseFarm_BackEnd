@@ -12,7 +12,6 @@ using Infrastructure.ViewModel.Request;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using static Infrastructure.ViewModel.Response.FarmActivityResponse;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WebAPI.Services
 {
@@ -27,6 +26,7 @@ namespace WebAPI.Services
         private readonly IInventoryService _inventory;
         private readonly JWTUtils _jwtUtils;
         private readonly IScheduleLogRepository _scheduleLogRepo;
+        private readonly IScheduleRepository _scheduleRepository;
         public FarmActivityServices(IUnitOfWorks unitOfWork, ICurrentTime currentTime, IConfiguration configuration, IMapper mapper
             , IFarmActivityRepository farmActivityRepository, IInventoryService inventory, JWTUtils jWTUtils, IScheduleLogRepository scheduleLogRepo)
 
@@ -41,8 +41,65 @@ namespace WebAPI.Services
             _scheduleLogRepo = scheduleLogRepo;
         }
 
+        public async Task<ResponseDTO?> ValidateCreateAsync(FarmActivityRequest request, ActivityType activityType)
+        {
+            // 1. ScheduleId bắt buộc và tồn tại
+            var schedule = await _unitOfWork.scheduleRepository.GetByIdAsync(request.ScheduleId.Value);
+            if (schedule == null)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Lịch không tồn tại.");
+
+            // 2. Schedule phải đang ACTIVE
+            if (schedule.Status != Status.ACTIVE)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Không thể thêm hoạt động vào lịch trình đã tạm dừng.");
+
+            // 3. Thời gian activity phải nằm trong Schedule
+            if (request.StartDate < schedule.StartDate || request.EndDate > schedule.EndDate)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Thời gian hoạt động phải nằm trong khoảng thời gian của lịch.");
+
+            // 4. Nhân viên tồn tại
+            var staff = await _unitOfWork.accountRepository.GetByIdAsync(request.StaffId);
+            if (staff == null)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Nhân viên được giao không tồn tại.");
+
+            // 5. Nhân viên không được trùng lịch làm việc (quan trọng nhất)
+            bool staffConflict = await _farmActivityRepository.HasStaffTimeConflictAsync(
+                staffId: request.StaffId,
+                startDate: request.StartDate.Value,
+                endDate: request.EndDate.Value,
+                excludeActivityId: null);
+
+            if (staffConflict)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Nhân viên này đã được giao hoạt động khác trong khoảng thời gian này.");
+
+            // 6. Không trùng hoạt động cùng loại trong cùng lịch trình (tránh duplicate)
+            bool hasDuplicateType = await _farmActivityRepository.HasDuplicateActivityTypeInScheduleAsync(
+                scheduleId: request.ScheduleId.Value,
+                activityType: activityType,
+                excludeActivityId: null);
+
+            if (hasDuplicateType)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION,
+                    $"Hoạt động này đã tồn tại trong lịch trình này. Không thể tạo thêm.");
+            }
+
+            // 7. Kiểm tra phù hợp giai đoạn cây trồng
+            // if (!IsSuitable(activityType, schedule.currentPlantStage))
+            //     return new ResponseDTO(Const.ERROR_EXCEPTION, "Loại hoạt động không phù hợp với giai đoạn cây trồng hiện tại.");
+
+            return null;
+        }
+
         public async Task<ResponseDTO> CreateFarmActivityAsync(FarmActivityRequest farmActivityRequest, ActivityType activityType)
         {
+            var validationResponse = await ValidateCreateAsync(farmActivityRequest, activityType);
+
+            // Nếu validate fail → return ngay lỗi
+            if (validationResponse != null)
+            {
+                return validationResponse;
+            }
+
             var utcDate = DateTime.UtcNow.ToUniversalTime();
 
             var user = await _jwtUtils.GetCurrentUserAsync();
@@ -226,8 +283,16 @@ namespace WebAPI.Services
         }
 
 
-        public async Task<ResponseDTO> UpdateFarmActivityAsync(long farmActivityId, FarmActivityRequest farmActivityrequest, ActivityType? activityType, FarmActivityStatus farmActivityStatus)
+        public async Task<ResponseDTO> UpdateFarmActivityAsync(long farmActivityId, FarmActivityRequest farmActivityrequest, ActivityType activityType, FarmActivityStatus farmActivityStatus)
         {
+            var validationResponse = await ValidateCreateAsync(farmActivityrequest, activityType);
+
+            // Nếu validate fail → return ngay lỗi
+            if (validationResponse != null)
+            {
+                return validationResponse;
+            }
+
             var user = await _jwtUtils.GetCurrentUserAsync();
             var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(farmActivityId);
 
