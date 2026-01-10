@@ -96,10 +96,44 @@ namespace WebAPI.Services
             }
 
             // 7. Kiểm tra phù hợp giai đoạn cây trồng
-            // if (!IsSuitable(activityType, schedule.currentPlantStage))
-            //     return new ResponseDTO(Const.ERROR_EXCEPTION, "Loại hoạt động không phù hợp với giai đoạn cây trồng hiện tại.");
+            if (!IsActivitySuitableForPlantStage(activityType, schedule.currentPlantStage))
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION,
+                    $"Hoạt động \"{activityType}\" không phù hợp với giai đoạn cây trồng hiện tại \"{schedule.currentPlantStage}\".");
+            }
 
             return null;
+        }
+
+        private bool IsActivitySuitableForPlantStage(ActivityType activityType, PlantStage currentStage)
+        {
+            return (activityType, currentStage) switch
+            {
+                // === Preparation (0–7 ngày): Chỉ cho phép chuẩn bị đất và gieo hạt ===
+                (ActivityType.SoilPreparation, PlantStage.Preparation) => true,
+                (ActivityType.Sowing, PlantStage.Preparation) => true,
+
+                // === Seedling (8–18 ngày): Cây con phát triển rễ, lá non ===
+                (ActivityType.Thinning, PlantStage.Seedling) => true,                 // Tỉa cây con
+                (ActivityType.Weeding, PlantStage.Seedling) => true,                  // Nhổ cỏ
+                (ActivityType.FertilizingDiluted, PlantStage.Seedling) => true,       // Bón phân pha loãng lần đầu
+                (ActivityType.PestControl, PlantStage.Seedling) => true,              // Phòng sâu bệnh sinh học
+                (ActivityType.FrostProtectionCovering, PlantStage.Seedling) => true,  // Phủ bạt che lạnh (nếu cần)
+
+                // === Vegetative (19–35 ngày): Sinh trưởng mạnh, phát triển lá thân ===
+                (ActivityType.Weeding, PlantStage.Vegetative) => true,
+                (ActivityType.FertilizingDiluted, PlantStage.Vegetative) => true,     // Bón thúc tiếp
+                (ActivityType.FertilizingLeaf, PlantStage.Vegetative) => true,        // Bón phân lá chính ở giai đoạn này
+                (ActivityType.PestControl, PlantStage.Vegetative) => true,
+
+                // === Harvest (36–37 ngày): Thu hoạch và kết thúc ===
+                (ActivityType.Harvesting, PlantStage.Harvest) => true,
+                (ActivityType.CleaningFarmArea, PlantStage.Harvest) => true,          // Dọn dẹp sau thu hoạch
+                (ActivityType.PestControl, PlantStage.Harvest) => true,               // Phòng sâu trước thu (nếu dùng thuốc sinh học)
+
+                // Mọi trường hợp khác → KHÔNG phù hợp
+                _ => false
+            };
         }
 
         public async Task<ResponseDTO> CreateFarmActivityAsync(FarmActivityRequest farmActivityRequest, ActivityType activityType)
