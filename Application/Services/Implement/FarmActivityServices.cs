@@ -173,24 +173,85 @@ namespace WebAPI.Services
 
         public async Task<ResponseDTO> ChangeFarmActivityStatusAsync(long farmActivityId)
         {
-            var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(farmActivityId);
+            try
+            {
+                // 1. Tìm FarmActivity
+                var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(farmActivityId);
+                if (farmActivity == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);
+                }
 
-            if (farmActivity == null)
-            {
-                return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);
-            }
-            else
-            {
-                farmActivity.Status = (farmActivity.Status == Domain.Enum.FarmActivityStatus.ACTIVE) ? Domain.Enum.FarmActivityStatus.DEACTIVATED : Domain.Enum.FarmActivityStatus.ACTIVE;
+                // 2. Xác định trạng thái mới (toggle)
+                FarmActivityStatus newStatus = farmActivity.Status == FarmActivityStatus.ACTIVE
+                    ? FarmActivityStatus.DEACTIVATED
+                    : FarmActivityStatus.ACTIVE;
+
+                // 3. Nếu không thay đổi gì → trả về sớm
+                if (farmActivity.Status == newStatus)
+                {
+                    return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, "Trạng thái không thay đổi.");
+                }
+
+                // 4. Validate chỉ khi chuyển sang ACTIVE
+                var today = _currentTime.GetCurrentTime().ToDateTime(TimeOnly.MinValue);
+
+                if (newStatus == FarmActivityStatus.ACTIVE)
+                {
+                    // a. Không cho active lại activity đã hết hạn (EndDate < today)
+                    if (farmActivity.EndDate?.ToDateTime(TimeOnly.MinValue) < today)
+                    {
+                        return new ResponseDTO(Const.ERROR_EXCEPTION, "Không thể kích hoạt lại hoạt động đã kết thúc trong quá khứ.");
+                    }
+
+                    // b. Không cho active nếu thời gian chồng chéo với activity ACTIVE khác
+                    bool hasTimeOverlap = await _unitOfWork.farmActivityRepository.HasOverlappingActiveActivityAsync(
+                        scheduleId: farmActivity.scheduleId.Value,
+                        startDate: farmActivity.StartDate.Value,
+                        endDate: farmActivity.EndDate.Value,
+                        excludeActivityId: farmActivity.FarmActivitiesId);  // exclude chính activity đang toggle
+
+                    if (hasTimeOverlap)
+                    {
+                        return new ResponseDTO(Const.ERROR_EXCEPTION,
+                            $"Không thể kích hoạt hoạt động vì thời gian từ {farmActivity.StartDate:dd/MM/yyyy} đến {farmActivity.EndDate:dd/MM/yyyy} đang chồng chéo với hoạt động khác đang active.");
+                    }
+
+                    // c. Staff không được trùng lịch với activity ACTIVE khác
+                    bool staffConflict = await _unitOfWork.farmActivityRepository.HasStaffTimeConflictAsync(
+                        staffId: farmActivity.AssignedTo,
+                        startDate: farmActivity.StartDate.Value,
+                        endDate: farmActivity.EndDate.Value,
+                        excludeActivityId: farmActivity.FarmActivitiesId);  // exclude chính nó
+
+                    if (staffConflict)
+                    {
+                        return new ResponseDTO(Const.ERROR_EXCEPTION,
+                            "Nhân viên được giao đã có hoạt động khác trùng thời gian trong khoảng này.");
+                    }
+                }
+                // Khi chuyển sang DEACTIVATED → luôn cho phép, không validate
+
+                // 5. Cập nhật trạng thái mới
+                farmActivity.Status = newStatus;
+
+                //Cập nhật UpdatedAt, UpdatedBy
+                //farmActivity.UpdatedAt = _currentTime.GetCurrentTime().ToDateTime(TimeOnly.MinValue);
+                //farmActivity.updatedBy = currentUser?.AccountId ?? 0; 
+
                 await _unitOfWork.farmActivityRepository.UpdateAsync(farmActivity);
                 if (await _unitOfWork.SaveChangesAsync() < 0)
                 {
                     return new ResponseDTO(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);
                 }
-                else
-                {
-                    return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG);
-                }
+
+                // 6. Trả kết quả
+                string action = newStatus == FarmActivityStatus.ACTIVE ? "kích hoạt" : "tạm dừng";
+                return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, $"Đã {action} hoạt động thành công.");
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Đã xảy ra lỗi khi thay đổi trạng thái hoạt động.");
             }
         }
 

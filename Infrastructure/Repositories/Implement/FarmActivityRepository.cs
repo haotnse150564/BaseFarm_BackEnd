@@ -166,5 +166,24 @@ namespace Infrastructure.Repositories.Implement
 
             return await query.AnyAsync();
         }
+
+        public async Task<bool> HasOverlappingActiveActivityAsync(long? scheduleId, DateOnly startDate, DateOnly endDate, long excludeActivityId)
+        {
+            var query = _context.FarmActivity
+                .Where(a =>
+                    a.Status == FarmActivityStatus.ACTIVE &&                          // Chỉ tính activity đang ACTIVE
+                    a.FarmActivitiesId != excludeActivityId &&                        // Không tính chính activity đang toggle
+                    a.StartDate <= endDate &&                                         // Start mới <= End cũ
+                    a.EndDate >= startDate                                            // End mới >= Start cũ
+                );
+
+            // Nếu truyền scheduleId → giới hạn trong cùng Schedule
+            if (scheduleId.HasValue)
+            {
+                query = query.Where(a => a.scheduleId == scheduleId.Value);
+            }
+
+            return await query.AnyAsync();
+        }
     }
 }
