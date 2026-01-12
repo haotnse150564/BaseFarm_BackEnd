@@ -64,6 +64,7 @@ public static class DependencyInjection
         services.AddScoped<IFarmEquipmentRepository, FarmEquipmentRepository>();
         //services.AddScoped<ICropRequirementRepository, CropRequirementtRepository>();
         services.AddScoped<IScheduleLogRepository, ScheduleLogRepository>();
+        services.AddScoped<IStaff_FarmActivityRepository, Staff_FarmActivityRepository>();
         //service
         services.AddScoped<IProductServices, ProductServices>();
         services.AddScoped<IFeedbackSevices, FeedbackServices>();

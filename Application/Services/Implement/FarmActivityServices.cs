@@ -141,10 +141,10 @@ namespace WebAPI.Services
             var validationResponse = await ValidateCreateAsync(farmActivityRequest, activityType);
 
             // Nếu validate fail → return ngay lỗi
-            if (validationResponse != null)
-            {
-                return validationResponse;
-            }
+            //if (validationResponse != null)
+            //{
+            //    return validationResponse;
+            //}
 
             var utcDate = DateTime.UtcNow.ToUniversalTime();
 

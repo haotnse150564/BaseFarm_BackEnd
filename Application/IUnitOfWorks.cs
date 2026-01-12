@@ -32,5 +32,6 @@ namespace Application
         IIOTLogRepository iotLogRepository { get; }
         IFarmEquipmentRepository farmEquipmentRepository { get; }
         IScheduleLogRepository scheduleLogRepository { get; }
+        IStaff_FarmActivityRepository staff_FarmActivityRepository { get; }
     }
 }

@@ -15,7 +15,7 @@ namespace Infrastructure.ViewModel.Request
         [Required(ErrorMessage = "FarmActivity End Date is required.")]
         public DateOnly? EndDate { get; set; }
         [Required(ErrorMessage = "Staff is required.")]
-        public long StaffId { get; set; }
+       // public long StaffId { get; set; }
         public long? ScheduleId { get; set; }
 
     }
