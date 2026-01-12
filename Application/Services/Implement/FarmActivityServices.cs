@@ -64,9 +64,13 @@ namespace WebAPI.Services
             if (schedule.Status != Status.ACTIVE)
                 return new ResponseDTO(Const.ERROR_EXCEPTION, "Không thể thêm hoạt động vào lịch trình đã tạm dừng.");
 
-            // 3. Thời gian activity phải nằm trong Schedule
-            if (request.StartDate < schedule.StartDate || request.EndDate > schedule.EndDate)
-                return new ResponseDTO(Const.ERROR_EXCEPTION, "Thời gian hoạt động phải nằm trong khoảng thời gian của lịch.");
+            // 3. Thời gian activity phải nằm trong khoảng của lịch
+            // (cho phép lố ra ngoài ngày kết thúc dự kiến)
+            if (request.StartDate.Value < schedule.StartDate)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION,
+                    "Ngày bắt đầu hoạt động phải từ ngày bắt đầu của lịch trình trở đi.");
+            }
 
             // 4. Nhân viên tồn tại
             var staff = await _unitOfWork.accountRepository.GetByIdAsync(request.StaffId);
