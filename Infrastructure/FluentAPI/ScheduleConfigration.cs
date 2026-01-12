@@ -45,6 +45,9 @@ namespace Infrastructure.FluentAPI
             builder.Property(e => e.Quantity)
                    .HasColumnName("quantity");
 
+            builder.Property(e => e.HarvestedQuantity)
+                   .HasColumnName("HarvestedQuantity");
+
             builder.Property(e => e.Status)
                    .HasColumnName("status");
 

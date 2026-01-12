@@ -15,6 +15,8 @@ public partial class Schedule
     public PlantStage currentPlantStage { get; set; }
     public DateOnly toDay { get; set; }
     public int? Quantity { get; set; }
+    public int? HarvestedQuantity { get; set; } 
+
     public Status? Status { get; set; }
     public bool PesticideUsed { get; set; }
     public DiseaseStatus? DiseaseStatus { get; set; }
