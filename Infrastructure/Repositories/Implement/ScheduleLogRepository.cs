@@ -43,7 +43,7 @@ namespace Infrastructure.Repositories.Implement
                         orderby log.CreatedAt descending
                         select new ScheduleLogResponse
                         {
-                            CropLogId = log.CropLogId,
+                            CropLogId = log.ScheduleLogId,
                             Notes = log.Notes,
                             CreatedAt = log.CreatedAt,
                             CreateBy = createBy.Fullname != null ? createBy.Fullname : null,

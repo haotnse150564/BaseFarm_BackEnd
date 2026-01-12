@@ -73,19 +73,19 @@ namespace WebAPI.Services
             }
 
             // 4. Nhân viên tồn tại
-            var staff = await _unitOfWork.accountRepository.GetByIdAsync(request.StaffId);
-            if (staff == null)
-                return new ResponseDTO(Const.ERROR_EXCEPTION, "Nhân viên được giao không tồn tại.");
+            //var staff = await _unitOfWork.accountRepository.GetByIdAsync(request.StaffId);
+            //if (staff == null)
+            //    return new ResponseDTO(Const.ERROR_EXCEPTION, "Nhân viên được giao không tồn tại.");
 
-            // 5. Nhân viên không được trùng lịch làm việc (quan trọng nhất)
-            bool staffConflict = await _farmActivityRepository.HasStaffTimeConflictAsync(
-                staffId: request.StaffId,
-                startDate: request.StartDate.Value,
-                endDate: request.EndDate.Value,
-                excludeActivityId: null);
+            //// 5. Nhân viên không được trùng lịch làm việc (quan trọng nhất)
+            //bool staffConflict = await _farmActivityRepository.HasStaffTimeConflictAsync(
+            //    staffId: request.StaffId,
+            //    startDate: request.StartDate.Value,
+            //    endDate: request.EndDate.Value,
+            //    excludeActivityId: null);
 
-            if (staffConflict)
-                return new ResponseDTO(Const.ERROR_EXCEPTION, "Nhân viên này đã được giao hoạt động khác trong khoảng thời gian này.");
+            //if (staffConflict)
+            //    return new ResponseDTO(Const.ERROR_EXCEPTION, "Nhân viên này đã được giao hoạt động khác trong khoảng thời gian này.");
 
             // 6. Không trùng hoạt động cùng loại trong cùng lịch trình (tránh duplicate)
             bool hasDuplicateType = await _farmActivityRepository.HasDuplicateActivityTypeInScheduleAsync(
@@ -222,17 +222,17 @@ namespace WebAPI.Services
                     }
 
                     // c. Staff không được trùng lịch với activity ACTIVE khác
-                    bool staffConflict = await _unitOfWork.farmActivityRepository.HasStaffTimeConflictAsync(
-                        staffId: farmActivity.AssignedTo,
-                        startDate: farmActivity.StartDate.Value,
-                        endDate: farmActivity.EndDate.Value,
-                        excludeActivityId: farmActivity.FarmActivitiesId);  // exclude chính nó
+                    //bool staffConflict = await _unitOfWork.farmActivityRepository.HasStaffTimeConflictAsync(
+                    //    staffId: 3,
+                    //    startDate: farmActivity.StartDate.Value,
+                    //    endDate: farmActivity.EndDate.Value,
+                    //    excludeActivityId: farmActivity.FarmActivitiesId);  // exclude chính nó
 
-                    if (staffConflict)
-                    {
-                        return new ResponseDTO(Const.ERROR_EXCEPTION,
-                            "Nhân viên được giao đã có hoạt động khác trùng thời gian trong khoảng này.");
-                    }
+                    //if (staffConflict)
+                    //{
+                    //    return new ResponseDTO(Const.ERROR_EXCEPTION,
+                    //        "Nhân viên được giao đã có hoạt động khác trùng thời gian trong khoảng này.");
+                    //}
                 }
                 // Khi chuyển sang DEACTIVATED → luôn cho phép, không validate
 

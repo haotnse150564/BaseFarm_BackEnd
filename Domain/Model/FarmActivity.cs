@@ -9,7 +9,6 @@ public partial class FarmActivity //update lên bảng cần sau này
     public long FarmActivitiesId { get; set; }
 
     public ActivityType? ActivityType { get; set; }
-    public long AssignedTo { get; set; }
 
     public DateOnly? StartDate { get; set; }
 
@@ -23,5 +22,6 @@ public partial class FarmActivity //update lên bảng cần sau này
     public long? scheduleId { get; set; }
     public virtual Schedule Schedule { get; set; } = null!;
     public virtual ICollection<Staff_FarmActivity> StaffFarmActivities { get; set; } = new List<Staff_FarmActivity>();
+    public virtual ICollection<ScheduleLog>? FarmActivityLogsInSchedule { get; set; } = new List<ScheduleLog>();
 
 }

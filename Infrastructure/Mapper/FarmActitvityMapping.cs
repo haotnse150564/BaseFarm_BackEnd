@@ -45,7 +45,6 @@ namespace Infrastructure.Mapper
             : "Chưa có hồ sơ"));
 
             CreateMap<FarmActivity,FarmActivityRequest>()
-                .ForMember(dest => dest.StaffId, opt => opt.MapFrom(src => src.AssignedTo))
                 .ForMember(dest => dest.ScheduleId, opt => opt.MapFrom(src => src.scheduleId))
                 .ReverseMap();
         }

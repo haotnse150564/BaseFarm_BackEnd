@@ -60,7 +60,6 @@ namespace Infrastructure.Repositories.Implement
                     //.ThenInclude(fa => fa.AssignedToNavigation)
                     //    .ThenInclude(a => a.AccountProfile)
                 // CHỈ LẤY schedule có activity của staff
-                .Where(s => s.FarmActivities.Any(fa => fa.AssignedTo == staffId))
                 .OrderByDescending(s => s.ScheduleId);
 
             if (month >= 1 && month <= 12)

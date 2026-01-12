@@ -134,7 +134,6 @@ namespace Infrastructure.Repositories.Implement
             // (StartDate mới <= EndDate cũ) AND (EndDate mới >= StartDate cũ)
             var query = _context.FarmActivity
                 .Where(a =>
-                    a.AssignedTo == staffId &&
                     (excludeActivityId == null || a.FarmActivitiesId != excludeActivityId) &&
                     a.Status != FarmActivityStatus.DEACTIVATED &&
                     a.Schedule.Status == Status.ACTIVE &&

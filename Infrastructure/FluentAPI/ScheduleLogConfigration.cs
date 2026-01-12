@@ -17,37 +17,46 @@ namespace Infrastructure.FluentAPI
             builder.ToTable("ScheduleLog");
 
             // Khóa chính
-            builder.HasKey(e => e.CropLogId);
+            builder.HasKey(e => e.ScheduleLogId);
 
-            builder.Property(e => e.CropLogId)
-                .HasColumnName("cropLogId")
-                .ValueGeneratedOnAdd();
+            builder.Property(e => e.ScheduleLogId)
+                   .HasColumnName("scheduleLogId")
+                   .ValueGeneratedOnAdd();
 
             builder.Property(e => e.ScheduleId)
-                .HasColumnName("scheduleId");
+                   .HasColumnName("scheduleId");
 
-            // Notes có thể viết bằng tiếng Việt có dấu
+            builder.Property(e => e.FarmActivityId)
+                   .HasColumnName("farmActivityId");
+
             builder.Property(e => e.Notes)
-                .HasColumnName("notes")
-                .HasColumnType("text"); 
+                   .HasColumnName("notes")
+                   .HasMaxLength(500); // tuỳ chỉnh độ dài
 
             builder.Property(e => e.CreatedAt)
-                .HasColumnName("createdAt");
+                   .HasColumnName("createdAt");
 
             builder.Property(e => e.UpdatedAt)
-                .HasColumnName("updatedAt");
+                   .HasColumnName("updatedAt");
 
             builder.Property(e => e.CreatedBy)
-                .HasColumnName("createdBy");
+                   .HasColumnName("createdBy");
 
             builder.Property(e => e.UpdatedBy)
-                .HasColumnName("updatedBy");
+                   .HasColumnName("updatedBy");
 
             // Quan hệ n-1 với Schedule
             builder.HasOne(e => e.schedule)
-                .WithMany(s => s.ScheduleLog) // giả định Schedule có ICollection<CropLog>
-                .HasForeignKey(e => e.ScheduleId)
-                .OnDelete(DeleteBehavior.Cascade);
+                   .WithMany(s => s.ScheduleLog) // cần ICollection<ScheduleLog> trong Schedule
+                   .HasForeignKey(e => e.ScheduleId)
+                   .OnDelete(DeleteBehavior.Cascade);
+
+            // Quan hệ n-1 với FarmActivity
+            builder.HasOne(e => e.farmActivity)
+                   .WithMany(f => f.FarmActivityLogsInSchedule) // cần ICollection<ScheduleLog> trong FarmActivity
+                   .HasForeignKey(e => e.FarmActivityId)
+                   .OnDelete(DeleteBehavior.Cascade);
+
         }
     }
 

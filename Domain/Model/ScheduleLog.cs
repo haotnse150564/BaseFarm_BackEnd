@@ -8,8 +8,9 @@ namespace Domain.Model
 {
     public class ScheduleLog
     {
-        public long CropLogId { get; set; }
+        public long ScheduleLogId { get; set; }
         public long ScheduleId { get; set; }
+        public long FarmActivityId { get; set; }
         public string? Notes { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
@@ -17,5 +18,6 @@ namespace Domain.Model
         public long UpdatedBy { get; set; }
         // Navigation property
         public virtual Schedule? schedule { get; set; }
+        public virtual FarmActivity? farmActivity { get; set; }
     }
 }

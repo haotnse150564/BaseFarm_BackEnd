@@ -11,6 +11,10 @@ namespace Domain.Model
         public long Staff_FarmActivityId { get; set; }
         public long AccountId { get; set; }
         public long FarmActivityId { get; set; }
+        public long CreatedBy { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public long? UpdatedBy { get; set; }
+        public DateTime? UpdatedAt { get; set; }
         public virtual Account? Account { get; set; }
         public virtual FarmActivity? FarmActivity { get; set; }
 
