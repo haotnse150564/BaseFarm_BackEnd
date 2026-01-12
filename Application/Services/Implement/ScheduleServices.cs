@@ -674,6 +674,39 @@ namespace Application.Services.Implement
             }
         }
 
+        public async Task<ResponseDTO> UpdateSchedulesHarvestedQuantityAsync(long scheduleId, double harvestedQuantity)
+        {
+            try
+            {
+                // Kiểm tra quyền
+                var currentUser = await _jwtUtils.GetCurrentUserAsync();
+                if (currentUser == null || currentUser.Role != Roles.Manager)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Tài khoản không hợp lệ.");
+                }
+                if (harvestedQuantity < 0)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Sản lượng thực tế không được âm.");
+                }
+                // Tìm schedule
+                var schedule = await _unitOfWork.scheduleRepository.GetByIdAsync(scheduleId);
+                if (schedule == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Lịch không tồn tại.");
+                }                
+                schedule.HarvestedQuantity = harvestedQuantity;
+
+                await _unitOfWork.scheduleRepository.UpdateAsync(schedule);
+                await _unitOfWork.SaveChangesAsync();             
+
+                return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.FAIL_READ_CODE, ex.Message);
+            }
+        }
+
     }
     #endregion
 }

@@ -17,7 +17,7 @@ namespace Application.Services
         Task<ResponseDTO> AssignTask(long scheduleID, long staffId);
         Task<ResponseDTO> UpdateActivities(long ScheduleId, long[] activityId);
         Task<ResponseDTO> ScheduleStaffView(int month);
-
+        Task<ResponseDTO> UpdateSchedulesHarvestedQuantityAsync(long scheduleId, double harvestedQuantity);
         Task<UpdateTodayResponse> UpdateTodayAsync(long scheduleId, UpdateTodayRequest request);
         //Task<ResponseDTO> AddFarmActivityToSchedule(long scheduleId, long farmActivities);
     }

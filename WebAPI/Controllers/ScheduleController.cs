@@ -152,5 +152,20 @@ namespace WebAPI.Controllers
         //    }
         //    return Ok(result); // Trả về danh sách sản phẩm với phân trang
         //}
+
+        [HttpPut("schedule-update-harvested-quantity")]
+        [Authorize(Roles = "Manager,Staff")]
+
+        public async Task<IActionResult> UpdateScheduleHarvestedQuantity(long scheduleId, double harvestedQuantity)
+        {
+            var result = await _schedule.UpdateSchedulesHarvestedQuantityAsync(scheduleId, harvestedQuantity);
+
+            if (result.Status != Const.SUCCESS_READ_CODE)
+            {
+                return BadRequest(result); // Trả về lỗi 400 nếu thất bại
+            }
+
+            return Ok(result);
+        }
     }
 }
