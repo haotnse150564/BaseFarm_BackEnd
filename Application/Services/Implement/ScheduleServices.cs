@@ -367,10 +367,10 @@ namespace Application.Services.Implement
                             EndDate = fa.EndDate?.ToString("dd/MM/yyyy"),
                             Status = fa.Status?.ToString(),
 
-                            StaffId = (long)(fa.AssignedToNavigation?.AccountId),
-                            StaffEmail = fa.AssignedToNavigation?.Email,
-                            StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
-                            StaffPhone = fa.AssignedToNavigation?.AccountProfile?.Phone
+                            //StaffId = (long)(fa.AssignedToNavigation?.AccountId),
+                            //StaffEmail = fa.AssignedToNavigation?.Email,
+                            //StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
+                            //StaffPhone = fa.AssignedToNavigation?.AccountProfile?.Phone
                         })
                         .ToList();
 
@@ -381,7 +381,7 @@ namespace Application.Services.Implement
 
                 var result = new Pagination<ScheduleResponseView>
                 {
-                    TotalItemCount = schedulesView.Count,
+                    TotalItemCount = schedulesView.Count(),
                     PageSize = pageSize,
                     PageIndex = safePageIndex,
                     Items = schedulesView
@@ -430,10 +430,10 @@ namespace Application.Services.Implement
                         EndDate = fa.EndDate?.ToString("dd/MM/yyyy"),
                         Status = fa.Status?.ToString(),
 
-                        StaffId = (long)(fa.AssignedToNavigation?.AccountId),
-                        StaffEmail = fa.AssignedToNavigation?.Email,
-                        StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
-                        StaffPhone = fa.AssignedToNavigation?.AccountProfile?.Phone
+                        //StaffId = (long)(fa.AssignedToNavigation?.AccountId),
+                        //StaffEmail = fa.AssignedToNavigation?.Email,
+                        //StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
+                        //StaffPhone = fa.AssignedToNavigation?.AccountProfile?.Phone
                     })
                     .ToList();
 
@@ -637,10 +637,10 @@ namespace Application.Services.Implement
 
                     // Chỉ lấy FarmActivity của staff đang đăng nhập
                     scheduleView.farmActivityView = schedule.FarmActivities?
-                        .Where(fa =>
-                            fa.AssignedToNavigation != null &&
-                            fa.AssignedToNavigation.AccountId == currentUser.AccountId
-                        )
+                        //.Where(fa =>
+                        //    fa.AssignedToNavigation != null &&
+                        //    fa.AssignedToNavigation.AccountId == currentUser.AccountId
+                        //)
                         .Select(fa => new FarmActivityView
                         {
                             FarmActivitiesId = fa.FarmActivitiesId,
@@ -649,10 +649,10 @@ namespace Application.Services.Implement
                             EndDate = fa.EndDate?.ToString("dd/MM/yyyy"),
                             Status = fa.Status?.ToString(),
 
-                            StaffId = (long)(fa.AssignedToNavigation?.AccountId),
-                            StaffEmail = fa.AssignedToNavigation?.Email,
-                            StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
-                            StaffPhone = fa.AssignedToNavigation?.AccountProfile?.Phone
+                            //StaffId = (long)(fa.AssignedToNavigation?.AccountId),
+                            //StaffEmail = fa.AssignedToNavigation?.Email,
+                            //StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
+                            //StaffPhone = fa.AssignedToNavigation?.AccountProfile?.Phone
                         })
                         .ToList();
 

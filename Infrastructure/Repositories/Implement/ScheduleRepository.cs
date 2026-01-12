@@ -20,8 +20,8 @@ namespace Infrastructure.Repositories.Implement
 
                 // FarmActivities + Staff + Profile
                 .Include(s => s.FarmActivities)
-                    .ThenInclude(fa => fa.AssignedToNavigation)
-                        .ThenInclude(a => a.AccountProfile)
+                    //.ThenInclude(fa => fa.AssignedToNavigation)
+                    //    .ThenInclude(a => a.AccountProfile)
 
                 // Farm
                 .Include(s => s.FarmDetails)
@@ -38,8 +38,8 @@ namespace Infrastructure.Repositories.Implement
         {
             return await _context.Schedule
                 .Include(s => s.FarmActivities)
-                    .ThenInclude(fa => fa.AssignedToNavigation)
-                        .ThenInclude(a => a.AccountProfile)
+                //    .ThenInclude(fa => fa.AssignedToNavigation)
+                //        .ThenInclude(a => a.AccountProfile)
                 .Include(s => s.FarmDetails)
                 .Include(s => s.Crop)
                     .ThenInclude(c => c.CropRequirement)
@@ -57,8 +57,8 @@ namespace Infrastructure.Repositories.Implement
                     .ThenInclude(c => c.CropRequirement)
                 .Include(s => s.FarmDetails)
                 .Include(s => s.FarmActivities)
-                    .ThenInclude(fa => fa.AssignedToNavigation)
-                        .ThenInclude(a => a.AccountProfile)
+                    //.ThenInclude(fa => fa.AssignedToNavigation)
+                    //    .ThenInclude(a => a.AccountProfile)
                 // CHỈ LẤY schedule có activity của staff
                 .Where(s => s.FarmActivities.Any(fa => fa.AssignedTo == staffId))
                 .OrderByDescending(s => s.ScheduleId);

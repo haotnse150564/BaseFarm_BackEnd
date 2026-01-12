@@ -22,5 +22,6 @@ public partial class FarmActivity //update lên bảng cần sau này
     public long? updatedBy { get; set; }
     public long? scheduleId { get; set; }
     public virtual Schedule Schedule { get; set; } = null!;
-    public virtual Account AssignedToNavigation { get; set; } = null!;
+    public virtual ICollection<Staff_FarmActivity> StaffFarmActivities { get; set; } = new List<Staff_FarmActivity>();
+
 }

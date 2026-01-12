@@ -63,9 +63,9 @@ namespace Infrastructure.FluentAPI
                    .OnDelete(DeleteBehavior.Cascade);
 
             // Quan hệ với Account (AssignedTo)
-            builder.HasOne(e => e.AssignedToNavigation)
-                   .WithMany(a => a.FarmActivities)
-                   .HasForeignKey(e => e.AssignedTo)
+            builder.HasMany(e => e.StaffFarmActivities)
+                   .WithOne(a => a.FarmActivity)
+                   .HasForeignKey(e => e.FarmActivityId)
                    .OnDelete(DeleteBehavior.Cascade);
 
         }

@@ -71,9 +71,9 @@ namespace Infrastructure.FluentAPI
                 .WithOne(ad => ad.Account)
                 .HasForeignKey(ad => ad.AddressID)
                 .OnDelete(DeleteBehavior.Cascade);
-            builder.HasMany(a => a.FarmActivities)
-                .WithOne(fa => fa.AssignedToNavigation)
-                .HasForeignKey(fa => fa.AssignedTo)
+            builder.HasMany(a => a.StaffFarmActivities)
+                .WithOne(fa => fa.Account)
+                .HasForeignKey(fa => fa.AccountId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

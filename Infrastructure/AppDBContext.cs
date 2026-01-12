@@ -55,6 +55,7 @@ namespace Infrastructure
         public DbSet<CartItem> CartItem { get; set; }
         public DbSet<Address> Address { get; set; }
         public DbSet<ScheduleLog> ScheduleLog { get; set; }
+        public DbSet<Staff_FarmActivity> StaffFarmActivities { get; set; }
 
         public string rau3 = "https://cdn.tgdd.vn/2021/08/CookProduct/dau-do-52-1200x676.jpg";
         public string rau2 = "https://www.vinmec.com/static/uploads/small_20201226_005345_144787_rau_den_max_1800x1800_jpg_aaca13f0a2.jpg";
@@ -117,7 +118,7 @@ namespace Infrastructure
                 new Crop { CropId = 2, CropName = "Cop 02", Description = "2x3 m2", Status = Domain.Enum.CropStatus.ACTIVE, CategoryId = 1, CreateAt = DateOnly.Parse("3/1/2025"), UpdateAt = DateOnly.Parse("3/1/2025") },
                 //new Crop { CropId = 3, CropName = "Cop 03", Description = "3x2 m2", Status = Domain.Enum.CropStatus.ACTIVE, CategoryId = 1, CreateAt = DateOnly.Parse("3/1/2025"), UpdateAt = DateOnly.Parse("3/1/2025") },
                 //new Crop { CropId = 4, CropName = "Cop 04", Description = "3x5 m2", Status = Domain.Enum.CropStatus.ACTIVE, CategoryId = 3, CreateAt = DateOnly.Parse("3/1/2025"), UpdateAt = DateOnly.Parse("3/1/2025") },
-                new Crop { CropId = 3, CropName = "Cop 05", Description = "4x3 m2", Status = Domain.Enum.CropStatus.ACTIVE, CategoryId = 3, CreateAt = DateOnly.Parse("3/1/2025"), UpdateAt = DateOnly.Parse("3/1/2025") }
+                new Crop { CropId = 3, CropName = "Cop 03", Description = "4x3 m2", Status = Domain.Enum.CropStatus.ACTIVE, CategoryId = 3, CreateAt = DateOnly.Parse("3/1/2025"), UpdateAt = DateOnly.Parse("3/1/2025") }
                 );
 
             builder.Entity<Device>().HasData(

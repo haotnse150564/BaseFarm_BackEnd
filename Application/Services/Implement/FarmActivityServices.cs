@@ -275,15 +275,15 @@ namespace WebAPI.Services
 
                 CropName = fa.Schedule?.Crop?.CropName,
                 scheduleId = fa.scheduleId,
-                StaffId = (long)(fa.AssignedToNavigation?.AccountId),
-                StaffEmail = fa.AssignedToNavigation?.Email,
-                StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
-                StaffPhone = fa.AssignedToNavigation?.AccountProfile?.Phone
+                //StaffId = (long)(fa.AssignedToNavigation?.AccountId),
+                //StaffEmail = fa.AssignedToNavigation?.Email,
+                //StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
+                //StaffPhone = fa.AssignedToNavigation?.AccountProfile?.Phone
             }).ToList();
 
             var pagination = new Pagination<FarmActivityView>
             {
-                TotalItemCount = views.Count,
+                TotalItemCount = views.Count(),
                 PageSize = pageSize,
                 PageIndex = pageIndex,
                 Items = views.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList()
@@ -312,15 +312,15 @@ namespace WebAPI.Services
 
                 CropName = fa.Schedule?.Crop?.CropName,
                 scheduleId = fa.scheduleId,
-                StaffId = (long)(fa.AssignedToNavigation?.AccountId),
-                StaffEmail = fa.AssignedToNavigation?.Email,
-                StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
-                StaffPhone = fa.AssignedToNavigation?.AccountProfile?.Phone
+                //StaffId = (long)(fa.AssignedToNavigation?.AccountId),
+                //StaffEmail = fa.AssignedToNavigation?.Email,
+                //StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
+                //StaffPhone = fa.AssignedToNavigation?.AccountProfile?.Phone
             }).ToList();
 
             var pagination = new Pagination<FarmActivityView>
             {
-                TotalItemCount = views.Count,
+                TotalItemCount = views.Count(),
                 PageSize = pageSize,
                 PageIndex = pageIndex,
                 Items = views.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList()
@@ -349,15 +349,15 @@ namespace WebAPI.Services
 
                 CropName = fa.Schedule?.Crop?.CropName,
                 scheduleId = fa.scheduleId,
-                StaffId = (long)(fa.AssignedToNavigation?.AccountId),
-                StaffEmail = fa.AssignedToNavigation?.Email,
-                StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
-                StaffPhone = fa.AssignedToNavigation?.AccountProfile?.Phone
+                //StaffId = (long)(fa.AssignedToNavigation?.AccountId),
+                //StaffEmail = fa.AssignedToNavigation?.Email,
+                //StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
+                //StaffPhone = fa.AssignedToNavigation?.AccountProfile?.Phone
             }).ToList();
 
             var pagination = new Pagination<FarmActivityView>
             {
-                TotalItemCount = views.Count,
+                TotalItemCount = views.Count(),
                 PageSize = pageSize,
                 PageIndex = pageIndex,
                 Items = views.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList()
@@ -388,10 +388,10 @@ namespace WebAPI.Services
 
                 CropName = fa.Schedule?.Crop?.CropName,
                 scheduleId = fa.scheduleId,
-                StaffId = (long)(fa.AssignedToNavigation?.AccountId),
-                StaffEmail = fa.AssignedToNavigation?.Email,
-                StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
-                StaffPhone = fa.AssignedToNavigation?.AccountProfile?.Phone
+                //StaffId = (long)(fa.AssignedToNavigation?.AccountId),
+                //StaffEmail = fa.AssignedToNavigation?.Email,
+                //StaffFullName = fa.AssignedToNavigation?.AccountProfile?.Fullname,
+                //StaffPhone = fa.AssignedToNavigation?.AccountProfile?.Phone
             };
 
             return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, view);
@@ -490,7 +490,7 @@ namespace WebAPI.Services
             var scheduleLog = new ScheduleLog
             {
                 ScheduleId = (long)farmActivity.scheduleId,
-                Notes = $"[Ghi chú tự động] Hoạt động {farmActivity.ActivityType} đã được {farmActivity.AssignedToNavigation.AccountProfile.Fullname} hoàn thành",
+                Notes = $"[Ghi chú tự động] Hoạt động {farmActivity.ActivityType} đã được {"chưa update *"} hoàn thành",
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = user.AccountId,
             };
