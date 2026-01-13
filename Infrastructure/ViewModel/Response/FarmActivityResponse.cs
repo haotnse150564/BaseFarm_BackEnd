@@ -10,6 +10,7 @@ namespace Infrastructure.ViewModel.Response
 {
     public class FarmActivityResponse
     {
+
         public class FarmActivityView
         {
             public long FarmActivitiesId { get; set; }
@@ -42,5 +43,7 @@ namespace Infrastructure.ViewModel.Response
                 Data = data;
             }
         }
+
+
     }
 }

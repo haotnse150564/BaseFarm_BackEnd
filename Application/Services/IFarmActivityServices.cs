@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static Infrastructure.ViewModel.Response.FarmActivityResponse;
+using static Infrastructure.ViewModel.Response.StaffActivityResponse;
 
 namespace Application.Services
 {
@@ -20,6 +21,11 @@ namespace Application.Services
         Task<ResponseDTO> GetFarmActivityByIdAsync(long farmActivityId);
         Task<ResponseDTO> ChangeFarmActivityStatusAsync(long farmActivityId);
         Task<ResponseDTO> CompleteFarmActivity(long id, string? location);
+
+        Task<Response_DTO> AddStafftoFarmActivity(long farmActivityId, long staffId);
+        Task<Response_DTO> UpdateStafftoFarmActivity(long Staf_farmActivityId, long staffId);
+        Task<Response_DTO> GetAllFarmTask();
+        Task<Response_DTO> GetFarmTaskById(long taskId);
 
     }
 }

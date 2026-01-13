@@ -4,6 +4,7 @@ using Domain.Model;
 using Infrastructure.ViewModel.Request;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.InteropServices;
 
 namespace WebAPI.Controllers
 {
@@ -70,6 +71,30 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> GetFarmActivitiesByStaff(ActivityType? type, FarmActivityStatus? status, int? month, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 10)
         {
             var result = await _farmActivityServices.GetFarmActivitiesByStaffAsync(pageIndex, pageSize, type, status, month);
+            return Ok(result);
+        }
+        [HttpPost("bind-staf-activity")]
+        public async Task<IActionResult> AddStafftoFarmActivity(long farmActivityId, long staffId)
+        {
+            var result = await _farmActivityServices.AddStafftoFarmActivity(farmActivityId, staffId);
+            return Ok(result);
+        }
+        [HttpPut("update-staf-activity")]
+        public async Task<IActionResult> UpdateStafftoFarmActivity(long Staf_farmActivityId, long staffId)
+        {
+            var result = await _farmActivityServices.UpdateStafftoFarmActivity(Staf_farmActivityId, staffId);
+            return Ok(result);
+        }
+        [HttpGet("get-all-farm-task")]
+        public async Task<IActionResult> GetAllFarmTask()
+        {
+            var result = await _farmActivityServices.GetAllFarmTask();
+            return Ok(result);
+        }
+        [HttpGet("get-farm-task-by-id/{taskId}")]
+        public async Task<IActionResult> GetFarmTaskById(long taskId)
+        {
+            var result = await _farmActivityServices.GetFarmTaskById(taskId);
             return Ok(result);
         }
     }

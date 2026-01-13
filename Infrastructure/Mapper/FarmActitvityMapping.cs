@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static Infrastructure.ViewModel.Response.AccountResponse;
 using static Infrastructure.ViewModel.Response.FarmActivityResponse;
+using static Infrastructure.ViewModel.Response.StaffActivityResponse;
 
 namespace Infrastructure.Mapper
 {
@@ -43,10 +44,29 @@ namespace Infrastructure.Mapper
                 src.AccountProfile != null && !string.IsNullOrWhiteSpace(src.AccountProfile.Fullname)
             ? src.AccountProfile.Fullname
             : "Chưa có hồ sơ"));
-
-            CreateMap<FarmActivity,FarmActivityRequest>()
-                .ForMember(dest => dest.ScheduleId, opt => opt.MapFrom(src => src.scheduleId))
+            CreateMap<FarmActivityRequest, FarmActivity>()
                 .ReverseMap();
+            CreateMap<Staff_FarmActivity, StaffFarmActivityResponse>()
+                // Map trực tiếp các field cơ bản
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Staff_FarmActivityId))
+                .ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.AccountId))
+                .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => src.CreatedBy))
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
+                .ForMember(dest => dest.ModifiedAt, opt => opt.MapFrom(src => src.UpdatedAt))
+
+                // Map từ Account sang các field trong Response
+                .ForMember(dest => dest.StaffEmail, opt => opt.MapFrom(src => src.Account.Email))
+                .ForPath(dest => dest.StaffPhone, opt => opt.MapFrom(src => src.Account.AccountProfile.Phone))
+                .ForPath(dest => dest.StaffName, opt => opt.MapFrom(src => src.Account.AccountProfile.Fullname))
+
+                // Map từ FarmActivity sang các field trong Response
+                .ForMember(dest => dest.ActivityType, opt => opt.MapFrom(src => src.FarmActivity.ActivityType.ToString()))
+                .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.FarmActivity.StartDate))
+                .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.FarmActivity.EndDate))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.FarmActivity.Status.ToString()))
+                .ForPath(dest => dest.CropName, opt => opt.MapFrom(src => src.FarmActivity.Schedule.Crop.CropName)) // giả sử Schedule có CropName
+                .ReverseMap();
+
         }
     }
 }
