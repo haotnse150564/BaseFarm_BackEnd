@@ -17,7 +17,6 @@ namespace Infrastructure.Repositories
         Task<List<FarmActivity>> GetListFarmActivityUpdate(IEnumerable<long>? farmActivityId);
         Task<List<FarmActivity>> GetAllFiler(Domain.Enum.ActivityType? type, Domain.Enum.FarmActivityStatus? status, int? month);
         Task<List<Product>> GetProductWillHarves(long acitivityId);
-        Task<bool> HasStaffTimeConflictAsync(long staffId, DateOnly startDate, DateOnly endDate, long? excludeActivityId = null);
         Task<bool> HasDuplicateActivityTypeInScheduleAsync(long scheduleId, ActivityType activityType, long? excludeActivityId = null);
         Task<bool> HasOverlappingActiveActivityAsync(long? scheduleId, DateOnly startDate, DateOnly endDate, long excludeActivityId);
     }

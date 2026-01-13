@@ -11,5 +11,6 @@ namespace Infrastructure.Repositories
 {
     public interface IStaff_FarmActivityRepository : IGenericRepository<Staff_FarmActivity>
     {
+        Task<bool> HasStaffTimeConflictAsync(long staffId, DateOnly startDate, DateOnly endDate, long? excludeStaffFarmActivityId = null);
     }
 }

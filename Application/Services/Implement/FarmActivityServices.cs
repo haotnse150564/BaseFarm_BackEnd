@@ -11,6 +11,7 @@ using Infrastructure.Repositories;
 using Infrastructure.ViewModel.Request;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using System.Data.Entity;
 using System.Diagnostics.Metrics;
 using System.Threading.Tasks;
 using static Infrastructure.ViewModel.Response.FarmActivityResponse;
@@ -214,6 +215,61 @@ namespace WebAPI.Services
                 _ => false
             };
         }
+
+        private async Task<Response_DTO?> ValidateAddStaffToFarmActivityAsync(long farmActivityId,long staffId)
+        {
+
+            // 1. Kiểm tra hoạt động tồn tại và trạng thái hợp lệ
+            var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(farmActivityId);
+            if (farmActivity == null)
+            {
+                return new Response_DTO(Const.FAIL_READ_CODE, "Không tìm thấy hoạt động.");
+            }
+
+            if (farmActivity.Status == FarmActivityStatus.COMPLETED || farmActivity.Status == FarmActivityStatus.DEACTIVATED)
+            {
+                return new Response_DTO(Const.ERROR_EXCEPTION,"Không thể gán nhân viên cho hoạt động đã hoàn thành hoặc đã hủy.");
+            }
+
+            // 2. Kiểm tra nhân viên tồn tại và vai trò phù hợp
+            var staff = await _unitOfWork.accountRepository.GetByIdAsync(staffId);
+            if (staff == null)
+            {
+                return new Response_DTO(Const.FAIL_READ_CODE, "Không tìm thấy nhân viên.");
+            }
+
+            if (staff.Role != Roles.Staff && staff.Role != Roles.Staff)
+            {
+                return new Response_DTO(Const.ERROR_EXCEPTION,"Chỉ có thể gán nhân viên có vai trò Staff");
+            }
+
+            // 3. Không cho thêm trùng nhân viên vào cùng hoạt động
+            bool alreadyAssigned = await _unitOfWork.staff_FarmActivityRepository.GetQueryable()
+                .AnyAsync(s => s.FarmActivityId == farmActivityId && s.AccountId == staffId);
+
+            if (alreadyAssigned)
+            {
+                return new Response_DTO(Const.ERROR_EXCEPTION,"Nhân viên này đã được gán cho hoạt động này rồi.");
+            }
+
+            // 4. Kiểm tra conflict thời gian (rất quan trọng)
+            bool hasConflict = await _unitOfWork.staff_FarmActivityRepository
+                .HasStaffTimeConflictAsync(
+                    staffId: staffId,
+                    startDate: (DateOnly)farmActivity.StartDate,
+                    endDate: (DateOnly)farmActivity.EndDate,
+                    excludeStaffFarmActivityId: null); // null vì là thêm mới
+
+            if (hasConflict)
+            {
+                return new Response_DTO(Const.ERROR_EXCEPTION,
+                    "Nhân viên này đã có lịch làm việc trùng thời gian với hoạt động này.");
+            }
+
+            return null; // hợp lệ
+        }
+
+        
 
         public async Task<ResponseDTO> CreateFarmActivityAsync(FarmActivityRequest farmActivityRequest, ActivityType activityType)
         {
@@ -626,6 +682,13 @@ namespace WebAPI.Services
         }
         public async Task<Response_DTO> AddStafftoFarmActivity(long farmActivityId, long staffId)
         {
+
+            var validationResult = await ValidateAddStaffToFarmActivityAsync(farmActivityId, staffId);
+            if (validationResult != null)
+            {
+                return validationResult;
+            }
+
             var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(farmActivityId);
             var staff = await _unitOfWork.accountRepository.GetByIdAsync(staffId);
             if (farmActivity == null || staff == null)
