@@ -9,6 +9,7 @@ using Domain.Enum;
 using Domain.Model;
 using Infrastructure.Repositories;
 using Infrastructure.ViewModel.Request;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Diagnostics.Metrics;
@@ -112,6 +113,78 @@ namespace WebAPI.Services
             return null;
         }
 
+        public async Task<ResponseDTO?> ValidateUpdateAsync(long farmActivityId,FarmActivityRequest request,ActivityType newActivityType,FarmActivityStatus newStatus,FarmActivity existingActivity)
+        {
+            if (request == null)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Dữ liệu yêu cầu không hợp lệ.");
+
+            // 1. validate ngày tháng, required fields
+            if (!request.StartDate.HasValue || !request.EndDate.HasValue)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Ngày bắt đầu/kết thúc là bắt buộc.");
+
+            if (request.StartDate.Value > request.EndDate.Value)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Ngày bắt đầu phải <= ngày kết thúc.");
+
+            // 2. Không cho thay đổi ScheduleId
+            if (request.ScheduleId.HasValue && request.ScheduleId != existingActivity.scheduleId)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Không thể thay đổi lịch trình của hoạt động đã tạo.");
+
+            // 3. Không cho thay đổi ActivityType
+            //if (newActivityType != existingActivity.ActivityType)
+            //{
+            //    return new ResponseDTO(Const.ERROR_EXCEPTION, "Không thể thay đổi loại hoạt động sau khi tạo.");
+            //}
+
+            // 4. Lấy schedule hiện tại
+            var schedule = await _unitOfWork.scheduleRepository.GetByIdAsync((long)existingActivity.scheduleId);
+            if (schedule == null)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Lịch trình không còn tồn tại.");
+
+            if (schedule.Status != Status.ACTIVE)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Không thể cập nhật hoạt động trong lịch đã tạm dừng.");
+
+            // 5. StartDate không được nhỏ hơn StartDate của schedule
+            if (request.StartDate.Value < schedule.StartDate)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Ngày bắt đầu phải từ ngày bắt đầu lịch trình trở đi.");
+            }
+
+            // 6. Giới hạn EndDate không quá xa
+            //var maxOverdueDays = 10;
+            //if (request.EndDate.Value > schedule.EndDate.AddDays(maxOverdueDays))
+            //{
+            //    return new ResponseDTO(..., $"Ngày kết thúc không được vượt quá {maxOverdueDays} ngày sau lịch.");
+            //}
+
+            // 7. Check duplicate type: exclude chính activity hiện tại
+            bool hasDuplicate = await _farmActivityRepository.HasDuplicateActivityTypeInScheduleAsync(
+                scheduleId: (long)existingActivity.scheduleId,
+                activityType: newActivityType,
+                excludeActivityId: farmActivityId);
+
+            if (hasDuplicate)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Loại hoạt động này đã tồn tại trong lịch trình.");
+
+            // 8. Phù hợp giai đoạn cây – dùng giai đoạn HIỆN TẠI của schedule
+            if (!IsActivitySuitableForPlantStage(newActivityType, schedule.currentPlantStage))
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, $"Hoạt động không phù hợp với giai đoạn cây hiện tại: {schedule.currentPlantStage}");
+            }
+
+            // 9. Validate trạng thái chuyển đổi (rất quan trọng cho update)
+            if (existingActivity.Status == FarmActivityStatus.COMPLETED)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Không thể cập nhật hoạt động đã hoàn thành.");
+            }
+
+            //if (newStatus == FarmActivityStatus.COMPLETED &&
+            //    newActivityType != ActivityType.Harvesting) // ví dụ: chỉ harvesting mới được hoàn thành để cộng kho
+            //{
+            //}
+
+            return null;
+        }
+
         private bool IsActivitySuitableForPlantStage(ActivityType activityType, PlantStage currentStage)
         {
             return (activityType, currentStage) switch
@@ -143,15 +216,153 @@ namespace WebAPI.Services
             };
         }
 
+        private async Task<Response_DTO?> ValidateAddStaffToFarmActivityAsync(long farmActivityId,long staffId)
+        {
+
+            // 1. Kiểm tra hoạt động tồn tại và trạng thái hợp lệ
+            var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(farmActivityId);
+            if (farmActivity == null)
+            {
+                return new Response_DTO(Const.FAIL_READ_CODE, "Không tìm thấy hoạt động.");
+            }
+
+            if (farmActivity.Status == FarmActivityStatus.COMPLETED || farmActivity.Status == FarmActivityStatus.DEACTIVATED)
+            {
+                return new Response_DTO(Const.ERROR_EXCEPTION,"Không thể gán nhân viên cho hoạt động đã hoàn thành hoặc đã hủy.");
+            }
+
+            // 2. Kiểm tra nhân viên tồn tại và vai trò phù hợp
+            var staff = await _unitOfWork.accountRepository.GetByIdAsync(staffId);
+            if (staff == null)
+            {
+                return new Response_DTO(Const.FAIL_READ_CODE, "Không tìm thấy nhân viên.");
+            }
+
+            if (staff.Role != Roles.Staff && staff.Role != Roles.Staff)
+            {
+                return new Response_DTO(Const.ERROR_EXCEPTION,"Chỉ có thể gán nhân viên có vai trò Staff");
+            }
+
+            // 3. Không cho thêm trùng nhân viên vào cùng hoạt động
+            bool alreadyAssigned = await _unitOfWork.staff_FarmActivityRepository.GetQueryable()
+                .AnyAsync(s => s.FarmActivityId == farmActivityId && s.AccountId == staffId);
+
+            if (alreadyAssigned)
+            {
+                return new Response_DTO(Const.ERROR_EXCEPTION,"Nhân viên này đã được gán cho hoạt động này rồi.");
+            }
+
+            // 4. Kiểm tra conflict thời gian (rất quan trọng)
+            bool hasConflict = await _unitOfWork.staff_FarmActivityRepository
+                .HasStaffTimeConflictAsync(
+                    staffId: staffId,
+                    startDate: (DateOnly)farmActivity.StartDate,
+                    endDate: (DateOnly)farmActivity.EndDate,
+                    excludeStaffFarmActivityId: null); // null vì là thêm mới
+
+            if (hasConflict)
+            {
+                return new Response_DTO(Const.ERROR_EXCEPTION,
+                    "Nhân viên này đã có lịch làm việc trùng thời gian với hoạt động này.");
+            }
+
+            return null; // hợp lệ
+        }
+
+        private async Task<Response_DTO?> ValidateUpdateStaffToFarmActivityAsync(long staffFarmActivityId, long newStaffId)
+        {
+
+            // 1. Kiểm tra bản ghi Staff_FarmActivity tồn tại
+            var staffFarmActivity = await _unitOfWork.staff_FarmActivityRepository
+                .GetByIdAsync(staffFarmActivityId);
+
+            if (staffFarmActivity == null)
+            {
+                return new Response_DTO(Const.FAIL_READ_CODE, "Không tìm thấy bản ghi gán nhân viên.");
+            }
+
+            // 2. Lấy thông tin hoạt động để check trạng thái
+            var farmActivity = await _unitOfWork.farmActivityRepository
+                .GetByIdAsync(staffFarmActivity.FarmActivityId);
+
+            if (farmActivity == null)
+            {
+                return new Response_DTO(Const.FAIL_READ_CODE, "Hoạt động liên quan không tồn tại.");
+            }
+
+            if (farmActivity.Status == FarmActivityStatus.COMPLETED ||
+                farmActivity.Status == FarmActivityStatus.DEACTIVATED)
+            {
+                return new Response_DTO(Const.ERROR_EXCEPTION,
+                    "Không thể thay đổi nhân viên cho hoạt động đã hoàn thành hoặc đã hủy.");
+            }
+
+            // 3. Kiểm tra nhân viên mới tồn tại và vai trò phù hợp
+            var newStaff = await _unitOfWork.accountRepository.GetByIdAsync(newStaffId);
+            if (newStaff == null)
+            {
+                return new Response_DTO(Const.FAIL_READ_CODE, "Không tìm thấy nhân viên.");
+            }
+
+            if (newStaff.Role != Roles.Staff && newStaff.Role != Roles.Staff)
+            {
+                return new Response_DTO(Const.ERROR_EXCEPTION,
+                    "Nhân viên mới phải có vai trò Staff.");
+            }
+
+            // 4. Không cho thay đổi thành chính nhân viên cũ 
+            if (staffFarmActivity.AccountId == newStaffId)
+            {
+                return new Response_DTO(Const.ERROR_EXCEPTION,
+                    "Nhân viên mới trùng với nhân viên hiện tại, không cần cập nhật.");
+            }
+
+            // 5. Kiểm tra nhân viên mới chưa được gán cho hoạt động này
+            bool alreadyAssigned = await _unitOfWork.staff_FarmActivityRepository
+                .GetQueryable()
+                .AnyAsync(s => s.FarmActivityId == staffFarmActivity.FarmActivityId
+                            && s.AccountId == newStaffId
+                            && s.Staff_FarmActivityId != staffFarmActivityId);
+
+            if (alreadyAssigned)
+            {
+                return new Response_DTO(Const.ERROR_EXCEPTION,
+                    "Nhân viên mới đã được gán cho hoạt động này từ bản ghi khác.");
+            }
+
+            // 6. Kiểm tra conflict thời gian cho nhân viên MỚI
+            bool hasConflict = await _unitOfWork.staff_FarmActivityRepository
+                .HasStaffTimeConflictAsync(
+                    staffId: newStaffId,
+                    startDate: (DateOnly)farmActivity.StartDate,
+                    endDate: (DateOnly)farmActivity.EndDate,
+                    excludeStaffFarmActivityId: staffFarmActivityId); // exclude bản ghi đang sửa
+
+            if (hasConflict)
+            {
+                return new Response_DTO(Const.ERROR_EXCEPTION,
+                    "Nhân viên mới có lịch làm việc trùng với khoảng thời gian của hoạt động.");
+            }
+
+            // 8. (Tùy chọn) Cảnh báo hoặc chặn nếu hoạt động đã bắt đầu
+            if (farmActivity.StartDate < DateOnly.FromDateTime(DateTime.UtcNow))
+            {
+                // Có thể chỉ cảnh báo, hoặc block tùy nghiệp vụ
+                // return new Response_DTO(Const.WARNING, "Hoạt động đã bắt đầu, việc thay đổi nhân viên chỉ nên thực hiện khi cần thiết.");
+            }
+
+            return null; // hợp lệ
+        }
+
         public async Task<ResponseDTO> CreateFarmActivityAsync(FarmActivityRequest farmActivityRequest, ActivityType activityType)
         {
             var validationResponse = await ValidateCreateAsync(farmActivityRequest, activityType);
 
-            // Nếu validate fail → return ngay lỗi
-            //if (validationResponse != null)
-            //{
-            //    return validationResponse;
-            //}
+            //Nếu validate fail → return ngay lỗi
+            if (validationResponse != null)
+            {
+                return validationResponse;
+            }
 
             var utcDate = DateTime.UtcNow.ToUniversalTime();
 
@@ -407,13 +618,6 @@ namespace WebAPI.Services
 
         public async Task<ResponseDTO> UpdateFarmActivityAsync(long farmActivityId, FarmActivityRequest farmActivityrequest, ActivityType activityType, FarmActivityStatus farmActivityStatus)
         {
-            var validationResponse = await ValidateCreateAsync(farmActivityrequest, activityType);
-
-            // Nếu validate fail → return ngay lỗi
-            if (validationResponse != null)
-            {
-                return validationResponse;
-            }
 
             var user = await _jwtUtils.GetCurrentUserAsync();
             var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(farmActivityId);
@@ -422,6 +626,10 @@ namespace WebAPI.Services
             {
                 return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);
             }
+
+            var validation = await ValidateUpdateAsync(farmActivityId, farmActivityrequest, activityType, farmActivityStatus, farmActivity);
+            if (validation != null) return validation;
+
             else
             {
                 farmActivity.ActivityType = activityType;
@@ -516,7 +724,7 @@ namespace WebAPI.Services
                 {
                     //CỘNG SL KHI THU HOẠCH
                     var schedule = await _unitOfWork.scheduleRepository.GetByCropId(item.ProductId);
-                    item.StockQuantity += schedule.Quantity;
+                    item.StockQuantity += schedule.HarvestedQuantity;
                 }
                 if (await _unitOfWork.SaveChangesAsync() < 0)
                 {
@@ -557,6 +765,13 @@ namespace WebAPI.Services
         }
         public async Task<Response_DTO> AddStafftoFarmActivity(long farmActivityId, long staffId)
         {
+
+            var validationResult = await ValidateAddStaffToFarmActivityAsync(farmActivityId, staffId);
+            if (validationResult != null)
+            {
+                return validationResult;
+            }
+
             var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(farmActivityId);
             var staff = await _unitOfWork.accountRepository.GetByIdAsync(staffId);
             if (farmActivity == null || staff == null)
@@ -589,6 +804,13 @@ namespace WebAPI.Services
         }
         public async Task<Response_DTO> UpdateStafftoFarmActivity(long Staf_farmActivityId, long staffId)
         {
+
+            var validationResult = await ValidateUpdateStaffToFarmActivityAsync(Staf_farmActivityId, staffId);
+            if (validationResult != null)
+            {
+                return validationResult;
+            }
+
             var staff = await _unitOfWork.accountRepository.GetByIdAsync(staffId);
             if (staff == null)
             {

@@ -128,21 +128,6 @@ namespace Infrastructure.Repositories.Implement
 
         }
 
-        public async Task<bool> HasStaffTimeConflictAsync(long staffId, DateOnly startDate, DateOnly endDate, long? excludeActivityId = null)
-        {
-            // Điều kiện chồng chéo thời gian:
-            // (StartDate mới <= EndDate cũ) AND (EndDate mới >= StartDate cũ)
-            var query = _context.FarmActivity
-                .Where(a =>
-                    (excludeActivityId == null || a.FarmActivitiesId != excludeActivityId) &&
-                    a.Status != FarmActivityStatus.DEACTIVATED &&
-                    a.Schedule.Status == Status.ACTIVE &&
-                    a.StartDate <= endDate &&
-                    a.EndDate >= startDate);
-
-            return await query.AnyAsync();
-        }
-
         private static readonly HashSet<ActivityType> AllowMultiple = new()
 {
                 ActivityType.FertilizingDiluted,

@@ -13,6 +13,6 @@ namespace Infrastructure.Repositories
     {
         Task<List<Staff_FarmActivity>> GetByStaffIdAsync(long staffId);
         Task<List<Staff_FarmActivity>> GetByFarmActivityIdAsync(long staffId);
-
+        Task<bool> HasStaffTimeConflictAsync(long staffId, DateOnly startDate, DateOnly endDate, long? excludeStaffFarmActivityId = null);
     }
 }
