@@ -11,5 +11,8 @@ namespace Infrastructure.Repositories
 {
     public interface IStaff_FarmActivityRepository : IGenericRepository<Staff_FarmActivity>
     {
+        Task<List<Staff_FarmActivity>> GetByStaffIdAsync(long staffId);
+        Task<List<Staff_FarmActivity>> GetByFarmActivityIdAsync(long staffId);
+
     }
 }

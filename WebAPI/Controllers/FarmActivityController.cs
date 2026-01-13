@@ -63,7 +63,7 @@ namespace WebAPI.Controllers
         [Authorize(Roles = "Manager, Staff")]
         public async Task<IActionResult> CompleteFarmActivity(long id, string? location)
         {
-            var result =await _farmActivityServices.CompleteFarmActivity(id, location);
+            var result = await _farmActivityServices.CompleteFarmActivity(id, location);
             return Ok(result);
         }
         [HttpGet("get-by-staff")]
@@ -95,6 +95,12 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> GetFarmTaskById(long taskId)
         {
             var result = await _farmActivityServices.GetFarmTaskById(taskId);
+            return Ok(result);
+        }
+        [HttpGet("Get-staff-by-FarmActivity-Id")]
+        public async Task<IActionResult> GetStaffByFarmActivityId(long farmActivityId)
+        {
+            var result = await _farmActivityServices.GetStaffByFarmActivityId(farmActivityId);
             return Ok(result);
         }
     }

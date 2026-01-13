@@ -26,6 +26,7 @@ namespace Application.Services
         Task<Response_DTO> UpdateStafftoFarmActivity(long Staf_farmActivityId, long staffId);
         Task<Response_DTO> GetAllFarmTask();
         Task<Response_DTO> GetFarmTaskById(long taskId);
+        Task<Response_DTO> GetStaffByFarmActivityId(long farmActivityId);
 
     }
 }
