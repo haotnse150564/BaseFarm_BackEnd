@@ -594,8 +594,8 @@ namespace WebAPI.Services
             {
                 return new Response_DTO(Const.FAIL_READ_CODE, "Not Found Farm Activity or Staff");
             }
-            var user = await _jwtUtils.GetCurrentUserAsync();
-            if (user != null || user?.Role != Roles.Manager)
+            var getCurrentUser = await _jwtUtils.GetCurrentUserAsync();
+            if (getCurrentUser == null || getCurrentUser.Role != Roles.Manager)
             {
                 return new Response_DTO(Const.FAIL_READ_CODE, "Người dùng không hợp lệ");
             }
