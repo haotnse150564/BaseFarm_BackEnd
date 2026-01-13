@@ -112,6 +112,78 @@ namespace WebAPI.Services
             return null;
         }
 
+        public async Task<ResponseDTO?> ValidateUpdateAsync(long farmActivityId,FarmActivityRequest request,ActivityType newActivityType,FarmActivityStatus newStatus,FarmActivity existingActivity)
+        {
+            if (request == null)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Dữ liệu yêu cầu không hợp lệ.");
+
+            // 1. validate ngày tháng, required fields
+            if (!request.StartDate.HasValue || !request.EndDate.HasValue)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Ngày bắt đầu/kết thúc là bắt buộc.");
+
+            if (request.StartDate.Value > request.EndDate.Value)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Ngày bắt đầu phải <= ngày kết thúc.");
+
+            // 2. Không cho thay đổi ScheduleId
+            if (request.ScheduleId.HasValue && request.ScheduleId != existingActivity.scheduleId)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Không thể thay đổi lịch trình của hoạt động đã tạo.");
+
+            // 3. Không cho thay đổi ActivityType
+            //if (newActivityType != existingActivity.ActivityType)
+            //{
+            //    return new ResponseDTO(Const.ERROR_EXCEPTION, "Không thể thay đổi loại hoạt động sau khi tạo.");
+            //}
+
+            // 4. Lấy schedule hiện tại
+            var schedule = await _unitOfWork.scheduleRepository.GetByIdAsync((long)existingActivity.scheduleId);
+            if (schedule == null)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Lịch trình không còn tồn tại.");
+
+            if (schedule.Status != Status.ACTIVE)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Không thể cập nhật hoạt động trong lịch đã tạm dừng.");
+
+            // 5. StartDate không được nhỏ hơn StartDate của schedule
+            if (request.StartDate.Value < schedule.StartDate)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Ngày bắt đầu phải từ ngày bắt đầu lịch trình trở đi.");
+            }
+
+            // 6. Giới hạn EndDate không quá xa
+            //var maxOverdueDays = 10;
+            //if (request.EndDate.Value > schedule.EndDate.AddDays(maxOverdueDays))
+            //{
+            //    return new ResponseDTO(..., $"Ngày kết thúc không được vượt quá {maxOverdueDays} ngày sau lịch.");
+            //}
+
+            // 7. Check duplicate type: exclude chính activity hiện tại
+            bool hasDuplicate = await _farmActivityRepository.HasDuplicateActivityTypeInScheduleAsync(
+                scheduleId: (long)existingActivity.scheduleId,
+                activityType: newActivityType,
+                excludeActivityId: farmActivityId);
+
+            if (hasDuplicate)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Loại hoạt động này đã tồn tại trong lịch trình.");
+
+            // 8. Phù hợp giai đoạn cây – dùng giai đoạn HIỆN TẠI của schedule
+            if (!IsActivitySuitableForPlantStage(newActivityType, schedule.currentPlantStage))
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, $"Hoạt động không phù hợp với giai đoạn cây hiện tại: {schedule.currentPlantStage}");
+            }
+
+            // 9. Validate trạng thái chuyển đổi (rất quan trọng cho update)
+            if (existingActivity.Status == FarmActivityStatus.COMPLETED)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Không thể cập nhật hoạt động đã hoàn thành.");
+            }
+
+            //if (newStatus == FarmActivityStatus.COMPLETED &&
+            //    newActivityType != ActivityType.Harvesting) // ví dụ: chỉ harvesting mới được hoàn thành để cộng kho
+            //{
+            //}
+
+            return null;
+        }
+
         private bool IsActivitySuitableForPlantStage(ActivityType activityType, PlantStage currentStage)
         {
             return (activityType, currentStage) switch
@@ -147,11 +219,11 @@ namespace WebAPI.Services
         {
             var validationResponse = await ValidateCreateAsync(farmActivityRequest, activityType);
 
-            // Nếu validate fail → return ngay lỗi
-            //if (validationResponse != null)
-            //{
-            //    return validationResponse;
-            //}
+            //Nếu validate fail → return ngay lỗi
+            if (validationResponse != null)
+            {
+                return validationResponse;
+            }
 
             var utcDate = DateTime.UtcNow.ToUniversalTime();
 
@@ -407,13 +479,6 @@ namespace WebAPI.Services
 
         public async Task<ResponseDTO> UpdateFarmActivityAsync(long farmActivityId, FarmActivityRequest farmActivityrequest, ActivityType activityType, FarmActivityStatus farmActivityStatus)
         {
-            var validationResponse = await ValidateCreateAsync(farmActivityrequest, activityType);
-
-            // Nếu validate fail → return ngay lỗi
-            if (validationResponse != null)
-            {
-                return validationResponse;
-            }
 
             var user = await _jwtUtils.GetCurrentUserAsync();
             var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(farmActivityId);
@@ -422,6 +487,10 @@ namespace WebAPI.Services
             {
                 return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);
             }
+
+            var validation = await ValidateUpdateAsync(farmActivityId, farmActivityrequest, activityType, farmActivityStatus, farmActivity);
+            if (validation != null) return validation;
+
             else
             {
                 farmActivity.ActivityType = activityType;
