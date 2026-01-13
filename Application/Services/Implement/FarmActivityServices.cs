@@ -594,8 +594,8 @@ namespace WebAPI.Services
             {
                 return new Response_DTO(Const.FAIL_READ_CODE, "Not Found Farm Activity or Staff");
             }
-            var user = await _jwtUtils.GetCurrentUserAsync();
-            if (user != null || user?.Role != Roles.Manager)
+            var getCurrentUser = await _jwtUtils.GetCurrentUserAsync();
+            if (getCurrentUser == null || getCurrentUser.Role != Roles.Manager)
             {
                 return new Response_DTO(Const.FAIL_READ_CODE, "Người dùng không hợp lệ");
             }
@@ -606,7 +606,7 @@ namespace WebAPI.Services
             }
             staff_FarmActivity.AccountId = staffId;
             staff_FarmActivity.UpdatedAt = DateTime.UtcNow;
-            staff_FarmActivity.UpdatedBy = user.AccountId;
+            staff_FarmActivity.UpdatedBy = getCurrentUser.AccountId;
 
             await _unitOfWork.staff_FarmActivityRepository.UpdateAsync(staff_FarmActivity);
             if (await _unitOfWork.SaveChangesAsync() < 0)
