@@ -44,9 +44,9 @@ namespace Application.ViewModel.Response
            // public long ProductId { get; set; }
             public string? Images { get; set; }
             public string? ProductName { get; set; }
-            public string? Unit { get; set; } = "Bó";
+            public string? Unit { get; set; } = "Kg";
             public decimal? Price { get; set; }
-            public int? StockQuantity { get; set; }
+            public double? StockQuantity { get; set; }
             public string? Description { get; set; }
           //  public long CategoryId { get; set; }
             public string? CategoryName { get; set; }
