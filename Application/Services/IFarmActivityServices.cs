@@ -21,5 +21,10 @@ namespace Application.Services
         Task<ResponseDTO> ChangeFarmActivityStatusAsync(long farmActivityId);
         Task<ResponseDTO> CompleteFarmActivity(long id, string? location);
 
+        Task<ResponseDTO> AddStafftoFarmActivity(long farmActivityId, long staffId);
+        Task<ResponseDTO> UpdateStafftoFarmActivity(long Staf_farmActivityId, long staffId);
+        Task<ResponseDTO> GetAllFarmTask();
+        Task<ResponseDTO> GetFarmTaskById(long taskId);
+
     }
 }

@@ -1,9 +1,6 @@
 ﻿using Domain.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace Infrastructure.Repositories.Implement
 {
@@ -13,6 +10,25 @@ namespace Infrastructure.Repositories.Implement
         {
             _context = context;
             _dbSet = _context.Set<Staff_FarmActivity>();
+        }
+        public override async Task<List<Staff_FarmActivity>> GetAllAsync()
+        {
+            return await _dbSet.Include(x => x.Account)
+                         .ThenInclude(x => x.AccountProfile)
+                         .Include(x => x.FarmActivity)
+                         .ThenInclude(x => x.Schedule)
+                         .ThenInclude(x => x.Crop)
+                         .ToListAsync();
+        }
+        public override async Task<Staff_FarmActivity?> GetByIdAsync(long id)
+        {
+            return await _dbSet.Include(x => x.Account)
+                         .ThenInclude(x => x.AccountProfile)
+                         .Include(x => x.FarmActivity)
+                         .ThenInclude(x => x.Schedule)
+                         .ThenInclude(x => x.Crop)
+                         .Where(x => x.Staff_FarmActivityId == id)
+                         .FirstOrDefaultAsync();
         }
     }
 }
