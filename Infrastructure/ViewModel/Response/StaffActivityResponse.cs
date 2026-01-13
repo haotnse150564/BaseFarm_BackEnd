@@ -10,23 +10,22 @@ namespace Infrastructure.ViewModel.Response
     {
         public class StaffFarmActivityResponse
         {
-            public string? Id;
-            public string? ActivityType;
-            public string? StartDate;
-            public string? EndDate;
-            public string? Status;
-            public string? CropName;
+            public string? Id { get; set; }
+            public string? ActivityType { get; set; }
+            public string? StartDate { get; set; }
+            public string? EndDate { get; set; }
+            public string? Status { get; set; }
+            public string? CropName { get; set; }
 
-            public string? AccountId;
-            public string? StaffName;
-            public string? StaffPhone;
-            public string? StaffEmail;
+            public string? AccountId { get; set; }
+            public string? StaffName { get; set; }
+            public string? StaffPhone { get; set; }
+            public string? StaffEmail { get; set; }
 
-            public string? CreatedAt;
-            public string? CreatedBy;
-            public string? CreatedOn;
-            public string? ModifiedAt;
-
+            public string? CreatedAt { get; set; }
+            public string? CreatedBy { get; set; }
+            public string? CreatedOn { get; set; }
+            public string? ModifiedAt { get; set; }
         }
         public class Response_DTO
         {
