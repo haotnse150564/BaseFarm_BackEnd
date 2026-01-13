@@ -269,7 +269,90 @@ namespace WebAPI.Services
             return null; // hợp lệ
         }
 
-        
+        private async Task<Response_DTO?> ValidateUpdateStaffToFarmActivityAsync(long staffFarmActivityId, long newStaffId)
+        {
+
+            // 1. Kiểm tra bản ghi Staff_FarmActivity tồn tại
+            var staffFarmActivity = await _unitOfWork.staff_FarmActivityRepository
+                .GetByIdAsync(staffFarmActivityId);
+
+            if (staffFarmActivity == null)
+            {
+                return new Response_DTO(Const.FAIL_READ_CODE, "Không tìm thấy bản ghi gán nhân viên.");
+            }
+
+            // 2. Lấy thông tin hoạt động để check trạng thái
+            var farmActivity = await _unitOfWork.farmActivityRepository
+                .GetByIdAsync(staffFarmActivity.FarmActivityId);
+
+            if (farmActivity == null)
+            {
+                return new Response_DTO(Const.FAIL_READ_CODE, "Hoạt động liên quan không tồn tại.");
+            }
+
+            if (farmActivity.Status == FarmActivityStatus.COMPLETED ||
+                farmActivity.Status == FarmActivityStatus.DEACTIVATED)
+            {
+                return new Response_DTO(Const.ERROR_EXCEPTION,
+                    "Không thể thay đổi nhân viên cho hoạt động đã hoàn thành hoặc đã hủy.");
+            }
+
+            // 3. Kiểm tra nhân viên mới tồn tại và vai trò phù hợp
+            var newStaff = await _unitOfWork.accountRepository.GetByIdAsync(newStaffId);
+            if (newStaff == null)
+            {
+                return new Response_DTO(Const.FAIL_READ_CODE, "Không tìm thấy nhân viên.");
+            }
+
+            if (newStaff.Role != Roles.Staff && newStaff.Role != Roles.Staff)
+            {
+                return new Response_DTO(Const.ERROR_EXCEPTION,
+                    "Nhân viên mới phải có vai trò Staff.");
+            }
+
+            // 4. Không cho thay đổi thành chính nhân viên cũ 
+            if (staffFarmActivity.AccountId == newStaffId)
+            {
+                return new Response_DTO(Const.ERROR_EXCEPTION,
+                    "Nhân viên mới trùng với nhân viên hiện tại, không cần cập nhật.");
+            }
+
+            // 5. Kiểm tra nhân viên mới chưa được gán cho hoạt động này
+            bool alreadyAssigned = await _unitOfWork.staff_FarmActivityRepository
+                .GetQueryable()
+                .AnyAsync(s => s.FarmActivityId == staffFarmActivity.FarmActivityId
+                            && s.AccountId == newStaffId
+                            && s.Staff_FarmActivityId != staffFarmActivityId);
+
+            if (alreadyAssigned)
+            {
+                return new Response_DTO(Const.ERROR_EXCEPTION,
+                    "Nhân viên mới đã được gán cho hoạt động này từ bản ghi khác.");
+            }
+
+            // 6. Kiểm tra conflict thời gian cho nhân viên MỚI
+            bool hasConflict = await _unitOfWork.staff_FarmActivityRepository
+                .HasStaffTimeConflictAsync(
+                    staffId: newStaffId,
+                    startDate: (DateOnly)farmActivity.StartDate,
+                    endDate: (DateOnly)farmActivity.EndDate,
+                    excludeStaffFarmActivityId: staffFarmActivityId); // exclude bản ghi đang sửa
+
+            if (hasConflict)
+            {
+                return new Response_DTO(Const.ERROR_EXCEPTION,
+                    "Nhân viên mới có lịch làm việc trùng với khoảng thời gian của hoạt động.");
+            }
+
+            // 8. (Tùy chọn) Cảnh báo hoặc chặn nếu hoạt động đã bắt đầu
+            if (farmActivity.StartDate < DateOnly.FromDateTime(DateTime.UtcNow))
+            {
+                // Có thể chỉ cảnh báo, hoặc block tùy nghiệp vụ
+                // return new Response_DTO(Const.WARNING, "Hoạt động đã bắt đầu, việc thay đổi nhân viên chỉ nên thực hiện khi cần thiết.");
+            }
+
+            return null; // hợp lệ
+        }
 
         public async Task<ResponseDTO> CreateFarmActivityAsync(FarmActivityRequest farmActivityRequest, ActivityType activityType)
         {
@@ -721,6 +804,13 @@ namespace WebAPI.Services
         }
         public async Task<Response_DTO> UpdateStafftoFarmActivity(long Staf_farmActivityId, long staffId)
         {
+
+            var validationResult = await ValidateUpdateStaffToFarmActivityAsync(Staf_farmActivityId, staffId);
+            if (validationResult != null)
+            {
+                return validationResult;
+            }
+
             var staff = await _unitOfWork.accountRepository.GetByIdAsync(staffId);
             if (staff == null)
             {
