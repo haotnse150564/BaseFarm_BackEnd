@@ -512,7 +512,7 @@ namespace WebAPI.Services
                 {
                     //CỘNG SL KHI THU HOẠCH
                     var schedule = await _unitOfWork.scheduleRepository.GetByCropId(item.ProductId);
-                    item.StockQuantity += schedule.Quantity;
+                    item.StockQuantity += schedule.HarvestedQuantity;
                 }
                 if (await _unitOfWork.SaveChangesAsync() < 0)
                 {
