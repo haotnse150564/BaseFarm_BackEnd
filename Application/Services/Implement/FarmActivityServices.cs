@@ -573,7 +573,7 @@ namespace WebAPI.Services
                 FarmActivityId = farmActivityId,
                 AccountId = staffId,
                 CreatedAt = DateTime.UtcNow,
-                CreatedBy = getCurrentUser.AccountId,
+                CreatedBy = (await _unitOfWork.accountProfileRepository.GetByIdAsync(getCurrentUser.AccountId))?.Fullname,
             };
             await _unitOfWork.staff_FarmActivityRepository.AddAsync(staff_FarmActivity);
             if (await _unitOfWork.SaveChangesAsync() < 0)
@@ -606,7 +606,7 @@ namespace WebAPI.Services
             }
             staff_FarmActivity.AccountId = staffId;
             staff_FarmActivity.UpdatedAt = DateTime.UtcNow;
-            staff_FarmActivity.UpdatedBy = getCurrentUser.AccountId;
+            staff_FarmActivity.UpdatedBy = (await _unitOfWork.accountProfileRepository.GetByIdAsync(getCurrentUser.AccountId))?.Fullname;
 
             await _unitOfWork.staff_FarmActivityRepository.UpdateAsync(staff_FarmActivity);
             if (await _unitOfWork.SaveChangesAsync() < 0)
