@@ -863,5 +863,15 @@ namespace WebAPI.Services
             var result = _mapper.Map<StaffFarmActivityResponse>(staff_FarmActivity);
             return new Response_DTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
         }
+        public async Task<Response_DTO> GetStaffByFarmActivityId(long farmActivityId)
+        {
+            var farmActivity = await _unitOfWork.staff_FarmActivityRepository.GetByFarmActivityIdAsync(farmActivityId);
+            if (farmActivity == null)
+            {
+                return new Response_DTO(Const.FAIL_READ_CODE, "Not Found Farm Activity");
+            }
+            var result = _mapper.Map<List<StaffFarmActivityResponse>>(farmActivity);
+            return new Response_DTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+        }
     }
 }
