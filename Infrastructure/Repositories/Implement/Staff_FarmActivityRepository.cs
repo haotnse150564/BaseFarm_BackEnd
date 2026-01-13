@@ -48,6 +48,7 @@ namespace Infrastructure.Repositories.Implement
         public Task<List<Staff_FarmActivity>> GetByStaffIdAsync(long staffId)
         {
             throw new NotImplementedException();
+        }
 
         public async Task<bool> HasStaffTimeConflictAsync(long staffId,DateOnly startDate,DateOnly endDate,long? excludeStaffFarmActivityId = null)
         {
