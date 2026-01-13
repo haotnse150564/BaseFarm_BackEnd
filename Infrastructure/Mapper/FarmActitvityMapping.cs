@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static Infrastructure.ViewModel.Response.AccountResponse;
 using static Infrastructure.ViewModel.Response.FarmActivityResponse;
+using static Infrastructure.ViewModel.Response.StaffActivityResponse;
 
 namespace Infrastructure.Mapper
 {
@@ -45,7 +46,7 @@ namespace Infrastructure.Mapper
             : "Chưa có hồ sơ"));
             CreateMap<FarmActivityRequest, FarmActivity>()
                 .ReverseMap();
-            CreateMap<Staff_FarmActivity, Staff_FarmActivityRespons>()
+            CreateMap<Staff_FarmActivity, StaffFarmActivityResponse>()
                 // Map trực tiếp các field cơ bản
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Staff_FarmActivityId))
                 .ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.AccountId))

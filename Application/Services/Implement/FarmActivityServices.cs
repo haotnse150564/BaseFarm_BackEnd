@@ -14,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Diagnostics.Metrics;
 using System.Threading.Tasks;
 using static Infrastructure.ViewModel.Response.FarmActivityResponse;
+using static Infrastructure.ViewModel.Response.StaffActivityResponse;
 
 namespace WebAPI.Services
 {
@@ -554,18 +555,18 @@ namespace WebAPI.Services
             }
             return true;
         }
-        public async Task<ResponseDTO> AddStafftoFarmActivity(long farmActivityId, long staffId)
+        public async Task<Response_DTO> AddStafftoFarmActivity(long farmActivityId, long staffId)
         {
             var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(farmActivityId);
             var staff = await _unitOfWork.accountRepository.GetByIdAsync(staffId);
             if (farmActivity == null || staff == null)
             {
-                return new ResponseDTO(Const.FAIL_READ_CODE, "Not Found Farm Activity or Staff");
+                return new Response_DTO(Const.FAIL_READ_CODE, "Not Found Farm Activity or Staff");
             }
             var getCurrentUser = await _jwtUtils.GetCurrentUserAsync();
             if (getCurrentUser == null || getCurrentUser.Role != Roles.Manager)
             {
-                return new ResponseDTO(Const.FAIL_READ_CODE, "Người dùng không hợp lệ");
+                return new Response_DTO(Const.FAIL_READ_CODE, "Người dùng không hợp lệ");
             }
             Staff_FarmActivity staff_FarmActivity = new Staff_FarmActivity
             {
@@ -577,31 +578,31 @@ namespace WebAPI.Services
             await _unitOfWork.staff_FarmActivityRepository.AddAsync(staff_FarmActivity);
             if (await _unitOfWork.SaveChangesAsync() < 0)
             {
-                return new ResponseDTO(Const.FAIL_CREATE_CODE, Const.FAIL_CREATE_MSG);
+                return new Response_DTO(Const.FAIL_CREATE_CODE, Const.FAIL_CREATE_MSG);
             }
             else
             {
-                var result = _mapper.Map<Staff_FarmActivityRespons>(staff_FarmActivity);
+                var result = _mapper.Map<StaffFarmActivityResponse>(staff_FarmActivity);
 
-                return new ResponseDTO(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, result);
+                return new Response_DTO(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, result);
             }
         }
-        public async Task<ResponseDTO> UpdateStafftoFarmActivity(long Staf_farmActivityId, long staffId)
+        public async Task<Response_DTO> UpdateStafftoFarmActivity(long Staf_farmActivityId, long staffId)
         {
             var staff = await _unitOfWork.accountRepository.GetByIdAsync(staffId);
             if (staff == null)
             {
-                return new ResponseDTO(Const.FAIL_READ_CODE, "Not Found Farm Activity or Staff");
+                return new Response_DTO(Const.FAIL_READ_CODE, "Not Found Farm Activity or Staff");
             }
             var user = await _jwtUtils.GetCurrentUserAsync();
             if (user != null || user?.Role != Roles.Manager)
             {
-                return new ResponseDTO(Const.FAIL_READ_CODE, "Người dùng không hợp lệ");
+                return new Response_DTO(Const.FAIL_READ_CODE, "Người dùng không hợp lệ");
             }
             var staff_FarmActivity = await _unitOfWork.staff_FarmActivityRepository.GetByIdAsync(Staf_farmActivityId);
             if (staff_FarmActivity == null)
             {
-                return new ResponseDTO(Const.FAIL_READ_CODE, "Not Found Staff_FarmActivity");
+                return new Response_DTO(Const.FAIL_READ_CODE, "Not Found Staff_FarmActivity");
             }
             staff_FarmActivity.AccountId = staffId;
             staff_FarmActivity.UpdatedAt = DateTime.UtcNow;
@@ -610,35 +611,35 @@ namespace WebAPI.Services
             await _unitOfWork.staff_FarmActivityRepository.UpdateAsync(staff_FarmActivity);
             if (await _unitOfWork.SaveChangesAsync() < 0)
             {
-                return new ResponseDTO(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);
+                return new Response_DTO(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);
             }
             else
             {
-                var result = _mapper.Map<Staff_FarmActivityRespons>(staff_FarmActivity);
+                var result = _mapper.Map<StaffFarmActivityResponse>(staff_FarmActivity);
 
-                return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, result);
+                return new Response_DTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, result);
             }
 
         }
-        public async Task<ResponseDTO> GetAllFarmTask()
+        public async Task<Response_DTO> GetAllFarmTask()
         {
             var staff_FarmActivity = await _unitOfWork.staff_FarmActivityRepository.GetAllAsync();
             if (staff_FarmActivity == null)
             {
-                return new ResponseDTO(Const.FAIL_READ_CODE, "Not Found Staff_FarmActivity");
+                return new Response_DTO(Const.FAIL_READ_CODE, "Not Found Staff_FarmActivity");
             }
-            var result = _mapper.Map<List<Staff_FarmActivityRespons>>(staff_FarmActivity);
-            return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+            var result = _mapper.Map<List<StaffFarmActivityResponse>>(staff_FarmActivity);
+            return new Response_DTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
         }
-        public async Task<ResponseDTO> GetFarmTaskById(long taskId)
+        public async Task<Response_DTO> GetFarmTaskById(long taskId)
         {
             var staff_FarmActivity = await _unitOfWork.staff_FarmActivityRepository.GetByIdAsync(taskId);
             if (staff_FarmActivity == null)
             {
-                return new ResponseDTO(Const.FAIL_READ_CODE, "Not Found Staff_FarmActivity");
+                return new Response_DTO(Const.FAIL_READ_CODE, "Not Found Staff_FarmActivity");
             }
-            var result = _mapper.Map<Staff_FarmActivityRespons>(staff_FarmActivity);
-            return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+            var result = _mapper.Map<StaffFarmActivityResponse>(staff_FarmActivity);
+            return new Response_DTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
         }
     }
 }
