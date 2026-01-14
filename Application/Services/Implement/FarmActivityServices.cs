@@ -110,6 +110,19 @@ namespace WebAPI.Services
                     $"Hoạt động \"{activityType}\" không phù hợp với giai đoạn cây trồng hiện tại \"{schedule.currentPlantStage}\".");
             }
 
+            // 8. Check chồng chéo hoạt động trong cùng schedule
+            bool hasOverlap = await _farmActivityRepository.HasOverlappingActivityInScheduleAsync(
+                scheduleId: request.ScheduleId.Value,
+                startDate: request.StartDate.Value,
+                endDate: request.EndDate.Value,
+                excludeActivityId: null);
+
+            if (hasOverlap)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION,
+                    "Khoảng thời gian này đã có hoạt động khác trong lịch trình. Kiểm tra lại để tránh chồng hoạt động.");
+            }
+
             return null;
         }
 
@@ -181,6 +194,19 @@ namespace WebAPI.Services
             //    newActivityType != ActivityType.Harvesting) // ví dụ: chỉ harvesting mới được hoàn thành để cộng kho
             //{
             //}
+
+            // 10. Check chồng chéo khi update
+            bool hasOverlap = await _farmActivityRepository.HasOverlappingActivityInScheduleAsync(
+                scheduleId: (long)existingActivity.scheduleId,
+                startDate: request.StartDate.Value,
+                endDate: request.EndDate.Value,
+                excludeActivityId: farmActivityId);  // exclude chính nó
+
+            if (hasOverlap)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION,
+                    "Khoảng thời gian mới có chồng chéo với hoạt động khác trong lịch trình.");
+            }
 
             return null;
         }
@@ -679,7 +705,8 @@ namespace WebAPI.Services
             if (farmActivity == null)
             {
                 return new ResponseDTO(Const.FAIL_READ_CODE, "Not Found Farm Activity");
-            }//else if (farmActivity.ScheduleId == null)
+            }
+            //else if (farmActivity.ScheduleId == null)
              // {
              // return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity Don't Have Any Schedule");
              // }    
@@ -695,6 +722,19 @@ namespace WebAPI.Services
             }
 
             farmActivity.Status = Domain.Enum.FarmActivityStatus.COMPLETED;
+            //  Chỉ staff được phân công mới được hoàn thành
+            bool isAssigned = await _unitOfWork.staff_FarmActivityRepository
+                .GetQueryable()
+                .AnyAsync(sfa => sfa.FarmActivityId == farmActivity.FarmActivitiesId
+                              && sfa.AccountId == user.AccountId);
+
+            if (!isAssigned)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION,
+                    "Bạn không được phân công cho hoạt động này. Chỉ nhân viên được phân công có quyền hoàn thành.");
+            }
+
+            farmActivity.Status = Domain.Enum.FarmActivityStatus.COMPLETED; 
 
             await _unitOfWork.farmActivityRepository.UpdateAsync(farmActivity);
 
