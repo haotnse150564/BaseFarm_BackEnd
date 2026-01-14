@@ -990,25 +990,30 @@ namespace WebAPI.Services
 
             if (allCompleted)
             {
+                // Cập nhật status activity
                 farmActivity.Status = FarmActivityStatus.COMPLETED;
                 farmActivity.UpdatedAt = DateTime.UtcNow;
 
                 await _unitOfWork.farmActivityRepository.UpdateAsync(farmActivity);
 
-                // Log hệ thống
+                // Tạo log hệ thống
                 var systemLog = new ScheduleLog
                 {
                     FarmActivityId = farmActivity.FarmActivitiesId,
-
-                    //lưu ScheduleId
                     ScheduleId = farmActivity.scheduleId ?? 0,
 
                     Notes = $"[Tự động hoàn thành] Hoạt động {farmActivity.ActivityType} đã hoàn thành khi tất cả nhân viên ({farmActivity.StaffFarmActivities.Count}) đã báo xong phần việc.",
+
+                    CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
+
+                    CreatedBy = farmActivity.createdBy,          // Hoặc ID user hệ thống nếu có
+                    UpdatedBy = (long)farmActivity.updatedBy           // Tương tự
                 };
+
                 await _scheduleLogRepo.AddAsync(systemLog);
 
-                // Xử lý đặc biệt nếu là Harvesting (cộng kho)
+                // Xử lý Harvesting (cộng kho)
                 if (farmActivity.ActivityType == ActivityType.Harvesting)
                 {
                     var products = await _unitOfWork.farmActivityRepository.GetProductWillHarves(farmActivity.FarmActivitiesId);
@@ -1025,8 +1030,16 @@ namespace WebAPI.Services
                     }
                 }
 
-                await _unitOfWork.SaveChangesAsync();
+                // Save tất cả thay đổi một lần duy nhất
+                var saveResult = await _unitOfWork.SaveChangesAsync();
+
+                // Optional: Check kết quả save để debug
+                if (saveResult <= 0)
+                {
+                    // Log lỗi hoặc throw nếu cần
+                    Console.WriteLine("SaveChangesAsync returned <= 0, no changes were saved.");
+                }
             }
         }
     }
-}
+    }
