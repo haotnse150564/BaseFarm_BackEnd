@@ -956,7 +956,7 @@ namespace WebAPI.Services
 
                 ScheduleId = farmActivity.scheduleId ?? 0,  // Lấy từ entity FarmActivity
 
-                Notes = $"[Staff hoàn thành phần việc] {user.AccountProfile?.Fullname ?? "Staff"} đã hoàn thành phần việc trong hoạt động {farmActivity.ActivityType}. Ghi chú: {notes ?? "Không có"}",
+                Notes = $"[Ghi chú tự động] {user.AccountProfile?.Fullname ?? "Staff"} đã hoàn thành phần việc trong hoạt động {farmActivity.ActivityType}. Ghi chú: {notes ?? "Không có"}",
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = user.AccountId,
                 UpdatedAt = DateTime.UtcNow,
@@ -1002,7 +1002,7 @@ namespace WebAPI.Services
                     FarmActivityId = farmActivity.FarmActivitiesId,
                     ScheduleId = farmActivity.scheduleId ?? 0,
 
-                    Notes = $"[Tự động hoàn thành] Hoạt động {farmActivity.ActivityType} đã hoàn thành khi tất cả nhân viên ({farmActivity.StaffFarmActivities.Count}) đã báo xong phần việc.",
+                    Notes = $"[Ghi chú tự động] Hoạt động {farmActivity.ActivityType} đã hoàn thành khi tất cả nhân viên ({farmActivity.StaffFarmActivities.Count}) đã báo xong phần việc.",
 
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
