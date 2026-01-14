@@ -73,31 +73,31 @@ namespace WebAPI.Controllers
             var result = await _farmActivityServices.GetFarmActivitiesByStaffAsync(pageIndex, pageSize, type, status, month);
             return Ok(result);
         }
-        [HttpPost("bind-staf-activity")]
+        [HttpPost("staff-activity/bind")]
         public async Task<IActionResult> AddStafftoFarmActivity(long farmActivityId, long staffId)
         {
             var result = await _farmActivityServices.AddStafftoFarmActivity(farmActivityId, staffId);
             return Ok(result);
         }
-        [HttpPut("update-staf-activity")]
-        public async Task<IActionResult> UpdateStafftoFarmActivity(long Staf_farmActivityId)
+        [HttpPut("staff-activity/status")]
+        public async Task<IActionResult> UpdateStafftoFarmActivity(long id)
         {
-            var result = await _farmActivityServices.UpdateStafftoFarmActivity(Staf_farmActivityId);
+            var result = await _farmActivityServices.UpdateStafftoFarmActivity(id);
             return Ok(result);
         }
-        [HttpGet("get-all-farm-task")]
+        [HttpGet("staff-activity/get-all")]
         public async Task<IActionResult> GetAllFarmTask()
         {
             var result = await _farmActivityServices.GetAllFarmTask();
             return Ok(result);
         }
-        [HttpGet("get-farm-task-by-id/{taskId}")]
+        [HttpGet("staff-activity/get-by-id/{taskId}")]
         public async Task<IActionResult> GetFarmTaskById(long taskId)
         {
             var result = await _farmActivityServices.GetFarmTaskById(taskId);
             return Ok(result);
         }
-        [HttpGet("Get-staff-by-FarmActivity-Id")]
+        [HttpGet("staff-activity/get-staff/{farmActivityId}")]
         public async Task<IActionResult> GetStaffByFarmActivityId(long farmActivityId)
         {
             var result = await _farmActivityServices.GetStaffByFarmActivityId(farmActivityId);

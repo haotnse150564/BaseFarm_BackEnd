@@ -19,6 +19,7 @@ namespace Infrastructure.Repositories.Implement
                          .Include(x => x.FarmActivity)
                          .ThenInclude(x => x.Schedule)
                          .ThenInclude(x => x.Crop)
+                         .OrderByDescending(x => x.Staff_FarmActivityId)
                          .ToListAsync();
         }
 
@@ -30,6 +31,7 @@ namespace Infrastructure.Repositories.Implement
                          .Include(x => x.FarmActivity)
                          .ThenInclude(x => x.Schedule)
                          .ThenInclude(x => x.Crop)
+                         .OrderByDescending(x => x.Staff_FarmActivityId)
                          .ToListAsync();
         }
 
