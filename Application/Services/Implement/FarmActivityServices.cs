@@ -973,16 +973,16 @@ namespace WebAPI.Services
             return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, "Bạn đã hoàn thành phần việc thành công.");
         }
 
-        private async Task AutoCompleteActivityIfAllDoneAsync(long farmActivityId)
+        private async Task<ResponseDTO> AutoCompleteActivityIfAllDoneAsync(long farmActivityId)
         {
             // Load activity kèm list staff
             var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(farmActivityId);
             if (farmActivity == null || farmActivity.Status == FarmActivityStatus.COMPLETED)
-                return;
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Hoạt động không tồn tại");
 
             // Nếu không có staff nào được gán → không tự động hoàn thành
             if (!farmActivity.StaffFarmActivities.Any())
-                return;
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Chưa có nhân viên được phân công trong hoạt động này");
 
             // Kiểm tra tất cả staff đã hoàn thành chưa
             bool allCompleted = farmActivity.StaffFarmActivities
@@ -1016,29 +1016,39 @@ namespace WebAPI.Services
                 // Xử lý Harvesting (cộng kho)
                 if (farmActivity.ActivityType == ActivityType.Harvesting)
                 {
-                    var products = await _unitOfWork.farmActivityRepository.GetProductWillHarves(farmActivity.FarmActivitiesId);
-                    if (products != null)
+                    var product = await _unitOfWork.farmActivityRepository.GetProductWillHarves(farmActivity.FarmActivitiesId);
+                    if (product == null)
                     {
-                        foreach (var item in products)
-                        {
-                            var schedule = await _unitOfWork.scheduleRepository.GetByCropId(item.ProductId);
-                            if (schedule != null)
-                            {
-                                item.StockQuantity += schedule.HarvestedQuantity ?? 0;
-                            }
-                        }
+                        return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);
+                    }
+                    foreach (var item in product)
+                    {
+                        //CỘNG SL KHI THU HOẠCH
+                        var schedule = await _unitOfWork.scheduleRepository.GetByCropId(item.ProductId);
+                        item.StockQuantity += schedule.HarvestedQuantity;
+                    }
+                    if (await _unitOfWork.SaveChangesAsync() < 0)
+                    {
+                        return new ResponseDTO(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);
+                    }
+                    else
+                    {
+                        return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG);
                     }
                 }
-
-                // Save tất cả thay đổi một lần duy nhất
-                var saveResult = await _unitOfWork.SaveChangesAsync();
-
-                // Optional: Check kết quả save để debug
-                if (saveResult <= 0)
+                else
                 {
-                    // Log lỗi hoặc throw nếu cần
-                    Console.WriteLine("SaveChangesAsync returned <= 0, no changes were saved.");
+                    if (await _unitOfWork.SaveChangesAsync() < 0)
+                    {
+                        return new ResponseDTO(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);
+                    }
+                    else
+                    {
+                        return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG);
+                    }
                 }
+                //// Save tất cả thay đổi một lần duy nhất
+                //var saveResult = await _unitOfWork.SaveChangesAsync();
             }
         }
     }
