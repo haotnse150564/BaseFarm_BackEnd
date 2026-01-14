@@ -48,8 +48,9 @@ namespace Infrastructure.Repositories.Implement
                 .AsNoTracking()
                 .Include(fa => fa.Schedule)
                     .ThenInclude(s => s.Crop)
-                //.Include(fa => fa.AssignedToNavigation)
-                //    .ThenInclude(a => a.AccountProfile)
+                .Include(sf => sf.StaffFarmActivities)
+                    .ThenInclude(fa => fa.Account)
+                    .ThenInclude(a => a.AccountProfile)
                 .Where(fa =>
                     fa.Status == FarmActivityStatus.ACTIVE &&
                     fa.EndDate >= DateOnly.FromDateTime(DateTime.Today))
@@ -64,8 +65,9 @@ namespace Infrastructure.Repositories.Implement
                 .AsNoTracking()
                 .Include(fa => fa.Schedule)
                     .ThenInclude(s => s.Crop)
-                //.Include(fa => fa.AssignedToNavigation) // Load thông tin nhân viên
-                //    .ThenInclude(a => a.AccountProfile)
+                .Include(sf => sf.StaffFarmActivities)
+                    .ThenInclude(fa => fa.Account)
+                    .ThenInclude(a => a.AccountProfile)
                 .OrderByDescending(fa => fa.FarmActivitiesId); // Sort ngay từ DB
 
             // Áp dụng filter
@@ -168,6 +170,15 @@ namespace Infrastructure.Repositories.Implement
             }
 
             return await query.AnyAsync();
+        }
+        public override Task<FarmActivity?> GetByIdAsync(long id)
+        {
+            return _dbSet.Include(fa => fa.Schedule)
+                         .ThenInclude(s => s.Crop)
+                         .Include(sf => sf.StaffFarmActivities)
+                             .ThenInclude(fa => fa.Account)
+                             .ThenInclude(a => a.AccountProfile)
+                         .FirstOrDefaultAsync(fa => fa.FarmActivitiesId == id);
         }
     }
 }
