@@ -3,6 +3,7 @@ using Domain.Enum;
 using Domain.Model;
 using Infrastructure.ViewModel.Request;
 using Infrastructure.ViewModel.Response;
+using System;
 using System.ComponentModel;
 using VNPAY.NET.Utilities;
 using static Infrastructure.ViewModel.Response.AccountResponse;
@@ -33,6 +34,8 @@ namespace Infrastructure.Mapper
                 .ForMember(dest => dest.farmView, opt => opt.MapFrom(src => src.FarmDetails))
                 .ForMember(dest => dest.farmActivityView, opt => opt.MapFrom(src => src.FarmActivities))
                 .ForPath(dest => dest.CurrentPlantStage, opt => opt.MapFrom(src => src.currentPlantStage))
+                .ForMember(dest => dest.Manager, opt => opt.MapFrom(src => src.AssignedToNavigation))
+                .ForMember( dest => dest.HarvestedQuantity,opt => opt.MapFrom(src => (src.HarvestedQuantity == 0 || src.HarvestedQuantity == null)? "Chưa thu hoạch" : src.HarvestedQuantity.ToString()))
 
                 .ReverseMap();
 
@@ -56,7 +59,7 @@ namespace Infrastructure.Mapper
                 .ForMember(dest => dest.EstimatedDate,
                     opt => opt.MapFrom(src => src.EstimatedDate.GetValueOrDefault(0)))
                 .ForMember(dest => dest.WateringFrequency,
-                    opt => opt.MapFrom(src => src.WateringFrequency)); 
+                    opt => opt.MapFrom(src => src.WateringFrequency));
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Infrastructure.ViewModel.Response
             public DateOnly? EndDate { get; set; }
             public string? CurrentPlantStage { get; set; }
             public int? Quantity { get; set; }
-
+            public string? HarvestedQuantity { get; set; }
             public Status? Status { get; set; }
 
             public bool PesticideUsed { get; set; }
