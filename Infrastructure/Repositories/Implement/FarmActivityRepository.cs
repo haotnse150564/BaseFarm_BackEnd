@@ -180,5 +180,16 @@ namespace Infrastructure.Repositories.Implement
                              .ThenInclude(a => a.AccountProfile)
                          .FirstOrDefaultAsync(fa => fa.FarmActivitiesId == id);
         }
+
+        public async Task<bool> HasOverlappingActivityInScheduleAsync(long scheduleId,DateOnly startDate,DateOnly endDate,long? excludeActivityId = null)
+        {
+            return await _context.FarmActivity
+                .Where(a => a.scheduleId == scheduleId
+                         && (excludeActivityId == null || a.FarmActivitiesId != excludeActivityId)
+                         && a.Status != FarmActivityStatus.DEACTIVATED  // loại trừ nếu cần
+                         && a.StartDate <= endDate
+                         && a.EndDate >= startDate)
+                .AnyAsync();
+        }
     }
 }

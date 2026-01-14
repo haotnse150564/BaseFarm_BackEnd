@@ -110,6 +110,19 @@ namespace WebAPI.Services
                     $"Hoạt động \"{activityType}\" không phù hợp với giai đoạn cây trồng hiện tại \"{schedule.currentPlantStage}\".");
             }
 
+            // 8. Check chồng chéo hoạt động trong cùng schedule
+            bool hasOverlap = await _farmActivityRepository.HasOverlappingActivityInScheduleAsync(
+                scheduleId: request.ScheduleId.Value,
+                startDate: request.StartDate.Value,
+                endDate: request.EndDate.Value,
+                excludeActivityId: null);
+
+            if (hasOverlap)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION,
+                    "Khoảng thời gian này đã có hoạt động khác trong lịch trình. Kiểm tra lại để tránh chồng hoạt động.");
+            }
+
             return null;
         }
 
@@ -181,6 +194,19 @@ namespace WebAPI.Services
             //    newActivityType != ActivityType.Harvesting) // ví dụ: chỉ harvesting mới được hoàn thành để cộng kho
             //{
             //}
+
+            // 10. Check chồng chéo khi update
+            bool hasOverlap = await _farmActivityRepository.HasOverlappingActivityInScheduleAsync(
+                scheduleId: (long)existingActivity.scheduleId,
+                startDate: request.StartDate.Value,
+                endDate: request.EndDate.Value,
+                excludeActivityId: farmActivityId);  // exclude chính nó
+
+            if (hasOverlap)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION,
+                    "Khoảng thời gian mới có chồng chéo với hoạt động khác trong lịch trình.");
+            }
 
             return null;
         }
