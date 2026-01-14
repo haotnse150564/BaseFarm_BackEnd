@@ -80,9 +80,9 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
         [HttpPut("update-staf-activity")]
-        public async Task<IActionResult> UpdateStafftoFarmActivity(long Staf_farmActivityId, long staffId)
+        public async Task<IActionResult> UpdateStafftoFarmActivity(long Staf_farmActivityId)
         {
-            var result = await _farmActivityServices.UpdateStafftoFarmActivity(Staf_farmActivityId, staffId);
+            var result = await _farmActivityServices.UpdateStafftoFarmActivity(Staf_farmActivityId);
             return Ok(result);
         }
         [HttpGet("get-all-farm-task")]

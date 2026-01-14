@@ -21,6 +21,7 @@ namespace Infrastructure.ViewModel.Response
             public string? StaffName { get; set; }
             public string? StaffPhone { get; set; }
             public string? StaffEmail { get; set; }
+            public string? IndividualStatus { get; set; }
 
             public string? CreatedAt { get; set; }
             public string? CreatedBy { get; set; }
