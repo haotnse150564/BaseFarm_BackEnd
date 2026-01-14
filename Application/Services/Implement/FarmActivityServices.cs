@@ -1047,9 +1047,9 @@ namespace WebAPI.Services
                         return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG);
                     }
                 }
-                //// Save tất cả thay đổi một lần duy nhất
-                //var saveResult = await _unitOfWork.SaveChangesAsync();
             }
+
+            return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, "Không có thay đổi nào được thực hiện.");
         }
     }
     }
