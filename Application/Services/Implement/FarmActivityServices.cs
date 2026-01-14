@@ -705,7 +705,8 @@ namespace WebAPI.Services
             if (farmActivity == null)
             {
                 return new ResponseDTO(Const.FAIL_READ_CODE, "Not Found Farm Activity");
-            }//else if (farmActivity.ScheduleId == null)
+            }
+            //else if (farmActivity.ScheduleId == null)
              // {
              // return new ResponseDTO(Const.FAIL_READ_CODE, "Farm Activity Don't Have Any Schedule");
              // }    
@@ -718,6 +719,18 @@ namespace WebAPI.Services
             if (user == null)
             {
                 return new ResponseDTO(Const.FAIL_READ_CODE, "Người dùng không hợp lệ");
+            }
+
+            //  Chỉ staff được phân công mới được hoàn thành
+            bool isAssigned = await _unitOfWork.staff_FarmActivityRepository
+                .GetQueryable()
+                .AnyAsync(sfa => sfa.FarmActivityId == farmActivity.FarmActivitiesId
+                              && sfa.AccountId == user.AccountId);
+
+            if (!isAssigned)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION,
+                    "Bạn không được phân công cho hoạt động này. Chỉ nhân viên được phân công có quyền hoàn thành.");
             }
 
             farmActivity.Status = Domain.Enum.FarmActivityStatus.COMPLETED; 
