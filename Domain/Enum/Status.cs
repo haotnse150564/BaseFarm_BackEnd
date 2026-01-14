@@ -70,4 +70,5 @@ namespace Domain.Enum
         COMPLETED,
         DELIVERED
     }
+
 }

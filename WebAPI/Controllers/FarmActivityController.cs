@@ -103,5 +103,14 @@ namespace WebAPI.Controllers
             var result = await _farmActivityServices.GetStaffByFarmActivityId(farmActivityId);
             return Ok(result);
         }
+
+        [HttpPost("complete-my-activity")]
+        public async Task<IActionResult> ReportMyPartCompleted(long farmActivityId, string? note)
+        {
+
+            var result = await _farmActivityServices.ReportMyPartCompletedAsync(farmActivityId, note);
+
+            return Ok(result);
+        }
     }
 }

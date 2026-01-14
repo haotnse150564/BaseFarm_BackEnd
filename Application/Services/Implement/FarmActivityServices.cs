@@ -917,5 +917,116 @@ namespace WebAPI.Services
             var result = _mapper.Map<List<StaffFarmActivityResponse>>(farmActivity);
             return new Response_DTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
         }
+
+        public async Task<ResponseDTO> ReportMyPartCompletedAsync(long farmActivityId, string? notes = null)
+        {
+            var user = await _jwtUtils.GetCurrentUserAsync();
+            if (user == null)
+                return new ResponseDTO(Const.FAIL_READ_CODE, "Người dùng không hợp lệ.");
+
+            // 1. Tìm assignment của user trong activity
+            var assignment = await _unitOfWork.staff_FarmActivityRepository
+                .GetQueryable()
+                .FirstOrDefaultAsync(s => s.FarmActivityId == farmActivityId && s.AccountId == user.AccountId);
+
+            if (assignment == null)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Bạn không được phân công cho hoạt động này.");
+
+            // 2. Kiểm tra chưa hoàn thành
+            if (assignment.individualStatus == IndividualStatus.COMPLETED)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Bạn đã báo hoàn thành phần việc rồi.");
+
+            // 3. Cập nhật trạng thái cá nhân
+            assignment.individualStatus = IndividualStatus.COMPLETED;
+            assignment.UpdatedAt = DateTime.UtcNow;
+            assignment.UpdatedBy = user.AccountId.ToString();
+
+            await _unitOfWork.staff_FarmActivityRepository.UpdateAsync(assignment);
+
+            var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(farmActivityId);
+            if (farmActivity == null)
+            {
+                throw new Exception("FarmActivity not found");
+            }
+
+            // 4. Tạo log cá nhân
+            var log = new ScheduleLog
+            {
+                FarmActivityId = farmActivityId,  //ID của hoạt động đang báo cáo hoàn thành
+
+                ScheduleId = farmActivity.scheduleId ?? 0,  // Lấy từ entity FarmActivity
+
+                Notes = $"[Staff hoàn thành phần việc] {user.AccountProfile?.Fullname ?? "Staff"} đã hoàn thành phần việc trong hoạt động {farmActivity.ActivityType}. Ghi chú: {notes ?? "Không có"}",
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = user.AccountId,
+                UpdatedAt = DateTime.UtcNow,
+                UpdatedBy = user.AccountId  // Nếu UpdatedBy bắt buộc
+            };
+            await _scheduleLogRepo.AddAsync(log);
+
+            // 5. Save trước khi check toàn bộ
+            await _unitOfWork.SaveChangesAsync();
+
+            // 6. Tự động kiểm tra và hoàn thành activity nếu tất cả staff xong
+            await AutoCompleteActivityIfAllDoneAsync(farmActivityId);
+
+            return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, "Bạn đã hoàn thành phần việc thành công.");
+        }
+
+        private async Task AutoCompleteActivityIfAllDoneAsync(long farmActivityId)
+        {
+            // Load activity kèm list staff
+            var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(farmActivityId);
+            if (farmActivity == null || farmActivity.Status == FarmActivityStatus.COMPLETED)
+                return;
+
+            // Nếu không có staff nào được gán → không tự động hoàn thành
+            if (!farmActivity.StaffFarmActivities.Any())
+                return;
+
+            // Kiểm tra tất cả staff đã hoàn thành chưa
+            bool allCompleted = farmActivity.StaffFarmActivities
+                .All(sfa => sfa.individualStatus == IndividualStatus.COMPLETED);
+
+            if (allCompleted)
+            {
+                farmActivity.Status = FarmActivityStatus.COMPLETED;
+                farmActivity.UpdatedAt = DateTime.UtcNow;
+
+                await _unitOfWork.farmActivityRepository.UpdateAsync(farmActivity);
+
+                // Log hệ thống
+                var systemLog = new ScheduleLog
+                {
+                    FarmActivityId = farmActivity.FarmActivitiesId,
+
+                    //lưu ScheduleId
+                    ScheduleId = farmActivity.scheduleId ?? 0,
+
+                    Notes = $"[Tự động hoàn thành] Hoạt động {farmActivity.ActivityType} đã hoàn thành khi tất cả nhân viên ({farmActivity.StaffFarmActivities.Count}) đã báo xong phần việc.",
+                    UpdatedAt = DateTime.UtcNow,
+                };
+                await _scheduleLogRepo.AddAsync(systemLog);
+
+                // Xử lý đặc biệt nếu là Harvesting (cộng kho)
+                if (farmActivity.ActivityType == ActivityType.Harvesting)
+                {
+                    var products = await _unitOfWork.farmActivityRepository.GetProductWillHarves(farmActivity.FarmActivitiesId);
+                    if (products != null)
+                    {
+                        foreach (var item in products)
+                        {
+                            var schedule = await _unitOfWork.scheduleRepository.GetByCropId(item.ProductId);
+                            if (schedule != null)
+                            {
+                                item.StockQuantity += schedule.HarvestedQuantity ?? 0;
+                            }
+                        }
+                    }
+                }
+
+                await _unitOfWork.SaveChangesAsync();
+            }
+        }
     }
 }

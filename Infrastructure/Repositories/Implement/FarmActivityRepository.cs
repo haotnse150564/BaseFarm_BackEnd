@@ -191,5 +191,12 @@ namespace Infrastructure.Repositories.Implement
                          && a.EndDate >= startDate)
                 .AnyAsync();
         }
+
+        public async Task<FarmActivity?> GetStaffFarmActivityByIdAsync(long id)
+        {
+            return await _context.FarmActivity
+                .Include(fa => fa.StaffFarmActivities)  // Load list Staff_FarmActivity
+                .FirstOrDefaultAsync(fa => fa.FarmActivitiesId == id);
+        }
     }
 }
