@@ -54,19 +54,20 @@ namespace Infrastructure.Mapper
                 .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => src.CreatedBy))
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
                 .ForMember(dest => dest.ModifiedAt, opt => opt.MapFrom(src => src.UpdatedAt))
+                .ForMember(dest => dest.FA_Status, opt => opt.MapFrom(src => src.FarmActivity.Status))
 
                 // Map từ Account sang các field trong Response
                 .ForMember(dest => dest.StaffEmail, opt => opt.MapFrom(src => src.Account.Email))
                 .ForPath(dest => dest.StaffPhone, opt => opt.MapFrom(src => src.Account.AccountProfile.Phone))
                 .ForPath(dest => dest.StaffName, opt => opt.MapFrom(src => src.Account.AccountProfile.Fullname))
                 .ForMember(dest => dest.IndividualStatus, opt => opt.MapFrom(src => src.individualStatus.ToString()))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.status.ToString()))
 
                 // Map từ FarmActivity sang các field trong Response
                 .ForMember(dest => dest.ActivityType, opt => opt.MapFrom(src => src.FarmActivity.ActivityType.ToString()))
                 .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.FarmActivity.StartDate))
                 .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.FarmActivity.EndDate))
                 .ForPath(dest => dest.CropName, opt => opt.MapFrom(src => src.FarmActivity.Schedule.Crop.CropName)) // giả sử Schedule có CropName
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.status))
 
                 .ReverseMap();
 

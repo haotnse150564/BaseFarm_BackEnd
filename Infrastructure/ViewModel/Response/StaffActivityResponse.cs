@@ -14,13 +14,15 @@ namespace Infrastructure.ViewModel.Response
             public string? ActivityType { get; set; }
             public string? StartDate { get; set; }
             public string? EndDate { get; set; }
-            public string? Status { get; set; }
+            public string? FA_Status { get; set; }
             public string? CropName { get; set; }
 
             public string? AccountId { get; set; }
             public string? StaffName { get; set; }
             public string? StaffPhone { get; set; }
             public string? StaffEmail { get; set; }
+            public string? Status { get; set; }
+
             public string? IndividualStatus { get; set; }
 
             public string? CreatedAt { get; set; }
