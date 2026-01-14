@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Enum;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,8 @@ namespace Domain.Model
         public DateTime CreatedAt { get; set; }
         public string? UpdatedBy { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public Status status { get; set; }
+        public IndividualStatus individualStatus { get; set; }
         public virtual Account? Account { get; set; }
         public virtual FarmActivity? FarmActivity { get; set; }
 

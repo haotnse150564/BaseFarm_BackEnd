@@ -113,7 +113,7 @@ namespace WebAPI.Services
             return null;
         }
 
-        public async Task<ResponseDTO?> ValidateUpdateAsync(long farmActivityId,FarmActivityRequest request,ActivityType newActivityType,FarmActivityStatus newStatus,FarmActivity existingActivity)
+        public async Task<ResponseDTO?> ValidateUpdateAsync(long farmActivityId, FarmActivityRequest request, ActivityType newActivityType, FarmActivityStatus newStatus, FarmActivity existingActivity)
         {
             if (request == null)
                 return new ResponseDTO(Const.ERROR_EXCEPTION, "Dữ liệu yêu cầu không hợp lệ.");
@@ -216,7 +216,7 @@ namespace WebAPI.Services
             };
         }
 
-        private async Task<Response_DTO?> ValidateAddStaffToFarmActivityAsync(long farmActivityId,long staffId)
+        private async Task<Response_DTO?> ValidateAddStaffToFarmActivityAsync(long farmActivityId, long staffId)
         {
 
             // 1. Kiểm tra hoạt động tồn tại và trạng thái hợp lệ
@@ -228,7 +228,7 @@ namespace WebAPI.Services
 
             if (farmActivity.Status == FarmActivityStatus.COMPLETED || farmActivity.Status == FarmActivityStatus.DEACTIVATED)
             {
-                return new Response_DTO(Const.ERROR_EXCEPTION,"Không thể gán nhân viên cho hoạt động đã hoàn thành hoặc đã hủy.");
+                return new Response_DTO(Const.ERROR_EXCEPTION, "Không thể gán nhân viên cho hoạt động đã hoàn thành hoặc đã hủy.");
             }
 
             // 2. Kiểm tra nhân viên tồn tại và vai trò phù hợp
@@ -240,7 +240,7 @@ namespace WebAPI.Services
 
             if (staff.Role != Roles.Staff && staff.Role != Roles.Staff)
             {
-                return new Response_DTO(Const.ERROR_EXCEPTION,"Chỉ có thể gán nhân viên có vai trò Staff");
+                return new Response_DTO(Const.ERROR_EXCEPTION, "Chỉ có thể gán nhân viên có vai trò Staff");
             }
 
             // 3. Không cho thêm trùng nhân viên vào cùng hoạt động
@@ -249,7 +249,7 @@ namespace WebAPI.Services
 
             if (alreadyAssigned)
             {
-                return new Response_DTO(Const.ERROR_EXCEPTION,"Nhân viên này đã được gán cho hoạt động này rồi.");
+                return new Response_DTO(Const.ERROR_EXCEPTION, "Nhân viên này đã được gán cho hoạt động này rồi.");
             }
 
             // 4. Kiểm tra conflict thời gian (rất quan trọng)
@@ -374,7 +374,7 @@ namespace WebAPI.Services
             farmActivity.createdBy = user.AccountId;
             farmActivity.UpdatedAt = DateTime.UtcNow;
             farmActivity.updatedBy = user.AccountId;
-            
+
 
             await _unitOfWork.farmActivityRepository.AddAsync(farmActivity);
 
@@ -473,13 +473,13 @@ namespace WebAPI.Services
             }
         }
 
-        public async Task<ResponseDTO> GetFarmActivitiesActiveAsync(int pageIndex,int pageSize)
+        public async Task<ResponseDTO> GetFarmActivitiesActiveAsync(int pageIndex, int pageSize)
         {
             var list = await _unitOfWork.farmActivityRepository.GetAllActive();
 
             if (list.IsNullOrEmpty())
             {
-                return new ResponseDTO(Const.FAIL_READ_CODE,Const.FAIL_READ_MSG,"Not Found");
+                return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Not Found");
             }
 
             // ===== Map tay, không dùng AutoMapper =====
@@ -507,7 +507,7 @@ namespace WebAPI.Services
                 Items = views.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList()
             };
 
-            return new ResponseDTO(Const.SUCCESS_READ_CODE,Const.SUCCESS_READ_MSG,pagination);
+            return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, pagination);
         }
 
 
@@ -546,13 +546,13 @@ namespace WebAPI.Services
 
             return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, pagination);
         }
-        public async Task<ResponseDTO> GetFarmActivitiesByStaffAsync(int pageIndex,int pageSize,ActivityType? type,FarmActivityStatus? status,int? month)
+        public async Task<ResponseDTO> GetFarmActivitiesByStaffAsync(int pageIndex, int pageSize, ActivityType? type, FarmActivityStatus? status, int? month)
         {
             var result = await _unitOfWork.farmActivityRepository.GetAllFiler(type, status, month);
 
             if (result.IsNullOrEmpty())
             {
-                return new ResponseDTO(Const.FAIL_READ_CODE,Const.FAIL_READ_MSG,"Not Found");
+                return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Not Found");
             }
 
             result.Sort((y, x) => x.FarmActivitiesId.CompareTo(y.FarmActivitiesId));
@@ -581,7 +581,7 @@ namespace WebAPI.Services
                 Items = views.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList()
             };
 
-            return new ResponseDTO(Const.SUCCESS_READ_CODE,Const.SUCCESS_READ_MSG,pagination);
+            return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, pagination);
         }
 
 
@@ -633,7 +633,7 @@ namespace WebAPI.Services
             else
             {
                 farmActivity.ActivityType = activityType;
-                farmActivity.Status = farmActivityStatus; 
+                farmActivity.Status = farmActivityStatus;
                 farmActivity.StartDate = farmActivityrequest.StartDate;
                 farmActivity.EndDate = farmActivityrequest.EndDate;
                 farmActivity.UpdatedAt = DateTime.UtcNow;
@@ -672,7 +672,7 @@ namespace WebAPI.Services
                 }
             }
         }
-        
+
         public async Task<ResponseDTO> CompleteFarmActivity(long id, string? location)
         {
             var farmActivity = await _farmActivityRepository.GetByIdAsync(id);
@@ -694,7 +694,7 @@ namespace WebAPI.Services
                 return new ResponseDTO(Const.FAIL_READ_CODE, "Người dùng không hợp lệ");
             }
 
-            farmActivity.Status = Domain.Enum.FarmActivityStatus.COMPLETED; 
+            farmActivity.Status = Domain.Enum.FarmActivityStatus.COMPLETED;
 
             await _unitOfWork.farmActivityRepository.UpdateAsync(farmActivity);
 
@@ -720,7 +720,7 @@ namespace WebAPI.Services
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);
                 }
-                foreach(var item in product)
+                foreach (var item in product)
                 {
                     //CỘNG SL KHI THU HOẠCH
                     var schedule = await _unitOfWork.scheduleRepository.GetByCropId(item.ProductId);
@@ -757,7 +757,7 @@ namespace WebAPI.Services
             {
                 return false;
             }
-            else if((startDate.Value.DayNumber - endDate.Value.DayNumber) >7)
+            else if ((startDate.Value.DayNumber - endDate.Value.DayNumber) > 7)
             {
                 return false;
             }
@@ -788,6 +788,8 @@ namespace WebAPI.Services
                 FarmActivityId = farmActivityId,
                 AccountId = staffId,
                 CreatedAt = DateTime.UtcNow,
+                status = Status.ACTIVE,
+                individualStatus = IndividualStatus.IN_PROGRESS,
                 CreatedBy = (await _unitOfWork.accountProfileRepository.GetByIdAsync(getCurrentUser.AccountId))?.Fullname,
             };
             await _unitOfWork.staff_FarmActivityRepository.AddAsync(staff_FarmActivity);
@@ -802,20 +804,15 @@ namespace WebAPI.Services
                 return new Response_DTO(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, result);
             }
         }
-        public async Task<Response_DTO> UpdateStafftoFarmActivity(long Staf_farmActivityId, long staffId)
+        public async Task<Response_DTO> UpdateStafftoFarmActivity(long Staf_farmActivityId)//update status
         {
 
-            var validationResult = await ValidateUpdateStaffToFarmActivityAsync(Staf_farmActivityId, staffId);
-            if (validationResult != null)
-            {
-                return validationResult;
-            }
+            //var validationResult = await ValidateUpdateStaffToFarmActivityAsync(Staf_farmActivityId);
+            //if (validationResult != null)
+            //{
+            //    return validationResult;
+            //}
 
-            var staff = await _unitOfWork.accountRepository.GetByIdAsync(staffId);
-            if (staff == null)
-            {
-                return new Response_DTO(Const.FAIL_READ_CODE, "Not Found Farm Activity or Staff");
-            }
             var getCurrentUser = await _jwtUtils.GetCurrentUserAsync();
             if (getCurrentUser == null || getCurrentUser.Role != Roles.Manager)
             {
@@ -826,8 +823,15 @@ namespace WebAPI.Services
             {
                 return new Response_DTO(Const.FAIL_READ_CODE, "Not Found Staff_FarmActivity");
             }
-            staff_FarmActivity.AccountId = staffId;
-            staff_FarmActivity.UpdatedAt = DateTime.UtcNow;
+            if (staff_FarmActivity.status.Equals(Status.ACTIVE))
+            {
+                staff_FarmActivity.status = Status.DEACTIVATED;
+            }
+            else
+            {
+                staff_FarmActivity.status = Status.ACTIVE;
+            }
+                staff_FarmActivity.UpdatedAt = DateTime.UtcNow;
             staff_FarmActivity.UpdatedBy = (await _unitOfWork.accountProfileRepository.GetByIdAsync(getCurrentUser.AccountId))?.Fullname;
 
             await _unitOfWork.staff_FarmActivityRepository.UpdateAsync(staff_FarmActivity);

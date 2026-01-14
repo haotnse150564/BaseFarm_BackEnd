@@ -39,6 +39,12 @@ namespace Infrastructure.FluentAPI
             builder.Property(e => e.UpdatedBy)
                 .HasColumnName("updatedBy");
 
+            builder.Property(e => e.status)
+               .HasColumnName("status");
+
+            builder.Property(e => e.individualStatus)
+               .HasColumnName("individualStatus");
+
             builder.HasOne(e => e.Account)
                    .WithMany(a => a.StaffFarmActivities)
                    .HasForeignKey(e => e.AccountId)
