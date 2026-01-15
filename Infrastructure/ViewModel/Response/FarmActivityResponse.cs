@@ -24,11 +24,11 @@ namespace Infrastructure.ViewModel.Response
 
             public string? CropName { get; set; }
             public long? scheduleId { get; set; }
-            //public AvailableStaffDTO? StaffDTO { get; set; }
-            public long StaffId { get; set; }
-            public string StaffEmail { get; set; } = string.Empty;
-            public string StaffFullName { get; set; } = "Chưa có hồ sơ";
-            public string StaffPhone { get; set; } = string.Empty;
+            ////public AvailableStaffDTO? StaffDTO { get; set; }
+            //public long StaffId { get; set; }
+            //public string StaffEmail { get; set; } = string.Empty;
+            //public string StaffFullName { get; set; } = "Chưa có hồ sơ";
+            //public string StaffPhone { get; set; } = string.Empty;
 
         }
         public class ResponseDTO
