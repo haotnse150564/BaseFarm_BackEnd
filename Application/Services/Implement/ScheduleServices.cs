@@ -680,7 +680,7 @@ namespace Application.Services.Implement
             {
                 // Kiểm tra quyền
                 var currentUser = await _jwtUtils.GetCurrentUserAsync();
-                if (currentUser == null || currentUser.Role != Roles.Manager)
+                if (currentUser == null)
                 {
                     return new ResponseDTO(Const.FAIL_READ_CODE, "Tài khoản không hợp lệ.");
                 }
