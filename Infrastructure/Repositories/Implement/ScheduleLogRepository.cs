@@ -33,22 +33,25 @@ namespace Infrastructure.Repositories.Implement
         public async Task<List<ScheduleLogResponse>> GetAllWithName(long scheduleId)
         {
             var query = from log in _context.ScheduleLog
-                        join createBy in _context.AccountProfile
-                            on log.CreatedBy equals createBy.AccountProfileId into createByJoin
-                        from createBy in createByJoin.DefaultIfEmpty() // left join
-                        join updateBy in _context.AccountProfile
-                            on log.UpdatedBy equals updateBy.AccountProfileId into updateByJoin
-                        from updateBy in updateByJoin.DefaultIfEmpty()
                         where log.ScheduleId == scheduleId
+                        // Left join với AccountProfile cho người tạo
+                        join createProfile in _context.AccountProfile
+                            on log.CreatedBy equals createProfile.AccountProfileId into createJoin
+                        from createProfile in createJoin.DefaultIfEmpty()
+                            // Left join với AccountProfile cho người cập nhật
+                        join updateProfile in _context.AccountProfile
+                            on log.UpdatedBy equals updateProfile.AccountProfileId into updateJoin
+                        from updateProfile in updateJoin.DefaultIfEmpty()
                         orderby log.CreatedAt descending
                         select new ScheduleLogResponse
                         {
-                            CropLogId = log.ScheduleLogId,
+                            CropLogId = log.ScheduleLogId,                   
+                            FarmActivityId = log.FarmActivityId,              
                             Notes = log.Notes,
                             CreatedAt = log.CreatedAt,
-                            CreateBy = createBy.Fullname != null ? createBy.Fullname : null,
+                            CreateBy = log.CreatedBy.ToString(),              
                             UpdatedAt = log.UpdatedAt,
-                            UpdateBy = updateBy.Fullname != null ? updateBy.Fullname : null
+                            UpdateBy = log.UpdatedBy.ToString(),              
                         };
 
             return await query.AsNoTracking().ToListAsync();

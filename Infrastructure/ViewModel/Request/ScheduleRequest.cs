@@ -51,6 +51,7 @@ namespace Infrastructure.ViewModel.Request
     public class CreateScheduleLogRequest
     {
         public long ScheduleId { get; set; }
+        public long FarmActivityId { get; set; }
         public string Notes { get; set; } = string.Empty;
     }
 

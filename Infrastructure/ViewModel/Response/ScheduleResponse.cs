@@ -57,6 +57,7 @@ namespace Infrastructure.ViewModel.Response
         public class ScheduleLogResponse
         {
             public long CropLogId { get; set; }
+            public long FarmActivityId { get; set; }
             public string? Notes { get; set; }
             public DateTime CreatedAt { get; set; }
             public string CreateBy { get; set; }

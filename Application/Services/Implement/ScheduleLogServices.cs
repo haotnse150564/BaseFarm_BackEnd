@@ -85,10 +85,14 @@ namespace Application.Services.Implement
             if (string.IsNullOrWhiteSpace(request.Notes))
                 return new ResponseDTO(Const.FAIL_CREATE_CODE, "Ghi chú không được để trống");
 
-            // Optional: Check schedule tồn tại (nên có)
+            // Optional: Check schedule tồn tại
             var scheduleExists = await _unitOfWork.scheduleRepository.GetByIdAsync(request.ScheduleId);
             if (scheduleExists == null)
                 return new ResponseDTO(Const.WARNING_NO_DATA_CODE, "Không tìm thấy lịch với ID này");
+
+            var farmActivityExist = await _unitOfWork.farmActivityRepository.GetByIdAsync(request.FarmActivityId);
+            if(farmActivityExist == null)
+                return new ResponseDTO(Const.WARNING_NO_DATA_CODE, "Không tìm thấy hoạt động trong lịch với ID này");
 
             TimeZoneInfo vietnamZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
             DateTime vietnamNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vietnamZone);
@@ -97,6 +101,7 @@ namespace Application.Services.Implement
             var log = new ScheduleLog
             {
                 ScheduleId = request.ScheduleId,
+                FarmActivityId = request.FarmActivityId,
                 Notes = $"[Ghi chú thủ công] {request.Notes.Trim()}",
                 CreatedAt = utcKindVietnamTime,
                 UpdatedAt = utcKindVietnamTime,
