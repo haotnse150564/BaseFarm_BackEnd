@@ -231,11 +231,11 @@ namespace WebAPI.Services
                 (ActivityType.FertilizingDiluted, PlantStage.Vegetative) => true,     // Bón thúc tiếp
                 (ActivityType.FertilizingLeaf, PlantStage.Vegetative) => true,        // Bón phân lá chính ở giai đoạn này
                 (ActivityType.PestControl, PlantStage.Vegetative) => true,
+                (ActivityType.FrostProtectionCovering, PlantStage.Vegetative) => true,  // Phủ bạt che lạnh (nếu cần)
 
                 // === Harvest (36–37 ngày): Thu hoạch và kết thúc ===
                 (ActivityType.Harvesting, PlantStage.Harvest) => true,
                 (ActivityType.CleaningFarmArea, PlantStage.Harvest) => true,          // Dọn dẹp sau thu hoạch
-                (ActivityType.PestControl, PlantStage.Harvest) => true,               // Phòng sâu trước thu (nếu dùng thuốc sinh học)
 
                 // Mọi trường hợp khác → KHÔNG phù hợp
                 _ => false
@@ -1052,4 +1052,4 @@ namespace WebAPI.Services
             return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, "Không có thay đổi nào được thực hiện.");
         }
     }
-    }
+}
