@@ -1016,16 +1016,22 @@ namespace WebAPI.Services
                 // Xử lý Harvesting (cộng kho)
                 if (farmActivity.ActivityType == ActivityType.Harvesting)
                 {
-                    var product = await _unitOfWork.farmActivityRepository.GetProductWillHarves(farmActivity.FarmActivitiesId);
-                    if (product == null)
+                    var crops = await _unitOfWork.farmActivityRepository.GetCropsForHarvestActivity(farmActivity.FarmActivitiesId);
+                    if (crops == null)
                     {
                         return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG);
                     }
-                    foreach (var item in product)
+                    foreach (var crop in crops)
                     {
+                        var product = crop.Product;
+                        if (product == null) return new ResponseDTO(Const.ERROR_EXCEPTION, "Hạt giống hiện tại chưa có sản phẩm"); ;
                         //CỘNG SL KHI THU HOẠCH
-                        var schedule = await _unitOfWork.scheduleRepository.GetByCropId(item.ProductId);
-                        item.StockQuantity += schedule.HarvestedQuantity;
+                        var schedule = await _unitOfWork.scheduleRepository.GetActiveScheduleByCropId(crop.CropId);
+                        double currentStock = product.StockQuantity ?? 0;
+                        double harvested = schedule.HarvestedQuantity ?? 0;
+
+                        product.StockQuantity = currentStock + harvested;
+
                     }
                     if (await _unitOfWork.SaveChangesAsync() < 0)
                     {

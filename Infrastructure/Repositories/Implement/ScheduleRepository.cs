@@ -144,5 +144,17 @@ namespace Infrastructure.Repositories.Implement
                     s.StartDate <= endDate &&
                     s.EndDate >= startDate);
         }
+
+        public async Task<Schedule?> GetActiveScheduleByCropId(long cropId)
+        {
+            return await _context.Schedule 
+                .Include(s => s.Crop)
+                .ThenInclude(c => c.CropRequirement)
+                .Where(s => s.CropId == cropId
+                         && s.Status == Status.ACTIVE)  
+                .OrderByDescending(s => s.CreatedAt)                                                                                                             
+                .ThenByDescending(s => s.ScheduleId)  // Nếu CreatedAt bằng nhau, lấy ID lớn nhất
+                .FirstOrDefaultAsync();
+        }
     }
 }

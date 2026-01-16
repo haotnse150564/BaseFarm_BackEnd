@@ -20,5 +20,6 @@ namespace Infrastructure.Repositories
         Task<bool> HasDuplicateActivityTypeInScheduleAsync(long scheduleId, ActivityType activityType, long? excludeActivityId = null);
         Task<bool> HasOverlappingActiveActivityAsync(long? scheduleId, DateOnly startDate, DateOnly endDate, long excludeActivityId);
         Task<bool> HasOverlappingActivityInScheduleAsync(long scheduleId, DateOnly startDate, DateOnly endDate, long? excludeActivityId = null);
+        Task<List<Crop>> GetCropsForHarvestActivity(long activityId);
     }
 }

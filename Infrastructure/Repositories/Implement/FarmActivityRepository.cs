@@ -130,6 +130,16 @@ namespace Infrastructure.Repositories.Implement
 
         }
 
+        public async Task<List<Crop>> GetCropsForHarvestActivity(long activityId)
+        {
+            return await _context.Crops
+                .Where(c => c.Schedules.Any(s => s.FarmActivities.Any(fa => fa.FarmActivitiesId == activityId)))
+                .Include(c => c.Product)  
+                .Include(c => c.Schedules) 
+                    .ThenInclude(s => s.FarmActivities)
+                .ToListAsync();
+        }
+
         private static readonly HashSet<ActivityType> AllowMultiple = new()
 {
                 ActivityType.FertilizingDiluted,
