@@ -101,6 +101,15 @@ namespace Infrastructure.Repositories.Implement
                 .FirstOrDefaultAsync(s => s.ScheduleId == scheduleId);
         }
 
+        public async Task<Schedule?> GetScheduleByFarmActivityIdAsync(long farmActivityId)
+        {
+            return await _context.Schedule
+                .Include(s => s.Crop)
+                    .ThenInclude(c => c.Product)
+                .Where(s => s.FarmActivities.Any(fa => fa.FarmActivitiesId == farmActivityId))
+                .FirstOrDefaultAsync();
+        }
+
         public async Task<Schedule?> GetByCropId(long cropId)
         {
             return await _context.Schedule

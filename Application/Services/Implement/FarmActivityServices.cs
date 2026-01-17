@@ -936,6 +936,20 @@ namespace WebAPI.Services
             if (assignment.individualStatus == IndividualStatus.COMPLETED)
                 return new ResponseDTO(Const.ERROR_EXCEPTION, "Bạn đã báo hoàn thành phần việc rồi.");
 
+            var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(farmActivityId);
+            if (farmActivity == null || farmActivity.Status == FarmActivityStatus.COMPLETED)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Hoạt động không tồn tại");
+
+            var schedule = await _unitOfWork.scheduleRepository.GetScheduleByFarmActivityIdAsync(farmActivityId);
+            if (schedule == null)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "lịch hoạt động không tồn tại");
+
+            if (farmActivity.ActivityType == ActivityType.Harvesting)
+            {
+                if (!schedule.HarvestedQuantity.HasValue || schedule.HarvestedQuantity.Value <= 0)
+                    return new ResponseDTO(Const.ERROR_EXCEPTION, "Số lượng thu hoạch không hợp lệ.");
+            }
+
             // 3. Cập nhật trạng thái cá nhân
             assignment.individualStatus = IndividualStatus.COMPLETED;
             assignment.UpdatedAt = DateTime.UtcNow;
@@ -943,7 +957,6 @@ namespace WebAPI.Services
 
             await _unitOfWork.staff_FarmActivityRepository.UpdateAsync(assignment);
 
-            var farmActivity = await _unitOfWork.farmActivityRepository.GetByIdAsync(farmActivityId);
             if (farmActivity == null)
             {
                 throw new Exception("FarmActivity not found");
@@ -1027,6 +1040,7 @@ namespace WebAPI.Services
                         if (product == null) return new ResponseDTO(Const.ERROR_EXCEPTION, "Hạt giống hiện tại chưa có sản phẩm"); ;
                         //CỘNG SL KHI THU HOẠCH
                         var schedule = await _unitOfWork.scheduleRepository.GetActiveScheduleByCropId(crop.CropId);
+
                         double currentStock = product.StockQuantity ?? 0;
                         double harvested = schedule.HarvestedQuantity ?? 0;
 
@@ -1042,6 +1056,43 @@ namespace WebAPI.Services
                         return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG);
                     }
                 }
+                else if(farmActivity.ActivityType == ActivityType.CleaningFarmArea)
+                {
+                    var currentSchedule = await _unitOfWork.scheduleRepository.GetScheduleByFarmActivityIdAsync(farmActivityId);
+                    //var allFarmActivity = await _unitOfWork.farmActivityRepository.GetListFarmActivityByScheduleId(currentSchedule.ScheduleId);
+                    //if (allFarmActivity == null)
+                    //    return new ResponseDTO(Const.ERROR_EXCEPTION, "Không tìm thấy hoạt động trong lịch");
+                    //foreach (var activity in allFarmActivity)
+                    //{
+                    //    if(activity.Status != FarmActivityStatus.COMPLETED)
+                    //    {
+                    //        systemLog = new ScheduleLog
+                    //        {
+                    //            FarmActivityId = activity.FarmActivitiesId,
+                    //            ScheduleId = activity.scheduleId ?? 0,
+
+                    //            Notes = $"[Ghi chú tự động] Hoạt động {activity.ActivityType} đã chưa được hoàn thành trong lịch trình.",
+
+                    //            CreatedAt = DateTime.UtcNow,
+                    //            UpdatedAt = DateTime.UtcNow,
+
+                    //            CreatedBy = activity.createdBy,          // Hoặc ID user hệ thống nếu có
+                    //            UpdatedBy = (long)activity.updatedBy           // Tương tự
+                    //        };
+                    //    }
+                    //}
+                    currentSchedule.Status = Status.COMPLETED;
+
+                    if (await _unitOfWork.SaveChangesAsync() < 0)
+                    {
+                        return new ResponseDTO(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);
+                    }
+                    else
+                    {
+                        return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG);
+                    }
+                }
+
                 else
                 {
                     if (await _unitOfWork.SaveChangesAsync() < 0)

@@ -9,7 +9,8 @@ namespace Domain.Enum
     public enum Status
     {
         DEACTIVATED,
-        ACTIVE
+        ACTIVE,
+        COMPLETED,
     }
     public enum IndividualStatus
     {
