@@ -9,6 +9,7 @@ namespace Infrastructure.ViewModel.Request
     public class FarmEquipmentRequest
     {
         public long deviceId { get; set; }
+        public long FarmId { get; set; }
         public string? Note { get; set; }
     }
 }

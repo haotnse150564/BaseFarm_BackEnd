@@ -35,39 +35,58 @@ namespace Application.Services.Implement
         {
             try
             {
-                var checklistEquipments = await _unitOfWork.farmEquipmentRepository.GetAllAsync();
-                if (checklistEquipments.Any())
+                // 1. Validate input cơ bản (nên dùng FluentValidation hoặc check thủ công)
+                if (request == null || request.deviceId <= 0 || request.FarmId <= 0)
                 {
-                    var checkExist = checklistEquipments.FirstOrDefault(x => x.DeviceId == request.deviceId && x.FarmId == 1 && x.Status == Domain.Enum.Status.ACTIVE);
-                    if (checkExist != null)
-                    {
-                        return new ResponseDTO(Const.FAIL_READ_CODE, "Thiết bị đang được sử dụng");
-                    }
+                    return new ResponseDTO(Const.ERROR_EXCEPTION, "Thiết bị hoặc nông trại không hợp lệ.");
                 }
-                var checkDevice = await _unitOfWork.deviceRepository.GetByIdAsync(request.deviceId);
-                if(checkDevice == null)
-                {
-                    return new ResponseDTO(Const.FAIL_READ_CODE, "Không có thiết bị này");
-                }
-                var fe = _mapper.Map<Domain.Model.FarmEquipment>(request);
-                fe.FarmId = 1; //Default farm id
-                fe.AssignDate = _currentTime.GetCurrentTime();
-                fe.Status = Domain.Enum.Status.ACTIVE;
 
-                await _unitOfWork.farmEquipmentRepository.AddAsync(fe);
+                // 2. Check thiết bị tồn tại
+                var device = await _unitOfWork.deviceRepository.GetByIdAsync(request.deviceId);
+                if (device == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Không tìm thấy thiết bị này.");
+                }
+
+                // 3. Check nông trại tồn tại
+                var farm = await _unitOfWork.farmRepository.GetByIdAsync(request.FarmId);
+                if (farm == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Không tìm thấy nông trại với ID này.");
+                }
+
+                // 4. Check thiết bị đã được gán ACTIVE trong nông trại này chưa
+                var existingAssignment = await _unitOfWork.farmEquipmentRepository.GetAllAsync();
+                var duplicate = existingAssignment.FirstOrDefault(x =>
+                    x.DeviceId == request.deviceId &&
+                    x.FarmId == request.FarmId && 
+                    x.Status == Domain.Enum.Status.ACTIVE);
+
+                if (duplicate != null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Thiết bị này đang được sử dụng trong nông trại này.");
+                }
+
+                // 5. Tạo FarmEquipment từ DTO
+                var farmEquipment = _mapper.Map<Domain.Model.FarmEquipment>(request);
+                // Mapper đã map FarmId rồi, nhưng để chắc chắn:
+                farmEquipment.FarmId = request.FarmId;
+                farmEquipment.AssignDate = _currentTime.GetCurrentTime();
+                farmEquipment.Status = Domain.Enum.Status.ACTIVE;
+
+                await _unitOfWork.farmEquipmentRepository.AddAsync(farmEquipment);
                 await _unitOfWork.SaveChangesAsync();
 
-                var farm = await _unitOfWork.farmRepository.GetByIdAsync(1);
-                var device = await _unitOfWork.deviceRepository.GetByIdAsync(request.deviceId);
-                var result = _mapper.Map<FarmEquipmentView>(fe);
+                // 6. Tạo response view với tên Farm và Device
+                var result = _mapper.Map<FarmEquipmentView>(farmEquipment);
                 result.FarmName = farm.FarmName;
                 result.DeviceName = device.DeviceName;
 
-                return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, result);
+                return new ResponseDTO(Const.SUCCESS_CREATE_CODE, Const.SUCCESS_CREATE_MSG, result);
             }
             catch (Exception ex)
             {
-                return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+                return new ResponseDTO(Const.ERROR_EXCEPTION, $"Lỗi hệ thống: {ex.Message}");
             }
         }
         public async Task<ResponseDTO> GetAll()
