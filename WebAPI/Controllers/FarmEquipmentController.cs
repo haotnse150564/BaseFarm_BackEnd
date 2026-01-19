@@ -45,7 +45,7 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
 
-        [HttpPut("/update-farm-equipment/{farmEquipmentId}")]
+        [HttpPut("update-farm-equipment")]
         public async Task<IActionResult> UpdateFarmEquipment(long farmEquipmentId, [FromBody] FarmEquipmentRequest request)
         {
             var result = await _farmEquipmentServices.UpdateFarmEquipment(farmEquipmentId, request);
