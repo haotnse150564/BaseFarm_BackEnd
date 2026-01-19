@@ -15,5 +15,6 @@ namespace Application.Services
         Task<ResponseDTO> CreateFarmEquipment(FarmEquipmentRequest request);
         Task<ResponseDTO> RemmoveFarmEquipment(long id);
         Task<ResponseDTO> GetFarmEquipmentByDevicesName(string name);
+        Task<ResponseDTO> UpdateFarmEquipment(long farmEquipmentId, FarmEquipmentRequest request);
     }
 }

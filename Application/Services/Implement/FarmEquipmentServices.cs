@@ -169,5 +169,75 @@ namespace Application.Services.Implement
                 return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
             }
         }
+
+        public async Task<ResponseDTO> UpdateFarmEquipment(long farmEquipmentId, FarmEquipmentRequest request)
+        {
+            try
+            {
+                // 1. Validate input cơ bản
+                if (request == null || request.deviceId <= 0 || request.FarmId <= 0)
+                {
+                    return new ResponseDTO(Const.ERROR_EXCEPTION, "Thiết bị hoặc nông trại không hợp lệ.");
+                }
+
+                // 2. Kiểm tra FarmEquipment tồn tại
+                var existingEquipment = await _unitOfWork.farmEquipmentRepository.GetByIdAsync(farmEquipmentId);
+                if (existingEquipment == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Không tìm thấy thiết bị nông trại với ID này.");
+                }
+
+                // 3. Kiểm tra thiết bị mới tồn tại
+                var newDevice = await _unitOfWork.deviceRepository.GetByIdAsync(request.deviceId);
+                if (newDevice == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Không tìm thấy thiết bị với ID này.");
+                }
+
+                // 4. Kiểm tra nông trại mới tồn tại
+                var newFarm = await _unitOfWork.farmRepository.GetByIdAsync(request.FarmId);
+                if (newFarm == null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Không tìm thấy nông trại với ID này.");
+                }
+
+                // 5. Check trùng thiết bị ACTIVE trong nông trại mới (trừ chính bản ghi đang update)
+                var allEquipments = await _unitOfWork.farmEquipmentRepository.GetAllAsync();
+                var duplicate = allEquipments.FirstOrDefault(x =>
+                    x.DeviceId == request.deviceId &&
+                    x.FarmId == request.FarmId &&
+                    x.Status == Domain.Enum.Status.ACTIVE &&
+                    x.FarmEquipmentId != farmEquipmentId);  //Exclude chính bản ghi đang update
+
+                if (duplicate != null)
+                {
+                    return new ResponseDTO(Const.FAIL_READ_CODE, "Thiết bị này đã được sử dụng trong nông trại này.");
+                }
+
+                // 6. Map dữ liệu từ request vào entity hiện có
+                _mapper.Map(request, existingEquipment);  // AutoMapper update existing entity
+
+                // Cập nhật các field cần thiết (nếu mapper chưa map hết)
+                existingEquipment.FarmId = request.FarmId;
+                existingEquipment.DeviceId = request.deviceId;  // Nếu request có thay đổi Device
+                existingEquipment.Note = request.Note;          // Nếu có ghi chú
+                existingEquipment.AssignDate = _currentTime.GetCurrentTime();  // Cập nhật ngày gán mới
+
+                // 7. Cập nhật vào DB
+                await _unitOfWork.farmEquipmentRepository.UpdateAsync(existingEquipment);
+                await _unitOfWork.SaveChangesAsync();
+
+                // 8. Tạo response view
+                var result = _mapper.Map<FarmEquipmentView>(existingEquipment);
+                result.FarmName = newFarm.FarmName;
+                result.DeviceName = newDevice.DeviceName;
+
+                return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, Const.SUCCESS_UPDATE_MSG, result);
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, $"Lỗi hệ thống: {ex.Message}");
+            }
+        }
     } 
 }

@@ -1,4 +1,6 @@
 ﻿using Application.Services;
+using Application.Services.Implement;
+using Infrastructure.ViewModel.Request;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
@@ -40,6 +42,13 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> RemmoveFarmEquipment([FromQuery] long id)
         {
             var result = await _farmEquipmentServices.RemmoveFarmEquipment(id);
+            return Ok(result);
+        }
+
+        [HttpPut("/update-farm-equipment/{farmEquipmentId}")]
+        public async Task<IActionResult> UpdateFarmEquipment(long farmEquipmentId, [FromBody] FarmEquipmentRequest request)
+        {
+            var result = await _farmEquipmentServices.UpdateFarmEquipment(farmEquipmentId, request);
             return Ok(result);
         }
     }
