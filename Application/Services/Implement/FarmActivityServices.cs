@@ -932,6 +932,9 @@ namespace WebAPI.Services
             if (assignment == null)
                 return new ResponseDTO(Const.ERROR_EXCEPTION, "Bạn không được phân công cho hoạt động này.");
 
+            if (assignment.status == Status.DEACTIVATED)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Phân công của bạn đã bị hủy.");
+
             // 2. Kiểm tra chưa hoàn thành
             if (assignment.individualStatus == IndividualStatus.COMPLETED)
                 return new ResponseDTO(Const.ERROR_EXCEPTION, "Bạn đã báo hoàn thành phần việc rồi.");
