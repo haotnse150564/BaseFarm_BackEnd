@@ -1067,9 +1067,9 @@ namespace WebAPI.Services
                         return new ResponseDTO(Const.ERROR_EXCEPTION, "Không tìm thấy hoạt động trong lịch");
                     foreach (var activity in allFarmActivity)
                     {
-                        if (activity.Status == FarmActivityStatus.ACTIVE)
+                        if (activity.Status == FarmActivityStatus.ACTIVE && activity.FarmActivitiesId != farmActivityId)
                         {
-                            systemLog = new ScheduleLog
+                            systemLog = new ScheduleLog 
                             {
                                 FarmActivityId = activity.FarmActivitiesId,
                                 ScheduleId = activity.scheduleId ?? 0,
@@ -1082,10 +1082,11 @@ namespace WebAPI.Services
                                 CreatedBy = activity.createdBy,          // Hoặc ID user hệ thống nếu có
                                 UpdatedBy = (long)activity.updatedBy           // Tương tự
                             };
+                            await _unitOfWork.scheduleLogRepository.AddAsync(systemLog);
                         }
                     }
                     currentSchedule.Status = Status.COMPLETED;
-
+                    await _unitOfWork.scheduleRepository.UpdateAsync(currentSchedule);
                     if (await _unitOfWork.SaveChangesAsync() < 0)
                     {
                         return new ResponseDTO(Const.FAIL_UPDATE_CODE, Const.FAIL_UPDATE_MSG);

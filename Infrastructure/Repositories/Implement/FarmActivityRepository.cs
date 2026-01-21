@@ -100,7 +100,7 @@ namespace Infrastructure.Repositories.Implement
         public async Task<List<FarmActivity>> GetListFarmActivityByScheduleId(long scheduleId)
         {
             return await _context.FarmActivity
-                //.Where(fa => fa.ScheduleId == scheduleId)
+                .Where(fa => fa.scheduleId == scheduleId)
                 .Include(fa => fa.Schedule)
                     .ThenInclude(s => s.Crop)
                     .ToListAsync();
