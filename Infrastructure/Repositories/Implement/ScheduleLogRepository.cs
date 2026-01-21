@@ -48,10 +48,15 @@ namespace Infrastructure.Repositories.Implement
                             CropLogId = log.ScheduleLogId,                   
                             FarmActivityId = log.FarmActivityId,              
                             Notes = log.Notes,
-                            CreatedAt = log.CreatedAt,
-                            CreateBy = log.CreatedBy.ToString(),              
+                            CreatedAt = log.CreatedAt,       
                             UpdatedAt = log.UpdatedAt,
-                            UpdateBy = log.UpdatedBy.ToString(),              
+                            CreateBy = createProfile != null
+                                ? (createProfile.Fullname ?? "Unknown")
+                                : "Hệ thống",
+
+                            UpdateBy = updateProfile != null
+                                ? (updateProfile.Fullname ??  "Unknown")
+                                : "Hệ thống",
                         };
 
             return await query.AsNoTracking().ToListAsync();
