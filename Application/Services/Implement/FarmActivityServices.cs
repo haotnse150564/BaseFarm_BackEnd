@@ -1062,28 +1062,28 @@ namespace WebAPI.Services
                 else if(farmActivity.ActivityType == ActivityType.CleaningFarmArea)
                 {
                     var currentSchedule = await _unitOfWork.scheduleRepository.GetScheduleByFarmActivityIdAsync(farmActivityId);
-                    //var allFarmActivity = await _unitOfWork.farmActivityRepository.GetListFarmActivityByScheduleId(currentSchedule.ScheduleId);
-                    //if (allFarmActivity == null)
-                    //    return new ResponseDTO(Const.ERROR_EXCEPTION, "Không tìm thấy hoạt động trong lịch");
-                    //foreach (var activity in allFarmActivity)
-                    //{
-                    //    if(activity.Status != FarmActivityStatus.COMPLETED)
-                    //    {
-                    //        systemLog = new ScheduleLog
-                    //        {
-                    //            FarmActivityId = activity.FarmActivitiesId,
-                    //            ScheduleId = activity.scheduleId ?? 0,
+                    var allFarmActivity = await _unitOfWork.farmActivityRepository.GetListFarmActivityByScheduleId(currentSchedule.ScheduleId);
+                    if (allFarmActivity == null)
+                        return new ResponseDTO(Const.ERROR_EXCEPTION, "Không tìm thấy hoạt động trong lịch");
+                    foreach (var activity in allFarmActivity)
+                    {
+                        if (activity.Status == FarmActivityStatus.ACTIVE)
+                        {
+                            systemLog = new ScheduleLog
+                            {
+                                FarmActivityId = activity.FarmActivitiesId,
+                                ScheduleId = activity.scheduleId ?? 0,
 
-                    //            Notes = $"[Ghi chú tự động] Hoạt động {activity.ActivityType} đã chưa được hoàn thành trong lịch trình.",
+                                Notes = $"[Ghi chú tự động] Hoạt động {activity.ActivityType} đã chưa được hoàn thành trong lịch trình.",
 
-                    //            CreatedAt = DateTime.UtcNow,
-                    //            UpdatedAt = DateTime.UtcNow,
+                                CreatedAt = DateTime.UtcNow,
+                                UpdatedAt = DateTime.UtcNow,
 
-                    //            CreatedBy = activity.createdBy,          // Hoặc ID user hệ thống nếu có
-                    //            UpdatedBy = (long)activity.updatedBy           // Tương tự
-                    //        };
-                    //    }
-                    //}
+                                CreatedBy = activity.createdBy,          // Hoặc ID user hệ thống nếu có
+                                UpdatedBy = (long)activity.updatedBy           // Tương tự
+                            };
+                        }
+                    }
                     currentSchedule.Status = Status.COMPLETED;
 
                     if (await _unitOfWork.SaveChangesAsync() < 0)
