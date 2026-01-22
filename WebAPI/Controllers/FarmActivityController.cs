@@ -113,7 +113,7 @@ namespace WebAPI.Controllers
             return Ok(result);
         }
 
-        [HttpPost("farm-activity-by-schedule")]
+        [HttpGet("farm-activity-by-schedule")]
         public async Task<IActionResult> GetFarmActivityBySchedule(long scheduleId)
         {
 
