@@ -1112,5 +1112,22 @@ namespace WebAPI.Services
 
             return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, "Không có thay đổi nào được thực hiện.");
         }
+
+        public async Task<ResponseDTO> GetFarmActivityByScheduleIdAsync(long scheduleId)
+        {
+            var scheduleExists = await _unitOfWork.scheduleRepository.GetByIdAsync(scheduleId);
+            if (scheduleExists == null)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Không tìm thấy lịch trình với ID này.");
+            }
+
+            // Cách 1: Load full entity rồi map (dễ, phù hợp list nhỏ)
+            var activities = await _farmActivityRepository.GetListFarmActivityByScheduleId(scheduleId);
+
+            // AutoMapper map list
+            var views = _mapper.Map<List<FarmActivityView>>(activities);
+
+            return new ResponseDTO(Const.SUCCESS_READ_CODE,views.Any() ? Const.SUCCESS_READ_MSG : "Không có hoạt động nào.",views);
+        }
     }
 }

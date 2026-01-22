@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static Infrastructure.ViewModel.Response.AccountResponse;
 using static Infrastructure.ViewModel.Response.FarmActivityResponse;
+using static Infrastructure.ViewModel.Response.ScheduleResponse;
 using static Infrastructure.ViewModel.Response.StaffActivityResponse;
 
 namespace Infrastructure.Mapper
@@ -71,6 +72,20 @@ namespace Infrastructure.Mapper
 
                 .ReverseMap();
 
+            CreateMap<FarmActivity, FarmActivityView>()
+                .ForMember(dest => dest.FarmActivitiesId, opt => opt.MapFrom(src => src.FarmActivitiesId))  // nếu tên property khác nhau
+                .ForMember(dest => dest.ActivityType, opt => opt.MapFrom(src => src.ActivityType))
+                .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate.HasValue
+                    ? src.StartDate.Value.ToString("dd/MM/yyyy")
+                    : null))
+                .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate.HasValue
+                    ? src.EndDate.Value.ToString("dd/MM/yyyy")
+                    : null))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+                .ForMember(dest => dest.CropName, opt => opt.MapFrom(src => src.Schedule != null && src.Schedule.Crop != null
+                    ? src.Schedule.Crop.CropName
+                    : "Không xác định"))
+                .ForMember(dest => dest.scheduleId, opt => opt.MapFrom(src => src.scheduleId));
         }
     }
 }
