@@ -104,7 +104,7 @@ namespace Infrastructure.Mapper
         : "Không xác định"))
     .ForMember(dest => dest.StaffEmail, opt => opt.MapFrom(src => src.Account != null
         ? src.Account.Email ?? "Không xác định"
-        : "Không xác định")
+        : "Không xác định"))
 
     // Các trường khác...
     .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.status.ToString()))
