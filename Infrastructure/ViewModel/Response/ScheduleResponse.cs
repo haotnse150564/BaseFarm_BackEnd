@@ -77,6 +77,14 @@ namespace Infrastructure.ViewModel.Response
             public int? DaysToNextStage { get; set; }
         }
 
-        
+        public class ScheduleLogCheckDto
+        {
+            public bool Exists { get; set; }
+            public int LogCount { get; set; }
+            public long? LatestScheduleLogId { get; set; }
+            public DateTime? LatestCreatedAt { get; set; }
+            public long? LatestCreatedBy { get; set; }
+            public string? LatestNotes { get; set; }
+        }
     }
 }

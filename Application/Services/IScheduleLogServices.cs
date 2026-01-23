@@ -14,5 +14,6 @@ namespace Application.Services
         Task<ResponseDTO> GetLogsByScheduleIdAsync(long scheduleId, int pageIndex = 0, int pageSize = 10);
         Task<ResponseDTO> CreateManualLogAsync(CreateScheduleLogRequest request);
         Task<ResponseDTO> UpdateManualLogAsync(UpdateScheduleLogRequest request);
+        Task<ResponseDTO> CheckLogExistsTodayAsync(long farmActivityId, long scheduleId);
     }
 }

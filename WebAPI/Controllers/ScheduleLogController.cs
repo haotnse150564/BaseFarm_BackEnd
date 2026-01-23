@@ -44,6 +44,18 @@ namespace WebAPI.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("check-today")]
+        public async Task<IActionResult> CheckLogExistsToday([FromQuery] long farmActivityId, [FromQuery] long scheduleId)
+        {
+            if (farmActivityId <= 0 || scheduleId <= 0)
+            {
+                return BadRequest(new { message = "farmActivityId và scheduleId phải lớn hơn 0" });
+            }
+
+            var result = await _scheduleLogServices.CheckLogExistsTodayAsync(farmActivityId, scheduleId);
+            return Ok(result);
+        }
     }
 
 

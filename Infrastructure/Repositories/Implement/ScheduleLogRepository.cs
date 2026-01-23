@@ -62,5 +62,37 @@ namespace Infrastructure.Repositories.Implement
             return await query.AsNoTracking().ToListAsync();
         }
 
+        public async Task<bool> ExistsTodayAsync(long farmActivityId, long scheduleId, DateTime date)
+        {
+            // Giữ nguyên nếu bạn vẫn cần method cũ (không theo user)
+            return await _context.ScheduleLog
+                .AnyAsync(s =>
+                    s.FarmActivityId == farmActivityId &&
+                    s.ScheduleId == scheduleId &&
+                    s.CreatedAt.Date == date.Date);
+        }
+
+        public async Task<int> CountTodayByUserAsync(long farmActivityId, long scheduleId, DateTime date, long userId)
+        {
+            return await _context.ScheduleLog
+                .CountAsync(s =>
+                    s.FarmActivityId == farmActivityId &&
+                    s.ScheduleId == scheduleId &&
+                    s.CreatedAt.Date == date.Date &&
+                    s.CreatedBy == userId);
+        }
+
+        public async Task<ScheduleLog?> GetLatestTodayByUserAsync(long farmActivityId, long scheduleId, DateTime date, long userId)
+        {
+            return await _context.ScheduleLog
+                .AsNoTracking()
+                .Where(s =>
+                    s.FarmActivityId == farmActivityId &&
+                    s.ScheduleId == scheduleId &&
+                    s.CreatedAt.Date == date.Date &&
+                    s.CreatedBy == userId)
+                .OrderByDescending(s => s.CreatedAt)
+                .FirstOrDefaultAsync();
+        }
     }
 }

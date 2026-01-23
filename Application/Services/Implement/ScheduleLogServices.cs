@@ -91,7 +91,7 @@ namespace Application.Services.Implement
                 return new ResponseDTO(Const.WARNING_NO_DATA_CODE, "Không tìm thấy lịch với ID này");
 
             var farmActivityExist = await _unitOfWork.farmActivityRepository.GetByIdAsync(request.FarmActivityId);
-            if(farmActivityExist == null)
+            if (farmActivityExist == null)
                 return new ResponseDTO(Const.WARNING_NO_DATA_CODE, "Không tìm thấy hoạt động trong lịch với ID này");
 
             TimeZoneInfo vietnamZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
@@ -167,6 +167,32 @@ namespace Application.Services.Implement
                 : "Không tìm thấy tên người dùng";
 
             return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, "Cập nhật log thành công", logDto);
+        }
+
+        public async Task<ResponseDTO> CheckLogExistsTodayAsync(long farmActivityId, long scheduleId)
+        {
+            var getCurrentUser = await _jwtUtils.GetCurrentUserAsync();
+            if (getCurrentUser == null)
+            {
+                return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, "Cập nhật log thành công");
+            }
+
+            var userId = getCurrentUser.AccountId; // giả sử property Id là long
+
+            var today = DateTime.UtcNow.Date; // Đúng rồi, dùng UTC
+
+            var count = await _scheduleLogRepo.CountTodayByUserAsync(farmActivityId, scheduleId, today, userId);
+            var latest = await _scheduleLogRepo.GetLatestTodayByUserAsync(farmActivityId, scheduleId, today, userId);
+
+            return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, new ScheduleLogCheckDto
+            {
+                Exists = count > 0,
+                LogCount = count,
+                LatestScheduleLogId = latest?.ScheduleLogId,
+                LatestCreatedAt = latest?.CreatedAt,
+                LatestCreatedBy = latest?.CreatedBy,
+                LatestNotes = latest?.Notes
+            });
         }
     }
 }

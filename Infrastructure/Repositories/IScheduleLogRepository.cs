@@ -15,7 +15,9 @@ namespace Infrastructure.Repositories
     {
         Task<List<ScheduleLog>> GetAllByScheduleIdAsync(long scheduleId);
         Task<List<ScheduleLogResponse>> GetAllWithName(long scheduleId);
-
+        Task<bool> ExistsTodayAsync(long farmActivityId, long scheduleId, DateTime date);
+        Task<int> CountTodayByUserAsync(long farmActivityId, long scheduleId, DateTime date, long userId);
+        Task<ScheduleLog?> GetLatestTodayByUserAsync(long farmActivityId, long scheduleId, DateTime date, long userId);
 
     }
 }
