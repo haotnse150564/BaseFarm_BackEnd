@@ -99,6 +99,12 @@ namespace Infrastructure.Mapper
         src.Account != null && src.Account.AccountProfile != null
             ? src.Account.AccountProfile.Fullname ?? src.Account.Email ?? "Không xác định"
             : "Hệ thống"))
+    .ForMember(dest => dest.StaffPhone, opt => opt.MapFrom(src => src.Account != null && src.Account.AccountProfile != null
+        ? src.Account.AccountProfile.Phone ?? "Không xác định"
+        : "Không xác định"))
+    .ForMember(dest => dest.StaffEmail, opt => opt.MapFrom(src => src.Account != null
+        ? src.Account.Email ?? "Không xác định"
+        : "Không xác định")
 
     // Các trường khác...
     .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.status.ToString()))
