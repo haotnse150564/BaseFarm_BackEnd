@@ -29,5 +29,6 @@ namespace Application.Services
         Task<Response_DTO> GetStaffByFarmActivityId(long farmActivityId);
         Task<ResponseDTO> ReportMyPartCompletedAsync(long farmActivityId, string? notes = null);
         Task<ResponseDTO> GetFarmActivityByScheduleIdAsync(long farmActivityId);
+        Task<ResponseDTO> GetAssignStaffByFarmActivityId(long farmActivityId);
     }
 }

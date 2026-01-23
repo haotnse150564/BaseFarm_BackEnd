@@ -1152,5 +1152,23 @@ namespace WebAPI.Services
             };
 }
 
+        public async Task<ResponseDTO> GetAssignStaffByFarmActivityId(long farmActivityId)
+        {
+            var currentUser = await _jwtUtils.GetCurrentUserAsync();
+            if (currentUser == null)
+            {
+                return new ResponseDTO(Const.FAIL_READ_CODE, "Tài khoản không hợp lệ hoặc không có quyền.");
+            }
+
+            // Lấy danh sách phân công, nhưng lọc ngay theo AccountId của current user
+            var assignedList = await _unitOfWork.farmActivityRepository.GetAssignStaffByFarmActivityIdAndAccountId(farmActivityId,currentUser.AccountId);
+
+            // Nếu repository chưa có method lọc theo AccountId → bạn cần tạo thêm
+            // (xem phần dưới)
+
+            var result = _mapper.Map<List<StaffFarmActivityResponse>>(assignedList);
+
+            return new ResponseDTO(Const.SUCCESS_READ_CODE,result.Any()? Const.SUCCESS_READ_MSG: "Bạn chưa được phân công cho hoạt động này.",result);
+        }
     }
 }

@@ -209,5 +209,16 @@ namespace Infrastructure.Repositories.Implement
                 .Include(fa => fa.StaffFarmActivities)  // Load list Staff_FarmActivity
                 .FirstOrDefaultAsync(fa => fa.FarmActivitiesId == id);
         }
+
+        public async Task<List<Staff_FarmActivity>> GetAssignStaffByFarmActivityIdAndAccountId(long farmActivityId,long accountId)
+        {
+            return await _context.StaffFarmActivities
+                .Where(sfa => sfa.FarmActivityId == farmActivityId
+                           && sfa.AccountId == accountId)
+                .Include(sfa => sfa.Account)
+                    .ThenInclude(a => a.AccountProfile) 
+                .AsNoTracking()
+                .ToListAsync();
+        }
     }
 }

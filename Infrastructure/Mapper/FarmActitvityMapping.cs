@@ -86,6 +86,26 @@ namespace Infrastructure.Mapper
                     ? src.Schedule.Crop.CropName
                     : "Không xác định"))
                 .ForMember(dest => dest.scheduleId, opt => opt.MapFrom(src => src.scheduleId));
+            CreateMap<Staff_FarmActivity, StaffFarmActivityResponse>()
+            .ForMember(dest => dest.StaffName, opt => opt.MapFrom(src => src.Account != null
+                ? (src.Account.AccountProfile.Fullname ?? src.Account.Email ?? "Không xác định")
+                : "Hệ thống"))
+            .ReverseMap();
+
+            CreateMap<Staff_FarmActivity, StaffFarmActivityResponse>()
+    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Staff_FarmActivityId.ToString()))
+    .ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.AccountId.ToString()))
+    .ForMember(dest => dest.StaffName, opt => opt.MapFrom(src =>
+        src.Account != null && src.Account.AccountProfile != null
+            ? src.Account.AccountProfile.Fullname ?? src.Account.Email ?? "Không xác định"
+            : "Hệ thống"))
+
+    // Các trường khác...
+    .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.status.ToString()))
+    .ForMember(dest => dest.IndividualStatus, opt => opt.MapFrom(src => src.individualStatus.ToString()))
+    .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt.ToString("dd/MM/yyyy HH:mm")))
+    .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => src.CreatedBy))
+    ;
         }
     }
 }

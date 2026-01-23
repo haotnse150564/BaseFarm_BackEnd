@@ -121,5 +121,13 @@ namespace WebAPI.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("assigned-staff-by-farm-activity")]
+        public async Task<IActionResult> getAssignStaffByFarmActivityId(long farmActivityId)
+        {
+            var result = await _farmActivityServices.GetAssignStaffByFarmActivityId(farmActivityId);
+
+            return Ok(result);
+        }
     }
 }
