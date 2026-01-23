@@ -112,5 +112,14 @@ namespace WebAPI.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("farm-activity-by-schedule")]
+        public async Task<IActionResult> GetFarmActivityBySchedule(long scheduleId)
+        {
+
+            var result = await _farmActivityServices.GetFarmActivityByScheduleIdAsync(scheduleId);
+
+            return Ok(result);
+        }
     }
 }

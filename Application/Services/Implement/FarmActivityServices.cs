@@ -933,6 +933,9 @@ namespace WebAPI.Services
             if (assignment == null)
                 return new ResponseDTO(Const.ERROR_EXCEPTION, "Bạn không được phân công cho hoạt động này.");
 
+            if (assignment.status == Status.DEACTIVATED)
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Phân công của bạn đã bị hủy.");
+
             // 2. Kiểm tra chưa hoàn thành
             if (assignment.individualStatus == IndividualStatus.COMPLETED)
                 return new ResponseDTO(Const.ERROR_EXCEPTION, "Bạn đã báo hoàn thành phần việc rồi.");
@@ -1112,6 +1115,24 @@ namespace WebAPI.Services
 
             return new ResponseDTO(Const.SUCCESS_UPDATE_CODE, "Không có thay đổi nào được thực hiện.");
         }
+
+        public async Task<ResponseDTO> GetFarmActivityByScheduleIdAsync(long scheduleId)
+        {
+            var scheduleExists = await _unitOfWork.scheduleRepository.GetByIdAsync(scheduleId);
+            if (scheduleExists == null)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "Không tìm thấy lịch trình với ID này.");
+            }
+
+            // Cách 1: Load full entity rồi map (dễ, phù hợp list nhỏ)
+            var activities = await _farmActivityRepository.GetListFarmActivityByScheduleId(scheduleId);
+
+            // AutoMapper map list
+            var views = _mapper.Map<List<FarmActivityView>>(activities);
+
+            return new ResponseDTO(Const.SUCCESS_READ_CODE,views.Any() ? Const.SUCCESS_READ_MSG : "Không có hoạt động nào.",views);
+        }
+        
         public string TranslateFarmActivityType(FarmActivity activity)
         {
 
@@ -1129,7 +1150,7 @@ namespace WebAPI.Services
                 ActivityType.CleaningFarmArea => "Dọn dẹp đồng ruộng",
                 _ => "Loại hoạt động không xác định",
             };
+}
 
-        }
     }
 }
