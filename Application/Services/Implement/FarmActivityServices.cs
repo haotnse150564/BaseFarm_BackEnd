@@ -12,6 +12,7 @@ using Infrastructure.ViewModel.Request;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using System.Threading.Tasks;
 using static Infrastructure.ViewModel.Response.FarmActivityResponse;
@@ -1011,6 +1012,7 @@ namespace WebAPI.Services
                 farmActivity.UpdatedAt = DateTime.UtcNow;
 
                 await _unitOfWork.farmActivityRepository.UpdateAsync(farmActivity);
+                var activityTypeVN_Name = TranslateFarmActivityType(farmActivity);
 
                 // Tạo log hệ thống
                 var systemLog = new ScheduleLog
@@ -1018,7 +1020,7 @@ namespace WebAPI.Services
                     FarmActivityId = farmActivity.FarmActivitiesId,
                     ScheduleId = farmActivity.scheduleId ?? 0,
 
-                    Notes = $"[Ghi chú tự động] Hoạt động {farmActivity.ActivityType} đã hoàn thành khi tất cả nhân viên ({farmActivity.StaffFarmActivities.Count}) đã báo xong phần việc.",
+                    Notes = $"[Ghi chú tự động] Hoạt động {activityTypeVN_Name} đã hoàn thành khi tất cả nhân viên ({farmActivity.StaffFarmActivities.Count}) đã báo xong phần việc.",
 
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
@@ -1069,12 +1071,13 @@ namespace WebAPI.Services
                     {
                         if (activity.Status == FarmActivityStatus.ACTIVE && activity.FarmActivitiesId != farmActivityId)
                         {
+                            activityTypeVN_Name = TranslateFarmActivityType(activity);
                             systemLog = new ScheduleLog 
                             {
                                 FarmActivityId = activity.FarmActivitiesId,
                                 ScheduleId = activity.scheduleId ?? 0,
 
-                                Notes = $"[Ghi chú tự động] Hoạt động {activity.ActivityType} đã chưa được hoàn thành trong lịch trình.",
+                                Notes = $"[Ghi chú tự động] Hoạt động {activityTypeVN_Name} đã chưa được hoàn thành trong lịch trình.",
 
                                 CreatedAt = DateTime.UtcNow,
                                 UpdatedAt = DateTime.UtcNow,
@@ -1129,5 +1132,25 @@ namespace WebAPI.Services
 
             return new ResponseDTO(Const.SUCCESS_READ_CODE,views.Any() ? Const.SUCCESS_READ_MSG : "Không có hoạt động nào.",views);
         }
+        
+        public string TranslateFarmActivityType(FarmActivity activity)
+        {
+
+            return activity.ActivityType switch
+            {
+                ActivityType.SoilPreparation => "Chuẩn bị đất trước gieo",
+                ActivityType.Sowing => "Gieo hạt",
+                ActivityType.Thinning => "Tỉa cây con cho đều",
+                ActivityType.FertilizingDiluted => "Bón phân pha loãng (NPK 20–30%)",
+                ActivityType.Weeding => "Nhổ cỏ nhỏ",
+                ActivityType.PestControl => "Phòng trừ sâu bằng thuốc sinh học",
+                ActivityType.FertilizingLeaf => "Bón phân cho lá (N, hữu cơ)",
+                ActivityType.FrostProtectionCovering => "Phủ bạt che lạnh",
+                ActivityType.Harvesting => "Thu hoạch",
+                ActivityType.CleaningFarmArea => "Dọn dẹp đồng ruộng",
+                _ => "Loại hoạt động không xác định",
+            };
+}
+
     }
 }
