@@ -194,5 +194,31 @@ namespace Application.Services.Implement
                 LatestNotes = latest?.Notes
             });
         }
+
+        public async Task<ResponseDTO> CheckLogExistsTodayByStaffAsync(long farmActivityId,long scheduleId,long staffId)
+        {
+            // Kiểm tra staffId hợp lệ (tùy business rule)
+            if (staffId <= 0)
+            {
+                return new ResponseDTO(Const.ERROR_EXCEPTION, "staffId không hợp lệ");
+            }
+
+            var today = DateTime.UtcNow.Date; // Giữ UTC như hàm cũ
+
+            var count = await _scheduleLogRepo.CountTodayByUserAsync(farmActivityId, scheduleId, today, staffId);
+            var latest = await _scheduleLogRepo.GetLatestTodayByUserAsync(farmActivityId, scheduleId, today, staffId);
+
+            var data = new ScheduleLogCheckDto
+            {
+                Exists = count > 0,
+                LogCount = count,
+                LatestScheduleLogId = latest?.ScheduleLogId,
+                LatestCreatedAt = latest?.CreatedAt,
+                LatestCreatedBy = latest?.CreatedBy,
+                LatestNotes = latest?.Notes
+            };
+
+            return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, data);
+        }
     }
 }

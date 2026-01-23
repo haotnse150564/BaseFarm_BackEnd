@@ -15,5 +15,6 @@ namespace Application.Services
         Task<ResponseDTO> CreateManualLogAsync(CreateScheduleLogRequest request);
         Task<ResponseDTO> UpdateManualLogAsync(UpdateScheduleLogRequest request);
         Task<ResponseDTO> CheckLogExistsTodayAsync(long farmActivityId, long scheduleId);
+        Task<ResponseDTO> CheckLogExistsTodayByStaffAsync(long farmActivityId, long scheduleId, long staffId);
     }
 }

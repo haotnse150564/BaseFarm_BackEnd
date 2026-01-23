@@ -56,6 +56,14 @@ namespace WebAPI.Controllers
             var result = await _scheduleLogServices.CheckLogExistsTodayAsync(farmActivityId, scheduleId);
             return Ok(result);
         }
+
+        [HttpGet("check-today/by-staff")]
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> CheckLogExistsTodayByStaff([FromQuery] long farmActivityId,[FromQuery] long scheduleId,[FromQuery] long staffId)
+        {
+            var result = await _scheduleLogServices.CheckLogExistsTodayByStaffAsync(farmActivityId, scheduleId, staffId);
+            return Ok(result);
+        }
     }
 
 
