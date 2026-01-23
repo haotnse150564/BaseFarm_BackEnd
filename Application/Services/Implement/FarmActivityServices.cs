@@ -965,7 +965,7 @@ namespace WebAPI.Services
             {
                 throw new Exception("FarmActivity not found");
             }
-
+            var activityTypeVN_Name = TranslateFarmActivityType(farmActivity);
             // 4. Tạo log cá nhân
             var log = new ScheduleLog
             {
@@ -973,7 +973,7 @@ namespace WebAPI.Services
 
                 ScheduleId = farmActivity.scheduleId ?? 0,  // Lấy từ entity FarmActivity
 
-                Notes = $"[Ghi chú tự động] {user.AccountProfile?.Fullname ?? "Staff"} đã hoàn thành phần việc trong hoạt động {farmActivity.ActivityType}. Ghi chú: {notes ?? "Không có"}",
+                Notes = $"[Ghi chú tự động] {user.AccountProfile?.Fullname ?? "Staff"} đã hoàn thành phần việc trong hoạt động {activityTypeVN_Name}. Ghi chú: {notes ?? "Không có"}",
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = user.AccountId,
                 UpdatedAt = DateTime.UtcNow,
@@ -1077,7 +1077,7 @@ namespace WebAPI.Services
                                 FarmActivityId = activity.FarmActivitiesId,
                                 ScheduleId = activity.scheduleId ?? 0,
 
-                                Notes = $"[Ghi chú tự động] Hoạt động {activityTypeVN_Name} đã chưa được hoàn thành trong lịch trình.",
+                                Notes = $"[Ghi chú tự động] Hoạt động {activityTypeVN_Name} chưa được hoàn thành trong lịch trình.",
 
                                 CreatedAt = DateTime.UtcNow,
                                 UpdatedAt = DateTime.UtcNow,
@@ -1141,10 +1141,10 @@ namespace WebAPI.Services
                 ActivityType.SoilPreparation => "Chuẩn bị đất trước gieo",
                 ActivityType.Sowing => "Gieo hạt",
                 ActivityType.Thinning => "Tỉa cây con cho đều",
-                ActivityType.FertilizingDiluted => "Bón phân pha loãng (NPK 20–30%)",
+                ActivityType.FertilizingDiluted => "Bón phân pha loãng)",
                 ActivityType.Weeding => "Nhổ cỏ nhỏ",
                 ActivityType.PestControl => "Phòng trừ sâu bằng thuốc sinh học",
-                ActivityType.FertilizingLeaf => "Bón phân cho lá (N, hữu cơ)",
+                ActivityType.FertilizingLeaf => "Bón phân cho lá",
                 ActivityType.FrostProtectionCovering => "Phủ bạt che lạnh",
                 ActivityType.Harvesting => "Thu hoạch",
                 ActivityType.CleaningFarmArea => "Dọn dẹp đồng ruộng",
