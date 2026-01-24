@@ -99,9 +99,9 @@ namespace Application.Services.Implement
                         await _unitOfWork.orderDetailRepository.AddAsync(orderDetail);
                         orderItems.Add(orderDetail);
 
-                        //// Cập nhật tồn kho (bạn đang comment, nên mình bỏ comment lại)
-                        //product.StockQuantity -= item.StockQuantity;
-                        //if (product.StockQuantity == 0) product.Status = 0;
+                        // Cập nhật tồn kho (bạn đang comment, nên mình bỏ comment lại)
+                        product.StockQuantity -= item.StockQuantity;
+                        if (product.StockQuantity == 0) product.Status = 0;
 
                         await _unitOfWork.productRepository.UpdateAsync(product);
 
@@ -488,20 +488,7 @@ namespace Application.Services.Implement
                     foreach (var detail in order.OrderDetails)
                     {
                         // Trừ tồn kho từng sản phẩm theo số lượng đặt mua
-                        //await _unitOfWork.productRepository.UpdateStockByOrderAsync(detail.ProductId, detail.Quantity ?? 0);
-
-                        // Trừ tồn kho từng sản phẩm theo số lượng đặt mua
                         await _unitOfWork.productRepository.UpdateStockByOrderAsync(detail.ProductId, detail.Quantity ?? 0);
-                        var product = await _unitOfWork.productRepository.GetByIdAsync(detail.ProductId);
-                        if (product == null)
-                        {
-                            return new ResponseDTO(Const.ERROR_EXCEPTION, $"Product ID {detail.ProductId} not found.");
-                        }
-                        product.StockQuantity -= detail.Quantity ?? 0;
-                        if (product.StockQuantity == 0)
-                        {
-                            product.Status = ProductStatus.DEACTIVED; // Cập nhật trạng thái nếu hết hàng
-                        }
                     }
 
                     await _unitOfWork.SaveChangesAsync();

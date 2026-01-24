@@ -109,17 +109,7 @@ public class VnPayService : IVnPayService
                 foreach (var detail in order.OrderDetails)
                 {
                     // Trừ tồn kho từng sản phẩm theo số lượng đặt mua
-                    //await _unitOfWork.productRepository.UpdateStockByOrderAsync(detail.ProductId, detail.Quantity ?? 0);
-                    var product = await _unitOfWork.productRepository.GetByIdAsync(detail.ProductId);
-                    if (product == null)
-                    {
-                        return new ResponseDTO(Const.ERROR_EXCEPTION, $"Product ID {detail.ProductId} not found.");
-                    }
-                    product.StockQuantity -= detail.Quantity ?? 0;
-                    if (product.StockQuantity == 0)
-                    {
-                        product.Status = ProductStatus.DEACTIVED; // Cập nhật trạng thái nếu hết hàng
-                    }
+                    await _unitOfWork.productRepository.UpdateStockByOrderAsync(detail.ProductId, detail.Quantity ?? 0);
                 }
 
             }
