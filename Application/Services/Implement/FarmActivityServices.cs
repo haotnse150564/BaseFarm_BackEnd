@@ -235,6 +235,11 @@ namespace WebAPI.Services
                 (ActivityType.FrostProtectionCovering, PlantStage.Vegetative) => true,  // Phủ bạt che lạnh (nếu cần)
 
                 // === Harvest (36–37 ngày): Thu hoạch và kết thúc ===
+                (ActivityType.Weeding, PlantStage.Harvest) => true,
+                (ActivityType.FertilizingDiluted, PlantStage.Harvest) => true,     // Bón thúc tiếp
+                (ActivityType.FertilizingLeaf, PlantStage.Harvest) => true,        // Bón phân lá chính ở giai đoạn này
+                (ActivityType.PestControl, PlantStage.Harvest) => true,
+                (ActivityType.FrostProtectionCovering, PlantStage.Harvest) => true,  // Phủ bạt che lạnh (nếu cần)
                 (ActivityType.Harvesting, PlantStage.Harvest) => true,
                 (ActivityType.CleaningFarmArea, PlantStage.Harvest) => true,          // Dọn dẹp sau thu hoạch
 
