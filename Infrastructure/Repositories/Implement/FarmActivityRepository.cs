@@ -146,7 +146,8 @@ namespace Infrastructure.Repositories.Implement
                 ActivityType.FertilizingLeaf,
                 ActivityType.PestControl,
                 ActivityType.Weeding,
-                ActivityType.FrostProtectionCovering
+                ActivityType.FrostProtectionCovering,
+                ActivityType.Harvesting
 };
 
         public async Task<bool> HasDuplicateActivityTypeInScheduleAsync(long scheduleId, ActivityType activityType, long? excludeActivityId = null)
