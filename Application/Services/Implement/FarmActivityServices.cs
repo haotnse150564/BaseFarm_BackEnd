@@ -32,8 +32,9 @@ namespace WebAPI.Services
         private readonly JWTUtils _jwtUtils;
         private readonly IScheduleLogRepository _scheduleLogRepo;
         private readonly IScheduleRepository _scheduleRepository;
+        private readonly IInventoryRepository _inventoryRepository;
         public FarmActivityServices(IUnitOfWorks unitOfWork, ICurrentTime currentTime, IConfiguration configuration, IMapper mapper
-            , IFarmActivityRepository farmActivityRepository, IInventoryService inventory, JWTUtils jWTUtils, IScheduleLogRepository scheduleLogRepo)
+            , IFarmActivityRepository farmActivityRepository, IInventoryService inventory, JWTUtils jWTUtils, IScheduleLogRepository scheduleLogRepo, IInventoryRepository _inventoryRepository)
 
         {
             _unitOfWork = unitOfWork;
@@ -44,6 +45,7 @@ namespace WebAPI.Services
             _inventory = inventory;
             _jwtUtils = jWTUtils;
             _scheduleLogRepo = scheduleLogRepo;
+            _inventoryRepository = _inventoryRepository;
         }
 
         public async Task<ResponseDTO?> ValidateCreateAsync(FarmActivityRequest request, ActivityType activityType)
@@ -1055,7 +1057,12 @@ namespace WebAPI.Services
                         double harvested = schedule.HarvestedQuantity ?? 0;
 
                         product.StockQuantity = currentStock + harvested;
-
+                        var inventory = await _unitOfWork.inventoryRepository.GetByProductIdAsync(product.ProductId);
+                        if (inventory != null)
+                        {
+                            inventory.StockQuantity = (int?)product.StockQuantity;
+                            await _unitOfWork.inventoryRepository.UpdateAsync(inventory);
+                        }
                     }
                     if (await _unitOfWork.SaveChangesAsync() < 0)
                     {

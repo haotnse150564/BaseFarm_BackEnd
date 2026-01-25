@@ -11,5 +11,6 @@ namespace Infrastructure.Repositories
     public interface IInventoryRepository : IGenericRepository<Inventory>
     {
         Task<int> GetTotalStockByProductIdAsync(long productId);
+        Task<Inventory?> GetByProductIdAsync(long productId);
     }
 }

@@ -22,5 +22,14 @@ namespace Infrastructure.Repositories.Implement
                 .Where(i => i.ProductId == productId && i.Status == Status.ACTIVE)
                 .SumAsync(i => i.StockQuantity ?? 0);
         }
+
+        public async Task<Inventory?> GetByProductIdAsync(long productId)
+        {
+            return await _context.Inventorie
+                .Where(i => i.ProductId == productId)
+                .Include(i => i.Product)     
+                .Include(i => i.Schedule)    
+                .FirstOrDefaultAsync();
+        }
     }
 }
