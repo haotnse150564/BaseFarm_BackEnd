@@ -100,8 +100,8 @@ namespace Application.Services.Implement
                         orderItems.Add(orderDetail);
 
                         // Cập nhật tồn kho (bạn đang comment, nên mình bỏ comment lại)
-                        product.StockQuantity -= item.StockQuantity;
-                        if (product.StockQuantity == 0) product.Status = 0;
+                        //product.StockQuantity -= item.StockQuantity;
+                        //if (product.StockQuantity == 0) product.Status = 0;
 
                         await _unitOfWork.productRepository.UpdateAsync(product);
 
