@@ -139,6 +139,7 @@ namespace Infrastructure.Repositories.Implement
                 .Where(o => o.OrderId == orderId)
                 .OrderByDescending(o => o.OrderId) // Sắp xếp theo ngày mới nhất
                 .Include(o => o.Customer)
+                    .ThenInclude(c => c.AccountProfile) // Bao gồm thông tin hồ sơ tài khoản của khách hàng
                 .Include(o => o.OrderDetails)
                     .ThenInclude(od => od.Product)
                 .FirstOrDefaultAsync();
