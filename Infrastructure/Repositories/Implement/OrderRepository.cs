@@ -38,7 +38,7 @@ namespace Infrastructure.Repositories.Implement
                     Fullname = o.Customer.AccountProfile.Fullname,
                     Email = o.Customer.Email,
                     ShippingAddress = o.ShippingAddress,
-                    Status = (Status?)o.Status,
+                    Status = (PaymentStatus?)o.Status,
                     CreatedAt = o.CreatedAt.HasValue ? o.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
                     OrderItems = o.OrderDetails.Select(od => new ViewProductDTO
                     {
@@ -85,7 +85,7 @@ namespace Infrastructure.Repositories.Implement
                     OrderId = o.OrderId,
                     TotalPrice = o.TotalPrice,
                     Email = o.Customer.Email,
-                    Status = (Status?)o.Status, // ép kiểu để trả về dưới dạng số
+                    Status = (PaymentStatus?)o.Status, // ép kiểu để trả về dưới dạng số
                     ShippingAddress = o.ShippingAddress,
                     OrderDetailIds = o.OrderDetails.Select(od => od.OrderDetailId).ToList(),
                     CreatedAt = o.CreatedAt.HasValue ? o.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
@@ -163,7 +163,7 @@ namespace Infrastructure.Repositories.Implement
                 {
                     TotalPrice = o.TotalPrice,
                     Email = o.Customer.Email,
-                    Status = (Status?)o.Status,
+                    Status = (PaymentStatus?)o.Status,
                     CreatedAt = o.CreatedAt.HasValue ? o.CreatedAt.Value.ToDateTime(TimeOnly.MinValue) : (DateTime?)null,
                     OrderItems = o.OrderDetails.Select(od => new ViewProductDTO
                     {
