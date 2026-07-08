@@ -31,7 +31,7 @@ namespace Application.ViewModel.Response
             public string? Email { get; set; }
             public List<long> OrderDetailIds { get; set; } = new();
             public DateTime? CreatedAt { get; set; }
-            public Status? Status { get; set; }
+            public PaymentStatus? Status { get; set; }
             public string? ShippingAddress { get; set; }
             public List<ViewProductDTO> OrderItems { get; set; } = new();
         }
