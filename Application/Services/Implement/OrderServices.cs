@@ -152,7 +152,7 @@ namespace Application.Services.Implement
 
                 if (listOrder == null || !listOrder.Items.Any())
                 {
-                    return new ResponseDTO(Const.FAIL_READ_CODE, "No Order found.");
+                    return new ResponseDTO(Const.SUCCESS_READ_CODE, "No Order found.");
                 }
 
                 return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_READ_MSG, listOrder);
