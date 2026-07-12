@@ -143,51 +143,42 @@ namespace Application.Services.Implement
         }
 
 
-        //public async Task<ResponseDTO> CreateProductAsync(CreateProductDTO request)
-        //{
-        //    try
-        //    {
-        //        var category = await _unitOfWork.categoryRepository.GetAllAsync();
+        public async Task<ResponseDTO> CreateProductAsync(CreateProductDTO request)
+        {
+           try
+           {
+               var category = await _unitOfWork.categoryRepository.GetAllAsync();
 
-        //        if (await _unitOfWork.productRepository.ExistsByNameAsync(request.ProductName))
-        //        {
-        //            return new ResponseDTO(Const.FAIL_CREATE_CODE, "The Product Name already exists. Please choose a different Product Name.");
-        //        }
-        //        else if (!category.Exists(x => x.CategoryId == request.CategoryId))
-        //        {
-        //            return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Category not exist!");
-        //        }
-        //        // Ánh xạ từ DTO sang Entity
-        //        var product = _mapper.Map<Product>(request);
-        //        product.Status = ProductStatus.ACTIVE;
-        //        product.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
-        //        product.StockQuantity = 0;
-        //        // Gọi AddAsync nhưng không gán vào biến vì nó không có giá trị trả về
-        //        await _unitOfWork.productRepository.AddAsync(product);
-        //        if (await _unitOfWork.SaveChangesAsync() < 0) ;
-        //        {
-        //            var crop = await _unitOfWork.cropRepository.GetByIdAsync(request.CropId);
-        //            if (crop == null)
-        //            {
-        //                return new ResponseDTO(Const.FAIL_CREATE_CODE, "Crop not exists.");
-        //            }
-        //            crop.Status = CropStatus.IN_STOCK;
-        //            await _unitOfWork.cropRepository.UpdateAsync(crop);
-        //        }
-        //        var check = await _unitOfWork.SaveChangesAsync();
-        //        // Kiểm tra xem sản phẩm có được thêm không bằng cách kiểm tra product.Id (hoặc khóa chính)
-        //        if (check < 0) // Nếu Id chưa được gán, có thể việc thêm đã thất bại
-        //        {
-        //            return new ResponseDTO(Const.FAIL_CREATE_CODE, "Failed to add product.");
-        //        }
+               if (await _unitOfWork.productRepository.ExistsByNameAsync(request.ProductName))
+               {
+                   return new ResponseDTO(Const.FAIL_CREATE_CODE, "The Product Name already exists. Please choose a different Product Name.");
+               }
+               else if (!category.Exists(x => x.CategoryId == request.CategoryId))
+               {
+                   return new ResponseDTO(Const.FAIL_READ_CODE, Const.FAIL_READ_MSG, "Category not exist!");
+               }
+               // Ánh xạ từ DTO sang Entity
+               var product = _mapper.Map<Product>(request);
+               product.Status = ProductStatus.ACTIVE;
+               product.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
+               product.StockQuantity = 0;
+               // Gọi AddAsync nhưng không gán vào biến vì nó không có giá trị trả về
+               await _unitOfWork.productRepository.AddAsync(product);
+             
+               var check = await _unitOfWork.SaveChangesAsync();
+               // Kiểm tra xem sản phẩm có được thêm không bằng cách kiểm tra product.Id (hoặc khóa chính)
+               if (check < 0) // Nếu Id chưa được gán, có thể việc thêm đã thất bại
+               {
+                   return new ResponseDTO(Const.FAIL_CREATE_CODE, "Failed to add product.");
+               }
 
-        //        return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Product registered successfully");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
-        //    }
-        //}
+               return new ResponseDTO(Const.SUCCESS_CREATE_CODE, "Product registered successfully");
+           }
+           catch (Exception ex)
+           {
+               return new ResponseDTO(Const.ERROR_EXCEPTION, ex.Message);
+           }
+        }
 
         public async Task<ResponseDTO> UpdateProductById(long productId, UpdateProductDTO request)
         {
@@ -220,9 +211,9 @@ namespace Application.Services.Implement
                     }
                     var result = _mapper.Map<ProductDetailDTO>(product);
                     //result.CropId = product.ProductNavigation.CropId.ToString();
-                    result.CropName = product.ProductNavigation.CropName;
+                    //result.CropName = product.ProductNavigation.CropName;
                     //result.CategoryName = category.Where(x => x.CategoryId == result.).FirstOrDefault().CategoryName;
-                    result.StockQuantity = product.StockQuantity;
+                    //result.StockQuantity = product.StockQuantity;
 
                     return new ResponseDTO(Const.SUCCESS_READ_CODE, Const.SUCCESS_UPDATE_MSG, result);
                 }
