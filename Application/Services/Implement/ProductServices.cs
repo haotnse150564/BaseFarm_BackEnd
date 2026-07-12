@@ -209,7 +209,7 @@ namespace Application.Services.Implement
                 {
                    var product = _mapper.Map(request, productUpdate);
 
-
+                    product.CategoryId = request.CategoryId;
 
                     // Lưu các thay đổi vào cơ sở dữ liệu
                     await _unitOfWork.productRepository.UpdateAsync(product);

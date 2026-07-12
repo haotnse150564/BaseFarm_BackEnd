@@ -38,11 +38,10 @@ namespace Application.ViewModel.Request
         }
         public class UpdateProductDTO
         {
-            [Required]
             [StringLength(255, ErrorMessage = "Product Name cannot exceed 255 characters.")]
             public string? ProductName { get; set; }
 
-            [Required(ErrorMessage = "Price is required.")]
+
             [Range(5000.00, double.MaxValue, ErrorMessage = "Price must be greater than 5000.")]
             public decimal? Price { get; set; }
             public string? Images { get; set; }
