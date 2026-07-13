@@ -20,9 +20,9 @@ namespace Application.ViewModel.Request
             public decimal? Price { get; set; }
             public string? Images { get; set; }
 
-            //[Required(ErrorMessage = "Stock Quantity is required.")]
-            //[Range(0, int.MaxValue, ErrorMessage = "Stock Quantity cannot be negative.")]
-            //public int? StockQuantity { get; set; }
+            [Required(ErrorMessage = "Stock Quantity is required.")]
+            [Range(0, int.MaxValue, ErrorMessage = "Stock Quantity cannot be negative.")]
+            public int? StockQuantity { get; set; }
 
             [StringLength(1000, ErrorMessage = "Description cannot exceed 1000 characters.")]
             public string? Description { get; set; }
