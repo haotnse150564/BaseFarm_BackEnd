@@ -161,7 +161,7 @@ namespace Application.Services.Implement
                var product = _mapper.Map<Product>(request);
                product.Status = ProductStatus.ACTIVE;
                product.CreatedAt = DateOnly.FromDateTime(DateTime.Now);
-               product.StockQuantity = 0;
+               product.StockQuantity = request.StockQuantity ?? 0; // Nếu StockQuantity là null, gán giá trị mặc định là 0
                // Gọi AddAsync nhưng không gán vào biến vì nó không có giá trị trả về
                await _unitOfWork.productRepository.AddAsync(product);
              
